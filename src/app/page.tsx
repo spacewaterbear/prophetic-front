@@ -254,12 +254,21 @@ export default function Home() {
                 <button
                   key={conversation.id}
                   onClick={() => loadConversation(conversation.id)}
-                  className={`w-full text-left px-3 py-2 rounded-lg hover:bg-white/10 text-sm transition-colors flex items-center gap-2 ${
-                    currentConversationId === conversation.id ? "bg-white/10" : ""
+                  className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all flex items-center gap-2 ${
+                    currentConversationId === conversation.id
+                      ? "bg-white/20 border border-white/30 shadow-sm"
+                      : "hover:bg-white/10 border border-transparent"
                   }`}
                 >
-                  <MessageSquare className="h-4 w-4 flex-shrink-0" />
-                  <span className="truncate">{conversation.title}</span>
+                  <MessageSquare className={`h-4 w-4 flex-shrink-0 ${
+                    currentConversationId === conversation.id ? "text-blue-400" : ""
+                  }`} />
+                  <span className={`truncate ${
+                    currentConversationId === conversation.id ? "font-medium" : ""
+                  }`}>{conversation.title}</span>
+                  {currentConversationId === conversation.id && (
+                    <Check className="h-4 w-4 ml-auto flex-shrink-0 text-blue-400" />
+                  )}
                 </button>
               ))
             )}
