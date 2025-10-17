@@ -226,13 +226,6 @@ export default function Home() {
       {/* Sidebar */}
       <aside className={`${sidebarOpen ? 'w-64' : 'w-0'} transition-all duration-300 bg-black text-white flex flex-col overflow-hidden`}>
         <div className="p-4 border-b border-gray-800">
-          <Image
-            src="https://ext.same-assets.com/4250389560/3143870090.png"
-            alt="Prophetic Orchestra"
-            width={150}
-            height={40}
-            className="h-8 w-auto mb-4"
-          />
           <Button
             className="w-full bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-lg"
             onClick={createNewConversation}
@@ -311,13 +304,13 @@ export default function Home() {
               <Menu className="h-5 w-5" />
             </Button>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium">
-                P7
-              </div>
-              <div>
-                <h1 className="text-lg font-medium">Prophetic Orchestra 7.5</h1>
-                <p className="text-xs text-gray-500">AI Luxury Investment Advisor</p>
-              </div>
+              <Image
+                src="https://ext.same-assets.com/4250389560/3143870090.png"
+                alt="Prophetic Orchestra"
+                width={180}
+                height={45}
+                className="h-10 w-auto"
+              />
             </div>
           </div>
           <div className="flex items-center gap-2">
