@@ -49,6 +49,10 @@ export default {
           '3': 'hsl(var(--chart-3))',
           '4': 'hsl(var(--chart-4))',
           '5': 'hsl(var(--chart-5))'
+        },
+        custom: {
+          brand: 'rgb(50, 45, 230)',
+          'brand-hover': 'rgb(40, 35, 200)'
         }
       },
       borderRadius: {
