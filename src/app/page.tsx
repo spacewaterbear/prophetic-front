@@ -157,10 +157,10 @@ export default function Home() {
     "Explain Score Orchestra™ methodology"
   ];
 
-  const handleSend = async () => {
-    if (!input.trim() || isLoading) return;
+  const handleSend = async (messageToSend?: string) => {
+    const userInput = messageToSend || input;
+    if (!userInput.trim() || isLoading) return;
 
-    const userInput = input;
     setInput("");
     setIsLoading(true);
     setStreamingMessage("");
@@ -382,7 +382,7 @@ export default function Home() {
                   <Card
                     key={i}
                     className="p-4 hover:shadow-lg transition-shadow cursor-pointer border-gray-200 bg-white"
-                    onClick={() => setInput(prompt)}
+                    onClick={() => handleSend(prompt)}
                   >
                     <p className="text-sm text-gray-700">{prompt}</p>
                   </Card>
@@ -471,8 +471,8 @@ export default function Home() {
                 />
               </div>
               <Button
-                onClick={handleSend}
-                disabled={!input.trim()}
+                onClick={() => handleSend()}
+                disabled={!input.trim() || isLoading}
                 size="lg"
                 className="bg-custom-brand hover:bg-custom-brand-hover text-white rounded-2xl h-[52px] px-6"
               >
