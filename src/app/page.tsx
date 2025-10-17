@@ -257,7 +257,7 @@ export default function Home() {
                   }`}
                 >
                   <MessageSquare className="h-4 w-4 flex-shrink-0" />
-                  <span className="truncate">{conversation.title || "New Chat"}</span>
+                  <span className="truncate">{conversation.title}</span>
                 </button>
               ))
             )}
