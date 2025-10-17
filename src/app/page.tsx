@@ -84,27 +84,12 @@ export default function Home() {
     }
   };
 
-  const createNewConversation = async () => {
-    try {
-      const response = await fetch("/api/conversations", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: "New Chat",
-          model: selectedModel
-        }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setCurrentConversationId(data.conversation.id);
-        setMessages([]);
-        setStreamingMessage("");
-        await loadConversations();
-      }
-    } catch (error) {
-      console.error("Error creating conversation:", error);
-    }
+  const createNewConversation = () => {
+    // Just clear the current chat state
+    // The conversation will be created in the database when the first message is sent
+    setCurrentConversationId(null);
+    setMessages([]);
+    setStreamingMessage("");
   };
 
   const handleSignOut = async () => {
