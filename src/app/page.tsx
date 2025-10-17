@@ -117,7 +117,7 @@ export default function Home() {
       <div className="flex h-screen items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
         <div className="text-center">
           <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center animate-pulse">
-            <span className="text-2xl text-white font-light">P7</span>
+            <span className="text-2xl text-white font-light leading-none">P7</span>
           </div>
           <p className="text-gray-600">Loading...</p>
         </div>
@@ -359,7 +359,7 @@ export default function Home() {
             <div className="max-w-3xl mx-auto mb-12">
               <div className="text-center mb-12">
                 <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center">
-                  <span className="text-3xl text-white font-light">P7</span>
+                  <span className="text-3xl text-white font-light leading-none">P7</span>
                 </div>
                 <h2 className="text-4xl font-light mb-4">Secure the advantage in nine luxury segments</h2>
                 <p className="text-gray-600">Powered by Score Orchestra™ and TTT Token technology</p>
@@ -383,10 +383,10 @@ export default function Home() {
             {messages.map((message) => (
               <div
                 key={message.id}
-                className={`flex gap-4 ${message.sender === "user" ? "justify-end" : "justify-start"}`}
+                className={`flex gap-4 items-start ${message.sender === "user" ? "justify-end" : "justify-start"}`}
               >
                 {message.sender === "ai" && (
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center text-white font-medium flex-shrink-0">
+                  <div className="w-10 h-10 mt-1 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center text-white font-medium flex-shrink-0 leading-none">
                     P7
                   </div>
                 )}
@@ -404,7 +404,7 @@ export default function Home() {
                   )}
                 </div>
                 {message.sender === "user" && (
-                  <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-700 font-medium flex-shrink-0">
+                  <div className="w-10 h-10 mt-1 rounded-full bg-gray-300 flex items-center justify-center text-gray-700 font-medium flex-shrink-0 leading-none">
                     You
                   </div>
                 )}
@@ -413,8 +413,8 @@ export default function Home() {
 
             {/* Streaming message */}
             {streamingMessage && (
-              <div className="flex gap-4 justify-start">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center text-white font-medium flex-shrink-0">
+              <div className="flex gap-4 items-start justify-start">
+                <div className="w-10 h-10 mt-1 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center text-white font-medium flex-shrink-0 leading-none">
                   P7
                 </div>
                 <div className="max-w-2xl px-6 py-4 rounded-2xl bg-white border border-gray-200">
