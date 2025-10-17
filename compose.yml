@@ -26,31 +26,6 @@ services:
     networks:
       - prophetic-network
 
-  # Development service (optional)
-  prophetic-front-dev:
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
-    container_name: prophetic-front-dev
-    ports:
-      - "3001:3000"
-    volumes:
-      - .:/app
-      - /app/node_modules
-      - /app/.next
-    env_file:
-      - .env.local
-    environment:
-      - NODE_ENV=development
-      - NEXT_TELEMETRY_DISABLED=1
-      - NEXTAUTH_URL=http://localhost:3001
-    command: npm run dev
-    restart: unless-stopped
-    profiles:
-      - dev
-    networks:
-      - prophetic-network
-
 networks:
   prophetic-network:
     driver: bridge
