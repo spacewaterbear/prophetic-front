@@ -1,5 +1,16 @@
 # Prophetic 7.5 Chatbot - Todos
 
+## Authentication
+- [x] Create login page
+- [x] Add Google OAuth button
+- [x] Style with Prophetic luxury design
+- [x] Integrate NextAuth.js
+- [x] Add session management
+- [x] Protect routes with middleware
+- [x] Add user profile in sidebar
+- [x] Add sign out functionality
+- [x] Create setup documentation
+
 ## Core Features
 - [x] Create chat interface layout
 - [x] Add message input area
