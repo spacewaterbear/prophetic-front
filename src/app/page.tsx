@@ -2,7 +2,13 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ArrowRight, Send, Menu, Plus, MessageSquare, Settings, ChevronDown, LogOut } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ArrowRight, Send, Menu, Plus, MessageSquare, Settings, ChevronDown, LogOut, Check } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
@@ -23,6 +29,12 @@ interface Conversation {
   updated_at: string | null;
 }
 
+const AI_PROVIDERS = {
+  google: { name: "Google Gemini", label: "Google" },
+  mistral: { name: "Mistral AI", label: "Mistral" },
+  anthropic: { name: "Claude (Anthropic)", label: "Anthropic" },
+} as const;
+
 export default function Home() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -34,6 +46,7 @@ export default function Home() {
   const [currentConversationId, setCurrentConversationId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [streamingMessage, setStreamingMessage] = useState("");
+  const [selectedProvider, setSelectedProvider] = useState<"google" | "mistral" | "anthropic">("anthropic");
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -308,10 +321,28 @@ export default function Home() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="rounded-full">
-              <ChevronDown className="h-4 w-4 mr-1" />
-              GPT-4
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="rounded-full">
+                  <ChevronDown className="h-4 w-4 mr-1" />
+                  {AI_PROVIDERS[selectedProvider].label}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                {Object.entries(AI_PROVIDERS).map(([key, provider]) => (
+                  <DropdownMenuItem
+                    key={key}
+                    onClick={() => setSelectedProvider(key as keyof typeof AI_PROVIDERS)}
+                    className="cursor-pointer"
+                  >
+                    <div className="flex items-center justify-between w-full">
+                      <span>{provider.name}</span>
+                      {selectedProvider === key && <Check className="h-4 w-4" />}
+                    </div>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </header>
 
