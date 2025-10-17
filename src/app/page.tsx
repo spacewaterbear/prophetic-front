@@ -391,7 +391,7 @@ export default function Home() {
         {/* Input Area */}
         <div className="border-t border-gray-200 bg-white px-6 py-4">
           <div className="max-w-3xl mx-auto">
-            <div className="flex gap-3 items-end">
+            <div className="flex gap-3 items-start">
               <div className="flex-1 relative">
                 <textarea
                   value={input}
