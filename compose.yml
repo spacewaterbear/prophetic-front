@@ -20,8 +20,7 @@ services:
       - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
       # OpenRouter API
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
-    env_file:
-      - .env.local
+
     restart: unless-stopped
     networks:
       - prophetic-network

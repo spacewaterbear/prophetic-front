@@ -12,3 +12,5 @@ services:
       - NODE_ENV=development
       - NEXTAUTH_URL=http://localhost:3010
     command: npm run dev
+    env_file:
+      - .env.local
