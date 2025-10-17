@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ArrowRight, Send, Menu, Plus, MessageSquare, Settings, ChevronDown, LogOut, Check } from "lucide-react";
+import { ArrowRight, Send, Menu, Plus, MessageSquare, ChevronDown, LogOut, Check } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
@@ -286,10 +286,6 @@ export default function Home() {
               </div>
             </div>
           )}
-          <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-white/10 text-sm transition-colors flex items-center gap-2">
-            <Settings className="h-4 w-4" />
-            Settings
-          </button>
           <button
             onClick={handleSignOut}
             className="w-full text-left px-3 py-2 rounded-lg hover:bg-red-500/10 text-sm transition-colors flex items-center gap-2 text-red-400 hover:text-red-300"
