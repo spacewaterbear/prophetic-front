@@ -21,7 +21,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   secret: process.env.AUTH_SECRET,
   trustHost: true,
-  debug: true,
   callbacks: {
     async signIn({ user, account, profile }) {
       // Auto-create/update user profile in Supabase
