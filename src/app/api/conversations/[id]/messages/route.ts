@@ -104,7 +104,7 @@ export async function POST(
               "X-Title": "Prophetic Orchestra 7.5"
             },
             body: JSON.stringify({
-              model: "mistralai/mistral-medium",
+              model: "mistralai/mistral-large",
               messages: [
                 {
                   role: "system",
