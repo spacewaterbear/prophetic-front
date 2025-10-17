@@ -2,18 +2,13 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { ArrowRight, Send, Menu, Plus, MessageSquare, ChevronDown, LogOut, Check } from "lucide-react";
+import { Send, Menu, Plus, MessageSquare, LogOut, Check } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Markdown } from "@/components/Markdown";
+import { ModelSelector } from "@/components/ModelSelector";
 
 interface Message {
   id: number;
@@ -25,15 +20,10 @@ interface Message {
 interface Conversation {
   id: number;
   title: string | null;
+  model: string | null;
   created_at: string | null;
   updated_at: string | null;
 }
-
-const AI_PROVIDERS = {
-  google: { name: "Google Gemini", label: "Google" },
-  mistral: { name: "Mistral AI", label: "Mistral" },
-  anthropic: { name: "Claude (Anthropic)", label: "Anthropic" },
-} as const;
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -46,7 +36,7 @@ export default function Home() {
   const [currentConversationId, setCurrentConversationId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [streamingMessage, setStreamingMessage] = useState("");
-  const [selectedProvider, setSelectedProvider] = useState<"google" | "mistral" | "anthropic">("anthropic");
+  const [selectedModel, setSelectedModel] = useState<string>("anthropic/claude-3.5-sonnet");
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -81,6 +71,10 @@ export default function Home() {
         const data = await response.json();
         setMessages(data.messages || []);
         setCurrentConversationId(conversationId);
+        // Update selected model from conversation
+        if (data.conversation?.model) {
+          setSelectedModel(data.conversation.model);
+        }
       }
     } catch (error) {
       console.error("Error loading conversation:", error);
@@ -92,7 +86,10 @@ export default function Home() {
       const response = await fetch("/api/conversations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: "New Chat" }),
+        body: JSON.stringify({
+          title: "New Chat",
+          model: selectedModel
+        }),
       });
 
       if (response.ok) {
@@ -109,6 +106,23 @@ export default function Home() {
 
   const handleSignOut = async () => {
     await signOut({ callbackUrl: "/login" });
+  };
+
+  const handleModelChange = async (newModel: string) => {
+    setSelectedModel(newModel);
+
+    // Update the current conversation's model if there is one
+    if (currentConversationId) {
+      try {
+        await fetch(`/api/conversations/${currentConversationId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ model: newModel }),
+        });
+      } catch (error) {
+        console.error("Error updating conversation model:", error);
+      }
+    }
   };
 
   // Show loading while checking authentication
@@ -167,7 +181,10 @@ export default function Home() {
         const response = await fetch("/api/conversations", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ title: "New Chat" }),
+          body: JSON.stringify({
+            title: "New Chat",
+            model: selectedModel
+          }),
         });
 
         if (response.ok) {
@@ -334,28 +351,11 @@ export default function Home() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="rounded-full">
-                  <ChevronDown className="h-4 w-4 mr-1" />
-                  {AI_PROVIDERS[selectedProvider].label}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                {Object.entries(AI_PROVIDERS).map(([key, provider]) => (
-                  <DropdownMenuItem
-                    key={key}
-                    onClick={() => setSelectedProvider(key as keyof typeof AI_PROVIDERS)}
-                    className="cursor-pointer"
-                  >
-                    <div className="flex items-center justify-between w-full">
-                      <span>{provider.name}</span>
-                      {selectedProvider === key && <Check className="h-4 w-4" />}
-                    </div>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <ModelSelector
+              selectedModel={selectedModel}
+              onModelChange={handleModelChange}
+              disabled={isLoading}
+            />
           </div>
         </header>
 

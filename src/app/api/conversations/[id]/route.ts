@@ -64,14 +64,19 @@ export async function PATCH(
     const { id } = await params;
     const conversationId = parseInt(id);
     const body = await request.json();
-    const { title } = body;
+    const { title, model } = body;
 
     const supabase = createAdminClient();
+
+    // Build update object with only provided fields
+    const updateData: { title?: string; model?: string } = {};
+    if (title !== undefined) updateData.title = title;
+    if (model !== undefined) updateData.model = model;
 
     // Using admin client, manually filtering by user_id for security
     const { data: conversation, error } = await supabase
       .from("conversations")
-      .update({ title })
+      .update(updateData)
       .eq("id", conversationId)
       .eq("user_id", session.user.id)
       .select()

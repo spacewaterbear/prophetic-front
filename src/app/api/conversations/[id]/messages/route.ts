@@ -46,6 +46,9 @@ export async function POST(
       });
     }
 
+    // Get the model from the conversation, default to Claude 3.5 Sonnet
+    const modelToUse = (conversation as any).model || "anthropic/claude-3.5-sonnet";
+
     // Insert user message
     const { data: userMessage, error: userMessageError } = await supabase
       .from("messages")
@@ -94,7 +97,7 @@ export async function POST(
     const stream = new ReadableStream({
       async start(controller) {
         try {
-          // Call OpenRouter API with Mistral Medium
+          // Call OpenRouter API with the selected model
           const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
             method: "POST",
             headers: {
@@ -104,7 +107,7 @@ export async function POST(
               "X-Title": "Prophetic Orchestra 7.5"
             },
             body: JSON.stringify({
-              model: "mistralai/mistral-large",
+              model: modelToUse,
               messages: [
                 {
                   role: "system",

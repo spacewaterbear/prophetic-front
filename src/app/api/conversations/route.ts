@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { title } = body;
+    const { title, model } = body;
 
     const supabase = createAdminClient();
 
@@ -52,6 +52,7 @@ export async function POST(request: NextRequest) {
       .insert({
         user_id: session.user.id,
         title: title || "New Chat",
+        model: model || "anthropic/claude-3.5-sonnet",
       })
       .select()
       .single();
