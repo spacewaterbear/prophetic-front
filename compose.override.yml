@@ -2,10 +2,13 @@ services:
   prophetic-front:
     build:
       dockerfile: Dockerfile.dev
+    ports:
+      - "3010:3000"
     volumes:
       - .:/app
       - /app/node_modules
       - /app/.next
     environment:
       - NODE_ENV=development
+      - NEXTAUTH_URL=http://localhost:3010
     command: npm run dev
