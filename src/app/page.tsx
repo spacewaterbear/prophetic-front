@@ -7,6 +7,7 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { Markdown } from "@/components/Markdown";
 
 interface Message {
   id: number;
@@ -358,7 +359,11 @@ export default function Home() {
                       : "bg-white border border-gray-200"
                   }`}
                 >
-                  <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+                  {message.sender === "user" ? (
+                    <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+                  ) : (
+                    <Markdown content={message.content} className="text-sm" />
+                  )}
                 </div>
                 {message.sender === "user" && (
                   <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-700 font-medium flex-shrink-0">
@@ -375,7 +380,7 @@ export default function Home() {
                   P7
                 </div>
                 <div className="max-w-2xl px-6 py-4 rounded-2xl bg-white border border-gray-200">
-                  <p className="text-sm leading-relaxed whitespace-pre-wrap">{streamingMessage}</p>
+                  <Markdown content={streamingMessage} className="text-sm" />
                   <span className="inline-block w-2 h-4 bg-blue-500 animate-pulse ml-1"></span>
                 </div>
               </div>
