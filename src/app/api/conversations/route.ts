@@ -27,6 +27,7 @@ export async function GET() {
       return NextResponse.json({ error: "Failed to fetch conversations" }, { status: 500 });
     }
 
+    console.log(`[API] Loaded ${conversations?.length || 0} conversations for user ${session.user.id}`);
     return NextResponse.json({ conversations });
   } catch (error) {
     console.error("Error in GET /api/conversations:", error);

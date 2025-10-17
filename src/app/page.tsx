@@ -57,7 +57,10 @@ export default function Home() {
       const response = await fetch("/api/conversations");
       if (response.ok) {
         const data = await response.json();
+        console.log("Loaded conversations:", data.conversations?.length || 0, data.conversations);
         setConversations(data.conversations || []);
+      } else {
+        console.error("Failed to load conversations:", response.status);
       }
     } catch (error) {
       console.error("Error loading conversations:", error);
