@@ -193,11 +193,16 @@ export default function Home() {
       // Create conversation if needed
       let conversationId = currentConversationId;
       if (!conversationId) {
+        // Generate title from user's question (first 50 chars)
+        const title = userInput.length > 50
+          ? userInput.substring(0, 50) + "..."
+          : userInput;
+
         const response = await fetch("/api/conversations", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            title: "New Chat",
+            title: title,
             model: selectedModel
           }),
         });
