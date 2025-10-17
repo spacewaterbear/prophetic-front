@@ -93,3 +93,61 @@ export async function PATCH(
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
+
+// DELETE /api/conversations/[id] - Delete a conversation and its messages
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const session = await auth();
+
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { id } = await params;
+    const conversationId = parseInt(id);
+    const supabase = createAdminClient();
+
+    // First verify the conversation belongs to the user
+    const { data: conversation, error: conversationError } = await supabase
+      .from("conversations")
+      .select("id")
+      .eq("id", conversationId)
+      .eq("user_id", session.user.id)
+      .single();
+
+    if (conversationError || !conversation) {
+      return NextResponse.json({ error: "Conversation not found" }, { status: 404 });
+    }
+
+    // Delete all messages associated with the conversation
+    const { error: messagesError } = await supabase
+      .from("messages")
+      .delete()
+      .eq("conversation_id", conversationId);
+
+    if (messagesError) {
+      console.error("Error deleting messages:", messagesError);
+      return NextResponse.json({ error: "Failed to delete messages" }, { status: 500 });
+    }
+
+    // Delete the conversation
+    const { error: deleteError } = await supabase
+      .from("conversations")
+      .delete()
+      .eq("id", conversationId)
+      .eq("user_id", session.user.id);
+
+    if (deleteError) {
+      console.error("Error deleting conversation:", deleteError);
+      return NextResponse.json({ error: "Failed to delete conversation" }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true }, { status: 200 });
+  } catch (error) {
+    console.error("Error in DELETE /api/conversations/[id]:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}

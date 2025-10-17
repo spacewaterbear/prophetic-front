@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Send, Menu, Plus, MessageSquare, LogOut, Check } from "lucide-react";
+import { Send, Menu, Plus, MessageSquare, LogOut, Check, X } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
@@ -90,6 +90,33 @@ export default function Home() {
     setCurrentConversationId(null);
     setMessages([]);
     setStreamingMessage("");
+  };
+
+  const deleteConversation = async (conversationId: number, e: React.MouseEvent) => {
+    // Prevent the click from triggering the conversation load
+    e.stopPropagation();
+
+    try {
+      const response = await fetch(`/api/conversations/${conversationId}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        // Remove the conversation from the list
+        setConversations(prev => prev.filter(c => c.id !== conversationId));
+
+        // If we deleted the current conversation, clear the chat
+        if (currentConversationId === conversationId) {
+          setCurrentConversationId(null);
+          setMessages([]);
+          setStreamingMessage("");
+        }
+      } else {
+        console.error("Failed to delete conversation:", response.status);
+      }
+    } catch (error) {
+      console.error("Error deleting conversation:", error);
+    }
   };
 
   const handleSignOut = async () => {
@@ -262,25 +289,33 @@ export default function Home() {
               <div className="text-xs text-gray-500 px-3 py-2">No conversations yet</div>
             ) : (
               conversations.map((conversation) => (
-                <button
-                  key={conversation.id}
-                  onClick={() => loadConversation(conversation.id)}
-                  className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all flex items-center gap-2 ${
-                    currentConversationId === conversation.id
-                      ? "bg-white/20 border border-white/30 shadow-sm"
-                      : "hover:bg-white/10 border border-transparent"
-                  }`}
-                >
-                  <MessageSquare className={`h-4 w-4 flex-shrink-0 ${
-                    currentConversationId === conversation.id ? "text-blue-400" : ""
-                  }`} />
-                  <span className={`truncate ${
-                    currentConversationId === conversation.id ? "font-medium" : ""
-                  }`}>{conversation.title}</span>
-                  {currentConversationId === conversation.id && (
-                    <Check className="h-4 w-4 ml-auto flex-shrink-0 text-blue-400" />
-                  )}
-                </button>
+                <div key={conversation.id} className="relative group">
+                  <button
+                    onClick={() => loadConversation(conversation.id)}
+                    className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all flex items-center gap-2 ${
+                      currentConversationId === conversation.id
+                        ? "bg-white/20 border border-white/30 shadow-sm"
+                        : "hover:bg-white/10 border border-transparent"
+                    }`}
+                  >
+                    <MessageSquare className={`h-4 w-4 flex-shrink-0 ${
+                      currentConversationId === conversation.id ? "text-blue-400" : ""
+                    }`} />
+                    <span className={`truncate ${
+                      currentConversationId === conversation.id ? "font-medium" : ""
+                    }`}>{conversation.title}</span>
+                    {currentConversationId === conversation.id && (
+                      <Check className="h-4 w-4 ml-auto flex-shrink-0 text-blue-400" />
+                    )}
+                  </button>
+                  <button
+                    onClick={(e) => deleteConversation(conversation.id, e)}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-red-500/20 text-gray-400 hover:text-red-400"
+                    aria-label="Delete conversation"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
               ))
             )}
           </div>
