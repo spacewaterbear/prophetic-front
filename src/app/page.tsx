@@ -132,7 +132,7 @@ export default function Home() {
         <div className="text-center">
           <div className="w-32 h-32 mx-auto mb-4 flex items-center justify-center animate-pulse">
             <Image
-              src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/logo_prophetic.png"
+              src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/logo_prophetic_v2.png"
               alt="Prophetic Orchestra"
               width={128}
               height={128}
