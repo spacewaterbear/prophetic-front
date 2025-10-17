@@ -130,13 +130,13 @@ export default function Home() {
     return (
       <div className="flex h-screen items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
         <div className="text-center">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center animate-pulse overflow-hidden">
+          <div className="w-32 h-32 mx-auto mb-4 flex items-center justify-center animate-pulse">
             <Image
-              src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon.png"
+              src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/logo_prophetic.png"
               alt="Prophetic Orchestra"
-              width={64}
-              height={64}
-              className="w-full h-full object-cover"
+              width={128}
+              height={128}
+              className="w-full h-full object-contain"
             />
           </div>
           <p className="text-gray-600">Loading...</p>
