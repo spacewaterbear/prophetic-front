@@ -47,7 +47,7 @@ export async function POST(
     }
 
     // Get the model from the conversation, default to Claude 3.5 Sonnet
-    const modelToUse = (conversation as any).model || "anthropic/claude-3.5-sonnet";
+    const modelToUse = (conversation as { model?: string }).model || "anthropic/claude-3.5-sonnet";
 
     // Insert user message
     const { data: userMessage, error: userMessageError } = await supabase
