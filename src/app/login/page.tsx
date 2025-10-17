@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { signIn } from "next-auth/react";
+import Image from "next/image";
 
 export default function LoginPage() {
   const handleGoogleSignIn = async () => {
@@ -28,8 +29,14 @@ export default function LoginPage() {
         <Card className="p-8 bg-white/80 backdrop-blur-xl border-gray-200 shadow-2xl">
           {/* Logo and Branding */}
           <div className="text-center mb-8">
-            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center shadow-lg">
-              <span className="text-3xl text-white font-light">P7</span>
+            <div className="w-20 h-20 mx-auto mb-6 rounded-full overflow-hidden shadow-lg">
+              <Image
+                src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon.png"
+                alt="Prophetic Orchestra Logo"
+                width={80}
+                height={80}
+                className="w-full h-full object-cover"
+              />
             </div>
             <h1 className="text-3xl font-light mb-2">Prophetic Orchestra 7.5</h1>
             <p className="text-gray-600 text-sm">AI Luxury Investment Advisor</p>
