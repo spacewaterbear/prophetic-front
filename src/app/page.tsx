@@ -145,6 +145,15 @@ export default function Home() {
     setIsLoading(true);
     setStreamingMessage("");
 
+    // Add user message to UI immediately
+    const tempUserMessage: Message = {
+      id: Date.now(), // Temporary ID
+      content: userInput,
+      sender: "user",
+      created_at: new Date().toISOString(),
+    };
+    setMessages(prev => [...prev, tempUserMessage]);
+
     try {
       // Create conversation if needed
       let conversationId = currentConversationId;
