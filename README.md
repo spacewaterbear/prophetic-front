@@ -121,3 +121,6 @@ See [SETUP_GOOGLE_AUTH.md](./SETUP_GOOGLE_AUTH.md) for common authentication iss
 - [NextAuth.js Documentation](https://authjs.dev)
 - [shadcn/ui Documentation](https://ui.shadcn.com)
 - [Tailwind CSS Documentation](https://tailwindcss.com)
+
+
+docker-compose --profile dev up prophetic-front-dev
