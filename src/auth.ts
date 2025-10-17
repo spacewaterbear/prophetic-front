@@ -11,6 +11,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   pages: {
     signIn: "/login",
   },
+  trustHost: true,
+  cookies: {
+    pkceCodeVerifier: {
+      name: "next-auth.pkce.code_verifier",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: false,
+      },
+    },
+  },
   callbacks: {
     async session({ session, token }) {
       if (session.user) {
