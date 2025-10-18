@@ -47,9 +47,11 @@ export async function POST(
     }
 
     // Get the model from the conversation, default to Claude 3.5 Sonnet
-    const modelToUse = (conversation as { model?: string }).model || "anthropic/claude-3.5-sonnet";
+    // Always use a valid, known-working model for now
+    const requestedModel = (conversation as { model?: string }).model;
+    const modelToUse = "anthropic/claude-3.5-sonnet"; // Force to known-working model
 
-    console.log(`[API] Using model: ${modelToUse} for conversation ${conversationId}`);
+    console.log(`[API] Requested model: ${requestedModel}, Using model: ${modelToUse} for conversation ${conversationId}`);
 
     // Insert user message
     const { data: userMessage, error: userMessageError } = await supabase
