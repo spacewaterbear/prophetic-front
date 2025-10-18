@@ -49,6 +49,8 @@ export async function POST(
     // Get the model from the conversation, default to Claude 3.5 Sonnet
     const modelToUse = (conversation as { model?: string }).model || "anthropic/claude-3.5-sonnet";
 
+    console.log(`[API] Using model: ${modelToUse} for conversation ${conversationId}`);
+
     // Insert user message
     const { data: userMessage, error: userMessageError } = await supabase
       .from("messages")
@@ -97,6 +99,12 @@ export async function POST(
     const stream = new ReadableStream({
       async start(controller) {
         try {
+          // Validate API key exists
+          if (!process.env.OPENROUTER_API_KEY) {
+            console.error("[OpenRouter Error] OPENROUTER_API_KEY environment variable is not set");
+            throw new Error("OpenRouter API key is not configured");
+          }
+
           // Call OpenRouter API with the selected model
           const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
             method: "POST",
@@ -124,7 +132,9 @@ export async function POST(
           });
 
           if (!response.ok) {
-            throw new Error(`OpenRouter API error: ${response.status}`);
+            const errorBody = await response.text();
+            console.error(`[OpenRouter Error] Status: ${response.status}, Model: ${modelToUse}, Body: ${errorBody}`);
+            throw new Error(`OpenRouter API error: ${response.status} - ${errorBody}`);
           }
 
           const reader = response.body?.getReader();

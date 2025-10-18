@@ -43,19 +43,19 @@ export const AI_COMPANIES: Record<string, AICompany> = {
     label: "Anthropic",
     models: [
       {
+        id: "anthropic/claude-sonnet-4.5",
+        name: "Claude Sonnet 4.5",
+        description: "Latest and most advanced Claude model"
+      },
+      {
+        id: "anthropic/claude-3.7-sonnet",
+        name: "Claude 3.7 Sonnet",
+        description: "Enhanced Claude 3.5 with better performance"
+      },
+      {
         id: "anthropic/claude-3.5-sonnet",
         name: "Claude 3.5 Sonnet",
-        description: "Most intelligent Claude model"
-      },
-      {
-        id: "anthropic/claude-3-opus",
-        name: "Claude 3 Opus",
-        description: "Powerful reasoning and analysis"
-      },
-      {
-        id: "anthropic/claude-3-sonnet",
-        name: "Claude 3 Sonnet",
-        description: "Balanced performance and speed"
+        description: "Fast and intelligent Claude model"
       }
     ]
   },
