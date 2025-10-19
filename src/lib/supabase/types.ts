@@ -60,6 +60,7 @@ export type Database = {
         Row: {
           created_at: string | null
           id: number
+          model: string | null
           title: string | null
           updated_at: string | null
           user_id: string
@@ -67,6 +68,7 @@ export type Database = {
         Insert: {
           created_at?: string | null
           id?: number
+          model?: string | null
           title?: string | null
           updated_at?: string | null
           user_id: string
@@ -74,6 +76,7 @@ export type Database = {
         Update: {
           created_at?: string | null
           id?: number
+          model?: string | null
           title?: string | null
           updated_at?: string | null
           user_id?: string
@@ -168,18 +171,24 @@ export type Database = {
         Row: {
           avatar_url: string | null
           id: string
+          mail: string | null
+          status: Database["public"]["Enums"]["user_status"]
           updated_at: string | null
           username: string | null
         }
         Insert: {
           avatar_url?: string | null
           id: string
+          mail?: string | null
+          status?: Database["public"]["Enums"]["user_status"]
           updated_at?: string | null
           username?: string | null
         }
         Update: {
           avatar_url?: string | null
           id?: string
+          mail?: string | null
+          status?: Database["public"]["Enums"]["user_status"]
           updated_at?: string | null
           username?: string | null
         }
@@ -194,6 +203,7 @@ export type Database = {
     }
     Enums: {
       message_sender: "user" | "ai"
+      user_status: "unauthorized" | "free" | "paid"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -322,6 +332,7 @@ export const Constants = {
   public: {
     Enums: {
       message_sender: ["user", "ai"],
+      user_status: ["unauthorized", "free", "paid"],
     },
   },
 } as const

@@ -181,7 +181,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             .from('profiles')
             .select('status')
             .eq('id', session.user.id)
-            .single();
+            .maybeSingle();
 
           if (profile) {
             session.user.status = profile.status;
