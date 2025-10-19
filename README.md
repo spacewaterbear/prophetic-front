@@ -76,6 +76,7 @@ GOOGLE_CLIENT_SECRET=your-secret
 NEXTAUTH_URL=http://localhost:3000
 ```
 
+
 ## Features Breakdown
 
 ### Authentication Flow
