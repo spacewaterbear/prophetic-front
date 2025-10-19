@@ -74,10 +74,14 @@ export default function RegistrationPendingPage() {
           </div>
 
           {/* Actions */}
-          <div className="text-center space-y-4">
-            <p className="text-sm text-gray-600">
-              Need to sign in with a different account?
-            </p>
+          <div className="text-center space-y-8">
+            <div className="py-4">
+
+                <p className="text-sm text-gray-600">
+                  Need to sign in with a different account?
+                </p>
+            </div>
+
             <Button
               onClick={handleSignOut}
               variant="outline"

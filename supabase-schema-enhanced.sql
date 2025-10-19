@@ -10,7 +10,7 @@ CREATE TABLE public.profiles (
   id UUID NOT NULL REFERENCES auth.users ON DELETE CASCADE,
   username TEXT,
   avatar_url TEXT,
-  mail TEXT,
+  mail TEXT UNIQUE,
   status public.user_status NOT NULL DEFAULT 'unauthorized',
   updated_at TIMESTAMPTZ DEFAULT NOW(),
 

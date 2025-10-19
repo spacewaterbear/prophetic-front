@@ -4,11 +4,11 @@ declare module "next-auth" {
   interface Session {
     user: {
       id: string;
-      status?: 'authorized' | 'unauthorized';
+      status?: 'unauthorized' | 'free' | 'paid';
     } & DefaultSession["user"]
   }
 
   interface User {
-    status?: 'authorized' | 'unauthorized';
+    status?: 'unauthorized' | 'free' | 'paid';
   }
 }

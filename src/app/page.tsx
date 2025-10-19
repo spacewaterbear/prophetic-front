@@ -38,12 +38,15 @@ export default function Home() {
   const [streamingMessage, setStreamingMessage] = useState("");
   const [selectedModel, setSelectedModel] = useState<string>("anthropic/claude-3.5-sonnet");
 
-  // Redirect to login if not authenticated
+  // Redirect to login if not authenticated or to registration-pending if unauthorized
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/login");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } else if (status === "authenticated" && (session?.user as any)?.status === 'unauthorized') {
+      router.push("/registration-pending");
     }
-  }, [status, router]);
+  }, [status, session, router]);
 
   // Load conversations on mount
   useEffect(() => {

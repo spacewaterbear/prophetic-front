@@ -23,10 +23,9 @@ export const supabaseAdmin = supabaseUrl && supabaseServiceKey
 // Types for our database
 export interface Profile {
   id: string;
-  email: string;
-  name: string | null;
-  image: string | null;
-  status: 'authorized' | 'unauthorized';
-  created_at: string;
+  mail: string | null;
+  username: string | null;
+  avatar_url: string | null;
+  status: 'unauthorized' | 'free' | 'paid';
   updated_at: string;
 }

@@ -1,13 +1,16 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createHash } from "crypto";
 
-// Generate a deterministic UUID v5 from Google account ID
+// Generate a deterministic UUID v5 from Google account ID using Web Crypto API
 // This ensures the same Google account always gets the same UUID
-function googleIdToUuid(googleId: string): string {
-  // Use MD5 hash of Google ID to generate UUID
-  const hash = createHash('md5').update(googleId).digest('hex');
+async function googleIdToUuid(googleId: string): Promise<string> {
+  // Use Web Crypto API (Edge Runtime compatible)
+  const encoder = new TextEncoder();
+  const data = encoder.encode(googleId);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
   // Format as UUID v5 (xxxxxxxx-xxxx-5xxx-xxxx-xxxxxxxxxxxx)
   return [
@@ -73,47 +76,92 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   callbacks: {
     async jwt({ token, account, profile, user }) {
-      // On first sign in, store the stable Google user ID as UUID
-      if (account && profile) {
-        // Convert Google's providerAccountId to a deterministic UUID
-        const googleId = account.providerAccountId;
-        token.userId = googleIdToUuid(googleId);
-        console.log(`[Auth] JWT callback - Google ID: ${googleId} -> UUID: ${token.userId}`);
+      // On first sign in, determine the correct user ID
+      if (account && profile && user.email) {
+        try {
+          const supabase = createAdminClient();
+
+          // Check if a profile with this email already exists
+          const { data: existingProfile } = await supabase
+            .from("profiles")
+            .select("id")
+            .eq("mail", user.email)
+            .maybeSingle();
+
+          if (existingProfile) {
+            // Use existing profile's ID
+            token.userId = existingProfile.id;
+            console.log(`[Auth] JWT callback - Using existing profile ID: ${token.userId} for email: ${user.email}`);
+          } else {
+            // Generate new UUID from Google ID
+            const googleId = account.providerAccountId;
+            token.userId = await googleIdToUuid(googleId);
+            console.log(`[Auth] JWT callback - Generated new UUID: ${token.userId} for Google ID: ${googleId}`);
+          }
+        } catch (error) {
+          console.error('[Auth] Error in JWT callback:', error);
+          // Fallback to generated UUID
+          const googleId = account.providerAccountId;
+          token.userId = await googleIdToUuid(googleId);
+        }
       }
       // Persist userId across token refreshes
       if (!token.userId && token.sub) {
         // Fallback: convert token.sub to UUID if userId wasn't set
-        token.userId = googleIdToUuid(token.sub);
+        token.userId = await googleIdToUuid(token.sub);
       }
       return token;
     },
     async signIn({ user, account, profile }) {
       // Auto-create/update user profile in Supabase
-      // Convert Google ID to UUID format
       const googleId = account?.providerAccountId;
 
       if (googleId && user.email) {
         try {
           const supabase = createAdminClient();
-          const userId = googleIdToUuid(googleId);
 
-          console.log(`[Auth] SignIn - Google ID: ${googleId} -> UUID: ${userId} (${user.email})`);
-
-          // Upsert the profile using admin client (bypasses RLS)
-          const { error } = await supabase
+          // Check if a profile with this email already exists
+          const { data: existingProfile } = await supabase
             .from("profiles")
-            .upsert({
-              id: userId,
-              username: user.name || user.email.split("@")[0],
-              avatar_url: user.image || null,
-              updated_at: new Date().toISOString(),
-            }, {
-              onConflict: "id"
-            });
+            .select("id")
+            .eq("mail", user.email)
+            .maybeSingle();
 
-          if (error) {
-            console.error("Error creating/updating profile:", error);
-            // Don't block login if profile creation fails
+          if (existingProfile) {
+            // Profile exists - just update metadata
+            console.log(`[Auth] SignIn - Updating existing profile ${existingProfile.id} for ${user.email}`);
+
+            const { error: updateError } = await supabase
+              .from("profiles")
+              .update({
+                username: user.name || user.email.split("@")[0],
+                avatar_url: user.image || null,
+                updated_at: new Date().toISOString(),
+              })
+              .eq("id", existingProfile.id);
+
+            if (updateError) {
+              console.error("Error updating profile:", updateError);
+            }
+          } else {
+            // No existing profile - create new one with generated UUID
+            const userId = await googleIdToUuid(googleId);
+            console.log(`[Auth] SignIn - Creating new profile ${userId} for ${user.email}`);
+
+            const { error } = await supabase
+              .from("profiles")
+              .insert({
+                id: userId,
+                mail: user.email,
+                username: user.name || user.email.split("@")[0],
+                avatar_url: user.image || null,
+                updated_at: new Date().toISOString(),
+              });
+
+            if (error) {
+              console.error("Error creating profile:", error);
+              // Don't block login if profile creation fails
+            }
           }
         } catch (error) {
           console.error("Error in signIn callback:", error);
@@ -125,7 +173,24 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (session.user) {
         // Use the stable Google user ID stored in the token
         session.user.id = token.userId as string;
-        console.log(`[Auth] Session callback - userId: ${session.user.id}, email: ${session.user.email}`);
+
+        // Fetch user's status from database
+        try {
+          const supabase = createAdminClient();
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('status')
+            .eq('id', session.user.id)
+            .single();
+
+          if (profile) {
+            session.user.status = profile.status;
+          }
+        } catch (error) {
+          console.error('[Auth] Error fetching user status:', error);
+        }
+
+        console.log(`[Auth] Session callback - userId: ${session.user.id}, email: ${session.user.email}, status: ${session.user.status}`);
       }
       if (!session.user?.id) {
         console.error("[Auth] Session has no user ID! Token:", token);
