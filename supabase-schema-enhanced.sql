@@ -10,6 +10,7 @@ CREATE TABLE public.profiles (
   id UUID NOT NULL REFERENCES auth.users ON DELETE CASCADE,
   username TEXT,
   avatar_url TEXT,
+  mail TEXT,
   status public.user_status NOT NULL DEFAULT 'unauthorized',
   updated_at TIMESTAMPTZ DEFAULT NOW(),
 
@@ -108,6 +109,51 @@ CREATE TRIGGER trigger_update_conversation_updated_at
 AFTER INSERT ON public.messages
 FOR EACH ROW
 EXECUTE FUNCTION public.update_conversation_updated_at();
+
+-- Function to auto-create profile and sync email when a new user signs up
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+  INSERT INTO public.profiles (id, mail)
+  VALUES (NEW.id, NEW.email)
+  ON CONFLICT (id) DO UPDATE
+  SET mail = EXCLUDED.mail;
+  RETURN NEW;
+END;
+$$;
+
+-- Trigger to auto-create profile on user signup
+CREATE TRIGGER on_auth_user_created
+AFTER INSERT ON auth.users
+FOR EACH ROW
+EXECUTE FUNCTION public.handle_new_user();
+
+-- Function to sync email updates from auth.users to profiles
+CREATE OR REPLACE FUNCTION public.handle_user_email_update()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+  IF OLD.email IS DISTINCT FROM NEW.email THEN
+    UPDATE public.profiles
+    SET mail = NEW.email
+    WHERE id = NEW.id;
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+-- Trigger to sync email updates
+CREATE TRIGGER on_auth_user_email_updated
+AFTER UPDATE ON auth.users
+FOR EACH ROW
+EXECUTE FUNCTION public.handle_user_email_update();
 
 -- ============================================
 -- Row Level Security (RLS)
