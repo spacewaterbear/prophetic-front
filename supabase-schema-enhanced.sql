@@ -2,11 +2,15 @@
 -- Enhanced Schema for ChatGPT-like Application
 -- ============================================
 
+-- Create an ENUM type for user status
+CREATE TYPE public.user_status AS ENUM ('unauthorized', 'free', 'paid');
+
 -- Create a table for public user profiles
 CREATE TABLE public.profiles (
   id UUID NOT NULL REFERENCES auth.users ON DELETE CASCADE,
   username TEXT,
   avatar_url TEXT,
+  status public.user_status NOT NULL DEFAULT 'unauthorized',
   updated_at TIMESTAMPTZ DEFAULT NOW(),
 
   PRIMARY KEY (id)
