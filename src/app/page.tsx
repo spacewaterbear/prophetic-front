@@ -487,7 +487,7 @@ export default function Home() {
                     className="p-4 hover:shadow-lg transition-shadow cursor-pointer border-gray-200 bg-white"
                     onClick={() => handleSend(prompt)}
                   >
-                    <p className="text-sm text-gray-700">{prompt}</p>
+                    <p className="text-sm text-gray-700 text-center">{prompt}</p>
                   </Card>
                 ))}
               </div>
@@ -543,7 +543,7 @@ export default function Home() {
                     }
                   }}
                   placeholder="Ask about luxury investments, market trends, or portfolio optimization..."
-                  className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                  className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none placeholder:truncate"
                   rows={1}
                   style={{ minHeight: '52px', maxHeight: '200px' }}
                 />
