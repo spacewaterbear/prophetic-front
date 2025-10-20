@@ -116,6 +116,7 @@ Recommended platforms:
 
 See [SETUP_GOOGLE_AUTH.md](./SETUP_GOOGLE_AUTH.md) for common authentication issues.
 
+
 ## Learn More
 
 - [Next.js Documentation](https://nextjs.org/docs)
