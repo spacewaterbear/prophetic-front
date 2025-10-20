@@ -3,13 +3,13 @@ const nextConfig = {
   allowedDevOrigins: ["*.preview.same-app.com"],
   output: "standalone",
   images: {
-    unoptimized: true,
     domains: [
       "source.unsplash.com",
       "images.unsplash.com",
       "ext.same-assets.com",
       "ugc.same-assets.com",
       "nqwovhetvhmtjigonohq.supabase.co",
+      "lh3.googleusercontent.com",
     ],
     remotePatterns: [
       {
@@ -35,6 +35,11 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "nqwovhetvhmtjigonohq.supabase.co",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
         pathname: "/**",
       },
     ],

@@ -4,12 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Send, Menu, Plus, MessageSquare, LogOut, Check, X } from "lucide-react";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense, memo } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Markdown } from "@/components/Markdown";
 import { ModelSelector } from "@/components/ModelSelector";
 import { TypingIndicator } from "@/components/TypingIndicator";
+
+// Lazy load Markdown component to reduce initial bundle size
+const Markdown = lazy(() => import("@/components/Markdown").then(mod => ({ default: mod.Markdown })));
 
 interface Message {
   id: number;
@@ -25,6 +27,63 @@ interface Conversation {
   created_at: string | null;
   updated_at: string | null;
 }
+
+// Reusable AI Avatar component to prevent duplicate image loads
+const AIAvatar = memo(() => (
+  <div className="w-10 h-10 mt-1 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center flex-shrink-0 overflow-hidden">
+    <Image
+      src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon.png"
+      alt="Prophetic Orchestra"
+      width={40}
+      height={40}
+      className="w-full h-full object-cover"
+      priority
+    />
+  </div>
+));
+
+AIAvatar.displayName = "AIAvatar";
+
+// Memoized message component to prevent unnecessary re-renders
+const MessageItem = memo(({ message, userName }: { message: Message; userName: string }) => {
+  return (
+    <div
+      className={`flex gap-4 items-start ${message.sender === "user" ? "justify-end" : "justify-start"}`}
+    >
+      {message.sender === "ai" && <AIAvatar />}
+      <div
+        className={`max-w-2xl px-6 py-4 rounded-2xl ${
+          message.sender === "user"
+            ? "bg-custom-brand text-white"
+            : "bg-white border border-gray-200"
+        }`}
+      >
+        {message.sender === "user" ? (
+          <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+        ) : (
+          <Suspense fallback={<div className="text-sm text-gray-400">Loading...</div>}>
+            <Markdown content={message.content} className="text-sm" />
+          </Suspense>
+        )}
+      </div>
+      {message.sender === "user" && (
+        <div className="w-10 h-10 mt-1 rounded-full bg-custom-brand flex items-center justify-center text-white font-medium flex-shrink-0 leading-none text-lg">
+          {userName}
+        </div>
+      )}
+    </div>
+  );
+});
+
+MessageItem.displayName = "MessageItem";
+
+// Example prompts - moved outside component to prevent recreation on every render
+const examplePrompts = [
+  "Analyze luxury watch market trends",
+  "Compare sneaker vs. art investments",
+  "Show me high-ROI opportunities",
+  "Explain Score Orchestra™ methodology"
+];
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -61,7 +120,6 @@ export default function Home() {
       const response = await fetch("/api/conversations");
       if (response.ok) {
         const data = await response.json();
-        console.log("Loaded conversations:", data.conversations?.length || 0, data.conversations);
         setConversations(data.conversations || []);
       } else {
         console.error("Failed to load conversations:", response.status);
@@ -168,13 +226,6 @@ export default function Home() {
   if (!session) {
     return null;
   }
-
-  const examplePrompts = [
-    "Analyze luxury watch market trends",
-    "Compare sneaker vs. art investments",
-    "Show me high-ROI opportunities",
-    "Explain Score Orchestra™ methodology"
-  ];
 
   const handleSend = async (messageToSend?: string) => {
     const userInput = messageToSend || input;
@@ -425,54 +476,17 @@ export default function Home() {
 
           <div className="max-w-3xl mx-auto space-y-6">
             {messages.map((message) => (
-              <div
+              <MessageItem
                 key={message.id}
-                className={`flex gap-4 items-start ${message.sender === "user" ? "justify-end" : "justify-start"}`}
-              >
-                {message.sender === "ai" && (
-                  <div className="w-10 h-10 mt-1 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                    <Image
-                      src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon.png"
-                      alt="Prophetic Orchestra"
-                      width={40}
-                      height={40}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                )}
-                <div
-                  className={`max-w-2xl px-6 py-4 rounded-2xl ${
-                    message.sender === "user"
-                      ? "bg-custom-brand text-white"
-                      : "bg-white border border-gray-200"
-                  }`}
-                >
-                  {message.sender === "user" ? (
-                    <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
-                  ) : (
-                    <Markdown content={message.content} className="text-sm" />
-                  )}
-                </div>
-                {message.sender === "user" && (
-                  <div className="w-10 h-10 mt-1 rounded-full bg-custom-brand flex items-center justify-center text-white font-medium flex-shrink-0 leading-none text-lg">
-                    {session?.user?.name?.[0]?.toUpperCase() || "U"}
-                  </div>
-                )}
-              </div>
+                message={message}
+                userName={session?.user?.name?.[0]?.toUpperCase() || "U"}
+              />
             ))}
 
             {/* Typing indicator - shown when waiting for AI response */}
             {isLoading && !streamingMessage && (
               <div className="flex gap-4 items-start justify-start">
-                <div className="w-10 h-10 mt-1 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                  <Image
-                    src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon.png"
-                    alt="Prophetic Orchestra"
-                    width={40}
-                    height={40}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+                <AIAvatar />
                 <div className="max-w-2xl px-6 py-4 rounded-2xl bg-white border border-gray-200">
                   <TypingIndicator />
                 </div>
@@ -482,17 +496,11 @@ export default function Home() {
             {/* Streaming message - shown while AI is responding */}
             {streamingMessage && (
               <div className="flex gap-4 items-start justify-start">
-                <div className="w-10 h-10 mt-1 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                  <Image
-                    src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon.png"
-                    alt="Prophetic Orchestra"
-                    width={40}
-                    height={40}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+                <AIAvatar />
                 <div className="max-w-2xl px-6 py-4 rounded-2xl bg-white border border-gray-200">
-                  <Markdown content={streamingMessage} className="text-sm" />
+                  <Suspense fallback={<div className="text-sm text-gray-400">Loading...</div>}>
+                    <Markdown content={streamingMessage} className="text-sm" />
+                  </Suspense>
                   <span className="inline-block w-1.5 h-4 bg-blue-500 animate-pulse ml-1 rounded-sm"></span>
                 </div>
               </div>
