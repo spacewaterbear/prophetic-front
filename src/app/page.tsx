@@ -91,7 +91,13 @@ export default function Home() {
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(() => {
+    // Default to closed on mobile, open on desktop
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 768; // Tailwind's md breakpoint
+    }
+    return false; // Default to closed for SSR
+  });
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [currentConversationId, setCurrentConversationId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -114,6 +120,20 @@ export default function Home() {
       loadConversations();
     }
   }, [session]);
+
+  // Handle responsive sidebar behavior
+  useEffect(() => {
+    const handleResize = () => {
+      const isDesktop = window.innerWidth >= 768;
+      setSidebarOpen(isDesktop);
+    };
+
+    // Add resize listener
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const loadConversations = async () => {
     try {
