@@ -102,6 +102,28 @@ export const AI_COMPANIES: Record<string, AICompany> = {
         description: "Versatile AI model"
       }
     ]
+  },
+  perplexity: {
+    id: "perplexity",
+    name: "Perplexity",
+    label: "Perplexity",
+    models: [
+      {
+        id: "perplexity/sonar-deep-research",
+        name: "Sonar Deep Research",
+        description: "Advanced research model with deep analysis"
+      },
+      {
+        id: "perplexity/sonar-pro",
+        name: "Sonar Pro",
+        description: "Professional model with web search"
+      },
+      {
+        id: "perplexity/sonar",
+        name: "Sonar",
+        description: "Fast model with real-time information"
+      }
+    ]
   }
 };
 

@@ -9,6 +9,7 @@ import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Markdown } from "@/components/Markdown";
 import { ModelSelector } from "@/components/ModelSelector";
+import { TypingIndicator } from "@/components/TypingIndicator";
 
 interface Message {
   id: number;
@@ -460,7 +461,25 @@ export default function Home() {
               </div>
             ))}
 
-            {/* Streaming message */}
+            {/* Typing indicator - shown when waiting for AI response */}
+            {isLoading && !streamingMessage && (
+              <div className="flex gap-4 items-start justify-start">
+                <div className="w-10 h-10 mt-1 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                  <Image
+                    src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon.png"
+                    alt="Prophetic Orchestra"
+                    width={40}
+                    height={40}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="max-w-2xl px-6 py-4 rounded-2xl bg-white border border-gray-200">
+                  <TypingIndicator />
+                </div>
+              </div>
+            )}
+
+            {/* Streaming message - shown while AI is responding */}
             {streamingMessage && (
               <div className="flex gap-4 items-start justify-start">
                 <div className="w-10 h-10 mt-1 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center flex-shrink-0 overflow-hidden">
@@ -474,7 +493,7 @@ export default function Home() {
                 </div>
                 <div className="max-w-2xl px-6 py-4 rounded-2xl bg-white border border-gray-200">
                   <Markdown content={streamingMessage} className="text-sm" />
-                  <span className="inline-block w-2 h-4 bg-blue-500 animate-pulse ml-1"></span>
+                  <span className="inline-block w-1.5 h-4 bg-blue-500 animate-pulse ml-1 rounded-sm"></span>
                 </div>
               </div>
             )}

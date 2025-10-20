@@ -47,9 +47,8 @@ export async function POST(
     }
 
     // Get the model from the conversation, default to Claude 3.5 Sonnet
-    // Always use a valid, known-working model for now
     const requestedModel = (conversation as { model?: string }).model;
-    const modelToUse = "anthropic/claude-3.5-sonnet"; // Force to known-working model
+    const modelToUse = requestedModel || "anthropic/claude-3.5-sonnet";
 
     console.log(`[API] Requested model: ${requestedModel}, Using model: ${modelToUse} for conversation ${conversationId}`);
 
