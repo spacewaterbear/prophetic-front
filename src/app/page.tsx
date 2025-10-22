@@ -9,6 +9,7 @@ import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { ModelSelector } from "@/components/ModelSelector";
 import { TypingIndicator } from "@/components/TypingIndicator";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 // Lazy load Markdown component to reduce initial bundle size
 const Markdown = lazy(() => import("@/components/Markdown").then(mod => ({ default: mod.Markdown })));
@@ -55,7 +56,7 @@ const MessageItem = memo(({ message, userName }: { message: Message; userName: s
         className={`max-w-2xl px-6 py-4 rounded-2xl ${
           message.sender === "user"
             ? "bg-custom-brand text-white"
-            : "bg-white border border-gray-200"
+            : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
         }`}
       >
         {message.sender === "user" ? (
@@ -225,7 +226,7 @@ export default function Home() {
   // Show loading while checking authentication
   if (status === "loading") {
     return (
-      <div className="flex h-screen items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="flex h-screen items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950">
         <div className="text-center">
           <div className="w-32 h-32 mx-auto mb-4 flex items-center justify-center animate-pulse">
             <Image
@@ -236,7 +237,7 @@ export default function Home() {
               className="w-full h-full object-contain"
             />
           </div>
-          <p className="text-gray-600">Loading...</p>
+          <p className="text-gray-600 dark:text-gray-400">Loading...</p>
         </div>
       </div>
     );
@@ -349,10 +350,10 @@ export default function Home() {
   };
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="flex h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950">
       {/* Sidebar */}
-      <aside className={`${sidebarOpen ? 'w-64' : 'w-0'} transition-all duration-300 bg-black text-white flex flex-col overflow-hidden`}>
-        <div className="p-4 border-b border-gray-800">
+      <aside className={`${sidebarOpen ? 'w-64' : 'w-0'} transition-all duration-300 bg-gray-900 dark:bg-black text-white flex flex-col overflow-hidden`}>
+        <div className="p-4 border-b border-gray-700 dark:border-gray-800">
           <Button
             className="w-full bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-lg"
             onClick={createNewConversation}
@@ -401,7 +402,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="p-4 border-t border-gray-800 space-y-2">
+        <div className="p-4 border-t border-gray-700 dark:border-gray-800 space-y-2">
           {session?.user && (
             <div className="px-3 py-2 rounded-lg bg-white/5 mb-2">
               <div className="flex items-center gap-2">
@@ -434,7 +435,7 @@ export default function Home() {
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col">
         {/* Header */}
-        <header className="bg-white/80 backdrop-blur-md border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+        <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"
@@ -459,6 +460,7 @@ export default function Home() {
               onModelChange={handleModelChange}
               disabled={isLoading}
             />
+            <ThemeToggle />
           </div>
         </header>
 
@@ -476,18 +478,18 @@ export default function Home() {
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <h2 className="text-4xl font-light mb-4">Secure the advantage in nine luxury segments</h2>
-                <p className="text-gray-600">Powered by Score Orchestra™ and TTT Token technology</p>
+                <h2 className="text-4xl font-light mb-4 dark:text-white">Secure the advantage in nine luxury segments</h2>
+                <p className="text-gray-600 dark:text-gray-400">Powered by Score Orchestra™ and TTT Token technology</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {examplePrompts.map((prompt, i) => (
                   <Card
                     key={i}
-                    className="p-4 hover:shadow-lg transition-shadow cursor-pointer border-gray-200 bg-white"
+                    className="p-4 hover:shadow-lg transition-shadow cursor-pointer border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
                     onClick={() => handleSend(prompt)}
                   >
-                    <p className="text-sm text-gray-700 text-center">{prompt}</p>
+                    <p className="text-sm text-gray-700 dark:text-gray-300 text-center">{prompt}</p>
                   </Card>
                 ))}
               </div>
@@ -507,7 +509,7 @@ export default function Home() {
             {isLoading && !streamingMessage && (
               <div className="flex gap-4 items-start justify-start">
                 <AIAvatar />
-                <div className="max-w-2xl px-6 py-4 rounded-2xl bg-white border border-gray-200">
+                <div className="max-w-2xl px-6 py-4 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                   <TypingIndicator />
                 </div>
               </div>
@@ -517,7 +519,7 @@ export default function Home() {
             {streamingMessage && (
               <div className="flex gap-4 items-start justify-start">
                 <AIAvatar />
-                <div className="max-w-2xl px-6 py-4 rounded-2xl bg-white border border-gray-200">
+                <div className="max-w-2xl px-6 py-4 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                   <Suspense fallback={<div className="text-sm text-gray-400">Loading...</div>}>
                     <Markdown content={streamingMessage} className="text-sm" />
                   </Suspense>
@@ -529,7 +531,7 @@ export default function Home() {
         </div>
 
         {/* Input Area */}
-        <div className="border-t border-gray-200 bg-white px-6 py-4">
+        <div className="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-6 py-4">
           <div className="max-w-3xl mx-auto">
             <div className="flex gap-3 items-start">
               <div className="flex-1 relative">
@@ -543,7 +545,7 @@ export default function Home() {
                     }
                   }}
                   placeholder="Ask about luxury investments, market trends, or portfolio optimization..."
-                  className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none placeholder:truncate"
+                  className="w-full px-4 py-3 pr-12 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none placeholder:truncate placeholder:text-gray-400 dark:placeholder:text-gray-500"
                   rows={1}
                   style={{ minHeight: '52px', maxHeight: '200px' }}
                 />
@@ -557,7 +559,7 @@ export default function Home() {
                 <Send className="h-5 w-5" />
               </Button>
             </div>
-            <p className="text-xs text-gray-500 mt-3 text-center">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-3 text-center">
               Prophetic Orchestra 7.5 can make mistakes. Verify investment advice with certified advisors.
             </p>
           </div>
