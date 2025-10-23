@@ -111,7 +111,7 @@ export async function POST(
           }
 
           // Call Prophetic API with the selected model
-          const response = await fetch(`${process.env.PROPHETIC_API_URL}/prophetic/page_index/inference`, {
+          const response = await fetch(`${process.env.PROPHETIC_API_URL}/prophetic/langchain_agent/query`, {
             method: "POST",
             headers: {
               "Authorization": `Bearer ${process.env.PROPHETIC_API_TOKEN}`,
@@ -120,8 +120,7 @@ export async function POST(
             },
             body: JSON.stringify({
               question: content,
-              model: modelToUse,
-              json_filename: "sneakers_pi.json"
+              model: modelToUse
             })
           });
 
