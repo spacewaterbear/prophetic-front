@@ -87,19 +87,19 @@ export const AI_COMPANIES: Record<string, AICompany> = {
     label: "Google",
     models: [
       {
-        id: "google/gemini-pro-1.5",
-        name: "Gemini 1.5 Pro",
+        id: "google/gemini-2.5-pro",
+        name: "Gemini 2.5 Pro",
         description: "Advanced reasoning with large context"
       },
       {
-        id: "google/gemini-flash-1.5",
-        name: "Gemini 1.5 Flash",
+        id: "google/gemini-2.5-flash",
+        name: "Gemini 2.5 Flash",
         description: "Fast and efficient"
       },
       {
-        id: "google/gemini-pro",
-        name: "Gemini Pro",
-        description: "Versatile AI model"
+        id: "google/gemini-2.5-flash-lite",
+        name: "Gemini 2.5 Flash Lite",
+        description: "Most cheap gemini 2.5 model"
       }
     ]
   },
@@ -129,7 +129,7 @@ export const AI_COMPANIES: Record<string, AICompany> = {
 
 // Helper to get default model for a company
 export const getDefaultModel = (companyId: string): string => {
-  return AI_COMPANIES[companyId]?.models[0]?.id || "anthropic/claude-3.5-sonnet";
+  return AI_COMPANIES[companyId]?.models[0]?.id || "anthropic/claude-3.7-sonnet";
 };
 
 // Helper to get model display name
