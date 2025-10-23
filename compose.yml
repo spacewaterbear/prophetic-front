@@ -3,7 +3,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: prophetic-front
     environment:
       - NODE_ENV=production
       - NEXT_TELEMETRY_DISABLED=1
