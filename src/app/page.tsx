@@ -103,7 +103,7 @@ export default function Home() {
   const [currentConversationId, setCurrentConversationId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [streamingMessage, setStreamingMessage] = useState("");
-  const [selectedModel, setSelectedModel] = useState<string>("anthropic/claude-3.5-sonnet");
+  const [selectedModel, setSelectedModel] = useState<string>("anthropic/claude-3.7-sonnet");
 
   // Redirect to login if not authenticated or to registration-pending if unauthorized
   useEffect(() => {

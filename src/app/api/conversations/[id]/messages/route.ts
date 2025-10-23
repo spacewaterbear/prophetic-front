@@ -46,9 +46,9 @@ export async function POST(
       });
     }
 
-    // Get the model from the conversation, default to Claude 3.5 Sonnet
+    // Get the model from the conversation, default to Claude 3.7 Sonnet
     const requestedModel = (conversation as { model?: string }).model;
-    const modelToUse = requestedModel || "anthropic/claude-3.5-sonnet";
+    const modelToUse = requestedModel || "anthropic/claude-3.7-sonnet";
 
     console.log(`[API] Requested model: ${requestedModel}, Using model: ${modelToUse} for conversation ${conversationId}`);
 
@@ -95,47 +95,40 @@ export async function POST(
         content: msg.content
       }));
 
-    // Create a streaming response with OpenRouter
+    // Create a streaming response with Prophetic API
     const encoder = new TextEncoder();
     const stream = new ReadableStream({
       async start(controller) {
         try {
-          // Validate API key exists
-          if (!process.env.OPENROUTER_API_KEY) {
-            console.error("[OpenRouter Error] OPENROUTER_API_KEY environment variable is not set");
-            throw new Error("OpenRouter API key is not configured");
+          // Validate API credentials exist
+          if (!process.env.PROPHETIC_API_URL) {
+            console.error("[Prophetic API Error] PROPHETIC_API_URL environment variable is not set");
+            throw new Error("Prophetic API URL is not configured");
+          }
+          if (!process.env.PROPHETIC_API_TOKEN) {
+            console.error("[Prophetic API Error] PROPHETIC_API_TOKEN environment variable is not set");
+            throw new Error("Prophetic API token is not configured");
           }
 
-          // Call OpenRouter API with the selected model
-          const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+          // Call Prophetic API with the selected model
+          const response = await fetch(`${process.env.PROPHETIC_API_URL}/prophetic/page_index/inference`, {
             method: "POST",
             headers: {
-              "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+              "Authorization": `Bearer ${process.env.PROPHETIC_API_TOKEN}`,
               "Content-Type": "application/json",
-              "HTTP-Referer": process.env.NEXTAUTH_URL || "http://localhost:3000",
-              "X-Title": "Prophetic Orchestra 7.5"
+              "Accept": "application/json"
             },
             body: JSON.stringify({
+              question: content,
               model: modelToUse,
-              messages: [
-                {
-                  role: "system",
-                  content: "You are Prophetic Orchestra 7.5, a luxury investment advisor AI. Provide sophisticated, data-driven insights about luxury markets, investment opportunities, and wealth management strategies. Be professional, insightful, and concise."
-                },
-                ...conversationHistory,
-                {
-                  role: "user",
-                  content: content
-                }
-              ],
-              stream: true
+              json_filename: "sneakers_pi.json"
             })
           });
 
           if (!response.ok) {
             const errorBody = await response.text();
-            console.error(`[OpenRouter Error] Status: ${response.status}, Model: ${modelToUse}, Body: ${errorBody}`);
-            throw new Error(`OpenRouter API error: ${response.status} - ${errorBody}`);
+            console.error(`[Prophetic API Error] Status: ${response.status}, Model: ${modelToUse}, Body: ${errorBody}`);
+            throw new Error(`Prophetic API error: ${response.status} - ${errorBody}`);
           }
 
           const reader = response.body?.getReader();
@@ -145,37 +138,71 @@ export async function POST(
 
           const decoder = new TextDecoder();
           let fullResponse = "";
+          let buffer = ""; // Buffer for incomplete SSE events
 
           // Read and stream the response
           while (true) {
             const { done, value } = await reader.read();
             if (done) break;
 
-            const chunk = decoder.decode(value);
-            const lines = chunk.split("\n");
+            // Append new chunk to buffer
+            const chunk = decoder.decode(value, { stream: true });
+            buffer += chunk;
 
-            for (const line of lines) {
-              if (line.startsWith("data: ")) {
-                const data = line.slice(6);
-                if (data === "[DONE]") continue;
+            // Split by double newline to get complete SSE events
+            const events = buffer.split("\n\n");
 
-                try {
-                  const parsed = JSON.parse(data);
-                  const content = parsed.choices?.[0]?.delta?.content || "";
+            // Keep the last incomplete event in the buffer
+            buffer = events.pop() || "";
 
-                  if (content) {
-                    fullResponse += content;
+            // Process each complete event
+            for (const event of events) {
+              if (!event.trim()) continue;
 
-                    // Send chunk to client
-                    const chunkData = JSON.stringify({
-                      type: "chunk",
-                      content: content
-                    }) + "\n";
-                    controller.enqueue(encoder.encode(chunkData));
-                  }
-                } catch (e) {
-                  // Skip invalid JSON
+              // Extract content from "data: " lines
+              const lines = event.split("\n");
+              let eventData = "";
+
+              for (const line of lines) {
+                if (line.startsWith("data: ")) {
+                  eventData += line.slice(6);
                 }
+              }
+
+              // Skip empty data
+              if (!eventData || eventData === "[DONE]") {
+                continue;
+              }
+
+              try {
+                // Parse JSON-encoded chunk from Prophetic API
+                const parsed = JSON.parse(eventData);
+
+                // Handle content chunks
+                if (parsed.content) {
+                  const content = parsed.content;
+                  fullResponse += content;
+
+                  // Send chunk to client
+                  const chunkData = JSON.stringify({
+                    type: "chunk",
+                    content: content
+                  }) + "\n";
+                  controller.enqueue(encoder.encode(chunkData));
+                }
+
+                // Handle error messages
+                if (parsed.error) {
+                  console.error("[Prophetic API] Error in stream:", parsed.error);
+                  const errorChunk = JSON.stringify({
+                    type: "error",
+                    error: parsed.error
+                  }) + "\n";
+                  controller.enqueue(encoder.encode(errorChunk));
+                }
+              } catch (e) {
+                // If JSON parsing fails, log and skip this chunk
+                console.error("[Prophetic API] Failed to parse JSON:", eventData, e);
               }
             }
           }

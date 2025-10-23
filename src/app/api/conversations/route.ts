@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
       .insert({
         user_id: session.user.id,
         title: title || "New Chat",
-        model: model || "anthropic/claude-3.5-sonnet",
+        model: model || "anthropic/claude-3.7-sonnet",
       })
       .select()
       .single();
