@@ -80,10 +80,10 @@ MessageItem.displayName = "MessageItem";
 
 // Example prompts - moved outside component to prevent recreation on every render
 const examplePrompts = [
-  "Analyze luxury watch market trends",
-  "Compare sneaker vs. art investments",
-  "Show me high-ROI opportunities",
-  "Explain Score Orchestra™ methodology"
+  "Propose me an investment portfolio for $150K",
+  "What watches should I buy with a $50K investment?",
+  "Which NFTs are worth buying with a $50K budget?",
+  "Propose me an investment portfolio for $50K"
 ];
 
 export default function Home() {
