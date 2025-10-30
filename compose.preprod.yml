@@ -7,8 +7,6 @@ services:
         NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
         NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
     container_name: prophetic-front-preprod
-    ports:
-      - 3000:3000
     environment:
       - NODE_ENV=production
       - NEXT_TELEMETRY_DISABLED=1
