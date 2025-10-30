@@ -170,13 +170,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return true;
     },
     async session({ session, token }) {
+      console.log('[Auth] Session callback START - token.userId:', token.userId);
+
       if (session.user) {
         // Use the stable Google user ID stored in the token
         session.user.id = token.userId as string;
 
         // Fetch user's status from database
         try {
+          console.log('[Auth] About to create admin client for session callback');
           const supabase = createAdminClient();
+          console.log('[Auth] Admin client created, fetching profile for:', session.user.id);
+
           const { data: profile } = await supabase
             .from('profiles')
             .select('status')
@@ -185,9 +190,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
           if (profile) {
             session.user.status = profile.status;
+            console.log('[Auth] Profile status fetched:', profile.status);
+          } else {
+            console.log('[Auth] No profile found for user:', session.user.id);
           }
         } catch (error) {
           console.error('[Auth] Error fetching user status:', error);
+          console.error('[Auth] Error stack:', error instanceof Error ? error.stack : 'No stack');
         }
 
         console.log(`[Auth] Session callback - userId: ${session.user.id}, email: ${session.user.email}, status: ${session.user.status}`);
