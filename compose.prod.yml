@@ -1,4 +1,4 @@
 services:
-  web:
+  prophetic-front:
     environment:
       - NODE_ENV=prod
