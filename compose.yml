@@ -3,7 +3,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: prophetic-front-${DOKPLOY_ENV:-${NODE_ENV}}
     environment:
       - NEXT_TELEMETRY_DISABLED=1
       # Auth environment variables
