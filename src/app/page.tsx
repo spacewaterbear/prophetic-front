@@ -415,9 +415,6 @@ export default function Home() {
                     <span className={`truncate ${
                       currentConversationId === conversation.id ? "font-medium" : ""
                     }`}>{conversation.title}</span>
-                    {currentConversationId === conversation.id && (
-                      <Check className="h-4 w-4 ml-auto flex-shrink-0 text-blue-400" />
-                    )}
                   </button>
                   <button
                     onClick={(e) => deleteConversation(conversation.id, e)}
