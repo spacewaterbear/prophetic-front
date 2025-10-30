@@ -21,6 +21,8 @@ services:
       - NEXTAUTH_URL=${NEXTAUTH_URL}
       - DOMAIN=${DOMAIN}
 
+
+
 #    labels:
 #      - "traefik.enable=true"
 #      - "traefik.http.routers.api-${NODE_ENV}.rule=Host(`${DOMAIN}`)"
