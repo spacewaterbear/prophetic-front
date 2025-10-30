@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Send, Menu, Plus, MessageSquare, LogOut, Check, X, Copy } from "lucide-react";
+import { Send, Menu, Plus, MessageSquare, LogOut, Check, X, Copy, Share2 } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect, lazy, Suspense, memo } from "react";
 import { useSession, signOut } from "next-auth/react";
@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { ModelSelector } from "@/components/ModelSelector";
 import { TypingIndicator } from "@/components/TypingIndicator";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { ShareButton } from "@/components/ShareButton";
 import { toast } from "sonner";
 
 // Lazy load Markdown component to reduce initial bundle size
@@ -488,6 +489,10 @@ export default function Home() {
               disabled={isLoading}
             />
             <ThemeToggle />
+            <ShareButton
+              conversationId={currentConversationId}
+              disabled={isLoading}
+            />
           </div>
         </header>
 
