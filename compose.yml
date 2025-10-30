@@ -20,6 +20,14 @@ services:
       # Legacy OpenRouter API (no longer used)
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
       - NEXTAUTH_URL=${NEXTAUTH_URL}
+      - DOMAIN=${DOMAIN}
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api-${NODE_ENV}.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.api-${NODE_ENV}.entrypoints=websecure"
+      - "traefik.http.routers.api-${NODE_ENV}.tls=true"
+      - "traefik.http.services.api-${NODE_ENV}.loadbalancer.server.port=3000"
 
     restart: unless-stopped
     networks:

@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Send, Menu, Plus, MessageSquare, LogOut, Check, X } from "lucide-react";
+import { Send, Menu, Plus, MessageSquare, LogOut, Check, X, Copy, Share2 } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect, lazy, Suspense, memo } from "react";
 import { useSession, signOut } from "next-auth/react";
@@ -10,6 +10,8 @@ import { useRouter } from "next/navigation";
 import { ModelSelector } from "@/components/ModelSelector";
 import { TypingIndicator } from "@/components/TypingIndicator";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { ShareButton } from "@/components/ShareButton";
+import { toast } from "sonner";
 
 // Lazy load Markdown component to reduce initial bundle size
 const Markdown = lazy(() => import("@/components/Markdown").then(mod => ({ default: mod.Markdown })));
@@ -47,25 +49,54 @@ AIAvatar.displayName = "AIAvatar";
 
 // Memoized message component to prevent unnecessary re-renders
 const MessageItem = memo(({ message, userName }: { message: Message; userName: string }) => {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(message.content);
+      setCopied(true);
+      toast.success("Copied to clipboard");
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      console.error("Failed to copy:", error);
+      toast.error("Failed to copy to clipboard");
+    }
+  };
+
   return (
     <div
       className={`flex gap-4 items-start ${message.sender === "user" ? "justify-end" : "justify-start"}`}
     >
       {message.sender === "ai" && <AIAvatar />}
-      <div
-        className={`max-w-2xl px-6 py-4 rounded-2xl ${
-          message.sender === "user"
-            ? "bg-custom-brand text-white"
-            : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
-        }`}
-      >
-        {message.sender === "user" ? (
-          <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
-        ) : (
-          <Suspense fallback={<div className="text-sm text-gray-400">Loading...</div>}>
-            <Markdown content={message.content} className="text-sm" />
-          </Suspense>
-        )}
+      <div className="group relative">
+        <div
+          className={`max-w-2xl pl-6 pr-12 py-4 rounded-2xl ${
+            message.sender === "user"
+              ? "bg-custom-brand text-white"
+              : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
+          }`}
+        >
+          {message.sender === "user" ? (
+            <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+          ) : (
+            <Suspense fallback={<div className="text-sm text-gray-400">Loading...</div>}>
+              <Markdown content={message.content} className="text-sm" />
+            </Suspense>
+          )}
+        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleCopy}
+          className={`absolute bottom-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity ${
+            message.sender === "user"
+              ? "text-white hover:bg-white/20"
+              : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+          }`}
+          aria-label="Copy message"
+        >
+          {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+        </Button>
       </div>
       {message.sender === "user" && (
         <div className="w-10 h-10 mt-1 rounded-full bg-custom-brand flex items-center justify-center text-white font-medium flex-shrink-0 leading-none text-lg">
@@ -80,10 +111,10 @@ MessageItem.displayName = "MessageItem";
 
 // Example prompts - moved outside component to prevent recreation on every render
 const examplePrompts = [
-  "Analyze luxury watch market trends",
-  "Compare sneaker vs. art investments",
-  "Show me high-ROI opportunities",
-  "Explain Score Orchestra™ methodology"
+  "Propose me an investment portfolio for $150K",
+  "What watches should I buy with a $50K investment?",
+  "Which NFTs are worth buying with a $50K budget?",
+  "Propose me an investment portfolio for $50K"
 ];
 
 export default function Home() {
@@ -385,9 +416,6 @@ export default function Home() {
                     <span className={`truncate ${
                       currentConversationId === conversation.id ? "font-medium" : ""
                     }`}>{conversation.title}</span>
-                    {currentConversationId === conversation.id && (
-                      <Check className="h-4 w-4 ml-auto flex-shrink-0 text-blue-400" />
-                    )}
                   </button>
                   <button
                     onClick={(e) => deleteConversation(conversation.id, e)}
@@ -461,6 +489,10 @@ export default function Home() {
               disabled={isLoading}
             />
             <ThemeToggle />
+            <ShareButton
+              conversationId={currentConversationId}
+              disabled={isLoading}
+            />
           </div>
         </header>
 

@@ -4,6 +4,7 @@ import "./globals.css";
 import ClientBody from "./ClientBody";
 import Script from "next/script";
 import { Providers } from "./providers";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,6 +41,7 @@ export default function RootLayout({
       <body suppressHydrationWarning className="antialiased">
         <Providers>
           <ClientBody>{children}</ClientBody>
+          <Toaster position="top-center" richColors />
         </Providers>
       </body>
     </html>
