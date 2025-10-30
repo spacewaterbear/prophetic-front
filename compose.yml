@@ -25,10 +25,10 @@ services:
 
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.api-${ENV}.rule=Host(`${DOMAIN}`)"
-      - "traefik.http.routers.api-${ENV}.entrypoints=websecure"
-      - "traefik.http.routers.api-${ENV}.tls=true"
-      - "traefik.http.services.api-${ENV}.loadbalancer.server.port=3000"
+      - "traefik.http.routers.api-${NODE_ENV}.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.api-${NODE_ENV}.entrypoints=websecure"
+      - "traefik.http.routers.api-${NODE_ENV}.tls=true"
+      - "traefik.http.services.api-${NODE_ENV}.loadbalancer.server.port=3000"
 
     restart: unless-stopped
     networks:
