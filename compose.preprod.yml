@@ -1,4 +1,40 @@
 services:
   prophetic-front:
+    build:
+      context: .
+      dockerfile: Dockerfile
     environment:
       - NODE_ENV=preprod
+      - NEXT_TELEMETRY_DISABLED=1
+      # Auth environment variables
+      - AUTH_SECRET=${AUTH_SECRET}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      # Supabase environment variables
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      # Prophetic API (Perplexity + Claude)
+      - PROPHETIC_API_URL=${PROPHETIC_API_URL}
+      - PROPHETIC_API_TOKEN=${PROPHETIC_API_TOKEN}
+      # Legacy OpenRouter API (no longer used)
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - NEXTAUTH_URL=${NEXTAUTH_URL}
+      - DOMAIN=${DOMAIN}
+
+
+
+#    labels:
+#      - "traefik.enable=true"
+#      - "traefik.http.routers.api-${NODE_ENV}.rule=Host(`${DOMAIN}`)"
+#      - "traefik.http.routers.api-${NODE_ENV}.entrypoints=websecure"
+#      - "traefik.http.routers.api-${NODE_ENV}.tls=true"
+#      - "traefik.http.services.api-${NODE_ENV}.loadbalancer.server.port=3000"
+
+    restart: unless-stopped
+    networks:
+      - prophetic-network
+
+networks:
+  prophetic-network:
+    driver: bridge
