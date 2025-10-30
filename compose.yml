@@ -4,6 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
+      - NODE_ENV=production
       - NEXT_TELEMETRY_DISABLED=1
       # Auth environment variables
       - AUTH_SECRET=${AUTH_SECRET}
