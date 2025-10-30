@@ -5,7 +5,6 @@ services:
       dockerfile: Dockerfile
     container_name: prophetic-front-${NODE_ENV}
     environment:
-      - NODE_ENV=production
       - NEXT_TELEMETRY_DISABLED=1
       # Auth environment variables
       - AUTH_SECRET=${AUTH_SECRET}
