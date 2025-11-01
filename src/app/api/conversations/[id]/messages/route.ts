@@ -111,6 +111,15 @@ export async function POST(
           }
 
           // Call Prophetic API with the selected model
+          const requestBody = {
+            question: content,
+            model: modelToUse,
+            session_id: conversationId.toString(),
+            user_id: conversation.user_id
+          };
+
+          console.log(`[Prophetic API] Request to langchain_agent/query:`, JSON.stringify(requestBody, null, 2));
+
           const response = await fetch(`${process.env.PROPHETIC_API_URL}/prophetic/langchain_agent/query`, {
             method: "POST",
             headers: {
@@ -118,10 +127,7 @@ export async function POST(
               "Content-Type": "application/json",
               "Accept": "application/json"
             },
-            body: JSON.stringify({
-              question: content,
-              model: modelToUse
-            })
+            body: JSON.stringify(requestBody)
           });
 
           if (!response.ok) {
