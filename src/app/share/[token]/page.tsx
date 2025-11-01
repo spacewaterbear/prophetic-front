@@ -111,18 +111,11 @@ export default async function SharedConversationPage({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Image
-                src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/logo-dark.png"
+                src="https://ext.same-assets.com/4250389560/3143870090.png"
                 alt="Prophetic Orchestra"
                 width={180}
                 height={45}
-                className="h-10 w-auto dark:hidden"
-              />
-              <Image
-                src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/logo-light.png"
-                alt="Prophetic Orchestra"
-                width={180}
-                height={45}
-                className="h-10 w-auto hidden dark:block"
+                className="h-10 w-auto"
               />
             </div>
             <div className="text-sm text-gray-600 dark:text-gray-400">
