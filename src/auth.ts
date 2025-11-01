@@ -81,6 +81,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         try {
           const supabase = createAdminClient();
 
+          // Store Google provider account ID for future token refreshes
+          token.googleId = account.providerAccountId;
+
           // Check if a profile with this email already exists
           const { data: existingProfile } = await supabase
             .from("profiles")
@@ -91,25 +94,24 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           if (existingProfile) {
             // Use existing profile's ID
             token.userId = existingProfile.id;
-            console.log(`[Auth] JWT callback - Using existing profile ID: ${token.userId} for email: ${user.email}`);
           } else {
             // Generate new UUID from Google ID
-            const googleId = account.providerAccountId;
-            token.userId = await googleIdToUuid(googleId);
-            console.log(`[Auth] JWT callback - Generated new UUID: ${token.userId} for Google ID: ${googleId}`);
+            token.userId = await googleIdToUuid(account.providerAccountId);
           }
         } catch (error) {
           console.error('[Auth] Error in JWT callback:', error);
           // Fallback to generated UUID
-          const googleId = account.providerAccountId;
-          token.userId = await googleIdToUuid(googleId);
+          token.googleId = account.providerAccountId;
+          token.userId = await googleIdToUuid(account.providerAccountId);
         }
       }
-      // Persist userId across token refreshes
-      if (!token.userId && token.sub) {
-        // Fallback: convert token.sub to UUID if userId wasn't set
-        token.userId = await googleIdToUuid(token.sub);
+
+      // On token refresh: regenerate userId from stored Google ID if needed
+      // NEVER use token.sub as it's NextAuth's internal ID, not the Google ID
+      if (!token.userId && token.googleId) {
+        token.userId = await googleIdToUuid(token.googleId as string);
       }
+
       return token;
     },
     async signIn({ user, account, profile }) {
@@ -129,8 +131,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
           if (existingProfile) {
             // Profile exists - just update metadata
-            console.log(`[Auth] SignIn - Updating existing profile ${existingProfile.id} for ${user.email}`);
-
             const { error: updateError } = await supabase
               .from("profiles")
               .update({
@@ -146,7 +146,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           } else {
             // No existing profile - create new one with generated UUID
             const userId = await googleIdToUuid(googleId);
-            console.log(`[Auth] SignIn - Creating new profile ${userId} for ${user.email}`);
 
             const { error } = await supabase
               .from("profiles")
@@ -170,17 +169,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return true;
     },
     async session({ session, token }) {
-      console.log('[Auth] Session callback START - token.userId:', token.userId);
-
       if (session.user) {
         // Use the stable Google user ID stored in the token
         session.user.id = token.userId as string;
 
         // Fetch user's status from database
         try {
-          console.log('[Auth] About to create admin client for session callback');
           const supabase = createAdminClient();
-          console.log('[Auth] Admin client created, fetching profile for:', session.user.id);
 
           const { data: profile } = await supabase
             .from('profiles')
@@ -190,20 +185,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
           if (profile) {
             session.user.status = profile.status;
-            console.log('[Auth] Profile status fetched:', profile.status);
-          } else {
-            console.log('[Auth] No profile found for user:', session.user.id);
           }
         } catch (error) {
           console.error('[Auth] Error fetching user status:', error);
-          console.error('[Auth] Error stack:', error instanceof Error ? error.stack : 'No stack');
         }
-
-        console.log(`[Auth] Session callback - userId: ${session.user.id}, email: ${session.user.email}, status: ${session.user.status}`);
       }
+
       if (!session.user?.id) {
         console.error("[Auth] Session has no user ID! Token:", token);
       }
+
       return session;
     },
   },

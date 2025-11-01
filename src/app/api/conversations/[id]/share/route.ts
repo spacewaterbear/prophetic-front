@@ -40,7 +40,8 @@ export async function POST(
 
     // If a valid share exists, return it
     if (existingShare && (!existingShare.expires_at || new Date(existingShare.expires_at) > new Date())) {
-      const shareUrl = `${new URL(request.url).origin}/share/${existingShare.share_token}`;
+      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || new URL(request.url).origin;
+      const shareUrl = `${baseUrl}/share/${existingShare.share_token}`;
       return NextResponse.json({
         shareToken: existingShare.share_token,
         shareUrl,
@@ -69,7 +70,8 @@ export async function POST(
     }
 
     // Generate the shareable URL
-    const shareUrl = `${new URL(request.url).origin}/share/${shareToken}`;
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || new URL(request.url).origin;
+    const shareUrl = `${baseUrl}/share/${shareToken}`;
 
     return NextResponse.json({
       shareToken,
