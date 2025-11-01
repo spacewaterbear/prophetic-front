@@ -70,7 +70,7 @@ export const AI_COMPANIES: Record<string, AICompany> = {
         description: "Flagship model with top performance"
       },
       {
-        id: "mistralai/mistral-medium",
+        id: "mistralai/mistral-medium-3.1",
         name: "Mistral Medium",
         description: "Balanced performance"
       },
