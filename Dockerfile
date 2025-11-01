@@ -38,7 +38,6 @@ COPY biome.json* ./
 
 # Copy source code (changes most frequently, so copied last for better caching)
 COPY src ./src
-COPY public ./public
 
 # Build the Next.js application
 RUN npm run build
