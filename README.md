@@ -125,4 +125,5 @@ See [SETUP_GOOGLE_AUTH.md](./SETUP_GOOGLE_AUTH.md) for common authentication iss
 - [Tailwind CSS Documentation](https://tailwindcss.com)
 
 
+
 docker-compose --profile dev up prophetic-front-dev
