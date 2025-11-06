@@ -599,7 +599,7 @@ export default function Home() {
                         }
                     }}
                     placeholder="Ask about luxury investments, market trends, or portfolio optimization..."
-                    className="w-full px-3 py-2 sm:px-4 sm:py-3 pr-12 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none placeholder:text-sm sm:placeholder:text-base placeholder:text-gray-400 dark:placeholder:text-gray-500 text-sm sm:text-base"
+                    className="w-full px-3 py-2 sm:px-4 sm:py-3 pr-12 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none placeholder:text-ellipsis placeholder:overflow-hidden placeholder:whitespace-nowrap placeholder:text-sm sm:placeholder:text-base placeholder:text-gray-400 dark:placeholder:text-gray-500 text-sm sm:text-base"
                     rows={1}
                     style={{minHeight: '48px', maxHeight: '200px'}}
                 />
