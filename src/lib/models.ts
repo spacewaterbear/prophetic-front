@@ -81,6 +81,18 @@ export const AI_COMPANIES: Record<string, AICompany> = {
       }
     ]
   },
+    grok:{
+      id: "grok",
+        name:"grok",
+        label:"grok",
+        models:[
+            {
+                id:"openai/gpt-oss-120b",
+                name: "OpenAI GPT OSS 120b",
+                description: "to try"
+            }
+        ]
+    },
   google: {
     id: "google",
     name: "Google",
