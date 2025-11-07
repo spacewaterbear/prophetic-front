@@ -401,6 +401,7 @@ export default function Home() {
                     <Button
                         className="w-full bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-lg"
                         onClick={createNewConversation}
+                        disabled={isLoading}
                     >
                         <Plus className="h-4 w-4 mr-2"/>
                         New Chat
