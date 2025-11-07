@@ -4,7 +4,7 @@ import {Button} from "@/components/ui/button";
 import {Card} from "@/components/ui/card";
 import {Check, Copy, LogOut, Menu, MessageSquare, Plus, Send, X} from "lucide-react";
 import Image from "next/image";
-import {lazy, memo, Suspense, useEffect, useState} from "react";
+import {lazy, memo, Suspense, useEffect, useRef, useState} from "react";
 import {signOut, useSession} from "next-auth/react";
 import {useRouter} from "next/navigation";
 import {ModelSelector} from "@/components/ModelSelector";
@@ -137,6 +137,7 @@ export default function Home() {
     const [isLoading, setIsLoading] = useState(false);
     const [streamingMessage, setStreamingMessage] = useState("");
     const [selectedModel, setSelectedModel] = useState<string>("anthropic/claude-3.7-sonnet");
+    const messagesEndRef = useRef<HTMLDivElement>(null);
 
     // Redirect to login if not authenticated or to registration-pending if unauthorized
     useEffect(() => {
@@ -168,6 +169,15 @@ export default function Home() {
         // Cleanup
         return () => window.removeEventListener('resize', handleResize);
     }, []);
+
+    // Auto-scroll to bottom when messages change or streaming updates
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages, streamingMessage, isLoading]);
 
     const loadConversations = async () => {
         try {
@@ -581,6 +591,8 @@ export default function Home() {
                                 </div>
                             </div>
                         )}
+                        {/* Invisible div to scroll to */}
+                        <div ref={messagesEndRef} />
                     </div>
                 </div>
 
