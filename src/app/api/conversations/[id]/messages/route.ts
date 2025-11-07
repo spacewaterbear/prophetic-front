@@ -80,20 +80,20 @@ export async function POST(
         .eq("id", conversationId);
     }
 
-    // Fetch conversation history for context
-    const { data: messages } = await supabase
+    // Fetch last 5 user messages for conversation history (excluding the current message)
+    const { data: previousUserMessages } = await supabase
       .from("messages")
-      .select("*")
+      .select("content")
       .eq("conversation_id", conversationId)
-      .order("created_at", { ascending: true });
+      .eq("sender", "user")
+      .neq("id", userMessage.id)
+      .order("created_at", { ascending: false })
+      .limit(5);
 
-    // Build conversation context (last 10 messages)
-    const conversationHistory = (messages || [])
-      .slice(-10)
-      .map(msg => ({
-        role: msg.sender === "user" ? "user" : "assistant",
-        content: msg.content
-      }));
+    // Extract content strings and reverse to maintain chronological order
+    const conversationHistory = (previousUserMessages || [])
+      .reverse()
+      .map(msg => msg.content);
 
     // Create a streaming response with Prophetic API
     const encoder = new TextEncoder();
@@ -115,7 +115,8 @@ export async function POST(
             question: content,
             model: modelToUse,
             session_id: conversationId.toString(),
-            user_id: conversation.user_id
+            user_id: conversation.user_id,
+            conversation_history: conversationHistory
           };
 
           console.log(`[Prophetic API] Request to langchain_agent/query:`, JSON.stringify(requestBody, null, 2));
