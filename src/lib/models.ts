@@ -89,7 +89,7 @@ export const AI_COMPANIES: Record<string, AICompany> = {
             {
                 id:"openai/gpt-oss-120b",
                 name: "OpenAI GPT OSS 120b",
-                description: "to try"
+                description: "Openai Open Source model"
             }
         ]
     },
