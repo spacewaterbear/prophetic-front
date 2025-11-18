@@ -138,6 +138,8 @@ export default function Home() {
     const [streamingMessage, setStreamingMessage] = useState("");
     const [selectedModel, setSelectedModel] = useState<string>("anthropic/claude-3.7-sonnet");
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const messagesContainerRef = useRef<HTMLDivElement>(null);
+    const [shouldAutoScroll, setShouldAutoScroll] = useState(true);
 
     // Redirect to login if not authenticated or to registration-pending if unauthorized
     useEffect(() => {
@@ -175,9 +177,22 @@ export default function Home() {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
 
+    // Detect user scroll to determine if auto-scroll should be enabled
+    const handleScroll = () => {
+        const container = messagesContainerRef.current;
+        if (!container) return;
+
+        // Check if user is near the bottom (within 20px threshold)
+        // This makes it very sensitive - any small scroll up will disable auto-scroll
+        const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 20;
+        setShouldAutoScroll(isNearBottom);
+    };
+
     useEffect(() => {
-        scrollToBottom();
-    }, [messages, streamingMessage, isLoading]);
+        if (shouldAutoScroll) {
+            scrollToBottom();
+        }
+    }, [messages, streamingMessage, isLoading, shouldAutoScroll]);
 
     const loadConversations = async () => {
         try {
@@ -523,7 +538,11 @@ export default function Home() {
                 </header>
 
                 {/* Messages */}
-                <div className="flex-1 overflow-y-auto px-3 sm:px-6 py-4 sm:py-8">
+                <div
+                    ref={messagesContainerRef}
+                    onScroll={handleScroll}
+                    className="flex-1 overflow-y-auto px-3 sm:px-6 py-4 sm:py-8"
+                >
                     {messages.length === 0 && !streamingMessage && (
                         <div className="max-w-4xl mx-auto mb-8 sm:mb-12">
                             <div className="text-center mb-8 sm:mb-12">
