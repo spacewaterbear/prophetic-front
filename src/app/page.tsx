@@ -71,17 +71,17 @@ const MessageItem = memo(({message, userName}: { message: Message; userName: str
             {message.sender === "ai" && <AIAvatar/>}
             <div className="group relative">
                 <div
-                    className={`max-w-[85vw] sm:max-w-2xl pl-3 pr-10 py-3 sm:pl-6 sm:pr-12 sm:py-4 rounded-2xl ${
+                    className={`max-w-[90vw] sm:max-w-3xl lg:max-w-4xl pl-4 pr-12 py-4 sm:pl-8 sm:pr-14 sm:py-5 rounded-2xl ${
                         message.sender === "user"
                             ? "bg-custom-brand text-white"
                             : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
                     }`}
                 >
                     {message.sender === "user" ? (
-                        <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+                        <p className="text-base leading-relaxed whitespace-pre-wrap">{message.content}</p>
                     ) : (
-                        <Suspense fallback={<div className="text-sm text-gray-400">Loading...</div>}>
-                            <Markdown content={message.content} className="text-sm"/>
+                        <Suspense fallback={<div className="text-base text-gray-400">Loading...</div>}>
+                            <Markdown content={message.content} className="text-base"/>
                         </Suspense>
                     )}
                 </div>
@@ -525,7 +525,7 @@ export default function Home() {
                 {/* Messages */}
                 <div className="flex-1 overflow-y-auto px-3 sm:px-6 py-4 sm:py-8">
                     {messages.length === 0 && !streamingMessage && (
-                        <div className="max-w-3xl mx-auto mb-8 sm:mb-12">
+                        <div className="max-w-4xl mx-auto mb-8 sm:mb-12">
                             <div className="text-center mb-8 sm:mb-12">
                                 <div
                                     className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center overflow-hidden">
@@ -557,7 +557,7 @@ export default function Home() {
                         </div>
                     )}
 
-                    <div className="max-w-3xl mx-auto space-y-6">
+                    <div className="max-w-5xl mx-auto space-y-6 md:pr-32 lg:pr-40">
                         {messages.map((message) => (
                             <MessageItem
                                 key={message.id}
@@ -571,7 +571,7 @@ export default function Home() {
                             <div className="flex gap-2 sm:gap-4 items-start justify-start">
                                 <AIAvatar/>
                                 <div
-                                    className="max-w-[85vw] sm:max-w-2xl px-3 py-3 sm:px-6 sm:py-4 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                                    className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-4 py-4 sm:px-8 sm:py-5 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                                     <TypingIndicator/>
                                 </div>
                             </div>
@@ -582,9 +582,9 @@ export default function Home() {
                             <div className="flex gap-2 sm:gap-4 items-start justify-start">
                                 <AIAvatar/>
                                 <div
-                                    className="max-w-[85vw] sm:max-w-2xl px-3 py-3 sm:px-6 sm:py-4 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-                                    <Suspense fallback={<div className="text-sm text-gray-400">Loading...</div>}>
-                                        <Markdown content={streamingMessage} className="text-sm"/>
+                                    className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-4 py-4 sm:px-8 sm:py-5 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                                    <Suspense fallback={<div className="text-base text-gray-400">Loading...</div>}>
+                                        <Markdown content={streamingMessage} className="text-base"/>
                                     </Suspense>
                                     <span
                                         className="inline-block w-1.5 h-4 bg-blue-500 animate-pulse ml-1 rounded-sm"></span>
