@@ -9,7 +9,7 @@ const nextConfig = {
       "img.freepik.com",
       "ext.same-assets.com",
       "ugc.same-assets.com",
-      "d38we5ntdyxyje.cloudfront.net",
+      "*.cloudfront.net",
       "nqwovhetvhmtjigonohq.supabase.co",
       "lh3.googleusercontent.com",
     ],
@@ -42,6 +42,11 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "lh3.googleusercontent.com",
+        pathname: "/**",
+      },
+        {
+        protocol: 'https',
+        hostname: '**.cloudfront.net',
         pathname: "/**",
       },
     ],

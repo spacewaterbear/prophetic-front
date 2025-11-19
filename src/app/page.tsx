@@ -146,7 +146,7 @@ const examplePrompts = [
     "Propose me an investment portfolio for $150K",
     "What watches should I buy with a $50K investment?",
     "Which NFTs are worth buying with a $50K budget?",
-    "Propose me an investment portfolio for $50K"
+    "tell me what you know about Jean-Michel Basquiat"
 ];
 
 export default function Home() {
@@ -463,9 +463,8 @@ export default function Home() {
                             setMessages(prev => [...prev, artistMessage]);
                             setStreamingMessage("");
 
-                            // Reload conversation to get the saved version from database
-                            // This will replace the temporary message with the real one
-                            await loadConversation(conversationId);
+                            // No reload needed - message is already complete and displayable
+                            // The backend has already saved it, and we have all the data we need
                         } else if (data.type === "metadata") {
                             // Handle metadata messages (e.g., intro text with skip_streaming flag)
                             if (data.skip_streaming && data.intro) {
@@ -692,8 +691,7 @@ export default function Home() {
                                     <Suspense fallback={<div className="text-base text-gray-400">Loading...</div>}>
                                         <Markdown content={streamingMessage} className="text-base"/>
                                     </Suspense>
-                                    <span
-                                        className="inline-block w-1.5 h-4 bg-blue-500 animate-pulse ml-1 rounded-sm"></span>
+                                    <TypingIndicator />
                                 </div>
                             </div>
                         )}
