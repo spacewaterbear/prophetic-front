@@ -19,9 +19,12 @@ const ArtistCard = lazy(() => import("@/components/ArtistCard").then(mod => ({de
 
 interface Artist {
     artist_name: string;
-    pictureUrl: string | null;
+    artist_picture_url: string | null;
+    primary_country: string | null;
     country_iso_code: string | null;
-    nb_of_arts: number | null;
+    total_artworks: number | null;
+    ratio_sold?: number; // Float between 0 and 1
+    social_score?: number; // Float between 0 and 1
 }
 
 interface Message {
