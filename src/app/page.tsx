@@ -18,10 +18,10 @@ const Markdown = lazy(() => import("@/components/Markdown").then(mod => ({defaul
 const ArtistCard = lazy(() => import("@/components/ArtistCard").then(mod => ({default: mod.ArtistCard})));
 
 interface Artist {
-    name: string;
-    pictureUrl: string;
-    country_iso_code: string;
-    nb_of_arts: number;
+    artist_name: string;
+    pictureUrl: string | null;
+    country_iso_code: string | null;
+    nb_of_arts: number | null;
 }
 
 interface Message {
@@ -421,8 +421,22 @@ export default function Home() {
                             setStreamingMessage(streamContent);
                         } else if (data.type === "artist_info") {
                             // Handle structured artist info response
+                            // Check if this is a "done" message (has userMessage/aiMessage) or actual artist data
+                            if (data.userMessage || data.aiMessage) {
+                                // This is a completion message, treat it as "done"
+                                await loadConversation(conversationId);
+                                setStreamingMessage("");
+                                continue;
+                            }
+
                             // Extract the nested data object from backend
                             const artistData = data.data;
+
+                            // Defensive check: ensure artistData exists
+                            if (!artistData) {
+                                console.error("[Artist Info] Missing nested data, skipping:", data);
+                                continue;
+                            }
 
                             // Create a temporary message with the artist info for immediate display
                             const artistMessage: Message = {
@@ -430,7 +444,7 @@ export default function Home() {
                                 content: artistData.message || "",
                                 sender: "ai",
                                 created_at: new Date().toISOString(),
-                                type: artistData.type,
+                                type: "artist_info",
                                 message: artistData.message,
                                 research_type: artistData.research_type,
                                 artist: artistData.artist,
