@@ -36,6 +36,7 @@ interface Message {
     artist?: Artist;
     has_existing_data?: boolean;
     text?: string;
+    streaming_text?: string;
 }
 
 interface Conversation {
@@ -101,6 +102,8 @@ const MessageItem = memo(({message, userName}: { message: Message; userName: str
                                 message={message.message}
                                 researchType={message.research_type}
                                 text={message.text}
+                                streamingText={message.streaming_text}
+                                hasExistingData={message.has_existing_data}
                             />
                         </Suspense>
                     ) : (
@@ -449,7 +452,8 @@ export default function Home() {
                                 research_type: artistData.research_type,
                                 artist: artistData.artist,
                                 has_existing_data: artistData.has_existing_data,
-                                text: artistData.text
+                                text: artistData.text,
+                                streaming_text: artistData.streaming_text
                             };
 
                             // Add the artist message to display immediately
