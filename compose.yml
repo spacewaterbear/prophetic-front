@@ -35,4 +35,4 @@ services:
 
 networks:
   prophetic-network:
-    driver: bridge
+    external: true
