@@ -2,8 +2,7 @@ import Image from "next/image";
 import {MapPin, Image as ImageIcon} from "lucide-react";
 import {Card} from "@/components/ui/card";
 import {Markdown} from "@/components/Markdown";
-import {SellStatusBar} from "@/components/SellStatusBar";
-import {SocialScoreBar} from "@/components/SocialScoreBar";
+import {MetricBadge} from "@/components/MetricBadge";
 
 interface Artist {
     artist_name: string;
@@ -50,15 +49,17 @@ export function ArtistCard({artist, message, researchType, text, streamingText, 
                     {/* Artist Details - Constrained to image height */}
                     <div className="flex flex-col justify-between md:h-[200px] space-y-3">
                         {/* Name and Research Type */}
-                        <div>
+                        <div className="space-y-2">
                             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1 line-clamp-2">
                                 {artist.artist_name}
                             </h3>
-                            {researchType && (
-                                <span className="inline-block px-2.5 py-0.5 text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded-full">
-                                    {researchType.replace(/_/g, " ").toUpperCase()}
-                                </span>
-                            )}
+                            <div className="flex flex-wrap items-center gap-2">
+                                {researchType && (
+                                    <span className="inline-block px-2.5 py-0.5 text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded-full">
+                                        {researchType.replace(/_/g, " ").toUpperCase()}
+                                    </span>
+                                )}
+                            </div>
                         </div>
 
                         {/* Stats Grid - Only show if at least one field has data */}
@@ -92,13 +93,10 @@ export function ArtistCard({artist, message, researchType, text, streamingText, 
                             </div>
                         )}
 
-                        {/* Progress Bars - Side by side */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            {/* Sell Status Bar */}
-                            <SellStatusBar ratio={artist.ratio_sold ?? 0.33}/>
-
-                            {/* Social Score Bar */}
-                            <SocialScoreBar ratio={artist.social_score ?? 0.50}/>
+                        {/* Metric Badges - Luxury badge design */}
+                        <div className="flex flex-wrap gap-2">
+                            <MetricBadge ratio={artist.ratio_sold ?? 0.33} type="sell"/>
+                            <MetricBadge ratio={artist.social_score ?? 0.50} type="social"/>
                         </div>
                     </div>
                 </div>
