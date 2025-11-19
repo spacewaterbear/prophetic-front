@@ -31,7 +31,7 @@ export async function GET(
     }
 
     // Fetch messages
-    const { data: messages, error: messagesError } = await supabase
+    const { data: rawMessages, error: messagesError } = await supabase
       .from("messages")
       .select("*")
       .eq("conversation_id", conversationId)
@@ -41,6 +41,27 @@ export async function GET(
       console.error("Error fetching messages:", messagesError);
       return NextResponse.json({ error: "Failed to fetch messages" }, { status: 500 });
     }
+
+    // Transform messages to include structured data from metadata
+    const messages = (rawMessages || []).map((msg: Record<string, unknown>) => {
+      // If message has metadata with structured_data, expand it into the message object
+      if (msg.metadata && typeof msg.metadata === 'object' && msg.metadata !== null) {
+        const metadata = msg.metadata as Record<string, unknown>;
+        if (metadata.structured_data && typeof metadata.structured_data === 'object') {
+          const structuredData = metadata.structured_data as Record<string, unknown>;
+
+          // Merge structured data fields into the message object
+          return {
+            ...msg,
+            type: metadata.type,
+            ...structuredData,
+          };
+        }
+      }
+
+      // Return message as-is if no structured data
+      return msg;
+    });
 
     return NextResponse.json({ conversation, messages });
   } catch (error) {

@@ -6,8 +6,10 @@ const nextConfig = {
     domains: [
       "source.unsplash.com",
       "images.unsplash.com",
+      "img.freepik.com",
       "ext.same-assets.com",
       "ugc.same-assets.com",
+      "d38we5ntdyxyje.cloudfront.net",
       "nqwovhetvhmtjigonohq.supabase.co",
       "lh3.googleusercontent.com",
     ],

@@ -145,6 +145,8 @@ export async function POST(
           const decoder = new TextDecoder();
           let fullResponse = "";
           let buffer = ""; // Buffer for incomplete SSE events
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          let structuredData: any = null; // Capture artist_info or other structured responses
 
           // Read and stream the response
           while (true) {
@@ -182,28 +184,115 @@ export async function POST(
 
               try {
                 // Parse JSON-encoded chunk from Prophetic API
+                console.log("[DEBUG] Raw eventData:", eventData);
                 const parsed = JSON.parse(eventData);
+                console.log("[DEBUG] Parsed type:", parsed.type, "has content:", !!parsed.content, "content preview:", parsed.content?.substring(0, 100));
 
-                // Handle content chunks
+                // Handle structured data responses (artist_info, metadata, etc.)
+                if (parsed.type && parsed.type === "artist_info") {
+                  console.log("[Prophetic API] Received artist_info structured data");
+                  structuredData = parsed;
+
+                  // Send artist_info to client immediately for display (SSE format)
+                  const artistChunk = `data: ${JSON.stringify({
+                    type: "artist_info",
+                    data: parsed
+                  })}\n\n`;
+                  controller.enqueue(encoder.encode(artistChunk));
+                  continue;
+                }
+
+                // Handle metadata messages (intro text, etc.)
+                if (parsed.type && parsed.type === "metadata") {
+                  console.log("[Prophetic API] Received metadata");
+                  // Forward metadata to client (SSE format)
+                  const metadataChunk = `data: ${JSON.stringify(parsed)}\n\n`;
+                  controller.enqueue(encoder.encode(metadataChunk));
+
+                  // If skip_streaming is true and there's intro text, add it to fullResponse
+                  if (parsed.skip_streaming && parsed.intro) {
+                    fullResponse += parsed.intro + "\n\n";
+                  }
+                  continue;
+                }
+
+                // Handle content chunks (regular text responses)
                 if (parsed.content) {
                   const content = parsed.content;
+                  const trimmedContent = content.trim();
+
+                  // Check if content contains nested SSE data (Prophetic API sends structured data this way)
+                  if (trimmedContent.startsWith('data:')) {
+                    console.log("[NESTED SSE] Detected nested SSE in content field");
+                    // Extract the JSON after "data: " and before any trailing whitespace/newlines
+                    const nestedJsonStr = trimmedContent.slice(6).trim();
+
+                    try {
+                      const nestedData = JSON.parse(nestedJsonStr);
+                      console.log("[NESTED SSE] Parsed nested data type:", nestedData.type);
+
+                      // Handle artist_info nested in content
+                      if (nestedData.type === "artist_info") {
+                        console.log("[Prophetic API] Received artist_info (from nested content)");
+                        structuredData = nestedData;
+
+                        // Send artist_info to client immediately for display (SSE format)
+                        const artistChunk = `data: ${JSON.stringify({
+                          type: "artist_info",
+                          data: nestedData
+                        })}\n\n`;
+                        controller.enqueue(encoder.encode(artistChunk));
+                        continue;
+                      }
+
+                      // Handle metadata nested in content
+                      if (nestedData.type === "metadata") {
+                        console.log("[Prophetic API] Received metadata (from nested content)");
+                        // Forward metadata to client (SSE format)
+                        const metadataChunk = `data: ${JSON.stringify(nestedData)}\n\n`;
+                        controller.enqueue(encoder.encode(metadataChunk));
+
+                        // If skip_streaming is true and there's intro text, add it to fullResponse
+                        if (nestedData.skip_streaming && nestedData.intro) {
+                          fullResponse += nestedData.intro + "\n\n";
+                        }
+                        continue;
+                      }
+
+                      // If it's some other nested type, log and skip
+                      console.log("[NESTED SSE] Unhandled nested type, skipping");
+                      continue;
+                    } catch (e) {
+                      // Not valid JSON after "data: ", skip this chunk
+                      console.log("[NESTED SSE] Failed to parse nested JSON, skipping");
+                      continue;
+                    }
+                  }
+
+                  // Skip standalone JSON objects (shouldn't happen but defensive)
+                  if (trimmedContent.startsWith('{')) {
+                    console.log("[SKIP] Ignoring standalone JSON in content field");
+                    continue;
+                  }
+
+                  // Normal text content - add to response and send to client
                   fullResponse += content;
 
-                  // Send chunk to client
-                  const chunkData = JSON.stringify({
+                  // Send chunk to client (SSE format)
+                  const chunkData = `data: ${JSON.stringify({
                     type: "chunk",
                     content: content
-                  }) + "\n";
+                  })}\n\n`;
                   controller.enqueue(encoder.encode(chunkData));
                 }
 
                 // Handle error messages
                 if (parsed.error) {
                   console.error("[Prophetic API] Error in stream:", parsed.error);
-                  const errorChunk = JSON.stringify({
+                  const errorChunk = `data: ${JSON.stringify({
                     type: "error",
                     error: parsed.error
-                  }) + "\n";
+                  })}\n\n`;
                   controller.enqueue(encoder.encode(errorChunk));
                 }
               } catch (e) {
@@ -213,13 +302,31 @@ export async function POST(
             }
           }
 
+          // Prepare message content and metadata based on response type
+          let messageContent = fullResponse.trim();
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          let messageMetadata: any = null;
+
+          // If we captured structured data (e.g., artist_info), store it in metadata
+          if (structuredData && structuredData.type) {
+            messageMetadata = {
+              type: structuredData.type,
+              structured_data: structuredData
+            };
+
+            // For artist_info, the intro text is what the user sees first
+            // The structured data will be rendered as a card by the frontend
+            console.log(`[Message Storage] Storing structured response type: ${structuredData.type}`);
+          }
+
           // Save AI message to database
           const { data: aiMessage, error: aiMessageError } = await supabase
             .from("messages")
             .insert({
               conversation_id: conversationId,
-              content: fullResponse.trim(),
+              content: messageContent,
               sender: "ai",
+              metadata: messageMetadata,
             })
             .select()
             .single();
@@ -228,21 +335,21 @@ export async function POST(
             console.error("Error creating AI message:", aiMessageError);
           }
 
-          // Send completion message
-          const doneChunk = JSON.stringify({
-            type: "done",
+          // Send completion message with type indicator if structured (SSE format)
+          const doneChunk = `data: ${JSON.stringify({
+            type: messageMetadata?.type === "artist_info" ? "artist_info" : "done",
             userMessage,
             aiMessage
-          }) + "\n";
+          })}\n\n`;
           controller.enqueue(encoder.encode(doneChunk));
 
           controller.close();
         } catch (error) {
           console.error("Error in stream:", error);
-          const errorChunk = JSON.stringify({
+          const errorChunk = `data: ${JSON.stringify({
             type: "error",
             error: "Failed to generate AI response"
-          }) + "\n";
+          })}\n\n`;
           controller.enqueue(encoder.encode(errorChunk));
           controller.close();
         }

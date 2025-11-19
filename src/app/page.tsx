@@ -15,12 +15,27 @@ import {toast} from "sonner";
 
 // Lazy load Markdown component to reduce initial bundle size
 const Markdown = lazy(() => import("@/components/Markdown").then(mod => ({default: mod.Markdown})));
+const ArtistCard = lazy(() => import("@/components/ArtistCard").then(mod => ({default: mod.ArtistCard})));
+
+interface Artist {
+    name: string;
+    pictureUrl: string;
+    country_iso_code: string;
+    nb_of_arts: number;
+}
 
 interface Message {
     id: number;
     content: string;
     sender: "user" | "ai";
     created_at: string;
+    // Optional structured data fields
+    type?: string;
+    message?: string;
+    research_type?: string;
+    artist?: Artist;
+    has_existing_data?: boolean;
+    text?: string;
 }
 
 interface Conversation {
@@ -79,6 +94,15 @@ const MessageItem = memo(({message, userName}: { message: Message; userName: str
                 >
                     {message.sender === "user" ? (
                         <p className="text-base leading-relaxed whitespace-pre-wrap">{message.content}</p>
+                    ) : message.type === "artist_info" && message.artist ? (
+                        <Suspense fallback={<div className="text-base text-gray-400">Loading...</div>}>
+                            <ArtistCard
+                                artist={message.artist}
+                                message={message.message}
+                                researchType={message.research_type}
+                                text={message.text}
+                            />
+                        </Suspense>
                     ) : (
                         <Suspense fallback={<div className="text-base text-gray-400">Loading...</div>}>
                             <Markdown content={message.content} className="text-base"/>
@@ -383,12 +407,52 @@ export default function Home() {
                 const lines = chunk.split("\n").filter(line => line.trim());
 
                 for (const line of lines) {
+                    // Strip "data: " prefix if present (defensive SSE parsing)
+                    let cleanedLine = line;
+                    if (line.startsWith("data: ")) {
+                        cleanedLine = line.slice(6); // Remove "data: " (6 characters)
+                    }
+
                     try {
-                        const data = JSON.parse(line);
+                        const data = JSON.parse(cleanedLine);
 
                         if (data.type === "chunk") {
                             streamContent += data.content;
                             setStreamingMessage(streamContent);
+                        } else if (data.type === "artist_info") {
+                            // Handle structured artist info response
+                            // Extract the nested data object from backend
+                            const artistData = data.data;
+
+                            // Create a temporary message with the artist info for immediate display
+                            const artistMessage: Message = {
+                                id: Date.now(), // Temporary ID until we reload from database
+                                content: artistData.message || "",
+                                sender: "ai",
+                                created_at: new Date().toISOString(),
+                                type: artistData.type,
+                                message: artistData.message,
+                                research_type: artistData.research_type,
+                                artist: artistData.artist,
+                                has_existing_data: artistData.has_existing_data,
+                                text: artistData.text
+                            };
+
+                            // Add the artist message to display immediately
+                            setMessages(prev => [...prev, artistMessage]);
+                            setStreamingMessage("");
+
+                            // Reload conversation to get the saved version from database
+                            // This will replace the temporary message with the real one
+                            await loadConversation(conversationId);
+                        } else if (data.type === "metadata") {
+                            // Handle metadata messages (e.g., intro text with skip_streaming flag)
+                            if (data.skip_streaming && data.intro) {
+                                // If skip_streaming is true, add the intro text immediately
+                                streamContent += data.intro + "\n\n";
+                                setStreamingMessage(streamContent);
+                            }
+                            // If skip_streaming is false, the intro will be streamed as chunks
                         } else if (data.type === "done") {
                             // Reload conversation to get all messages
                             await loadConversation(conversationId);
@@ -398,6 +462,8 @@ export default function Home() {
                         }
                     } catch (error) {
                         console.error("Error parsing chunk:", error);
+                        console.error("Raw line:", line);
+                        console.error("Cleaned line:", cleanedLine);
                     }
                 }
             }
