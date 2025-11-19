@@ -474,9 +474,19 @@ export default function Home() {
                             }
                             // If skip_streaming is false, the intro will be streamed as chunks
                         } else if (data.type === "done") {
-                            // Reload conversation to get all messages
-                            await loadConversation(conversationId);
+                            // Optimistically add the AI message if provided in the event
+                            if (data.aiMessage) {
+                                setMessages(prev => [...prev, data.aiMessage]);
+                            }
+
+                            // Clear streaming message
                             setStreamingMessage("");
+
+                            // Reload conversation as backup to ensure consistency
+                            // This happens in background and won't block UI update
+                            loadConversation(conversationId).catch(err =>
+                                console.error("Error reloading conversation:", err)
+                            );
                         } else if (data.type === "error") {
                             console.error("Stream error:", data.error);
                         }

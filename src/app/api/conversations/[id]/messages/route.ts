@@ -303,7 +303,7 @@ export async function POST(
           }
 
           // Prepare message content and metadata based on response type
-          let messageContent = fullResponse.trim();
+          const messageContent = fullResponse.trim();
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           let messageMetadata: any = null;
 
