@@ -8,7 +8,7 @@ services:
         NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
     container_name: prophetic-front-preprod
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=preprod
       - NEXT_TELEMETRY_DISABLED=1
       # Auth environment variables
       - AUTH_SECRET=${AUTH_SECRET}
