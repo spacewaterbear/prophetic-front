@@ -12,6 +12,7 @@
 
 # testing
 /coverage
+.idea
 
 # next.js
 /.next/
@@ -39,3 +40,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+client_secret_684219263827-tkck8j0hm46ilihr7ungl1v1pmh30uk4.apps.googleusercontent.com.json
+temp.py
+DOCKER_README.md
