@@ -53,7 +53,7 @@ interface Conversation {
 // Reusable AI Avatar component to prevent duplicate image loads
 const AIAvatar = memo(() => (
     <div
-        className="w-8 h-8 sm:w-10 sm:h-10 mt-1 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center flex-shrink-0 overflow-hidden">
+        className="hidden sm:flex w-8 h-8 sm:w-10 sm:h-10 mt-1 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 items-center justify-center flex-shrink-0 overflow-hidden">
         <Image
             src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon.png"
             alt="Prophetic Orchestra"
@@ -131,7 +131,7 @@ const MessageItem = memo(({message, userName}: { message: Message; userName: str
             </div>
             {message.sender === "user" && (
                 <div
-                    className="w-8 h-8 sm:w-10 sm:h-10 mt-1 rounded-full bg-custom-brand flex items-center justify-center text-white font-medium flex-shrink-0 leading-none text-base sm:text-lg">
+                    className="hidden sm:flex w-8 h-8 sm:w-10 sm:h-10 mt-1 rounded-full bg-custom-brand items-center justify-center text-white font-medium flex-shrink-0 leading-none text-base sm:text-lg">
                     {userName}
                 </div>
             )}

@@ -1,5 +1,5 @@
-import {memo} from "react";
-import {TrendingUp, Users, LucideIcon} from "lucide-react";
+import { memo } from "react";
+import { TrendingUp, Users, LucideIcon } from "lucide-react";
 
 interface MetricBadgeProps {
     ratio: number; // Float between 0 and 1
@@ -21,7 +21,7 @@ interface MetricBadgeProps {
  * - Medium: Rich amber/bronze tones
  * - High: Emerald/jade green with subtle shimmer
  */
-export const MetricBadge = memo(({ratio, type, className = ""}: MetricBadgeProps) => {
+export const MetricBadge = memo(({ ratio, type, className = "" }: MetricBadgeProps) => {
     // Ensure ratio is clamped between 0 and 1
     const clampedRatio = Math.max(0, Math.min(1, ratio));
     const percentage = Math.round(clampedRatio * 100);
@@ -84,14 +84,13 @@ export const MetricBadge = memo(({ratio, type, className = ""}: MetricBadgeProps
                 shadow-lg ${style.glow}
                 transition-all duration-300 ease-out
                 hover:scale-105 hover:shadow-xl
-                w-full sm:w-auto sm:min-w-[280px]
                 ${className}
             `}
             role="status"
             aria-label={`${label}: ${clampedRatio.toFixed(2)} (${percentage}%) - ${style.label}`}
         >
             {/* Icon */}
-            <Icon className={`w-4 h-4 ${style.icon} transition-transform group-hover:scale-110`}/>
+            <Icon className={`w-4 h-4 ${style.icon} transition-transform group-hover:scale-110`} />
 
             {/* Content */}
             <div className="flex items-center gap-2">
@@ -125,7 +124,7 @@ export const MetricBadge = memo(({ratio, type, className = ""}: MetricBadgeProps
             </div>
 
             {/* Subtle shimmer effect on hover */}
-            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"/>
+            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         </div>
     );
 });
