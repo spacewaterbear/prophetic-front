@@ -112,6 +112,11 @@ export const AI_COMPANIES: Record<string, AICompany> = {
         id: "google/gemini-2.5-flash-lite",
         name: "Gemini 2.5 Flash Lite",
         description: "Most cheap gemini 2.5 model"
+      },
+      {
+        id: "google/gemini-3-pro-preview",
+        name: "Gemini 3 Pro Preview",
+        description: "Latest Google Model"
       }
     ]
   },
