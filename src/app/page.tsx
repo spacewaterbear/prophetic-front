@@ -1,21 +1,21 @@
 "use client";
 
-import {Button} from "@/components/ui/button";
-import {Card} from "@/components/ui/card";
-import {Check, Copy, LogOut, Menu, MessageSquare, Plus, Send, X} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Check, Copy, LogOut, Menu, MessageSquare, Plus, Send, X } from "lucide-react";
 import Image from "next/image";
-import {lazy, memo, Suspense, useEffect, useRef, useState} from "react";
-import {signOut, useSession} from "next-auth/react";
-import {useRouter} from "next/navigation";
-import {ModelSelector} from "@/components/ModelSelector";
-import {TypingIndicator} from "@/components/TypingIndicator";
-import {ThemeToggle} from "@/components/ThemeToggle";
-import {ShareButton} from "@/components/ShareButton";
-import {toast} from "sonner";
+import { lazy, memo, Suspense, useEffect, useRef, useState } from "react";
+import { signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { ModelSelector } from "@/components/ModelSelector";
+import { TypingIndicator } from "@/components/TypingIndicator";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { ShareButton } from "@/components/ShareButton";
+import { toast } from "sonner";
 
 // Lazy load Markdown component to reduce initial bundle size
-const Markdown = lazy(() => import("@/components/Markdown").then(mod => ({default: mod.Markdown})));
-const ArtistCard = lazy(() => import("@/components/ArtistCard").then(mod => ({default: mod.ArtistCard})));
+const Markdown = lazy(() => import("@/components/Markdown").then(mod => ({ default: mod.Markdown })));
+const ArtistCard = lazy(() => import("@/components/ArtistCard").then(mod => ({ default: mod.ArtistCard })));
 
 interface Artist {
     artist_name: string;
@@ -68,7 +68,7 @@ const AIAvatar = memo(() => (
 AIAvatar.displayName = "AIAvatar";
 
 // Memoized message component to prevent unnecessary re-renders
-const MessageItem = memo(({message, userName}: { message: Message; userName: string }) => {
+const MessageItem = memo(({ message, userName }: { message: Message; userName: string }) => {
     const [copied, setCopied] = useState(false);
 
     const handleCopy = async () => {
@@ -87,14 +87,13 @@ const MessageItem = memo(({message, userName}: { message: Message; userName: str
         <div
             className={`flex gap-2 sm:gap-4 items-start ${message.sender === "user" ? "justify-end" : "justify-start"}`}
         >
-            {message.sender === "ai" && <AIAvatar/>}
+            {message.sender === "ai" && <AIAvatar />}
             <div className="group relative">
                 <div
-                    className={`max-w-[90vw] sm:max-w-3xl lg:max-w-4xl pl-4 pr-12 py-4 sm:pl-8 sm:pr-14 sm:py-5 rounded-2xl ${
-                        message.sender === "user"
+                    className={`max-w-[90vw] sm:max-w-3xl lg:max-w-4xl pl-4 pr-12 py-4 sm:pl-8 sm:pr-14 sm:py-5 rounded-2xl ${message.sender === "user"
                             ? "bg-custom-brand text-white"
                             : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
-                    }`}
+                        }`}
                 >
                     {message.sender === "user" ? (
                         <p className="text-base leading-relaxed whitespace-pre-wrap">{message.content}</p>
@@ -111,7 +110,7 @@ const MessageItem = memo(({message, userName}: { message: Message; userName: str
                         </Suspense>
                     ) : (
                         <Suspense fallback={<div className="text-base text-gray-400">Loading...</div>}>
-                            <Markdown content={message.content} className="text-base"/>
+                            <Markdown content={message.content} className="text-base" />
                         </Suspense>
                     )}
                 </div>
@@ -119,14 +118,13 @@ const MessageItem = memo(({message, userName}: { message: Message; userName: str
                     variant="ghost"
                     size="icon"
                     onClick={handleCopy}
-                    className={`absolute bottom-2 right-2 h-7 w-7 sm:h-8 sm:w-8 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity ${
-                        message.sender === "user"
+                    className={`absolute bottom-2 right-2 h-7 w-7 sm:h-8 sm:w-8 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity ${message.sender === "user"
                             ? "text-white hover:bg-white/20"
                             : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
-                    }`}
+                        }`}
                     aria-label="Copy message"
                 >
-                    {copied ? <Check className="h-3 w-3 sm:h-4 sm:w-4"/> : <Copy className="h-3 w-3 sm:h-4 sm:w-4"/>}
+                    {copied ? <Check className="h-3 w-3 sm:h-4 sm:w-4" /> : <Copy className="h-3 w-3 sm:h-4 sm:w-4" />}
                 </Button>
             </div>
             {message.sender === "user" && (
@@ -150,7 +148,7 @@ const examplePrompts = [
 ];
 
 export default function Home() {
-    const {data: session, status} = useSession();
+    const { data: session, status } = useSession();
     const router = useRouter();
 
     const [messages, setMessages] = useState<Message[]>([]);
@@ -291,7 +289,7 @@ export default function Home() {
     };
 
     const handleSignOut = async () => {
-        await signOut({callbackUrl: "/login"});
+        await signOut({ callbackUrl: "/login" });
     };
 
     const handleModelChange = async (newModel: string) => {
@@ -302,8 +300,8 @@ export default function Home() {
             try {
                 await fetch(`/api/conversations/${currentConversationId}`, {
                     method: "PATCH",
-                    headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify({model: newModel}),
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ model: newModel }),
                 });
             } catch (error) {
                 console.error("Error updating conversation model:", error);
@@ -365,7 +363,7 @@ export default function Home() {
 
                 const response = await fetch("/api/conversations", {
                     method: "POST",
-                    headers: {"Content-Type": "application/json"},
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         title: title,
                         model: selectedModel
@@ -387,8 +385,8 @@ export default function Home() {
             // Send message with streaming
             const response = await fetch(`/api/conversations/${conversationId}/messages`, {
                 method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({content: userInput}),
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ content: userInput }),
             });
 
             if (!response.ok) {
@@ -405,7 +403,7 @@ export default function Home() {
             let streamContent = "";
 
             while (true) {
-                const {done, value} = await reader.read();
+                const { done, value } = await reader.read();
 
                 if (done) break;
 
@@ -444,6 +442,9 @@ export default function Home() {
                                 continue;
                             }
 
+                            // DISABLED: Don't display ArtistCard during streaming
+                            // Uncomment the code below to re-enable ArtistCard display during streaming
+                            /*
                             // Create a temporary message with the artist info for immediate display
                             const artistMessage: Message = {
                                 id: Date.now(), // Temporary ID until we reload from database
@@ -461,6 +462,8 @@ export default function Home() {
 
                             // Add the artist message to display immediately
                             setMessages(prev => [...prev, artistMessage]);
+                            */
+
                             setStreamingMessage("");
 
                             // No reload needed - message is already complete and displayable
@@ -524,7 +527,7 @@ export default function Home() {
                         onClick={createNewConversation}
                         disabled={isLoading}
                     >
-                        <Plus className="h-4 w-4 mr-2"/>
+                        <Plus className="h-4 w-4 mr-2" />
                         New Chat
                     </Button>
                 </div>
@@ -539,25 +542,22 @@ export default function Home() {
                                 <div key={conversation.id} className="relative group">
                                     <button
                                         onClick={() => loadConversation(conversation.id)}
-                                        className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all flex items-center gap-2 ${
-                                            currentConversationId === conversation.id
+                                        className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all flex items-center gap-2 ${currentConversationId === conversation.id
                                                 ? "bg-white/20 border border-white/30 shadow-sm"
                                                 : "hover:bg-white/10 border border-transparent"
-                                        }`}
+                                            }`}
                                     >
-                                        <MessageSquare className={`h-4 w-4 flex-shrink-0 ${
-                                            currentConversationId === conversation.id ? "text-blue-400" : ""
-                                        }`}/>
-                                        <span className={`truncate ${
-                                            currentConversationId === conversation.id ? "font-medium" : ""
-                                        }`}>{conversation.title}</span>
+                                        <MessageSquare className={`h-4 w-4 flex-shrink-0 ${currentConversationId === conversation.id ? "text-blue-400" : ""
+                                            }`} />
+                                        <span className={`truncate ${currentConversationId === conversation.id ? "font-medium" : ""
+                                            }`}>{conversation.title}</span>
                                     </button>
                                     <button
                                         onClick={(e) => deleteConversation(conversation.id, e)}
                                         className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-red-500/20 text-gray-400 hover:text-red-400"
                                         aria-label="Delete conversation"
                                     >
-                                        <X className="h-4 w-4"/>
+                                        <X className="h-4 w-4" />
                                     </button>
                                 </div>
                             ))
@@ -589,7 +589,7 @@ export default function Home() {
                         onClick={handleSignOut}
                         className="w-full text-left px-3 py-2 rounded-lg hover:bg-red-500/10 text-sm transition-colors flex items-center gap-2 text-red-400 hover:text-red-300"
                     >
-                        <LogOut className="h-4 w-4"/>
+                        <LogOut className="h-4 w-4" />
                         Sign Out
                     </button>
                 </div>
@@ -607,7 +607,7 @@ export default function Home() {
                             onClick={() => setSidebarOpen(!sidebarOpen)}
                             className="flex-shrink-0 h-9 w-9 sm:h-10 sm:w-10"
                         >
-                            <Menu className="h-5 w-5"/>
+                            <Menu className="h-5 w-5" />
                         </Button>
                         <div className="flex items-center gap-3 min-w-0">
                             <Image
@@ -625,7 +625,7 @@ export default function Home() {
                             onModelChange={handleModelChange}
                             disabled={isLoading}
                         />
-                        <ThemeToggle/>
+                        <ThemeToggle />
                         <ShareButton
                             conversationId={currentConversationId}
                             disabled={isLoading}
@@ -684,10 +684,10 @@ export default function Home() {
                         {/* Typing indicator - shown when waiting for AI response */}
                         {isLoading && !streamingMessage && (
                             <div className="flex gap-2 sm:gap-4 items-start justify-start">
-                                <AIAvatar/>
+                                <AIAvatar />
                                 <div
                                     className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-4 py-4 sm:px-8 sm:py-5 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-                                    <TypingIndicator/>
+                                    <TypingIndicator />
                                 </div>
                             </div>
                         )}
@@ -695,11 +695,11 @@ export default function Home() {
                         {/* Streaming message - shown while AI is responding */}
                         {streamingMessage && (
                             <div className="flex gap-2 sm:gap-4 items-start justify-start">
-                                <AIAvatar/>
+                                <AIAvatar />
                                 <div
                                     className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-4 py-4 sm:px-8 sm:py-5 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                                     <Suspense fallback={<div className="text-base text-gray-400">Loading...</div>}>
-                                        <Markdown content={streamingMessage} className="text-base"/>
+                                        <Markdown content={streamingMessage} className="text-base" />
                                     </Suspense>
                                     <TypingIndicator />
                                 </div>
@@ -716,20 +716,20 @@ export default function Home() {
                     <div className="max-w-3xl mx-auto">
                         <div className="flex gap-2 sm:gap-3 items-start">
                             <div className="flex-1 relative">
-                <textarea
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={(e) => {
-                        if (e.key === "Enter" && !e.shiftKey) {
-                            e.preventDefault();
-                            handleSend();
-                        }
-                    }}
-                    placeholder="Ask about luxury investments, market trends, or portfolio optimization..."
-                    className="w-full px-3 py-2 sm:px-4 sm:py-3 pr-12 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none placeholder:text-ellipsis placeholder:overflow-hidden placeholder:whitespace-nowrap placeholder:text-sm sm:placeholder:text-base placeholder:text-gray-400 dark:placeholder:text-gray-500 text-sm sm:text-base"
-                    rows={1}
-                    style={{minHeight: '48px', maxHeight: '200px'}}
-                />
+                                <textarea
+                                    value={input}
+                                    onChange={(e) => setInput(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter" && !e.shiftKey) {
+                                            e.preventDefault();
+                                            handleSend();
+                                        }
+                                    }}
+                                    placeholder="Ask about luxury investments, market trends, or portfolio optimization..."
+                                    className="w-full px-3 py-2 sm:px-4 sm:py-3 pr-12 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none placeholder:text-ellipsis placeholder:overflow-hidden placeholder:whitespace-nowrap placeholder:text-sm sm:placeholder:text-base placeholder:text-gray-400 dark:placeholder:text-gray-500 text-sm sm:text-base"
+                                    rows={1}
+                                    style={{ minHeight: '48px', maxHeight: '200px' }}
+                                />
                             </div>
                             <Button
                                 onClick={() => handleSend()}
@@ -737,7 +737,7 @@ export default function Home() {
                                 size="lg"
                                 className="bg-custom-brand hover:bg-custom-brand-hover text-white rounded-2xl h-[48px] w-[48px] sm:h-[52px] sm:w-auto sm:px-6 p-0 flex-shrink-0"
                             >
-                                <Send className="h-4 w-4 sm:h-5 sm:w-5"/>
+                                <Send className="h-4 w-4 sm:h-5 sm:w-5" />
                             </Button>
                         </div>
                         <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 sm:mt-3 text-center px-2">

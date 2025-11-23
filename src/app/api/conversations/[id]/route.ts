@@ -61,6 +61,15 @@ export async function GET(
 
       // Return message as-is if no structured data
       return msg;
+    }).map((msg: Record<string, unknown>) => {
+      // Transform artist_info messages to regular messages to prevent ArtistCard from displaying
+      // but preserve the text content
+      if (msg.type === 'artist_info') {
+        // Remove artist-specific fields but keep the content
+        const { type, artist, message, research_type, has_existing_data, text, streaming_text, ...rest } = msg;
+        return rest;
+      }
+      return msg;
     });
 
     return NextResponse.json({ conversation, messages });
