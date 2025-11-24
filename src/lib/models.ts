@@ -81,18 +81,18 @@ export const AI_COMPANIES: Record<string, AICompany> = {
       }
     ]
   },
-    grok:{
-      id: "grok",
-        name:"grok",
-        label:"grok",
-        models:[
-            {
-                id:"openai/gpt-oss-120b",
-                name: "OpenAI GPT OSS 120b",
-                description: "Openai Open Source model"
-            }
-        ]
-    },
+  grok: {
+    id: "grok",
+    name: "grok",
+    label: "grok",
+    models: [
+      {
+        id: "openai/gpt-oss-120b",
+        name: "OpenAI GPT OSS 120b",
+        description: "Openai Open Source model"
+      }
+    ]
+  },
   google: {
     id: "google",
     name: "Google",
@@ -143,6 +143,9 @@ export const AI_COMPANIES: Record<string, AICompany> = {
     ]
   }
 };
+
+// Default model for non-admin users
+export const DEFAULT_NON_ADMIN_MODEL = "anthropic/claude-sonnet-4.5";
 
 // Helper to get default model for a company
 export const getDefaultModel = (companyId: string): string => {

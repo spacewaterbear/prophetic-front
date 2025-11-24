@@ -8,6 +8,7 @@ import { lazy, memo, Suspense, useEffect, useRef, useState } from "react";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { ModelSelector } from "@/components/ModelSelector";
+import { DEFAULT_NON_ADMIN_MODEL } from "@/lib/models";
 import { TypingIndicator } from "@/components/TypingIndicator";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ShareButton } from "@/components/ShareButton";
@@ -91,8 +92,8 @@ const MessageItem = memo(({ message, userName }: { message: Message; userName: s
             <div className="group relative">
                 <div
                     className={`max-w-[90vw] sm:max-w-3xl lg:max-w-4xl pl-4 pr-12 py-4 sm:pl-8 sm:pr-14 sm:py-5 rounded-2xl ${message.sender === "user"
-                            ? "bg-custom-brand text-white"
-                            : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
+                        ? "bg-custom-brand text-white"
+                        : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
                         }`}
                 >
                     {message.sender === "user" ? (
@@ -119,8 +120,8 @@ const MessageItem = memo(({ message, userName }: { message: Message; userName: s
                     size="icon"
                     onClick={handleCopy}
                     className={`absolute bottom-2 right-2 h-7 w-7 sm:h-8 sm:w-8 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity ${message.sender === "user"
-                            ? "text-white hover:bg-white/20"
-                            : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        ? "text-white hover:bg-white/20"
+                        : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
                         }`}
                     aria-label="Copy message"
                 >
@@ -147,6 +148,11 @@ const examplePrompts = [
     "tell me what you know about Jean-Michel Basquiat"
 ];
 
+// Helper function to check if user is admin
+const isAdminUser = (session: { user?: { status?: string } } | null): boolean => {
+    return session?.user?.status === "admini";
+};
+
 export default function Home() {
     const { data: session, status } = useSession();
     const router = useRouter();
@@ -164,7 +170,7 @@ export default function Home() {
     const [currentConversationId, setCurrentConversationId] = useState<number | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [streamingMessage, setStreamingMessage] = useState("");
-    const [selectedModel, setSelectedModel] = useState<string>("anthropic/claude-3.7-sonnet");
+    const [selectedModel, setSelectedModel] = useState<string>(DEFAULT_NON_ADMIN_MODEL);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const messagesContainerRef = useRef<HTMLDivElement>(null);
     const [shouldAutoScroll, setShouldAutoScroll] = useState(true);
@@ -178,6 +184,13 @@ export default function Home() {
             router.push("/registration-pending");
         }
     }, [status, session, router]);
+
+    // Enforce default model for non-admin users
+    useEffect(() => {
+        if (session && !isAdminUser(session)) {
+            setSelectedModel(DEFAULT_NON_ADMIN_MODEL);
+        }
+    }, [session]);
 
     // Load conversations on mount
     useEffect(() => {
@@ -543,8 +556,8 @@ export default function Home() {
                                     <button
                                         onClick={() => loadConversation(conversation.id)}
                                         className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all flex items-center gap-2 ${currentConversationId === conversation.id
-                                                ? "bg-white/20 border border-white/30 shadow-sm"
-                                                : "hover:bg-white/10 border border-transparent"
+                                            ? "bg-white/20 border border-white/30 shadow-sm"
+                                            : "hover:bg-white/10 border border-transparent"
                                             }`}
                                     >
                                         <MessageSquare className={`h-4 w-4 flex-shrink-0 ${currentConversationId === conversation.id ? "text-blue-400" : ""
@@ -620,11 +633,13 @@ export default function Home() {
                         </div>
                     </div>
                     <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
-                        <ModelSelector
-                            selectedModel={selectedModel}
-                            onModelChange={handleModelChange}
-                            disabled={isLoading}
-                        />
+                        {isAdminUser(session) && (
+                            <ModelSelector
+                                selectedModel={selectedModel}
+                                onModelChange={handleModelChange}
+                                disabled={isLoading}
+                            />
+                        )}
                         <ThemeToggle />
                         <ShareButton
                             conversationId={currentConversationId}
