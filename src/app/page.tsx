@@ -17,6 +17,7 @@ import { toast } from "sonner";
 // Lazy load Markdown component to reduce initial bundle size
 const Markdown = lazy(() => import("@/components/Markdown").then(mod => ({ default: mod.Markdown })));
 const ArtistCard = lazy(() => import("@/components/ArtistCard").then(mod => ({ default: mod.ArtistCard })));
+const MarketplaceCard = lazy(() => import("@/components/MarketplaceCard").then(mod => ({ default: mod.MarketplaceCard })));
 
 interface Artist {
     artist_name: string;
@@ -26,6 +27,25 @@ interface Artist {
     total_artworks: number | null;
     ratio_sold?: number; // Float between 0 and 1
     social_score?: number; // Float between 0 and 1
+}
+
+interface MarketplaceData {
+    found: boolean;
+    marketplace: string;
+    artist_profile?: {
+        name: string;
+        url: string;
+        artwork_count?: number;
+    } | null;
+    artworks?: Array<{
+        title: string;
+        price: string;
+        url: string;
+        image_url?: string;
+    }>
+    total_artworks?: number;
+    error_message?: string | null;
+    search_metadata?: Record<string, unknown>;
 }
 
 interface Message {
@@ -41,6 +61,7 @@ interface Message {
     has_existing_data?: boolean;
     text?: string;
     streaming_text?: string;
+    marketplace_data?: MarketplaceData;
 }
 
 interface Conversation {
@@ -109,6 +130,10 @@ const MessageItem = memo(({ message, userName }: { message: Message; userName: s
                                 hasExistingData={message.has_existing_data}
                             />
                         </Suspense>
+                    ) : message.type === "marketplace_data" && message.marketplace_data ? (
+                        <Suspense fallback={<div className="text-base text-gray-400">Loading marketplace data...</div>}>
+                            <MarketplaceCard data={message.marketplace_data} />
+                        </Suspense>
                     ) : (
                         <Suspense fallback={<div className="text-base text-gray-400">Loading...</div>}>
                             <Markdown content={message.content} className="text-base" />
@@ -174,6 +199,7 @@ export default function Home() {
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const messagesContainerRef = useRef<HTMLDivElement>(null);
     const [shouldAutoScroll, setShouldAutoScroll] = useState(true);
+    const hasReceivedMarketplaceDataRef = useRef(false);
 
     // Redirect to login if not authenticated or to registration-pending if unauthorized
     useEffect(() => {
@@ -355,6 +381,7 @@ export default function Home() {
         setInput("");
         setIsLoading(true);
         setStreamingMessage("");
+        hasReceivedMarketplaceDataRef.current = false;
 
         // Add user message to UI immediately
         const tempUserMessage: Message = {
@@ -432,6 +459,7 @@ export default function Home() {
 
                     try {
                         const data = JSON.parse(cleanedLine);
+                        console.log("[FRONTEND DEBUG] Received event:", data.type, data);
 
                         if (data.type === "chunk") {
                             streamContent += data.content;
@@ -481,6 +509,33 @@ export default function Home() {
 
                             // No reload needed - message is already complete and displayable
                             // The backend has already saved it, and we have all the data we need
+                        } else if (data.type === "marketplace_data") {
+                            const marketplaceData = data.data;
+
+                            if (!marketplaceData) {
+                                console.error("[Marketplace Data] Missing nested data, skipping:", data);
+                                continue;
+                            }
+
+                            console.log("[DEBUG] Processing marketplace_data event", marketplaceData);
+                            hasReceivedMarketplaceDataRef.current = true;
+
+                            const marketplaceMessage: Message = {
+                                id: Date.now(),
+                                content: "",
+                                sender: "ai",
+                                created_at: new Date().toISOString(),
+                                type: "marketplace_data",
+                                marketplace_data: marketplaceData
+                            };
+
+                            console.log("[DEBUG] Adding marketplace message to state", marketplaceMessage);
+                            setMessages(prev => {
+                                const newMessages = [...prev, marketplaceMessage];
+                                console.log("[DEBUG] New messages state length:", newMessages.length);
+                                return newMessages;
+                            });
+                            setStreamingMessage("");
                         } else if (data.type === "metadata") {
                             // Handle metadata messages (e.g., intro text with skip_streaming flag)
                             if (data.skip_streaming && data.intro) {
@@ -500,9 +555,14 @@ export default function Home() {
 
                             // Reload conversation as backup to ensure consistency
                             // This happens in background and won't block UI update
-                            loadConversation(conversationId).catch(err =>
-                                console.error("Error reloading conversation:", err)
-                            );
+                            // Skip reload if we just received marketplace data to prevent overwriting it
+                            if (!hasReceivedMarketplaceDataRef.current) {
+                                loadConversation(conversationId).catch(err =>
+                                    console.error("Error reloading conversation:", err)
+                                );
+                            } else {
+                                console.log("[DEBUG] Skipping conversation reload to preserve marketplace data");
+                            }
                         } else if (data.type === "error") {
                             console.error("Stream error:", data.error);
                         }

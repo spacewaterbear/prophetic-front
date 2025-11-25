@@ -67,9 +67,39 @@ export async function GET(
       if (msg.type === 'artist_info') {
         // Remove artist-specific fields but keep the content
         const { type, artist, message, research_type, has_existing_data, text, streaming_text, ...rest } = msg;
+
+        // If there's marketplace_data in the metadata, preserve it as a separate message
+        if (msg.marketplace_data) {
+          // We'll handle this in a separate pass
+          return rest;
+        }
+
         return rest;
       }
       return msg;
+    }).flatMap((msg: Record<string, unknown>) => {
+      // If a message has marketplace_data in metadata, create a separate marketplace_data message
+      if (msg.metadata && typeof msg.metadata === 'object' && msg.metadata !== null) {
+        const metadata = msg.metadata as Record<string, unknown>;
+        if (metadata.marketplace_data) {
+          // Create the main message without marketplace_data
+          const mainMessage = { ...msg };
+
+          // Create a separate marketplace_data message
+          const marketplaceMessage: Record<string, unknown> = {
+            id: `${msg.id}_marketplace`, // Unique ID for the marketplace message
+            conversation_id: msg.conversation_id,
+            sender: 'ai',
+            created_at: msg.created_at,
+            content: '',
+            type: 'marketplace_data',
+            marketplace_data: metadata.marketplace_data
+          };
+
+          return [mainMessage, marketplaceMessage];
+        }
+      }
+      return [msg];
     });
 
     return NextResponse.json({ conversation, messages });

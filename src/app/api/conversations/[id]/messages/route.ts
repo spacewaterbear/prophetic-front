@@ -147,6 +147,8 @@ export async function POST(
           let buffer = ""; // Buffer for incomplete SSE events
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           let structuredData: any = null; // Capture artist_info or other structured responses
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          let marketplaceData: any = null; // Capture marketplace_data separately
 
           // Read and stream the response
           while (true) {
@@ -213,6 +215,21 @@ export async function POST(
                   if (parsed.skip_streaming && parsed.intro) {
                     fullResponse += parsed.intro + "\n\n";
                   }
+                  continue;
+                }
+
+                // Handle marketplace_data messages
+                if (parsed.type && parsed.type === "marketplace_data") {
+                  console.log("[Prophetic API] Received marketplace_data");
+                  // Capture marketplace data for database storage
+                  marketplaceData = parsed;
+
+                  // Forward marketplace_data to client immediately (SSE format)
+                  const marketplaceChunk = `data: ${JSON.stringify({
+                    type: "marketplace_data",
+                    data: parsed.data
+                  })}\n\n`;
+                  controller.enqueue(encoder.encode(marketplaceChunk));
                   continue;
                 }
 
@@ -317,6 +334,20 @@ export async function POST(
             // For artist_info, the intro text is what the user sees first
             // The structured data will be rendered as a card by the frontend
             console.log(`[Message Storage] Storing structured response type: ${structuredData.type}`);
+          }
+
+          // If we captured marketplace data, store it in metadata
+          if (marketplaceData && marketplaceData.type === "marketplace_data") {
+            // If we already have structured data (e.g., artist_info), create a combined metadata
+            if (messageMetadata) {
+              messageMetadata.marketplace_data = marketplaceData.data;
+            } else {
+              messageMetadata = {
+                type: "marketplace_data",
+                structured_data: marketplaceData
+              };
+            }
+            console.log(`[Message Storage] Storing marketplace_data`);
           }
 
           // Save AI message to database

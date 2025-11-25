@@ -12,6 +12,7 @@ const nextConfig = {
       "*.cloudfront.net",
       "nqwovhetvhmtjigonohq.supabase.co",
       "lh3.googleusercontent.com",
+      "images.saatchiart.com",
     ],
     remotePatterns: [
       {
