@@ -198,6 +198,7 @@ export default function Home() {
     const [selectedModel, setSelectedModel] = useState<string>(DEFAULT_NON_ADMIN_MODEL);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const messagesContainerRef = useRef<HTMLDivElement>(null);
+    const inputRef = useRef<HTMLTextAreaElement>(null);
     const [shouldAutoScroll, setShouldAutoScroll] = useState(true);
 
     // Redirect to login if not authenticated or to registration-pending if unauthorized
@@ -297,6 +298,9 @@ export default function Home() {
         setCurrentConversationId(null);
         setMessages([]);
         setStreamingMessage("");
+
+        // Focus the input field
+        inputRef.current?.focus();
     };
 
     const deleteConversation = async (conversationId: number, e: React.MouseEvent) => {
@@ -783,6 +787,7 @@ export default function Home() {
                         <div className="flex gap-2 sm:gap-3 items-start">
                             <div className="flex-1 relative">
                                 <textarea
+                                    ref={inputRef}
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
                                     onKeyDown={(e) => {
