@@ -350,6 +350,15 @@ export async function POST(
             console.log(`[Message Storage] Storing marketplace_data`);
           }
 
+          console.log("[Message Storage] About to save message:", {
+            conversation_id: conversationId,
+            contentLength: messageContent.length,
+            contentPreview: messageContent.substring(0, 100),
+            hasMetadata: !!messageMetadata,
+            metadataType: messageMetadata?.type,
+            hasMarketplaceData: !!messageMetadata?.marketplace_data
+          });
+
           // Save AI message to database
           const { data: aiMessage, error: aiMessageError } = await supabase
             .from("messages")
@@ -364,6 +373,12 @@ export async function POST(
 
           if (aiMessageError) {
             console.error("Error creating AI message:", aiMessageError);
+          } else {
+            console.log("[Message Storage] Message saved successfully:", {
+              id: aiMessage.id,
+              contentLength: aiMessage.content?.length,
+              hasMetadata: !!aiMessage.metadata
+            });
           }
 
           // Send completion message with type indicator if structured (SSE format)
