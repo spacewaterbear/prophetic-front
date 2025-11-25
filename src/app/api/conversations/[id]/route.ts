@@ -42,6 +42,19 @@ export async function GET(
       return NextResponse.json({ error: "Failed to fetch messages" }, { status: 500 });
     }
 
+    console.log("[GET Conversation] Raw messages from DB:", rawMessages?.length);
+    rawMessages?.forEach((msg, idx) => {
+      const metadata = msg.metadata as Record<string, unknown> | null | undefined;
+      console.log(`[GET Conversation] Raw message ${idx}:`, {
+        id: msg.id,
+        sender: msg.sender,
+        hasContent: !!msg.content,
+        contentLength: (msg.content as string | undefined)?.length,
+        hasMetadata: !!msg.metadata,
+        metadataType: metadata?.type
+      });
+    });
+
     // Transform messages to include structured data from metadata
     const messages = (rawMessages || []).map((msg: Record<string, unknown>) => {
       // If message has metadata with structured_data, expand it into the message object
@@ -95,6 +108,18 @@ export async function GET(
         }
       }
       return [msg];
+    });
+
+    console.log("[GET Conversation] Returning", messages.length, "messages");
+    messages.forEach((msg, idx) => {
+      console.log(`[GET Conversation] Message ${idx}:`, {
+        id: msg.id,
+        type: msg.type,
+        sender: msg.sender,
+        hasContent: !!msg.content,
+        contentLength: (msg.content as string | undefined)?.length,
+        hasMarketplaceData: !!msg.marketplace_data
+      });
     });
 
     return NextResponse.json({ conversation, messages });
