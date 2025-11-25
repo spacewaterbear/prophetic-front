@@ -467,8 +467,10 @@ export default function Home() {
                             // Check if this is a "done" message (has userMessage/aiMessage) or actual artist data
                             if (data.userMessage || data.aiMessage) {
                                 // This is a completion message, treat it as "done"
+                                console.log("[FRONTEND DEBUG] artist_info done event detected, calling loadConversation");
                                 await loadConversation(conversationId);
                                 setStreamingMessage("");
+                                console.log("[FRONTEND DEBUG] loadConversation completed");
                                 continue;
                             }
 
@@ -532,7 +534,7 @@ export default function Home() {
                                 console.log("[DEBUG] New messages state length:", newMessages.length);
                                 return newMessages;
                             });
-                            setStreamingMessage("");
+                            // Don't clear streamingMessage here - let it continue displaying until done event
                         } else if (data.type === "metadata") {
                             // Handle metadata messages (e.g., intro text with skip_streaming flag)
                             if (data.skip_streaming && data.intro) {
@@ -542,6 +544,7 @@ export default function Home() {
                             }
                             // If skip_streaming is false, the intro will be streamed as chunks
                         } else if (data.type === "done") {
+                            console.log("[FRONTEND DEBUG] done event detected, calling loadConversation");
                             // Clear streaming message
                             setStreamingMessage("");
 
@@ -550,6 +553,7 @@ export default function Home() {
                             loadConversation(conversationId).catch(err =>
                                 console.error("Error reloading conversation:", err)
                             );
+                            console.log("[FRONTEND DEBUG] loadConversation called");
                         } else if (data.type === "error") {
                             console.error("Stream error:", data.error);
                         }
