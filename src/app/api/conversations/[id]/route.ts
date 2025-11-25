@@ -65,15 +65,10 @@ export async function GET(
       // Transform artist_info messages to regular messages to prevent ArtistCard from displaying
       // but preserve the text content
       if (msg.type === 'artist_info') {
-        // Remove artist-specific fields but keep the content
+        // Remove artist-specific fields but KEEP the content field
         const { type, artist, message, research_type, has_existing_data, text, streaming_text, ...rest } = msg;
 
-        // If there's marketplace_data in the metadata, preserve it as a separate message
-        if (msg.marketplace_data) {
-          // We'll handle this in a separate pass
-          return rest;
-        }
-
+        // Return the message without artist_info type, but with content preserved
         return rest;
       }
       return msg;

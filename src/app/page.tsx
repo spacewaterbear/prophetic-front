@@ -199,7 +199,6 @@ export default function Home() {
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const messagesContainerRef = useRef<HTMLDivElement>(null);
     const [shouldAutoScroll, setShouldAutoScroll] = useState(true);
-    const hasReceivedMarketplaceDataRef = useRef(false);
 
     // Redirect to login if not authenticated or to registration-pending if unauthorized
     useEffect(() => {
@@ -381,7 +380,6 @@ export default function Home() {
         setInput("");
         setIsLoading(true);
         setStreamingMessage("");
-        hasReceivedMarketplaceDataRef.current = false;
 
         // Add user message to UI immediately
         const tempUserMessage: Message = {
@@ -518,7 +516,6 @@ export default function Home() {
                             }
 
                             console.log("[DEBUG] Processing marketplace_data event", marketplaceData);
-                            hasReceivedMarketplaceDataRef.current = true;
 
                             const marketplaceMessage: Message = {
                                 id: Date.now(),
@@ -545,24 +542,14 @@ export default function Home() {
                             }
                             // If skip_streaming is false, the intro will be streamed as chunks
                         } else if (data.type === "done") {
-                            // Optimistically add the AI message if provided in the event
-                            if (data.aiMessage) {
-                                setMessages(prev => [...prev, data.aiMessage]);
-                            }
-
                             // Clear streaming message
                             setStreamingMessage("");
 
-                            // Reload conversation as backup to ensure consistency
-                            // This happens in background and won't block UI update
-                            // Skip reload if we just received marketplace data to prevent overwriting it
-                            if (!hasReceivedMarketplaceDataRef.current) {
-                                loadConversation(conversationId).catch(err =>
-                                    console.error("Error reloading conversation:", err)
-                                );
-                            } else {
-                                console.log("[DEBUG] Skipping conversation reload to preserve marketplace data");
-                            }
+                            // Always reload conversation to get the complete state from database
+                            // This ensures both text and marketplace data are displayed correctly
+                            loadConversation(conversationId).catch(err =>
+                                console.error("Error reloading conversation:", err)
+                            );
                         } else if (data.type === "error") {
                             console.error("Stream error:", data.error);
                         }
