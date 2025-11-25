@@ -63,11 +63,14 @@ export async function GET(
         if (metadata.structured_data && typeof metadata.structured_data === 'object') {
           const structuredData = metadata.structured_data as Record<string, unknown>;
 
-          // Merge structured data fields into the message object
+          // Preserve the original content field (the actual text response)
+          // and merge structured data fields into the message object
+          const originalContent = msg.content;
           return {
             ...msg,
             type: metadata.type,
             ...structuredData,
+            content: originalContent, // Ensure original content is not overwritten
           };
         }
       }
