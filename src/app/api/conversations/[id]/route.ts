@@ -88,29 +88,19 @@ export async function GET(
         return rest;
       }
       return msg;
-    }).flatMap((msg: Record<string, unknown>) => {
-      // If a message has marketplace_data in metadata, create a separate marketplace_data message
+    }).map((msg: Record<string, unknown>) => {
+      // If a message has marketplace_data in metadata, include it in the message object
       if (msg.metadata && typeof msg.metadata === 'object' && msg.metadata !== null) {
         const metadata = msg.metadata as Record<string, unknown>;
         if (metadata.marketplace_data) {
-          // Create the main message without marketplace_data
-          const mainMessage = { ...msg };
-
-          // Create a separate marketplace_data message
-          const marketplaceMessage: Record<string, unknown> = {
-            id: `${msg.id}_marketplace`, // Unique ID for the marketplace message
-            conversation_id: msg.conversation_id,
-            sender: 'ai',
-            created_at: msg.created_at,
-            content: '',
-            type: 'marketplace_data',
+          // Include marketplace_data directly in the message
+          return {
+            ...msg,
             marketplace_data: metadata.marketplace_data
           };
-
-          return [mainMessage, marketplaceMessage];
         }
       }
-      return [msg];
+      return msg;
     });
 
     console.log("[GET Conversation] Returning", messages.length, "messages");

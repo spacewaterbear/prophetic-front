@@ -130,14 +130,23 @@ const MessageItem = memo(({ message, userName }: { message: Message; userName: s
                                 hasExistingData={message.has_existing_data}
                             />
                         </Suspense>
-                    ) : message.type === "marketplace_data" && message.marketplace_data ? (
-                        <Suspense fallback={<div className="text-base text-gray-400">Loading marketplace data...</div>}>
-                            <MarketplaceCard data={message.marketplace_data} />
-                        </Suspense>
                     ) : (
-                        <Suspense fallback={<div className="text-base text-gray-400">Loading...</div>}>
-                            <Markdown content={message.content} className="text-base" />
-                        </Suspense>
+                        <>
+                            {/* Display text content if present */}
+                            {message.content && (
+                                <Suspense fallback={<div className="text-base text-gray-400">Loading...</div>}>
+                                    <Markdown content={message.content} className="text-base" />
+                                </Suspense>
+                            )}
+                            {/* Display marketplace data if present */}
+                            {message.marketplace_data && (
+                                <div className={message.content ? "mt-4" : ""}>
+                                    <Suspense fallback={<div className="text-base text-gray-400">Loading marketplace data...</div>}>
+                                        <MarketplaceCard data={message.marketplace_data} />
+                                    </Suspense>
+                                </div>
+                            )}
+                        </>
                     )}
                 </div>
                 <Button

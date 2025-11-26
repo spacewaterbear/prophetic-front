@@ -157,7 +157,7 @@ export const MarketplaceCard = memo(({ data }: MarketplaceCardProps) => {
             {/* Artworks Grid */}
             {artworks.length > 0 && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {artworks.map((artwork, index) => (
+                    {artworks.slice(0, 6).map((artwork, index) => (
                         <a
                             key={index}
                             href={artwork.url}
