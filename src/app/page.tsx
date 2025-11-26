@@ -747,8 +747,9 @@ export default function Home() {
                                         className="w-full h-full object-cover"
                                     />
                                 </div>
-                                <h2 className="text-2xl sm:text-4xl font-light mb-3 sm:mb-4 dark:text-white px-4">Secure
-                                    the advantage in nine luxury segments</h2>
+                                <h2 className="text-2xl sm:text-4xl font-light mb-3 sm:mb-4 dark:text-white px-4">
+                                    Bonjour, {session?.user?.name?.split(' ')[0]}
+                                </h2>
                                 <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 px-4">Powered by
                                     Score Orchestra™ and TTT Token technology</p>
                             </div>

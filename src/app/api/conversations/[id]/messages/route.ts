@@ -80,20 +80,22 @@ export async function POST(
         .eq("id", conversationId);
     }
 
-    // Fetch last 5 user messages for conversation history (excluding the current message)
-    const { data: previousUserMessages } = await supabase
+    // Fetch last 5 messages (user + AI) for conversation history (excluding the current message)
+    const { data: previousMessages } = await supabase
       .from("messages")
-      .select("content")
+      .select("content, sender, created_at")
       .eq("conversation_id", conversationId)
-      .eq("sender", "user")
       .neq("id", userMessage.id)
       .order("created_at", { ascending: false })
       .limit(5);
 
-    // Extract content strings and reverse to maintain chronological order
-    const conversationHistory = (previousUserMessages || [])
+    // Transform to structured format with role, in chronological order
+    const conversationHistory = (previousMessages || [])
       .reverse()
-      .map(msg => msg.content);
+      .map(msg => ({
+        role: msg.sender === "user" ? "user" : "assistant",
+        content: msg.content
+      }));
 
     // Create a streaming response with Prophetic API
     const encoder = new TextEncoder();
