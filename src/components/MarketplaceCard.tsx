@@ -185,7 +185,7 @@ export const MarketplaceCard = memo(({ data }: MarketplaceCardProps) => {
 
                                 {/* Artwork Info */}
                                 <div className="p-4">
-                                    <h4 className="font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                    <h4 className="font-semibold text-gray-900 dark:text-white mb-2 line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                                         {artwork.title}
                                     </h4>
                                     <p className="text-lg font-bold text-emerald-700 dark:text-emerald-400">
