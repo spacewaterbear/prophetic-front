@@ -62,6 +62,7 @@ interface Message {
     text?: string;
     streaming_text?: string;
     marketplace_data?: MarketplaceData;
+    marketplace_position?: "before" | "after"; // Position of marketplace data relative to text
 }
 
 interface Conversation {
@@ -132,14 +133,24 @@ const MessageItem = memo(({ message, userName }: { message: Message; userName: s
                         </Suspense>
                     ) : (
                         <>
+                            {/* Display marketplace data BEFORE text if position is 'before' or not specified (default) */}
+                            {message.marketplace_data && (!message.marketplace_position || message.marketplace_position === "before") && (
+                                <div className={message.content ? "mb-4" : ""}>
+                                    <Suspense fallback={<div className="text-base text-gray-400">Loading marketplace data...</div>}>
+                                        <MarketplaceCard data={message.marketplace_data} />
+                                    </Suspense>
+                                </div>
+                            )}
+
                             {/* Display text content if present */}
                             {message.content && (
                                 <Suspense fallback={<div className="text-base text-gray-400">Loading...</div>}>
                                     <Markdown content={message.content} className="text-base" />
                                 </Suspense>
                             )}
-                            {/* Display marketplace data if present */}
-                            {message.marketplace_data && (
+
+                            {/* Display marketplace data AFTER text if position is 'after' */}
+                            {message.marketplace_data && message.marketplace_position === "after" && (
                                 <div className={message.content ? "mt-4" : ""}>
                                     <Suspense fallback={<div className="text-base text-gray-400">Loading marketplace data...</div>}>
                                         <MarketplaceCard data={message.marketplace_data} />
@@ -204,6 +215,7 @@ export default function Home() {
     const [currentConversationId, setCurrentConversationId] = useState<number | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [streamingMessage, setStreamingMessage] = useState("");
+    const [streamingMarketplaceData, setStreamingMarketplaceData] = useState<MarketplaceData | null>(null);
     const [selectedModel, setSelectedModel] = useState<string>(DEFAULT_NON_ADMIN_MODEL);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -268,7 +280,7 @@ export default function Home() {
         if (shouldAutoScroll) {
             scrollToBottom();
         }
-    }, [messages, streamingMessage, isLoading, shouldAutoScroll]);
+    }, [messages, streamingMessage, streamingMarketplaceData, isLoading, shouldAutoScroll]);
 
     const loadConversations = async () => {
         try {
@@ -289,6 +301,17 @@ export default function Home() {
             const response = await fetch(`/api/conversations/${conversationId}`);
             if (response.ok) {
                 const data = await response.json();
+                console.log("[LOAD CONVERSATION] Received data:", {
+                    messageCount: data.messages?.length,
+                    messages: data.messages?.map((m: Message) => ({
+                        id: m.id,
+                        sender: m.sender,
+                        hasContent: !!m.content,
+                        hasMarketplaceData: !!m.marketplace_data,
+                        marketplace_position: m.marketplace_position,
+                        type: m.type
+                    }))
+                });
                 setMessages(data.messages || []);
                 setCurrentConversationId(conversationId);
                 // Update selected model from conversation
@@ -307,6 +330,7 @@ export default function Home() {
         setCurrentConversationId(null);
         setMessages([]);
         setStreamingMessage("");
+        setStreamingMarketplaceData(null);
 
         // Focus the input field
         inputRef.current?.focus();
@@ -330,6 +354,7 @@ export default function Home() {
                     setCurrentConversationId(null);
                     setMessages([]);
                     setStreamingMessage("");
+                    setStreamingMarketplaceData(null);
                 }
             } else {
                 console.error("Failed to delete conversation:", response.status);
@@ -393,6 +418,7 @@ export default function Home() {
         setInput("");
         setIsLoading(true);
         setStreamingMessage("");
+        setStreamingMarketplaceData(null);
 
         // Add user message to UI immediately
         const tempUserMessage: Message = {
@@ -483,6 +509,7 @@ export default function Home() {
                                 console.log("[FRONTEND DEBUG] artist_info done event detected, calling loadConversation");
                                 await loadConversation(conversationId);
                                 setStreamingMessage("");
+                                setStreamingMarketplaceData(null);
                                 console.log("[FRONTEND DEBUG] loadConversation completed");
                                 continue;
                             }
@@ -518,7 +545,8 @@ export default function Home() {
                             setMessages(prev => [...prev, artistMessage]);
                             */
 
-                            setStreamingMessage("");
+                            // setStreamingMessage("");
+                            // setStreamingMarketplaceData(null);
 
                             // No reload needed - message is already complete and displayable
                             // The backend has already saved it, and we have all the data we need
@@ -532,22 +560,9 @@ export default function Home() {
 
                             console.log("[DEBUG] Processing marketplace_data event", marketplaceData);
 
-                            const marketplaceMessage: Message = {
-                                id: Date.now(),
-                                content: "",
-                                sender: "ai",
-                                created_at: new Date().toISOString(),
-                                type: "marketplace_data",
-                                marketplace_data: marketplaceData
-                            };
+                            // Set streaming marketplace data to display it immediately
+                            setStreamingMarketplaceData(marketplaceData);
 
-                            console.log("[DEBUG] Adding marketplace message to state", marketplaceMessage);
-                            setMessages(prev => {
-                                const newMessages = [...prev, marketplaceMessage];
-                                console.log("[DEBUG] New messages state length:", newMessages.length);
-                                return newMessages;
-                            });
-                            // Don't clear streamingMessage here - let it continue displaying until done event
                         } else if (data.type === "metadata") {
                             // Handle metadata messages (e.g., intro text with skip_streaming flag)
                             if (data.skip_streaming && data.intro) {
@@ -558,8 +573,9 @@ export default function Home() {
                             // If skip_streaming is false, the intro will be streamed as chunks
                         } else if (data.type === "done") {
                             console.log("[FRONTEND DEBUG] done event detected, calling loadConversation");
-                            // Clear streaming message
+                            // Clear streaming message and data
                             setStreamingMessage("");
+                            setStreamingMarketplaceData(null);
 
                             // Always reload conversation to get the complete state from database
                             // This ensures both text and marketplace data are displayed correctly
@@ -718,7 +734,7 @@ export default function Home() {
                     onScroll={handleScroll}
                     className="flex-1 overflow-y-auto px-3 sm:px-6 py-4 sm:py-8"
                 >
-                    {messages.length === 0 && !streamingMessage && (
+                    {messages.length === 0 && !streamingMessage && !streamingMarketplaceData && (
                         <div className="max-w-4xl mx-auto mb-8 sm:mb-12">
                             <div className="text-center mb-8 sm:mb-12">
                                 <div
@@ -761,7 +777,7 @@ export default function Home() {
                         ))}
 
                         {/* Typing indicator - shown when waiting for AI response */}
-                        {isLoading && !streamingMessage && (
+                        {isLoading && !streamingMessage && !streamingMarketplaceData && (
                             <div className="flex gap-2 sm:gap-4 items-start justify-start">
                                 <AIAvatar />
                                 <div
@@ -772,14 +788,26 @@ export default function Home() {
                         )}
 
                         {/* Streaming message - shown while AI is responding */}
-                        {streamingMessage && (
+                        {(streamingMessage || streamingMarketplaceData) && (
                             <div className="flex gap-2 sm:gap-4 items-start justify-start">
                                 <AIAvatar />
                                 <div
                                     className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-4 py-4 sm:px-8 sm:py-5 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-                                    <Suspense fallback={<div className="text-base text-gray-400">Loading...</div>}>
-                                        <Markdown content={streamingMessage} className="text-base" />
-                                    </Suspense>
+
+                                    {/* Display marketplace data BEFORE text (default) */}
+                                    {streamingMarketplaceData && (
+                                        <div className={streamingMessage ? "mb-4" : ""}>
+                                            <Suspense fallback={<div className="text-base text-gray-400">Loading marketplace data...</div>}>
+                                                <MarketplaceCard data={streamingMarketplaceData} />
+                                            </Suspense>
+                                        </div>
+                                    )}
+
+                                    {streamingMessage && (
+                                        <Suspense fallback={<div className="text-base text-gray-400">Loading...</div>}>
+                                            <Markdown content={streamingMessage} className="text-base" />
+                                        </Suspense>
+                                    )}
                                     <TypingIndicator />
                                 </div>
                             </div>

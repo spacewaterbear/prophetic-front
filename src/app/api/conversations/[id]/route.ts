@@ -93,10 +93,11 @@ export async function GET(
       if (msg.metadata && typeof msg.metadata === 'object' && msg.metadata !== null) {
         const metadata = msg.metadata as Record<string, unknown>;
         if (metadata.marketplace_data) {
-          // Include marketplace_data directly in the message
+          // Include marketplace_data and marketplace_position directly in the message
           return {
             ...msg,
-            marketplace_data: metadata.marketplace_data
+            marketplace_data: metadata.marketplace_data,
+            marketplace_position: metadata.marketplace_position || "before" // Default to 'before' if not specified
           };
         }
       }
@@ -105,13 +106,17 @@ export async function GET(
 
     console.log("[GET Conversation] Returning", messages.length, "messages");
     messages.forEach((msg, idx) => {
+      const metadata = msg.metadata as Record<string, unknown> | null | undefined;
       console.log(`[GET Conversation] Message ${idx}:`, {
         id: msg.id,
         type: msg.type,
         sender: msg.sender,
         hasContent: !!msg.content,
         contentLength: (msg.content as string | undefined)?.length,
-        hasMarketplaceData: !!msg.marketplace_data
+        hasMarketplaceData: !!msg.marketplace_data,
+        hasMetadata: !!msg.metadata,
+        metadataHasMarketplaceData: !!(metadata?.marketplace_data),
+        marketplace_position: msg.marketplace_position
       });
     });
 

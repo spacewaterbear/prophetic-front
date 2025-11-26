@@ -341,13 +341,17 @@ export async function POST(
             // If we already have structured data (e.g., artist_info), create a combined metadata
             if (messageMetadata) {
               messageMetadata.marketplace_data = marketplaceData.data;
+              // Store marketplace_position if provided, default to "before"
+              messageMetadata.marketplace_position = marketplaceData.marketplace_position || marketplaceData.data?.marketplace_position || "before";
             } else {
               messageMetadata = {
                 type: "marketplace_data",
-                structured_data: marketplaceData
+                structured_data: marketplaceData,
+                marketplace_data: marketplaceData.data,
+                marketplace_position: marketplaceData.marketplace_position || marketplaceData.data?.marketplace_position || "before"
               };
             }
-            console.log(`[Message Storage] Storing marketplace_data`);
+            console.log(`[Message Storage] Storing marketplace_data with position: ${messageMetadata.marketplace_position}`);
           }
 
           console.log("[Message Storage] About to save message:", {
@@ -374,11 +378,25 @@ export async function POST(
           if (aiMessageError) {
             console.error("Error creating AI message:", aiMessageError);
           } else {
+            const savedMetadata = aiMessage.metadata as Record<string, unknown> | null;
             console.log("[Message Storage] Message saved successfully:", {
               id: aiMessage.id,
               contentLength: aiMessage.content?.length,
-              hasMetadata: !!aiMessage.metadata
+              hasMetadata: !!aiMessage.metadata,
+              metadataType: savedMetadata?.type,
+              hasMarketplaceData: !!(savedMetadata?.marketplace_data),
+              marketplace_position: savedMetadata?.marketplace_position,
+              metadataKeys: savedMetadata ? Object.keys(savedMetadata) : []
             });
+
+            // Log the full marketplace_data if present for debugging
+            if (savedMetadata?.marketplace_data) {
+              console.log("[Message Storage] Marketplace data details:", {
+                found: (savedMetadata.marketplace_data as any)?.found,
+                marketplace: (savedMetadata.marketplace_data as any)?.marketplace,
+                artworkCount: (savedMetadata.marketplace_data as any)?.artworks?.length
+              });
+            }
           }
 
           // Send completion message with type indicator if structured (SSE format)
