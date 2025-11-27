@@ -93,12 +93,22 @@ export async function GET(
       if (msg.metadata && typeof msg.metadata === 'object' && msg.metadata !== null) {
         const metadata = msg.metadata as Record<string, unknown>;
         if (metadata.marketplace_data) {
-          // Include marketplace_data and marketplace_position directly in the message
-          return {
-            ...msg,
-            marketplace_data: metadata.marketplace_data,
-            marketplace_position: metadata.marketplace_position || "before" // Default to 'before' if not specified
-          };
+          try {
+            console.log("[GET Conversation] Processing marketplace_data for message:", msg.id);
+            console.log("[GET Conversation] marketplace_data type:", typeof metadata.marketplace_data);
+            console.log("[GET Conversation] marketplace_data keys:", Object.keys(metadata.marketplace_data as object));
+
+            // Include marketplace_data and marketplace_position directly in the message
+            return {
+              ...msg,
+              marketplace_data: metadata.marketplace_data,
+              marketplace_position: metadata.marketplace_position || "before" // Default to 'before' if not specified
+            };
+          } catch (error) {
+            console.error("[GET Conversation] Error processing marketplace_data for message:", msg.id, error);
+            // Return message without marketplace_data if there's an error
+            return msg;
+          }
         }
       }
       return msg;

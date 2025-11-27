@@ -393,10 +393,12 @@ export async function POST(
 
             // Log the full marketplace_data if present for debugging
             if (savedMetadata?.marketplace_data) {
+              const marketplaceData = savedMetadata.marketplace_data as Record<string, unknown>;
+              const artworks = marketplaceData.artworks as Array<unknown> | undefined;
               console.log("[Message Storage] Marketplace data details:", {
-                found: (savedMetadata.marketplace_data as any)?.found,
-                marketplace: (savedMetadata.marketplace_data as any)?.marketplace,
-                artworkCount: (savedMetadata.marketplace_data as any)?.artworks?.length
+                found: marketplaceData.found,
+                marketplace: marketplaceData.marketplace,
+                artworkCount: artworks?.length
               });
             }
           }
