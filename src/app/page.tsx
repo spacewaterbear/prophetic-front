@@ -809,7 +809,6 @@ export default function Home() {
                                             <Markdown content={streamingMessage} className="text-base" />
                                         </Suspense>
                                     )}
-                                    <TypingIndicator />
                                 </div>
                             </div>
                         )}
