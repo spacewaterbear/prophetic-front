@@ -8,7 +8,7 @@ This guide provides examples for common operations with the enhanced chat schema
 - [Auto-generating Conversation Titles](#auto-generating-conversation-titles)
 - [Sharing Conversations](#sharing-conversations)
 - [Tracking Message Usage](#tracking-message-usage)
-- [Querying Conversations](#querying-conversations)
+- [Querying Conversations](#querying-conversations)sa   
 
 ## Creating Conversations
 
