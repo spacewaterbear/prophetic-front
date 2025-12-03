@@ -542,12 +542,10 @@ export default function Home() {
                                     await loadConversation(conversationId);
                                     console.log("[FRONTEND DEBUG] loadConversation completed successfully");
 
-                                    // Use setTimeout to defer clearing streaming state until after React renders
-                                    setTimeout(() => {
-                                        setStreamingMessage("");
-                                        setStreamingMarketplaceData(null);
-                                        console.log("[FRONTEND DEBUG] Streaming state cleared");
-                                    }, 100);
+                                    // Clear streaming state immediately (React batches updates)
+                                    setStreamingMessage("");
+                                    setStreamingMarketplaceData(null);
+                                    console.log("[FRONTEND DEBUG] Streaming state cleared immediately");
                                 } catch (err) {
                                     console.error("Error reloading conversation:", err);
                                     // Clear streaming state even on error to prevent stuck UI
@@ -623,14 +621,12 @@ export default function Home() {
                                 await loadConversation(conversationId);
                                 console.log("[FRONTEND DEBUG] loadConversation completed successfully");
 
-                                // Use setTimeout to defer clearing streaming state until after React renders
-                                // This prevents a visual gap where marketplace data disappears before
-                                // the reloaded messages are displayed
-                                setTimeout(() => {
-                                    setStreamingMessage("");
-                                    setStreamingMarketplaceData(null);
-                                    console.log("[FRONTEND DEBUG] Streaming state cleared");
-                                }, 100); // Small delay to ensure messages are rendered
+                                // Clear streaming state immediately
+                                // React batches state updates, so setMessages() from loadConversation
+                                // and these clear calls will render in the same cycle, preventing duplicate bubbles
+                                setStreamingMessage("");
+                                setStreamingMarketplaceData(null);
+                                console.log("[FRONTEND DEBUG] Streaming state cleared immediately");
                             } catch (err) {
                                 console.error("Error reloading conversation:", err);
                                 // Clear streaming state even on error to prevent stuck UI
