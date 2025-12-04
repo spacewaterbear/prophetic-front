@@ -171,7 +171,7 @@ export const MarketplaceCard = memo(({ data }: MarketplaceCardProps) => {
                                     <div className="relative w-full aspect-square bg-gray-100 dark:bg-gray-900 overflow-hidden">
                                         <Image
                                             src={artwork.image_url}
-                                            alt={artwork.title}
+                                            alt={artwork.title || "Artwork"}
                                             fill
                                             className="object-cover group-hover:scale-110 transition-transform duration-500"
                                             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"

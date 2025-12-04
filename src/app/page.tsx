@@ -94,6 +94,17 @@ AIAvatar.displayName = "AIAvatar";
 const MessageItem = memo(({ message, userName }: { message: Message; userName: string }) => {
     const [copied, setCopied] = useState(false);
 
+    // Log marketplace data for debugging
+    if (message.marketplace_data) {
+        console.log("[MessageItem RENDER] Rendering message with marketplace_data:", {
+            id: message.id,
+            sender: message.sender,
+            marketplace: message.marketplace_data.marketplace,
+            found: message.marketplace_data.found,
+            position: message.marketplace_position
+        });
+    }
+
     const handleCopy = async () => {
         try {
             await navigator.clipboard.writeText(message.content);
@@ -309,10 +320,29 @@ export default function Home() {
                         hasContent: !!m.content,
                         hasMarketplaceData: !!m.marketplace_data,
                         marketplace_position: m.marketplace_position,
-                        type: m.type
+                        type: m.type,
+                        // Log the actual marketplace_data for debugging
+                        marketplace_data_preview: m.marketplace_data ? {
+                            found: m.marketplace_data.found,
+                            marketplace: m.marketplace_data.marketplace
+                        } : null
                     }))
                 });
+
+                // Log each message's marketplace_data before setting state
+                data.messages?.forEach((msg: Message, idx: number) => {
+                    if (msg.marketplace_data) {
+                        console.log(`[LOAD CONVERSATION] Message ${idx} has marketplace_data:`, {
+                            id: msg.id,
+                            marketplace: msg.marketplace_data.marketplace,
+                            found: msg.marketplace_data.found,
+                            artworkCount: msg.marketplace_data.artworks?.length
+                        });
+                    }
+                });
+
                 setMessages(data.messages || []);
+                console.log("[LOAD CONVERSATION] Messages state updated");
                 setCurrentConversationId(conversationId);
                 // Update selected model from conversation
                 if (data.conversation?.model) {
@@ -507,10 +537,21 @@ export default function Home() {
                             if (data.userMessage || data.aiMessage) {
                                 // This is a completion message, treat it as "done"
                                 console.log("[FRONTEND DEBUG] artist_info done event detected, calling loadConversation");
-                                await loadConversation(conversationId);
-                                setStreamingMessage("");
-                                setStreamingMarketplaceData(null);
-                                console.log("[FRONTEND DEBUG] loadConversation completed");
+
+                                try {
+                                    await loadConversation(conversationId);
+                                    console.log("[FRONTEND DEBUG] loadConversation completed successfully");
+
+                                    // Clear streaming state immediately (React batches updates)
+                                    setStreamingMessage("");
+                                    setStreamingMarketplaceData(null);
+                                    console.log("[FRONTEND DEBUG] Streaming state cleared immediately");
+                                } catch (err) {
+                                    console.error("Error reloading conversation:", err);
+                                    // Clear streaming state even on error to prevent stuck UI
+                                    setStreamingMessage("");
+                                    setStreamingMarketplaceData(null);
+                                }
                                 continue;
                             }
 
@@ -573,16 +614,25 @@ export default function Home() {
                             // If skip_streaming is false, the intro will be streamed as chunks
                         } else if (data.type === "done") {
                             console.log("[FRONTEND DEBUG] done event detected, calling loadConversation");
-                            // Clear streaming message and data
-                            setStreamingMessage("");
-                            setStreamingMarketplaceData(null);
 
                             // Always reload conversation to get the complete state from database
                             // This ensures both text and marketplace data are displayed correctly
-                            loadConversation(conversationId).catch(err =>
-                                console.error("Error reloading conversation:", err)
-                            );
-                            console.log("[FRONTEND DEBUG] loadConversation called");
+                            try {
+                                await loadConversation(conversationId);
+                                console.log("[FRONTEND DEBUG] loadConversation completed successfully");
+
+                                // Clear streaming state immediately
+                                // React batches state updates, so setMessages() from loadConversation
+                                // and these clear calls will render in the same cycle, preventing duplicate bubbles
+                                setStreamingMessage("");
+                                setStreamingMarketplaceData(null);
+                                console.log("[FRONTEND DEBUG] Streaming state cleared immediately");
+                            } catch (err) {
+                                console.error("Error reloading conversation:", err);
+                                // Clear streaming state even on error to prevent stuck UI
+                                setStreamingMessage("");
+                                setStreamingMarketplaceData(null);
+                            }
                         } else if (data.type === "error") {
                             console.error("Stream error:", data.error);
                         }
