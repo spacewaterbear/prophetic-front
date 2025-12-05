@@ -18,6 +18,7 @@ import { toast } from "sonner";
 const Markdown = lazy(() => import("@/components/Markdown").then(mod => ({ default: mod.Markdown })));
 const ArtistCard = lazy(() => import("@/components/ArtistCard").then(mod => ({ default: mod.ArtistCard })));
 const MarketplaceCard = lazy(() => import("@/components/MarketplaceCard").then(mod => ({ default: mod.MarketplaceCard })));
+const RealEstateCard = lazy(() => import("@/components/RealEstateCard").then(mod => ({ default: mod.RealEstateCard })));
 
 interface Artist {
     artist_name: string;
@@ -48,6 +49,31 @@ interface MarketplaceData {
     search_metadata?: Record<string, unknown>;
 }
 
+interface RealEstateData {
+    found: boolean;
+    marketplace: string;
+    location: string;
+    location_slug?: string;
+    properties: Array<{
+        title: string;
+        price: string;
+        price_amount: number;
+        price_currency: string;
+        url: string;
+        image_url: string;
+        bedrooms?: number;
+        bathrooms?: number;
+        square_meters?: number;
+        square_feet?: number;
+        property_type: string;
+        listing_id?: string;
+    }>;
+    total_properties: number;
+    search_url?: string;
+    filters_applied?: Record<string, unknown>;
+    error_message?: string | null;
+}
+
 interface Message {
     id: number;
     content: string;
@@ -63,6 +89,7 @@ interface Message {
     streaming_text?: string;
     marketplace_data?: MarketplaceData;
     marketplace_position?: "before" | "after"; // Position of marketplace data relative to text
+    real_estate_data?: RealEstateData;
 }
 
 interface Conversation {
@@ -168,6 +195,15 @@ const MessageItem = memo(({ message, userName }: { message: Message; userName: s
                                     </Suspense>
                                 </div>
                             )}
+
+                            {/* Display real estate data */}
+                            {message.real_estate_data && (
+                                <div className={message.content ? "mt-4" : ""}>
+                                    <Suspense fallback={<div className="text-base text-gray-400">Loading real estate data...</div>}>
+                                        <RealEstateCard data={message.real_estate_data} />
+                                    </Suspense>
+                                </div>
+                            )}
                         </>
                     )}
                 </div>
@@ -227,6 +263,7 @@ export default function Home() {
     const [isLoading, setIsLoading] = useState(false);
     const [streamingMessage, setStreamingMessage] = useState("");
     const [streamingMarketplaceData, setStreamingMarketplaceData] = useState<MarketplaceData | null>(null);
+    const [streamingRealEstateData, setStreamingRealEstateData] = useState<RealEstateData | null>(null);
     const [selectedModel, setSelectedModel] = useState<string>(DEFAULT_NON_ADMIN_MODEL);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -291,7 +328,7 @@ export default function Home() {
         if (shouldAutoScroll) {
             scrollToBottom();
         }
-    }, [messages, streamingMessage, streamingMarketplaceData, isLoading, shouldAutoScroll]);
+    }, [messages, streamingMessage, streamingMarketplaceData, streamingRealEstateData, isLoading, shouldAutoScroll]);
 
     const loadConversations = async () => {
         try {
@@ -361,6 +398,7 @@ export default function Home() {
         setMessages([]);
         setStreamingMessage("");
         setStreamingMarketplaceData(null);
+        setStreamingRealEstateData(null);
 
         // Focus the input field
         inputRef.current?.focus();
@@ -385,6 +423,7 @@ export default function Home() {
                     setMessages([]);
                     setStreamingMessage("");
                     setStreamingMarketplaceData(null);
+                    setStreamingRealEstateData(null);
                 }
             } else {
                 console.error("Failed to delete conversation:", response.status);
@@ -449,6 +488,7 @@ export default function Home() {
         setIsLoading(true);
         setStreamingMessage("");
         setStreamingMarketplaceData(null);
+        setStreamingRealEstateData(null);
 
         // Add user message to UI immediately
         const tempUserMessage: Message = {
@@ -545,12 +585,14 @@ export default function Home() {
                                     // Clear streaming state immediately (React batches updates)
                                     setStreamingMessage("");
                                     setStreamingMarketplaceData(null);
+                                    setStreamingRealEstateData(null);
                                     console.log("[FRONTEND DEBUG] Streaming state cleared immediately");
                                 } catch (err) {
                                     console.error("Error reloading conversation:", err);
                                     // Clear streaming state even on error to prevent stuck UI
                                     setStreamingMessage("");
                                     setStreamingMarketplaceData(null);
+                                    setStreamingRealEstateData(null);
                                 }
                                 continue;
                             }
@@ -604,6 +646,15 @@ export default function Home() {
                             // Set streaming marketplace data to display it immediately
                             setStreamingMarketplaceData(marketplaceData);
 
+                        } else if (data.type === "real_estate_data") {
+                            const realEstateData = data.data;
+                            if (!realEstateData) {
+                                console.error("[Real Estate Data] Missing nested data, skipping:", data);
+                                continue;
+                            }
+                            console.log("[DEBUG] Processing real_estate_data event", realEstateData);
+                            setStreamingRealEstateData(realEstateData);
+
                         } else if (data.type === "metadata") {
                             // Handle metadata messages (e.g., intro text with skip_streaming flag)
                             if (data.skip_streaming && data.intro) {
@@ -626,12 +677,14 @@ export default function Home() {
                                 // and these clear calls will render in the same cycle, preventing duplicate bubbles
                                 setStreamingMessage("");
                                 setStreamingMarketplaceData(null);
+                                setStreamingRealEstateData(null);
                                 console.log("[FRONTEND DEBUG] Streaming state cleared immediately");
                             } catch (err) {
                                 console.error("Error reloading conversation:", err);
                                 // Clear streaming state even on error to prevent stuck UI
                                 setStreamingMessage("");
                                 setStreamingMarketplaceData(null);
+                                setStreamingRealEstateData(null);
                             }
                         } else if (data.type === "error") {
                             console.error("Stream error:", data.error);
@@ -838,26 +891,34 @@ export default function Home() {
                             </div>
                         )}
 
-                        {/* Streaming message - shown while AI is responding */}
-                        {(streamingMessage || streamingMarketplaceData) && (
+                        {/* Streaming Message Bubble */}
+                        {(streamingMessage || streamingMarketplaceData || streamingRealEstateData) && (
                             <div className="flex gap-2 sm:gap-4 items-start justify-start">
                                 <AIAvatar />
-                                <div
-                                    className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-4 py-4 sm:px-8 sm:py-5 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-
-                                    {/* Display marketplace data BEFORE text (default) */}
+                                <div className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl pl-4 pr-12 py-4 sm:pl-8 sm:pr-14 sm:py-5 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                                     {streamingMarketplaceData && (
-                                        <div className={streamingMessage ? "mb-4" : ""}>
+                                        <div className="mb-4">
                                             <Suspense fallback={<div className="text-base text-gray-400">Loading marketplace data...</div>}>
                                                 <MarketplaceCard data={streamingMarketplaceData} />
                                             </Suspense>
                                         </div>
                                     )}
-
+                                    {streamingRealEstateData && (
+                                        <div className="mb-4">
+                                            <Suspense fallback={<div className="text-base text-gray-400">Loading real estate data...</div>}>
+                                                <RealEstateCard data={streamingRealEstateData} />
+                                            </Suspense>
+                                        </div>
+                                    )}
                                     {streamingMessage && (
-                                        <Suspense fallback={<div className="text-base text-gray-400">Loading...</div>}>
-                                            <Markdown content={streamingMessage} className="text-base" />
-                                        </Suspense>
+                                        <Markdown content={streamingMessage} className="text-base" />
+                                    )}
+                                    {!streamingMessage && !streamingMarketplaceData && !streamingRealEstateData && (
+                                        <div className="flex space-x-2 h-6 items-center">
+                                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                                        </div>
                                     )}
                                 </div>
                             </div>

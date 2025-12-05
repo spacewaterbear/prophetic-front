@@ -151,6 +151,7 @@ export async function POST(
           let structuredData: any = null; // Capture artist_info or other structured responses
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           let marketplaceData: any = null; // Capture marketplace_data separately
+          let realEstateData: any = null; // Capture real_estate_data separately
 
           // Read and stream the response
           while (true) {
@@ -232,6 +233,21 @@ export async function POST(
                     data: parsed.data
                   })}\n\n`;
                   controller.enqueue(encoder.encode(marketplaceChunk));
+                  continue;
+                }
+
+                // Handle real_estate_data messages
+                if (parsed.type && parsed.type === "real_estate_data") {
+                  console.log("[Prophetic API] Received real_estate_data");
+                  // Capture real estate data for database storage
+                  realEstateData = parsed;
+
+                  // Forward real_estate_data to client immediately (SSE format)
+                  const realEstateChunk = `data: ${JSON.stringify({
+                    type: "real_estate_data",
+                    data: parsed.data
+                  })}\n\n`;
+                  controller.enqueue(encoder.encode(realEstateChunk));
                   continue;
                 }
 
@@ -354,6 +370,21 @@ export async function POST(
               };
             }
             console.log(`[Message Storage] Storing marketplace_data with position: ${messageMetadata.marketplace_position}`);
+          }
+
+          // If we captured real estate data, store it in metadata
+          if (realEstateData && realEstateData.type === "real_estate_data") {
+            // If we already have structured data, add real_estate_data to it
+            if (messageMetadata) {
+              messageMetadata.real_estate_data = realEstateData.data;
+            } else {
+              messageMetadata = {
+                type: "real_estate_data",
+                structured_data: realEstateData,
+                real_estate_data: realEstateData.data
+              };
+            }
+            console.log(`[Message Storage] Storing real_estate_data`);
           }
 
           console.log("[Message Storage] About to save message:", {

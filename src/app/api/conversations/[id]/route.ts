@@ -110,6 +110,23 @@ export async function GET(
             return msg;
           }
         }
+
+        // If a message has real_estate_data in metadata, include it in the message object
+        if (metadata.real_estate_data) {
+          try {
+            console.log("[GET Conversation] Processing real_estate_data for message:", msg.id);
+
+            // Include real_estate_data directly in the message
+            return {
+              ...msg,
+              real_estate_data: metadata.real_estate_data
+            };
+          } catch (error) {
+            console.error("[GET Conversation] Error processing real_estate_data for message:", msg.id, error);
+            // Return message without real_estate_data if there's an error
+            return msg;
+          }
+        }
       }
       return msg;
     });
@@ -124,8 +141,10 @@ export async function GET(
         hasContent: !!msg.content,
         contentLength: (msg.content as string | undefined)?.length,
         hasMarketplaceData: !!msg.marketplace_data,
+        hasRealEstateData: !!msg.real_estate_data,
         hasMetadata: !!msg.metadata,
         metadataHasMarketplaceData: !!(metadata?.marketplace_data),
+        metadataHasRealEstateData: !!(metadata?.real_estate_data),
         marketplace_position: msg.marketplace_position
       });
     });

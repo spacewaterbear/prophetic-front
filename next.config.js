@@ -13,7 +13,8 @@ const nextConfig = {
             "nqwovhetvhmtjigonohq.supabase.co",
             "lh3.googleusercontent.com",
             "images.saatchiart.com",
-            "media.artsper.com"
+            "media.artsper.com",
+            "img.jamesedition.com",
         ],
         remotePatterns: [
             {
