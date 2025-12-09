@@ -769,7 +769,7 @@ export default function Home() {
                                             : "hover:bg-gray-600/30 border border-transparent dark:hover:bg-white/10"
                                             }`}
                                     >
-                                        <MessageSquare className={`h-4 w-4 flex-shrink-0 ${currentConversationId === conversation.id ? "text-blue-400" : ""
+                                        <MessageSquare className={`h-4 w-4 flex-shrink-0 ${currentConversationId === conversation.id ? "text-gray-300 dark:text-gray-400" : ""
                                             }`} />
                                         <span className={`truncate ${currentConversationId === conversation.id ? "font-medium" : ""
                                             }`}>{conversation.title}</span>
