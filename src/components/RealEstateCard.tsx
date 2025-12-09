@@ -98,9 +98,6 @@ export const RealEstateCard = memo(({ data }: RealEstateCardProps) => {
                         {location}
                     </h2>
                 </div>
-                <div className={`${accentClass} text-white px-6 py-3 font-bold text-lg`}>
-                    {displayedProperties.length} {displayedProperties.length === 1 ? 'Property' : 'Properties'}
-                </div>
             </div>
 
             {/* Properties Grid */}

@@ -893,8 +893,7 @@ export default function Home() {
                             <div className="flex gap-2 sm:gap-4 items-start justify-start">
                                 <AIAvatar />
                                 <div
-                                    className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-4 py-4 sm:px-8 sm:py-5 rounded-2xl dark:bg-gray-800"
-                                    style={{ backgroundColor: 'rgb(247, 240, 232)' }}>
+                                    className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-4 py-4 sm:px-8 sm:py-5 rounded-2xl bg-[rgb(247,240,232)] dark:bg-gray-800">
                                     <TypingIndicator />
                                 </div>
                             </div>
