@@ -95,10 +95,10 @@ export function Markdown({ content, className }: MarkdownProps) {
             </div>
           ),
           thead: ({ node, ...props }) => (
-            <thead className="dark:bg-gray-800" style={{ backgroundColor: 'rgb(235, 225, 215)' }} {...props} />
+            <thead className="bg-[rgb(235,225,215)] dark:bg-gray-800" {...props} />
           ),
           tbody: ({ node, ...props }) => (
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900" style={{ backgroundColor: 'rgb(242, 235, 225)' }} {...props} />
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-[rgb(242,235,225)] dark:bg-gray-900" {...props} />
           ),
           tr: ({ node, ...props }) => (
             <tr {...props} />
