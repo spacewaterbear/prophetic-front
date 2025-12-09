@@ -461,12 +461,12 @@ export default function Home() {
             <div
                 className="flex h-screen items-center justify-center dark:bg-gradient-to-br dark:from-gray-900 dark:to-gray-950" style={{ backgroundColor: 'rgb(247, 240, 232)' }}>
                 <div className="text-center">
-                    <div className="w-32 h-32 mx-auto mb-4 flex items-center justify-center animate-pulse">
+                    <div className="w-64 h-32 mx-auto mb-4 flex items-center justify-center animate-pulse">
                         <Image
-                            src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/logo_prophetic_v2.png"
+                            src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/logo_text.svg"
                             alt="Prophetic Orchestra"
-                            width={128}
-                            height={128}
+                            width={256}
+                            height={64}
                             className="w-full h-full object-contain"
                         />
                     </div>
@@ -810,7 +810,7 @@ export default function Home() {
                         </Button>
                         <div className="flex items-center gap-3 min-w-0">
                             <Image
-                                src="https://ext.same-assets.com/4250389560/3143870090.png"
+                                src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/logo_text.svg"
                                 alt="Prophetic Orchestra"
                                 width={180}
                                 height={45}
@@ -841,36 +841,23 @@ export default function Home() {
                     className="flex-1 overflow-y-auto px-3 sm:px-6 py-4 sm:py-8"
                 >
                     {messages.length === 0 && !streamingMessage && !streamingMarketplaceData && (
-                        <div className="max-w-4xl mx-auto mb-8 sm:mb-12">
-                            <div className="text-center mb-8 sm:mb-12">
+                        <div className="flex items-center justify-center h-full">
+                            <div className="text-center">
                                 <div
-                                    className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 rounded-full flex items-center justify-center overflow-hidden">
+                                    className="w-24 h-24 sm:w-32 sm:h-32 mx-auto mb-6 sm:mb-8 rounded-full flex items-center justify-center overflow-hidden">
                                     <Image
                                         src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_new.svg"
                                         alt="Prophetic Orchestra"
-                                        width={80}
-                                        height={80}
+                                        width={128}
+                                        height={128}
                                         className="w-full h-full object-cover"
                                     />
                                 </div>
-                                <h2 className="text-2xl sm:text-4xl font-light mb-3 sm:mb-4 dark:text-white px-4">
+                                <h2 className="text-4xl sm:text-6xl font-light mb-4 sm:mb-6 dark:text-white px-4">
                                     Bonjour, {session?.user?.name?.split(' ')[0]}
                                 </h2>
-                                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 px-4">Powered by
+                                <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400 px-4">Powered by
                                     Score Orchestra™ and TTT Token technology</p>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
-                                {examplePrompts.map((prompt, i) => (
-                                    <Card
-                                        key={i}
-                                        className="p-3 sm:p-4 hover:shadow-lg transition-shadow cursor-pointer border-gray-400 dark:border-gray-700 dark:bg-gray-800"
-                                        style={{ backgroundColor: 'rgb(230, 220, 210)' }}
-                                        onClick={() => handleSend(prompt)}
-                                    >
-                                        <p className="text-sm text-gray-700 dark:text-gray-300 text-center" style={{ fontFamily: "'Spectral', serif" }}>{prompt}</p>
-                                    </Card>
-                                ))}
                             </div>
                         </div>
                     )}
