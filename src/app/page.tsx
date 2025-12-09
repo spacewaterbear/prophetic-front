@@ -103,9 +103,9 @@ interface Conversation {
 // Reusable AI Avatar component to prevent duplicate image loads
 const AIAvatar = memo(() => (
     <div
-        className="hidden sm:flex w-8 h-8 sm:w-10 sm:h-10 mt-1 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 items-center justify-center flex-shrink-0 overflow-hidden">
+        className="hidden sm:flex w-8 h-8 sm:w-10 sm:h-10 mt-1 rounded-full items-center justify-center flex-shrink-0 overflow-hidden">
         <Image
-            src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon.png"
+            src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_new.svg"
             alt="Prophetic Orchestra"
             width={40}
             height={40}
@@ -152,9 +152,10 @@ const MessageItem = memo(({ message, userName }: { message: Message; userName: s
             <div className="group relative">
                 <div
                     className={`max-w-[90vw] sm:max-w-3xl lg:max-w-4xl pl-4 pr-12 py-4 sm:pl-8 sm:pr-14 sm:py-5 rounded-2xl ${message.sender === "user"
-                        ? "bg-custom-brand text-white"
-                        : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
+                        ? "text-gray-900"
+                        : "dark:bg-gray-800"
                         }`}
+                    style={message.sender === "ai" ? { backgroundColor: 'rgb(247, 240, 232)' } : { backgroundColor: 'rgb(230, 220, 210)' }}
                 >
                     {message.sender === "user" ? (
                         <p className="text-base leading-relaxed whitespace-pre-wrap">{message.content}</p>
@@ -458,7 +459,7 @@ export default function Home() {
     if (status === "loading") {
         return (
             <div
-                className="flex h-screen items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950">
+                className="flex h-screen items-center justify-center dark:bg-gradient-to-br dark:from-gray-900 dark:to-gray-950" style={{ backgroundColor: 'rgb(247, 240, 232)' }}>
                 <div className="text-center">
                     <div className="w-32 h-32 mx-auto mb-4 flex items-center justify-center animate-pulse">
                         <Image
@@ -704,7 +705,7 @@ export default function Home() {
     };
 
     return (
-        <div className="flex h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950">
+        <div className="flex h-screen dark:bg-gradient-to-br dark:from-gray-900 dark:to-gray-950" style={{ backgroundColor: 'rgb(247, 240, 232)' }}>
             {/* Mobile overlay/backdrop */}
             {sidebarOpen && (
                 <div
@@ -716,10 +717,11 @@ export default function Home() {
 
             {/* Sidebar */}
             <aside
-                className={`${sidebarOpen ? 'w-64' : 'w-0'} transition-all duration-300 bg-gray-900 dark:bg-black text-white flex flex-col overflow-hidden fixed md:relative h-full z-50 md:z-auto`}>
-                <div className="p-4 border-b border-gray-700 dark:border-gray-800">
+                className={`${sidebarOpen ? 'w-64' : 'w-0'} transition-all duration-300 dark:bg-black text-gray-900 dark:text-white flex flex-col overflow-hidden fixed md:relative h-full z-50 md:z-auto`}
+                style={{ backgroundColor: 'rgb(230, 220, 210)' }}>
+                <div className="p-4 border-b border-gray-400 dark:border-gray-800">
                     <Button
-                        className="w-full bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-lg"
+                        className="w-full bg-gray-800 hover:bg-gray-700 text-white border border-gray-600 rounded-lg dark:bg-white/10 dark:hover:bg-white/20 dark:border-white/20"
                         onClick={createNewConversation}
                         disabled={isLoading}
                     >
@@ -730,17 +732,17 @@ export default function Home() {
 
                 <div className="flex-1 overflow-y-auto p-4">
                     <div className="space-y-2">
-                        <div className="text-xs text-gray-400 mb-2">Recent Chats</div>
+                        <div className="text-xs text-gray-600 dark:text-gray-400 mb-2">Recent Chats</div>
                         {conversations.length === 0 ? (
-                            <div className="text-xs text-gray-500 px-3 py-2">No conversations yet</div>
+                            <div className="text-xs text-gray-500 dark:text-gray-500 px-3 py-2">No conversations yet</div>
                         ) : (
                             conversations.map((conversation) => (
                                 <div key={conversation.id} className="relative group">
                                     <button
                                         onClick={() => loadConversation(conversation.id)}
                                         className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all flex items-center gap-2 ${currentConversationId === conversation.id
-                                            ? "bg-white/20 border border-white/30 shadow-sm"
-                                            : "hover:bg-white/10 border border-transparent"
+                                            ? "bg-gray-700 border border-gray-600 shadow-sm text-white dark:bg-white/20 dark:border-white/30"
+                                            : "hover:bg-gray-600/30 border border-transparent dark:hover:bg-white/10"
                                             }`}
                                     >
                                         <MessageSquare className={`h-4 w-4 flex-shrink-0 ${currentConversationId === conversation.id ? "text-blue-400" : ""
@@ -750,7 +752,7 @@ export default function Home() {
                                     </button>
                                     <button
                                         onClick={(e) => deleteConversation(conversation.id, e)}
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-red-500/20 text-gray-400 hover:text-red-400"
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-red-500/20 text-gray-600 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400"
                                         aria-label="Delete conversation"
                                     >
                                         <X className="h-4 w-4" />
@@ -761,9 +763,9 @@ export default function Home() {
                     </div>
                 </div>
 
-                <div className="p-4 border-t border-gray-700 dark:border-gray-800 space-y-2">
+                <div className="p-4 border-t border-gray-400 dark:border-gray-800 space-y-2">
                     {session?.user && (
-                        <div className="px-3 py-2 rounded-lg bg-white/5 mb-2">
+                        <div className="px-3 py-2 rounded-lg bg-gray-600/20 dark:bg-white/5 mb-2">
                             <div className="flex items-center gap-2">
                                 {session.user.image && (
                                     <Image
@@ -776,14 +778,14 @@ export default function Home() {
                                 )}
                                 <div className="flex-1 min-w-0">
                                     <p className="text-sm font-medium truncate">{session.user.name}</p>
-                                    <p className="text-xs text-gray-400 truncate">{session.user.email}</p>
+                                    <p className="text-xs text-gray-600 dark:text-gray-400 truncate">{session.user.email}</p>
                                 </div>
                             </div>
                         </div>
                     )}
                     <button
                         onClick={handleSignOut}
-                        className="w-full text-left px-3 py-2 rounded-lg hover:bg-red-500/10 text-sm transition-colors flex items-center gap-2 text-red-400 hover:text-red-300"
+                        className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-800/10 dark:hover:bg-white/10 text-sm transition-colors flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
                     >
                         <LogOut className="h-4 w-4" />
                         Sign Out
@@ -795,7 +797,8 @@ export default function Home() {
             <div className="flex-1 flex flex-col">
                 {/* Header */}
                 <header
-                    className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+                    className="dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-300 dark:border-gray-800 px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between"
+                    style={{ backgroundColor: 'rgba(247, 240, 232, 0.8)' }}>
                     <div className="flex items-center gap-2 sm:gap-4 min-w-0">
                         <Button
                             variant="ghost"
@@ -841,9 +844,9 @@ export default function Home() {
                         <div className="max-w-4xl mx-auto mb-8 sm:mb-12">
                             <div className="text-center mb-8 sm:mb-12">
                                 <div
-                                    className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center overflow-hidden">
+                                    className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 rounded-full flex items-center justify-center overflow-hidden">
                                     <Image
-                                        src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon.png"
+                                        src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_new.svg"
                                         alt="Prophetic Orchestra"
                                         width={80}
                                         height={80}
@@ -861,10 +864,11 @@ export default function Home() {
                                 {examplePrompts.map((prompt, i) => (
                                     <Card
                                         key={i}
-                                        className="p-3 sm:p-4 hover:shadow-lg transition-shadow cursor-pointer border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
+                                        className="p-3 sm:p-4 hover:shadow-lg transition-shadow cursor-pointer border-gray-400 dark:border-gray-700 dark:bg-gray-800"
+                                        style={{ backgroundColor: 'rgb(230, 220, 210)' }}
                                         onClick={() => handleSend(prompt)}
                                     >
-                                        <p className="text-sm text-gray-700 dark:text-gray-300 text-center">{prompt}</p>
+                                        <p className="text-sm text-gray-700 dark:text-gray-300 text-center" style={{ fontFamily: "'Spectral', serif" }}>{prompt}</p>
                                     </Card>
                                 ))}
                             </div>
@@ -885,7 +889,8 @@ export default function Home() {
                             <div className="flex gap-2 sm:gap-4 items-start justify-start">
                                 <AIAvatar />
                                 <div
-                                    className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-4 py-4 sm:px-8 sm:py-5 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                                    className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-4 py-4 sm:px-8 sm:py-5 rounded-2xl dark:bg-gray-800"
+                                    style={{ backgroundColor: 'rgb(247, 240, 232)' }}>
                                     <TypingIndicator />
                                 </div>
                             </div>
@@ -895,7 +900,7 @@ export default function Home() {
                         {(streamingMessage || streamingMarketplaceData || streamingRealEstateData) && (
                             <div className="flex gap-2 sm:gap-4 items-start justify-start">
                                 <AIAvatar />
-                                <div className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl pl-4 pr-12 py-4 sm:pl-8 sm:pr-14 sm:py-5 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                                <div className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl pl-4 pr-12 py-4 sm:pl-8 sm:pr-14 sm:py-5 rounded-2xl dark:bg-gray-800" style={{ backgroundColor: 'rgb(247, 240, 232)' }}>
                                     {streamingMarketplaceData && (
                                         <div className="mb-4">
                                             <Suspense fallback={<div className="text-base text-gray-400">Loading marketplace data...</div>}>
@@ -930,7 +935,8 @@ export default function Home() {
 
                 {/* Input Area */}
                 <div
-                    className="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-3 sm:px-6 py-3 sm:py-4">
+                    className="border-t border-gray-300 dark:border-gray-800 dark:bg-gray-900 px-3 sm:px-6 py-3 sm:py-4"
+                    style={{ backgroundColor: 'rgb(247, 240, 232)' }}>
                     <div className="max-w-3xl mx-auto">
                         <div className="flex gap-2 sm:gap-3 items-start">
                             <div className="flex-1 relative">
@@ -945,9 +951,9 @@ export default function Home() {
                                         }
                                     }}
                                     placeholder="Ask about luxury investments, market trends, or portfolio optimization..."
-                                    className="w-full px-3 py-2 sm:px-4 sm:py-3 pr-12 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none placeholder:text-ellipsis placeholder:overflow-hidden placeholder:whitespace-nowrap placeholder:text-sm sm:placeholder:text-base placeholder:text-gray-400 dark:placeholder:text-gray-500 text-sm sm:text-base"
+                                    className="w-full px-3 py-2 sm:px-4 sm:py-3 pr-12 border border-gray-400 dark:border-gray-700 dark:bg-gray-800 text-gray-900 dark:text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none placeholder:text-ellipsis placeholder:overflow-hidden placeholder:whitespace-nowrap placeholder:text-sm sm:placeholder:text-base placeholder:text-gray-400 dark:placeholder:text-gray-500 text-sm sm:text-base"
+                                    style={{ backgroundColor: 'rgb(240, 230, 220)', minHeight: '48px', maxHeight: '200px' }}
                                     rows={1}
-                                    style={{ minHeight: '48px', maxHeight: '200px' }}
                                 />
                             </div>
                             <Button

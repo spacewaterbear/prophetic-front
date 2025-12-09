@@ -94,7 +94,10 @@ export const RealEstateCard = memo(({ data }: RealEstateCardProps) => {
                     <div className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
                         {marketplace}
                     </div>
-                    <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
+                    <h2
+                        className="text-4xl md:text-5xl font-normal text-gray-900 dark:text-white"
+                        style={{ fontFamily: "'Spectral', serif" }}
+                    >
                         {location}
                     </h2>
                 </div>
@@ -150,7 +153,10 @@ export const RealEstateCard = memo(({ data }: RealEstateCardProps) => {
                             {/* Content */}
                             <div className="p-6">
                                 {/* Title */}
-                                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 line-clamp-2 min-h-[3.5rem]">
+                                <h3
+                                    className="text-xl font-normal text-gray-900 dark:text-white mb-3 line-clamp-2 min-h-[3.5rem]"
+                                    style={{ fontFamily: "'Spectral', serif" }}
+                                >
                                     {property.title}
                                 </h3>
 
@@ -216,6 +222,10 @@ export const RealEstateCard = memo(({ data }: RealEstateCardProps) => {
                     </a>
                 ))}
             </div>
+
+            <style jsx>{`
+                @import url('https://fonts.googleapis.com/css2?family=Spectral:wght@400&display=swap');
+            `}</style>
         </div>
     );
 });

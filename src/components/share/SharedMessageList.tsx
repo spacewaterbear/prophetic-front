@@ -37,11 +37,11 @@ const SharedMessageItem = memo(({ message }: { message: Message }) => {
       {message.sender === "ai" && <AIAvatar />}
       <div className="group relative">
         <div
-          className={`max-w-2xl pl-6 pr-12 py-4 rounded-2xl ${
-            message.sender === "user"
-              ? "bg-custom-brand text-white"
-              : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
-          }`}
+          className={`max-w-2xl pl-6 pr-12 py-4 rounded-2xl ${message.sender === "user"
+            ? "text-gray-900"
+            : "dark:bg-gray-800"
+            }`}
+          style={message.sender === "ai" ? { backgroundColor: 'rgb(247, 240, 232)' } : { backgroundColor: 'rgb(230, 220, 210)' }}
         >
           {message.sender === "user" ? (
             <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
@@ -53,11 +53,10 @@ const SharedMessageItem = memo(({ message }: { message: Message }) => {
         </div>
         <CopyButton
           content={message.content}
-          className={`absolute bottom-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity ${
-            message.sender === "user"
-              ? "text-white hover:bg-white/20"
-              : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
-          }`}
+          className={`absolute bottom-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity ${message.sender === "user"
+            ? "text-white hover:bg-white/20"
+            : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+            }`}
         />
       </div>
       {message.sender === "user" && (
