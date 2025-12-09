@@ -275,6 +275,7 @@ export default function Home() {
     const [streamingMessage, setStreamingMessage] = useState("");
     const [streamingMarketplaceData, setStreamingMarketplaceData] = useState<MarketplaceData | null>(null);
     const [streamingRealEstateData, setStreamingRealEstateData] = useState<RealEstateData | null>(null);
+    const [currentStatus, setCurrentStatus] = useState("");
     const [selectedModel, setSelectedModel] = useState<string>(DEFAULT_NON_ADMIN_MODEL);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -410,6 +411,7 @@ export default function Home() {
         setStreamingMessage("");
         setStreamingMarketplaceData(null);
         setStreamingRealEstateData(null);
+        setCurrentStatus("");
 
         // Focus the input field
         inputRef.current?.focus();
@@ -503,6 +505,7 @@ export default function Home() {
         setStreamingMessage("");
         setStreamingMarketplaceData(null);
         setStreamingRealEstateData(null);
+        setCurrentStatus("");
 
         // Add user message to UI immediately
         const tempUserMessage: Message = {
@@ -585,6 +588,8 @@ export default function Home() {
                         if (data.type === "chunk") {
                             streamContent += data.content;
                             setStreamingMessage(streamContent);
+                            // Clear status when content starts streaming
+                            setCurrentStatus("");
                         } else if (data.type === "artist_info") {
                             // Handle structured artist info response
                             // Check if this is a "done" message (has userMessage/aiMessage) or actual artist data
@@ -600,6 +605,7 @@ export default function Home() {
                                     setStreamingMessage("");
                                     setStreamingMarketplaceData(null);
                                     setStreamingRealEstateData(null);
+                                    setCurrentStatus("");
                                     console.log("[FRONTEND DEBUG] Streaming state cleared immediately");
                                 } catch (err) {
                                     console.error("Error reloading conversation:", err);
@@ -692,6 +698,7 @@ export default function Home() {
                                 setStreamingMessage("");
                                 setStreamingMarketplaceData(null);
                                 setStreamingRealEstateData(null);
+                                setCurrentStatus("");
                                 console.log("[FRONTEND DEBUG] Streaming state cleared immediately");
                             } catch (err) {
                                 console.error("Error reloading conversation:", err);
@@ -699,7 +706,12 @@ export default function Home() {
                                 setStreamingMessage("");
                                 setStreamingMarketplaceData(null);
                                 setStreamingRealEstateData(null);
+                                setCurrentStatus("");
                             }
+                        } else if (data.type === "status") {
+                            // Handle status messages
+                            console.log("[FRONTEND DEBUG] Received status:", data.message);
+                            setCurrentStatus(data.message);
                         } else if (data.type === "error") {
                             console.error("Stream error:", data.error);
                         }
@@ -889,6 +901,11 @@ export default function Home() {
                                 <div
                                     className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-4 py-4 sm:px-8 sm:py-5 rounded-2xl bg-[rgb(247,240,232)] dark:bg-gray-800">
                                     <TypingIndicator />
+                                    {currentStatus && (
+                                        <p className="text-sm text-gray-500 dark:text-gray-400 italic mt-2">
+                                            {currentStatus}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
                         )}
@@ -917,9 +934,9 @@ export default function Home() {
                                     )}
                                     {!streamingMessage && !streamingMarketplaceData && !streamingRealEstateData && (
                                         <div className="flex space-x-2 h-6 items-center">
-                                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                                            <div className="w-2 h-2 bg-gray-900 dark:bg-white rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                                            <div className="w-2 h-2 bg-gray-900 dark:bg-white rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                                            <div className="w-2 h-2 bg-gray-900 dark:bg-white rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                                         </div>
                                     )}
                                 </div>

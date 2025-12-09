@@ -251,6 +251,18 @@ export async function POST(
                   continue;
                 }
 
+                // Handle status messages
+                if (parsed.type && parsed.type === "status") {
+                  console.log("[Prophetic API] Received status:", parsed.message);
+                  // Forward status to client immediately (SSE format)
+                  const statusChunk = `data: ${JSON.stringify({
+                    type: "status",
+                    message: parsed.message
+                  })}\n\n`;
+                  controller.enqueue(encoder.encode(statusChunk));
+                  continue;
+                }
+
                 // Handle content chunks (regular text responses)
                 if (parsed.content) {
                   const content = parsed.content;
