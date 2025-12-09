@@ -7,6 +7,7 @@ import Image from "next/image";
 import { lazy, memo, Suspense, useEffect, useRef, useState } from "react";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
 import { ModelSelector } from "@/components/ModelSelector";
 import { DEFAULT_NON_ADMIN_MODEL } from "@/lib/models";
 import { TypingIndicator } from "@/components/TypingIndicator";
@@ -101,19 +102,27 @@ interface Conversation {
 }
 
 // Reusable AI Avatar component to prevent duplicate image loads
-const AIAvatar = memo(() => (
-    <div
-        className="hidden sm:flex w-8 h-8 sm:w-10 sm:h-10 mt-1 rounded-full items-center justify-center flex-shrink-0 overflow-hidden">
-        <Image
-            src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_new.svg"
-            alt="Prophetic Orchestra"
-            width={40}
-            height={40}
-            className="w-full h-full object-cover"
-            priority
-        />
-    </div>
-));
+const AIAvatar = memo(() => {
+    const { theme, resolvedTheme } = useTheme();
+    const isDark = theme === "dark" || resolvedTheme === "dark";
+
+    return (
+        <div
+            className="hidden sm:flex w-8 h-8 sm:w-10 sm:h-10 mt-1 rounded-full items-center justify-center flex-shrink-0 overflow-hidden">
+            <Image
+                src={isDark
+                    ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_white.svg"
+                    : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_new.svg"
+                }
+                alt="Prophetic Orchestra"
+                width={40}
+                height={40}
+                className="w-full h-full object-cover"
+                priority
+            />
+        </div>
+    );
+});
 
 AIAvatar.displayName = "AIAvatar";
 
@@ -152,10 +161,9 @@ const MessageItem = memo(({ message, userName }: { message: Message; userName: s
             <div className="group relative">
                 <div
                     className={`max-w-[90vw] sm:max-w-3xl lg:max-w-4xl pl-4 pr-12 py-4 sm:pl-8 sm:pr-14 sm:py-5 rounded-2xl ${message.sender === "user"
-                        ? "text-gray-900"
-                        : "dark:bg-gray-800"
+                        ? "bg-[rgb(230,220,210)] dark:bg-gray-700 text-gray-900 dark:text-white"
+                        : "bg-[rgb(247,240,232)] dark:bg-gray-800 text-gray-900 dark:text-white"
                         }`}
-                    style={message.sender === "ai" ? { backgroundColor: 'rgb(247, 240, 232)' } : { backgroundColor: 'rgb(230, 220, 210)' }}
                 >
                     {message.sender === "user" ? (
                         <p className="text-base leading-relaxed whitespace-pre-wrap">{message.content}</p>
@@ -249,6 +257,8 @@ const isAdminUser = (session: { user?: { status?: string } } | null): boolean =>
 export default function Home() {
     const { data: session, status } = useSession();
     const router = useRouter();
+    const { theme, resolvedTheme } = useTheme();
+    const isDark = theme === "dark" || resolvedTheme === "dark";
 
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState("");
@@ -459,11 +469,14 @@ export default function Home() {
     if (status === "loading") {
         return (
             <div
-                className="flex h-screen items-center justify-center dark:bg-gradient-to-br dark:from-gray-900 dark:to-gray-950" style={{ backgroundColor: 'rgb(247, 240, 232)' }}>
+                className="flex h-screen items-center justify-center bg-[rgb(247,240,232)] dark:bg-gradient-to-br dark:from-gray-900 dark:to-gray-950">
                 <div className="text-center">
                     <div className="w-64 h-32 mx-auto mb-4 flex items-center justify-center animate-pulse">
                         <Image
-                            src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/logo_text.svg"
+                            src={isDark
+                                ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/logo_text_blanc.svg"
+                                : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/logo_text.svg"
+                            }
                             alt="Prophetic Orchestra"
                             width={256}
                             height={64}
@@ -705,7 +718,7 @@ export default function Home() {
     };
 
     return (
-        <div className="flex h-screen dark:bg-gradient-to-br dark:from-gray-900 dark:to-gray-950" style={{ backgroundColor: 'rgb(247, 240, 232)' }}>
+        <div className="flex h-screen bg-[rgb(247,240,232)] dark:bg-gradient-to-br dark:from-gray-900 dark:to-gray-950">
             {/* Mobile overlay/backdrop */}
             {sidebarOpen && (
                 <div
@@ -717,8 +730,7 @@ export default function Home() {
 
             {/* Sidebar */}
             <aside
-                className={`${sidebarOpen ? 'w-64' : 'w-0'} transition-all duration-300 dark:bg-black text-gray-900 dark:text-white flex flex-col overflow-hidden fixed md:relative h-full z-50 md:z-auto`}
-                style={{ backgroundColor: 'rgb(230, 220, 210)' }}>
+                className={`${sidebarOpen ? 'w-64' : 'w-0'} transition-all duration-300 bg-[rgb(230,220,210)] dark:bg-black text-gray-900 dark:text-white flex flex-col overflow-hidden fixed md:relative h-full z-50 md:z-auto`}>
                 <div className="p-4 border-b border-gray-400 dark:border-gray-800">
                     <Button
                         className="w-full bg-gray-800 hover:bg-gray-700 text-white border border-gray-600 rounded-lg dark:bg-white/10 dark:hover:bg-white/20 dark:border-white/20"
@@ -797,8 +809,7 @@ export default function Home() {
             <div className="flex-1 flex flex-col">
                 {/* Header */}
                 <header
-                    className="dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-300 dark:border-gray-800 px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between"
-                    style={{ backgroundColor: 'rgba(247, 240, 232, 0.8)' }}>
+                    className="bg-[rgba(247,240,232,0.8)] dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-300 dark:border-gray-800 px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
                     <div className="flex items-center gap-2 sm:gap-4 min-w-0">
                         <Button
                             variant="ghost"
@@ -810,7 +821,10 @@ export default function Home() {
                         </Button>
                         <div className="flex items-center gap-3 min-w-0">
                             <Image
-                                src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/logo_text.svg"
+                                src={isDark
+                                    ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/logo_text_blanc.svg"
+                                    : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/logo_text.svg"
+                                }
                                 alt="Prophetic Orchestra"
                                 width={180}
                                 height={45}
@@ -846,7 +860,10 @@ export default function Home() {
                                 <div
                                     className="w-24 h-24 sm:w-32 sm:h-32 mx-auto mb-6 sm:mb-8 rounded-full flex items-center justify-center overflow-hidden">
                                     <Image
-                                        src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_new.svg"
+                                        src={isDark
+                                            ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_white.svg"
+                                            : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_new.svg"
+                                        }
                                         alt="Prophetic Orchestra"
                                         width={128}
                                         height={128}
@@ -887,7 +904,7 @@ export default function Home() {
                         {(streamingMessage || streamingMarketplaceData || streamingRealEstateData) && (
                             <div className="flex gap-2 sm:gap-4 items-start justify-start">
                                 <AIAvatar />
-                                <div className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl pl-4 pr-12 py-4 sm:pl-8 sm:pr-14 sm:py-5 rounded-2xl dark:bg-gray-800" style={{ backgroundColor: 'rgb(247, 240, 232)' }}>
+                                <div className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl pl-4 pr-12 py-4 sm:pl-8 sm:pr-14 sm:py-5 rounded-2xl bg-[rgb(247,240,232)] dark:bg-gray-800 text-gray-900 dark:text-white">
                                     {streamingMarketplaceData && (
                                         <div className="mb-4">
                                             <Suspense fallback={<div className="text-base text-gray-400">Loading marketplace data...</div>}>
@@ -922,8 +939,7 @@ export default function Home() {
 
                 {/* Input Area */}
                 <div
-                    className="border-t border-gray-300 dark:border-gray-800 dark:bg-gray-900 px-3 sm:px-6 py-3 sm:py-4"
-                    style={{ backgroundColor: 'rgb(247, 240, 232)' }}>
+                    className="border-t border-gray-300 dark:border-gray-800 px-3 sm:px-6 py-3 sm:py-4 bg-[rgb(247,240,232)] dark:bg-gray-900">
                     <div className="max-w-3xl mx-auto">
                         <div className="flex gap-2 sm:gap-3 items-start">
                             <div className="flex-1 relative">
@@ -938,8 +954,8 @@ export default function Home() {
                                         }
                                     }}
                                     placeholder="Ask about luxury investments, market trends, or portfolio optimization..."
-                                    className="w-full px-3 py-2 sm:px-4 sm:py-3 pr-12 border border-gray-400 dark:border-gray-700 dark:bg-gray-800 text-gray-900 dark:text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none placeholder:text-ellipsis placeholder:overflow-hidden placeholder:whitespace-nowrap placeholder:text-sm sm:placeholder:text-base placeholder:text-gray-400 dark:placeholder:text-gray-500 text-sm sm:text-base"
-                                    style={{ backgroundColor: 'rgb(240, 230, 220)', minHeight: '48px', maxHeight: '200px' }}
+                                    className="w-full px-3 py-2 sm:px-4 sm:py-3 pr-12 border border-gray-400 dark:border-gray-700 bg-[rgb(240,230,220)] dark:bg-gray-800 text-gray-900 dark:text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none placeholder:text-ellipsis placeholder:overflow-hidden placeholder:whitespace-nowrap placeholder:text-sm sm:placeholder:text-base placeholder:text-gray-400 dark:placeholder:text-gray-500 text-sm sm:text-base"
+                                    style={{ minHeight: '48px', maxHeight: '200px' }}
                                     rows={1}
                                 />
                             </div>
