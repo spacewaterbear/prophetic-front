@@ -947,9 +947,9 @@ export default function Home() {
                                 onClick={() => handleSend()}
                                 disabled={!input.trim() || isLoading}
                                 size="lg"
-                                className="bg-gray-800 hover:bg-gray-700 text-white rounded-2xl h-[48px] w-[48px] sm:h-[52px] sm:w-auto sm:px-6 p-0 flex-shrink-0"
+                                className="bg-gray-800 hover:bg-gray-700 text-white rounded-2xl h-[48px] w-[48px] sm:h-[52px] sm:w-auto sm:px-6 p-0 flex-shrink-0 group"
                             >
-                                <Send className="h-4 w-4 sm:h-5 sm:w-5" />
+                                <Send className="h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-300 group-hover:rotate-45" />
                             </Button>
                         </div>
                         <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 sm:mt-3 text-center px-2">
