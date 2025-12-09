@@ -36,6 +36,26 @@ interface RealEstateCardProps {
 }
 
 /**
+ * Format price to display in K (thousands) or M (millions)
+ * @param amount - The price amount
+ * @param currency - The currency code (e.g., "USD")
+ * @returns Formatted price string (e.g., "USD 780K", "USD 50M")
+ */
+const formatPrice = (amount: number, currency: string): string => {
+    if (amount >= 1000000) {
+        const millions = amount / 1000000;
+        // Remove unnecessary decimals (e.g., 50.00M -> 50M, but 49.99M stays)
+        const formatted = millions % 1 === 0 ? millions.toFixed(0) : millions.toFixed(2).replace(/\.?0+$/, '');
+        return `${currency} ${formatted}M`;
+    } else if (amount >= 1000) {
+        const thousands = amount / 1000;
+        const formatted = thousands % 1 === 0 ? thousands.toFixed(0) : thousands.toFixed(2).replace(/\.?0+$/, '');
+        return `${currency} ${formatted}K`;
+    }
+    return `${currency} ${amount}`;
+};
+
+/**
  * RealEstateCard - Premium component for displaying real estate search results
  * 
  * Features:
@@ -118,7 +138,10 @@ export const RealEstateCard = memo(({ data }: RealEstateCardProps) => {
             </div>
 
             {/* Properties Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className={`grid gap-6 ${properties.length === 1 ? 'grid-cols-1' :
+                properties.length === 2 ? 'grid-cols-1 md:grid-cols-2' :
+                    'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
+                }`}>
                 {properties.map((property, index) => (
                     <a
                         key={index}
@@ -147,7 +170,7 @@ export const RealEstateCard = memo(({ data }: RealEstateCardProps) => {
                                 {/* Price Tag Overlay */}
                                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4 pt-12">
                                     <p className="text-xl font-bold text-white">
-                                        {property.price}
+                                        {formatPrice(property.price_amount, property.price_currency)}
                                     </p>
                                 </div>
 
@@ -208,10 +231,12 @@ export const RealEstateCard = memo(({ data }: RealEstateCardProps) => {
 
                                 {/* Property Type Badge */}
                                 <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-800 flex justify-between items-center">
-                                    <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
-                                        {property.property_type}
-                                    </span>
-                                    <span className="text-xs text-blue-600 dark:text-blue-400 font-medium group-hover:underline">
+                                    {property.property_type && (
+                                        <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
+                                            {property.property_type}
+                                        </span>
+                                    )}
+                                    <span className={`text-xs text-blue-600 dark:text-blue-400 font-medium group-hover:underline ${!property.property_type ? 'ml-auto' : ''}`}>
                                         View Details
                                     </span>
                                 </div>
