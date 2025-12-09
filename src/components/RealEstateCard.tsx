@@ -91,9 +91,6 @@ export const RealEstateCard = memo(({ data }: RealEstateCardProps) => {
             {/* Header */}
             <div className="flex items-end justify-between border-b-2 border-gray-900 dark:border-white pb-6">
                 <div>
-                    <div className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
-                        {marketplace}
-                    </div>
                     <h2
                         className="text-4xl md:text-5xl font-normal text-gray-900 dark:text-white"
                         style={{ fontFamily: "'Spectral', serif" }}

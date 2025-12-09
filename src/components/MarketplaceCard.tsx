@@ -115,13 +115,6 @@ export const MarketplaceCard = memo(({ data }: MarketplaceCardProps) => {
 
                         {/* Artist Profile Info */}
                         <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-2">
-                                <Store className={`w-5 h-5 ${style.icon}`} />
-                                <span className={`text-sm font-semibold uppercase tracking-wide ${style.text} opacity-80`}>
-                                    {marketplace}
-                                </span>
-                            </div>
-
                             {artist_profile && (
                                 <>
                                     <a
