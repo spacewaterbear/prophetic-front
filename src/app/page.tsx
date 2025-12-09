@@ -231,7 +231,7 @@ const MessageItem = memo(({ message, userName }: { message: Message; userName: s
             </div>
             {message.sender === "user" && (
                 <div
-                    className="hidden sm:flex w-8 h-8 sm:w-10 sm:h-10 mt-1 rounded-full bg-custom-brand items-center justify-center text-white font-medium flex-shrink-0 leading-none text-base sm:text-lg">
+                    className="hidden sm:flex w-8 h-8 sm:w-10 sm:h-10 mt-1 rounded-full bg-gray-800 dark:bg-white/10 items-center justify-center text-white dark:text-white font-medium flex-shrink-0 leading-none text-base sm:text-lg">
                     {userName}
                 </div>
             )}
