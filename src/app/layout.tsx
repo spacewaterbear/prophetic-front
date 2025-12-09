@@ -47,7 +47,18 @@ export default function RootLayout({
       <body suppressHydrationWarning className="antialiased">
         <Providers>
           <ClientBody>{children}</ClientBody>
-          <Toaster position="top-center" richColors />
+          <Toaster
+            position="top-center"
+            richColors
+            toastOptions={{
+              style: {
+                background: 'rgb(230, 220, 210)',
+                color: 'rgb(17, 24, 39)',
+                border: '1px solid rgb(209, 213, 219)',
+              },
+              className: 'dark:!bg-gray-700 dark:!text-white dark:!border-gray-600',
+            }}
+          />
         </Providers>
       </body>
     </html>
