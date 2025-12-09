@@ -779,15 +779,9 @@ export default function Home() {
                     {session?.user && (
                         <div className="px-3 py-2 rounded-lg bg-gray-600/20 dark:bg-white/5 mb-2">
                             <div className="flex items-center gap-2">
-                                {session.user.image && (
-                                    <Image
-                                        src={session.user.image}
-                                        alt={session.user.name || "User"}
-                                        width={32}
-                                        height={32}
-                                        className="rounded-full"
-                                    />
-                                )}
+                                <div className="w-8 h-8 rounded-full bg-gray-800 dark:bg-white/10 flex items-center justify-center text-white font-medium text-sm">
+                                    {session.user.name?.[0]?.toUpperCase() || session.user.email?.[0]?.toUpperCase() || "U"}
+                                </div>
                                 <div className="flex-1 min-w-0">
                                     <p className="text-sm font-medium truncate">{session.user.name}</p>
                                     <p className="text-xs text-gray-600 dark:text-gray-400 truncate">{session.user.email}</p>
