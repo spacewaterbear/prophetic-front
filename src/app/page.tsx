@@ -9,6 +9,7 @@ import {
   Menu,
   MessageSquare,
   Plus,
+  Search,
   Send,
   X,
 } from "lucide-react";
@@ -193,8 +194,8 @@ const MessageItem = memo(
         <div className="group relative">
           <div
             className={`max-w-[90vw] sm:max-w-3xl lg:max-w-4xl pl-4 pr-12 py-4 sm:pl-8 sm:pr-14 sm:py-5 rounded-2xl ${message.sender === "user"
-              ? "bg-[rgb(230,220,210)] dark:bg-gray-700 text-gray-900 dark:text-white"
-              : "bg-[rgb(247,240,232)] dark:bg-gray-800 text-gray-900 dark:text-white"
+                ? "bg-[rgb(230,220,210)] dark:bg-gray-700 text-gray-900 dark:text-white"
+                : "bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] text-gray-900 dark:text-white"
               }`}
           >
             {message.sender === "user" ? (
@@ -1049,7 +1050,7 @@ export default function Home() {
             {isLoading && !streamingMessage && !streamingMarketplaceData && (
               <div className="flex gap-2 sm:gap-4 items-start justify-start">
                 <AIAvatar />
-                <div className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-4 py-4 sm:px-8 sm:py-5 rounded-2xl bg-[rgb(247,240,232)] dark:bg-gray-800">
+                <div className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-4 py-4 sm:px-8 sm:py-5 rounded-2xl bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)]">
                   <TypingIndicator />
                   {currentStatus && (
                     <p className="text-sm text-gray-500 dark:text-gray-400 italic mt-2">
@@ -1066,7 +1067,7 @@ export default function Home() {
               streamingRealEstateData) && (
                 <div className="flex gap-2 sm:gap-4 items-start justify-start">
                   <AIAvatar />
-                  <div className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl pl-4 pr-12 py-4 sm:pl-8 sm:pr-14 sm:py-5 rounded-2xl bg-[rgb(247,240,232)] dark:bg-gray-800 text-gray-900 dark:text-white">
+                  <div className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl pl-4 pr-12 py-4 sm:pl-8 sm:pr-14 sm:py-5 rounded-2xl bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] text-gray-900 dark:text-white">
                     {streamingMarketplaceData && (
                       <div className="mb-4">
                         <Suspense
@@ -1140,32 +1141,55 @@ export default function Home() {
                       handleSend();
                     }
                   }}
-                  placeholder="Ask about luxury investments, market trends, or portfolio optimization..."
-                  className="w-full border-none bg-black text-white rounded-[25px] focus:outline-none focus:ring-0 resize-none placeholder:text-sm sm:placeholder:text-base placeholder:text-gray-400 text-sm sm:text-base shadow-sm"
+                  placeholder="Ask to Prophetic"
+                  className="w-full border-none rounded-[25px] focus:outline-none focus:ring-0 resize-none placeholder:text-sm sm:placeholder:text-base placeholder:text-gray-400 text-sm sm:text-base shadow-sm bg-[#f0e7dd] dark:bg-[#1e1f20] text-gray-900 dark:text-white"
                   style={{
-                    height: "130px",
+                    height: "100px",
                     padding: "20px",
                     paddingRight: "60px",
-                    backgroundColor: "#1e1f20"
                   }}
                   rows={1}
                 />
+                {/* Plus button - bottom left */}
+                <div className="absolute bottom-5 left-5 group">
+                  <button disabled className="text-gray-500 cursor-not-allowed">
+                    <Plus className="h-6 w-6" />
+                  </button>
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                    coming soon
+                  </div>
+                </div>
+                {/* Prophetic logo button - to the right of Plus */}
+                <div className="absolute bottom-5 left-16 group">
+                  <button disabled className="cursor-not-allowed">
+                    <Image
+                      src={
+                        mounted && isDark
+                          ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_white.svg"
+                          : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_new.svg"
+                      }
+                      alt="Prophetic"
+                      width={24}
+                      height={24}
+                      className="w-6 h-6 opacity-50"
+                    />
+                  </button>
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                    coming soon
+                  </div>
+                </div>
+                {/* Send button - bottom right */}
                 {input.trim() && (
-                  <Button
+                  <button
                     onClick={() => handleSend()}
                     disabled={isLoading}
-                    size="icon"
-                    className="absolute bottom-5 right-5 bg-gray-800 hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 text-white rounded-full h-10 w-10 p-0 group shadow-sm"
+                    className="absolute bottom-6 right-5 text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors group"
                   >
-                    <Send className="h-5 w-5 transition-transform duration-300 group-hover:rotate-45" />
-                  </Button>
+                    <Send className="h-6 w-6 rotate-45" />
+                  </button>
                 )}
               </div>
             </div>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 sm:mt-3 text-center px-2">
-              Prophetic Orchestra 7.5 can make mistakes. Verify investment
-              advice with certified advisors.
-            </p>
           </div>
         </div>
       </div>
