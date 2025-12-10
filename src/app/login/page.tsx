@@ -14,7 +14,7 @@ export default function LoginPage() {
     try {
       await signIn("google", {
         callbackUrl: "/",
-        redirect: true
+        redirect: true,
       });
     } catch (error) {
       console.error("Sign in error:", error);
@@ -36,9 +36,10 @@ export default function LoginPage() {
             {/* Icon Logo */}
             <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden flex items-center justify-center">
               <Image
-                src={isDark
-                  ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_white.svg"
-                  : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_new.svg"
+                src={
+                  isDark
+                    ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_white.svg"
+                    : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_new.svg"
                 }
                 alt="Prophetic Orchestra"
                 width={96}
@@ -51,9 +52,10 @@ export default function LoginPage() {
             {/* Text Logo */}
             <div className="w-48 h-12 mx-auto mb-4">
               <Image
-                src={isDark
-                  ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/logo_text_blanc.svg"
-                  : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/logo_text.svg"
+                src={
+                  isDark
+                    ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/logo_text_blanc.svg"
+                    : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/logo_text.svg"
                 }
                 alt="Prophetic Orchestra"
                 width={192}
@@ -62,13 +64,13 @@ export default function LoginPage() {
                 priority
               />
             </div>
-
-            <p className="text-gray-600 dark:text-gray-400 text-sm">Powered by Score Orchestra™ and TTT Token technology</p>
           </div>
 
           {/* Welcome Message */}
           <div className="mb-8 text-center">
-            <h2 className="text-2xl font-light mb-2 text-gray-900 dark:text-white">Welcome</h2>
+            <h2 className="text-2xl font-light mb-2 text-gray-900 dark:text-white">
+              Welcome
+            </h2>
             <p className="text-gray-600 dark:text-gray-400 text-sm">
               Sign in to access your luxury investment insights
             </p>
@@ -107,15 +109,17 @@ export default function LoginPage() {
               <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">Secure Authentication</span>
+              <span className="px-4 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
+                Secure Authentication
+              </span>
             </div>
           </div>
 
           {/* Footer Info */}
           <div className="text-center">
             <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
-              By signing in, you agree to our Terms of Service and Privacy Policy.
-              Your data is encrypted and secure.
+              By signing in, you agree to our Terms of Service and Privacy
+              Policy. Your data is encrypted and secure.
             </p>
           </div>
         </Card>
