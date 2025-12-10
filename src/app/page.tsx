@@ -194,8 +194,8 @@ const MessageItem = memo(
         <div className="group relative">
           <div
             className={`max-w-[90vw] sm:max-w-3xl lg:max-w-4xl pl-4 pr-12 py-4 sm:pl-8 sm:pr-14 sm:py-5 rounded-2xl ${message.sender === "user"
-                ? "bg-[rgb(230,220,210)] dark:bg-gray-700 text-gray-900 dark:text-white"
-                : "bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] text-gray-900 dark:text-white"
+              ? "bg-[rgb(230,220,210)] dark:bg-gray-700 text-gray-900 dark:text-white"
+              : "bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] text-gray-900 dark:text-white"
               }`}
           >
             {message.sender === "user" ? (
@@ -1010,13 +1010,16 @@ export default function Home() {
         <div
           ref={messagesContainerRef}
           onScroll={handleScroll}
-          className="flex-1 overflow-y-auto px-3 sm:px-6 py-4 sm:py-8"
+          className={`flex-1 overflow-y-auto py-4 sm:py-8 ${messages.length === 0 && !streamingMessage && !streamingMarketplaceData
+            ? "flex items-center justify-center"
+            : "px-3 sm:px-6"
+            }`}
         >
           {messages.length === 0 &&
             !streamingMessage &&
             !streamingMarketplaceData && (
-              <div className="flex items-center justify-center h-full">
-                <div className="text-center">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 md:left-[calc(50%+128px)] w-full max-w-3xl px-4 sm:px-6">
+                <div className="text-center mb-8">
                   <div className="w-24 h-24 sm:w-32 sm:h-32 mx-auto mb-6 sm:mb-8 rounded-full flex items-center justify-center overflow-hidden">
                     <Image
                       src={
@@ -1033,6 +1036,71 @@ export default function Home() {
                   <h2 className="text-4xl sm:text-6xl font-light mb-4 sm:mb-6 dark:text-white px-4">
                     Bonjour, {session?.user?.name?.split(" ")[0]}
                   </h2>
+                </div>
+
+                {/* Centered Input Area */}
+                <div className="w-full">
+                  <div className="flex gap-2 sm:gap-3 items-start">
+                    <div className="flex-1 relative">
+                      <textarea
+                        ref={inputRef}
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && !e.shiftKey) {
+                            e.preventDefault();
+                            handleSend();
+                          }
+                        }}
+                        placeholder="Ask to Prophetic"
+                        className="w-full border-none rounded-[25px] focus:outline-none focus:ring-0 resize-none placeholder:text-sm sm:placeholder:text-base placeholder:text-gray-400 text-sm sm:text-base shadow-sm bg-[#f0e7dd] dark:bg-[#1e1f20] text-gray-900 dark:text-white"
+                        style={{
+                          height: "100px",
+                          padding: "20px",
+                          paddingRight: "60px",
+                        }}
+                        rows={1}
+                      />
+                      {/* Plus button - bottom left */}
+                      <div className="absolute bottom-5 left-5 group">
+                        <button disabled className="text-gray-500 cursor-not-allowed">
+                          <Plus className="h-6 w-6" />
+                        </button>
+                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                          coming soon
+                        </div>
+                      </div>
+                      {/* Prophetic logo button - to the right of Plus */}
+                      <div className="absolute bottom-5 left-16 group">
+                        <button disabled className="cursor-not-allowed">
+                          <Image
+                            src={
+                              mounted && isDark
+                                ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_white.svg"
+                                : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_new.svg"
+                            }
+                            alt="Prophetic"
+                            width={24}
+                            height={24}
+                            className="w-6 h-6 opacity-50"
+                          />
+                        </button>
+                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                          coming soon
+                        </div>
+                      </div>
+                      {/* Send button - bottom right */}
+                      {input.trim() && (
+                        <button
+                          onClick={() => handleSend()}
+                          disabled={isLoading}
+                          className="absolute bottom-6 right-5 text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors group"
+                        >
+                          <Send className="h-6 w-6 rotate-45" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
@@ -1126,72 +1194,74 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Input Area */}
-        <div className="border-t border-gray-300 dark:border-gray-800 px-3 sm:px-6 py-3 sm:py-4 bg-[rgb(247,240,232)] dark:bg-black">
-          <div className="max-w-3xl mx-auto">
-            <div className="flex gap-2 sm:gap-3 items-start">
-              <div className="flex-1 relative">
-                <textarea
-                  ref={inputRef}
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                      e.preventDefault();
-                      handleSend();
-                    }
-                  }}
-                  placeholder="Ask to Prophetic"
-                  className="w-full border-none rounded-[25px] focus:outline-none focus:ring-0 resize-none placeholder:text-sm sm:placeholder:text-base placeholder:text-gray-400 text-sm sm:text-base shadow-sm bg-[#f0e7dd] dark:bg-[#1e1f20] text-gray-900 dark:text-white"
-                  style={{
-                    height: "100px",
-                    padding: "20px",
-                    paddingRight: "60px",
-                  }}
-                  rows={1}
-                />
-                {/* Plus button - bottom left */}
-                <div className="absolute bottom-5 left-5 group">
-                  <button disabled className="text-gray-500 cursor-not-allowed">
-                    <Plus className="h-6 w-6" />
-                  </button>
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                    coming soon
-                  </div>
-                </div>
-                {/* Prophetic logo button - to the right of Plus */}
-                <div className="absolute bottom-5 left-16 group">
-                  <button disabled className="cursor-not-allowed">
-                    <Image
-                      src={
-                        mounted && isDark
-                          ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_white.svg"
-                          : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_new.svg"
+        {/* Input Area - shown at bottom when there are messages */}
+        {(messages.length > 0 || streamingMessage || streamingMarketplaceData) && (
+          <div className="border-t border-gray-300 dark:border-gray-800 px-3 sm:px-6 py-3 sm:py-4 bg-[rgb(247,240,232)] dark:bg-black">
+            <div className="max-w-3xl mx-auto">
+              <div className="flex gap-2 sm:gap-3 items-start">
+                <div className="flex-1 relative">
+                  <textarea
+                    ref={inputRef}
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSend();
                       }
-                      alt="Prophetic"
-                      width={24}
-                      height={24}
-                      className="w-6 h-6 opacity-50"
-                    />
-                  </button>
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                    coming soon
+                    }}
+                    placeholder="Ask to Prophetic"
+                    className="w-full border-none rounded-[25px] focus:outline-none focus:ring-0 resize-none placeholder:text-sm sm:placeholder:text-base placeholder:text-gray-400 text-sm sm:text-base shadow-sm bg-[#f0e7dd] dark:bg-[#1e1f20] text-gray-900 dark:text-white"
+                    style={{
+                      height: "100px",
+                      padding: "20px",
+                      paddingRight: "60px",
+                    }}
+                    rows={1}
+                  />
+                  {/* Plus button - bottom left */}
+                  <div className="absolute bottom-5 left-5 group">
+                    <button disabled className="text-gray-500 cursor-not-allowed">
+                      <Plus className="h-6 w-6" />
+                    </button>
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                      coming soon
+                    </div>
                   </div>
+                  {/* Prophetic logo button - to the right of Plus */}
+                  <div className="absolute bottom-5 left-16 group">
+                    <button disabled className="cursor-not-allowed">
+                      <Image
+                        src={
+                          mounted && isDark
+                            ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_white.svg"
+                            : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_new.svg"
+                        }
+                        alt="Prophetic"
+                        width={24}
+                        height={24}
+                        className="w-6 h-6 opacity-50"
+                      />
+                    </button>
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                      coming soon
+                    </div>
+                  </div>
+                  {/* Send button - bottom right */}
+                  {input.trim() && (
+                    <button
+                      onClick={() => handleSend()}
+                      disabled={isLoading}
+                      className="absolute bottom-6 right-5 text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors group"
+                    >
+                      <Send className="h-6 w-6 rotate-45" />
+                    </button>
+                  )}
                 </div>
-                {/* Send button - bottom right */}
-                {input.trim() && (
-                  <button
-                    onClick={() => handleSend()}
-                    disabled={isLoading}
-                    className="absolute bottom-6 right-5 text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors group"
-                  >
-                    <Send className="h-6 w-6 rotate-45" />
-                  </button>
-                )}
               </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
