@@ -1126,7 +1126,7 @@ export default function Home() {
         </div>
 
         {/* Input Area */}
-        <div className="border-t border-gray-300 dark:border-gray-800 px-3 sm:px-6 py-3 sm:py-4 bg-[rgb(247,240,232)] dark:bg-gray-900">
+        <div className="border-t border-gray-300 dark:border-gray-800 px-3 sm:px-6 py-3 sm:py-4 bg-[rgb(247,240,232)] dark:bg-black">
           <div className="max-w-3xl mx-auto">
             <div className="flex gap-2 sm:gap-3 items-start">
               <div className="flex-1 relative">
@@ -1141,8 +1141,15 @@ export default function Home() {
                     }
                   }}
                   placeholder="Ask about luxury investments, market trends, or portfolio optimization..."
-                  className="w-full px-3 py-2 sm:px-4 sm:py-3 pr-12 border border-gray-400 dark:border-gray-700 bg-[rgb(240,230,220)] dark:bg-[rgb(30,31,32)] text-gray-900 dark:text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none placeholder:text-ellipsis placeholder:overflow-hidden placeholder:whitespace-nowrap placeholder:text-sm sm:placeholder:text-base placeholder:text-gray-400 dark:placeholder:text-gray-500 text-sm sm:text-base"
-                  style={{ minHeight: "48px", maxHeight: "200px" }}
+                  className="w-full border-none bg-black text-white rounded-[25px] focus:outline-none focus:ring-0 resize-none placeholder:text-sm sm:placeholder:text-base placeholder:text-gray-400 text-sm sm:text-base shadow-sm"
+                  style={{
+                    height: "130px",
+                    paddingLeft: "10px",
+                    paddingRight: "10px",
+                    paddingBottom: "20px",
+                    paddingTop: "10px",
+                    backgroundColor: "#1e1f20"
+                  }}
                   rows={1}
                 />
               </div>
@@ -1150,7 +1157,7 @@ export default function Home() {
                 onClick={() => handleSend()}
                 disabled={!input.trim() || isLoading}
                 size="lg"
-                className="bg-gray-800 hover:bg-gray-700 text-white rounded-2xl h-[48px] w-[48px] sm:h-[52px] sm:w-auto sm:px-6 p-0 flex-shrink-0 group"
+                className="bg-gray-800 hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 text-white rounded-3xl h-[56px] w-[56px] sm:h-[56px] sm:w-auto sm:px-6 p-0 flex-shrink-0 group shadow-sm"
               >
                 <Send className="h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-300 group-hover:rotate-45" />
               </Button>
