@@ -1144,23 +1144,23 @@ export default function Home() {
                   className="w-full border-none bg-black text-white rounded-[25px] focus:outline-none focus:ring-0 resize-none placeholder:text-sm sm:placeholder:text-base placeholder:text-gray-400 text-sm sm:text-base shadow-sm"
                   style={{
                     height: "130px",
-                    paddingLeft: "10px",
-                    paddingRight: "10px",
-                    paddingBottom: "20px",
-                    paddingTop: "10px",
+                    padding: "20px",
+                    paddingRight: "60px",
                     backgroundColor: "#1e1f20"
                   }}
                   rows={1}
                 />
+                {input.trim() && (
+                  <Button
+                    onClick={() => handleSend()}
+                    disabled={isLoading}
+                    size="icon"
+                    className="absolute bottom-5 right-5 bg-gray-800 hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 text-white rounded-full h-10 w-10 p-0 group shadow-sm"
+                  >
+                    <Send className="h-5 w-5 transition-transform duration-300 group-hover:rotate-45" />
+                  </Button>
+                )}
               </div>
-              <Button
-                onClick={() => handleSend()}
-                disabled={!input.trim() || isLoading}
-                size="lg"
-                className="bg-gray-800 hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 text-white rounded-3xl h-[56px] w-[56px] sm:h-[56px] sm:w-auto sm:px-6 p-0 flex-shrink-0 group shadow-sm"
-              >
-                <Send className="h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-300 group-hover:rotate-45" />
-              </Button>
             </div>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 sm:mt-3 text-center px-2">
               Prophetic Orchestra 7.5 can make mistakes. Verify investment
