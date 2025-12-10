@@ -3,9 +3,13 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { signIn } from "next-auth/react";
+import { useTheme } from "next-themes";
 import Image from "next/image";
 
 export default function LoginPage() {
+  const { theme, resolvedTheme } = useTheme();
+  const isDark = theme === "dark" || resolvedTheme === "dark";
+
   const handleGoogleSignIn = async () => {
     try {
       await signIn("google", {
@@ -18,34 +22,54 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[rgb(247,240,232)] dark:bg-gradient-to-br dark:from-gray-900 dark:to-gray-950 flex items-center justify-center p-4">
       {/* Background Decorations */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-200/30 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-sky-200/30 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[rgb(230,220,210)]/40 dark:bg-gray-800/30 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[rgb(230,220,210)]/40 dark:bg-gray-800/30 rounded-full blur-3xl"></div>
       </div>
 
       <div className="w-full max-w-md relative z-10">
-        <Card className="p-8 bg-white/80 backdrop-blur-xl border-gray-200 shadow-2xl">
+        <Card className="p-8 sm:p-10 bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl border-gray-300 dark:border-gray-700 shadow-2xl">
           {/* Logo and Branding */}
           <div className="text-center mb-8">
-            <div className="w-20 h-20 mx-auto mb-6 rounded-full overflow-hidden shadow-lg">
+            {/* Icon Logo */}
+            <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden flex items-center justify-center">
               <Image
-                src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon.png"
-                alt="Prophetic Orchestra Logo"
-                width={80}
-                height={80}
+                src={isDark
+                  ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_white.svg"
+                  : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_new.svg"
+                }
+                alt="Prophetic Orchestra"
+                width={96}
+                height={96}
                 className="w-full h-full object-cover"
+                priority
               />
             </div>
-            <h1 className="text-3xl font-light mb-2">Prophetic Orchestra 7.5</h1>
-            <p className="text-gray-600 text-sm">AI Luxury Investment Advisor</p>
+
+            {/* Text Logo */}
+            <div className="w-48 h-12 mx-auto mb-4">
+              <Image
+                src={isDark
+                  ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/logo_text_blanc.svg"
+                  : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/logo_text.svg"
+                }
+                alt="Prophetic Orchestra"
+                width={192}
+                height={48}
+                className="w-full h-full object-contain"
+                priority
+              />
+            </div>
+
+            <p className="text-gray-600 dark:text-gray-400 text-sm">Powered by Score Orchestra™ and TTT Token technology</p>
           </div>
 
           {/* Welcome Message */}
           <div className="mb-8 text-center">
-            <h2 className="text-xl font-light mb-2">Welcome back</h2>
-            <p className="text-gray-500 text-sm">
+            <h2 className="text-2xl font-light mb-2 text-gray-900 dark:text-white">Welcome</h2>
+            <p className="text-gray-600 dark:text-gray-400 text-sm">
               Sign in to access your luxury investment insights
             </p>
           </div>
@@ -53,7 +77,7 @@ export default function LoginPage() {
           {/* Google Sign In Button */}
           <Button
             onClick={handleGoogleSignIn}
-            className="w-full h-12 bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 shadow-sm rounded-xl font-medium flex items-center justify-center gap-3"
+            className="w-full h-12 bg-white hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-white border border-gray-300 dark:border-gray-600 shadow-sm rounded-xl font-medium flex items-center justify-center gap-3 transition-colors"
             variant="outline"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -80,16 +104,16 @@ export default function LoginPage() {
           {/* Divider */}
           <div className="relative my-8">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300"></div>
+              <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-white text-gray-500">Secure Authentication</span>
+              <span className="px-4 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">Secure Authentication</span>
             </div>
           </div>
 
           {/* Footer Info */}
           <div className="text-center">
-            <p className="text-xs text-gray-500 leading-relaxed">
+            <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
               By signing in, you agree to our Terms of Service and Privacy Policy.
               Your data is encrypted and secure.
             </p>
@@ -98,7 +122,7 @@ export default function LoginPage() {
 
         {/* Additional Info */}
         <div className="mt-6 text-center">
-          <div className="flex items-center justify-center gap-6 text-xs text-gray-600">
+          <div className="flex items-center justify-center gap-6 text-xs text-gray-600 dark:text-gray-400">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-green-500"></div>
               <span>256-bit Encryption</span>
