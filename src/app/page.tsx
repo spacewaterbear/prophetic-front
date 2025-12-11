@@ -861,7 +861,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex h-screen bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)]">
+    <div className="main-container bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)]">
       {/* Mobile overlay/backdrop */}
       {sidebarOpen && (
         <div
@@ -1010,7 +1010,7 @@ export default function Home() {
         <div
           ref={messagesContainerRef}
           onScroll={handleScroll}
-          className={`flex-1 overflow-y-auto py-4 sm:py-8 ${messages.length === 0 && !streamingMessage && !streamingMarketplaceData
+          className={`chat-history py-4 sm:py-8 ${messages.length === 0 && !streamingMessage && !streamingMarketplaceData
             ? "flex items-center justify-center"
             : "px-3 sm:px-6"
             }`}
@@ -1196,7 +1196,7 @@ export default function Home() {
 
         {/* Input Area - shown at bottom when there are messages */}
         {(messages.length > 0 || streamingMessage || streamingMarketplaceData) && (
-          <div className="border-t border-gray-300 dark:border-gray-800 px-3 sm:px-6 py-3 sm:py-4 bg-[rgb(247,240,232)] dark:bg-black">
+          <div className="input-area border-t border-gray-300 dark:border-gray-800 px-3 sm:px-6 py-3 sm:py-4 bg-[rgb(247,240,232)] dark:bg-black">
             <div className="max-w-3xl mx-auto">
               <div className="flex gap-2 sm:gap-3 items-start">
                 <div className="flex-1 relative">

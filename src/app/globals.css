@@ -63,6 +63,7 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -74,9 +75,31 @@ html {
 
 /* Prevent iOS Safari auto-zoom on input focus */
 @media screen and (max-width: 768px) {
+
   input,
   textarea,
   select {
     font-size: 16px !important;
   }
+}
+
+/* Gemini-style Flexbox layout for mobile keyboard handling */
+.main-container {
+  display: flex;
+  /* flex-direction: row is default - sidebar and main content side by side */
+  height: 100dvh;
+  /* Dynamic Viewport Height - adapts to keyboard */
+  overflow: hidden;
+}
+
+.chat-history {
+  flex: 1;
+  /* Takes all remaining space */
+  overflow-y: auto;
+  padding-bottom: 20px;
+}
+
+.input-area {
+  width: 100%;
+  /* No position: fixed needed with flexbox */
 }
