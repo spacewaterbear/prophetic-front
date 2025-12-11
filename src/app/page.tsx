@@ -1196,7 +1196,7 @@ export default function Home() {
 
         {/* Input Area - shown at bottom when there are messages */}
         {(messages.length > 0 || streamingMessage || streamingMarketplaceData) && (
-          <div className="input-area border-t border-gray-300 dark:border-gray-800 px-3 sm:px-6 py-3 sm:py-4 bg-[rgb(247,240,232)] dark:bg-black">
+          <div className="input-area px-3 sm:px-6 py-3 sm:py-4 bg-[rgb(247,240,232)] dark:bg-black">
             <div className="max-w-3xl mx-auto">
               <div className="flex gap-2 sm:gap-3 items-start">
                 <div className="flex-1 relative">
