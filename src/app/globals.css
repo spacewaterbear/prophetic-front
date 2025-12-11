@@ -71,3 +71,12 @@
 html {
   scroll-behavior: smooth;
 }
+
+/* Prevent iOS Safari auto-zoom on input focus */
+@media screen and (max-width: 768px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
