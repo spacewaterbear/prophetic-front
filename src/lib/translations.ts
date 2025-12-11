@@ -1,0 +1,375 @@
+// Translation dictionary for all UI text in the application
+export const translations = {
+    fr: {
+        // Navigation
+        nav: {
+            newChat: "Nouveau Chat",
+            recentChats: "Discussions Récentes",
+            signOut: "Se Déconnecter",
+            noConversations: "Aucune conversation pour le moment",
+        },
+        // Chat Interface
+        chat: {
+            greeting: "Bonjour",
+            welcomeMessage: "Comment puis-je vous aider à investir intelligemment ?",
+            placeholder: "Demandez à Prophetic",
+            send: "Envoyer",
+            comingSoon: "bientôt disponible",
+            loading: "Chargement...",
+            loadingMarketplace: "Chargement des données du marché...",
+            loadingRealEstate: "Chargement des données immobilières...",
+        },
+        // Login Page
+        login: {
+            welcome: "Bienvenue",
+            subtitle: "Connectez-vous pour accéder à vos analyses d'investissement de luxe",
+            continueWithGoogle: "Continuer avec Google",
+            secureAuth: "Authentification Sécurisée",
+            termsText: "En vous connectant, vous acceptez nos Conditions d'Utilisation et notre Politique de Confidentialité. Vos données sont cryptées et sécurisées.",
+            encryption: "Chiffrement 256 bits",
+            certified: "Certifié SOC 2",
+        },
+        // Common
+        common: {
+            loading: "Chargement...",
+            error: "Erreur",
+            success: "Succès",
+            cancel: "Annuler",
+            confirm: "Confirmer",
+            delete: "Supprimer",
+            edit: "Modifier",
+            save: "Enregistrer",
+        },
+    },
+    en: {
+        nav: {
+            newChat: "New Chat",
+            recentChats: "Recent Chats",
+            signOut: "Sign Out",
+            noConversations: "No conversations yet",
+        },
+        chat: {
+            greeting: "Hello",
+            welcomeMessage: "How can I help you invest wisely?",
+            placeholder: "Ask to Prophetic",
+            send: "Send",
+            comingSoon: "coming soon",
+            loading: "Loading...",
+            loadingMarketplace: "Loading marketplace data...",
+            loadingRealEstate: "Loading real estate data...",
+        },
+        login: {
+            welcome: "Welcome",
+            subtitle: "Sign in to access your luxury investment insights",
+            continueWithGoogle: "Continue with Google",
+            secureAuth: "Secure Authentication",
+            termsText: "By signing in, you agree to our Terms of Service and Privacy Policy. Your data is encrypted and secure.",
+            encryption: "256-bit Encryption",
+            certified: "SOC 2 Certified",
+        },
+        common: {
+            loading: "Loading...",
+            error: "Error",
+            success: "Success",
+            cancel: "Cancel",
+            confirm: "Confirm",
+            delete: "Delete",
+            edit: "Edit",
+            save: "Save",
+        },
+    },
+    es: {
+        nav: {
+            newChat: "Nuevo Chat",
+            recentChats: "Chats Recientes",
+            signOut: "Cerrar Sesión",
+            noConversations: "Aún no hay conversaciones",
+        },
+        chat: {
+            greeting: "Hola",
+            welcomeMessage: "¿Cómo puedo ayudarte a invertir inteligentemente?",
+            placeholder: "Pregunta a Prophetic",
+            send: "Enviar",
+            comingSoon: "próximamente",
+            loading: "Cargando...",
+            loadingMarketplace: "Cargando datos del mercado...",
+            loadingRealEstate: "Cargando datos inmobiliarios...",
+        },
+        login: {
+            welcome: "Bienvenido",
+            subtitle: "Inicia sesión para acceder a tus análisis de inversión de lujo",
+            continueWithGoogle: "Continuar con Google",
+            secureAuth: "Autenticación Segura",
+            termsText: "Al iniciar sesión, aceptas nuestros Términos de Servicio y Política de Privacidad. Tus datos están cifrados y seguros.",
+            encryption: "Cifrado de 256 bits",
+            certified: "Certificado SOC 2",
+        },
+        common: {
+            loading: "Cargando...",
+            error: "Error",
+            success: "Éxito",
+            cancel: "Cancelar",
+            confirm: "Confirmar",
+            delete: "Eliminar",
+            edit: "Editar",
+            save: "Guardar",
+        },
+    },
+    de: {
+        nav: {
+            newChat: "Neuer Chat",
+            recentChats: "Letzte Chats",
+            signOut: "Abmelden",
+            noConversations: "Noch keine Gespräche",
+        },
+        chat: {
+            greeting: "Hallo",
+            welcomeMessage: "Wie kann ich Ihnen helfen, intelligent zu investieren?",
+            placeholder: "Fragen Sie Prophetic",
+            send: "Senden",
+            comingSoon: "demnächst verfügbar",
+            loading: "Laden...",
+            loadingMarketplace: "Marktdaten werden geladen...",
+            loadingRealEstate: "Immobiliendaten werden geladen...",
+        },
+        login: {
+            welcome: "Willkommen",
+            subtitle: "Melden Sie sich an, um auf Ihre Luxusinvestitionsanalysen zuzugreifen",
+            continueWithGoogle: "Mit Google fortfahren",
+            secureAuth: "Sichere Authentifizierung",
+            termsText: "Durch die Anmeldung stimmen Sie unseren Nutzungsbedingungen und Datenschutzrichtlinien zu. Ihre Daten sind verschlüsselt und sicher.",
+            encryption: "256-Bit-Verschlüsselung",
+            certified: "SOC 2 zertifiziert",
+        },
+        common: {
+            loading: "Laden...",
+            error: "Fehler",
+            success: "Erfolg",
+            cancel: "Abbrechen",
+            confirm: "Bestätigen",
+            delete: "Löschen",
+            edit: "Bearbeiten",
+            save: "Speichern",
+        },
+    },
+    it: {
+        nav: {
+            newChat: "Nuova Chat",
+            recentChats: "Chat Recenti",
+            signOut: "Disconnetti",
+            noConversations: "Nessuna conversazione ancora",
+        },
+        chat: {
+            greeting: "Ciao",
+            welcomeMessage: "Come posso aiutarti a investire in modo intelligente?",
+            placeholder: "Chiedi a Prophetic",
+            send: "Invia",
+            comingSoon: "prossimamente",
+            loading: "Caricamento...",
+            loadingMarketplace: "Caricamento dati di mercato...",
+            loadingRealEstate: "Caricamento dati immobiliari...",
+        },
+        login: {
+            welcome: "Benvenuto",
+            subtitle: "Accedi per accedere alle tue analisi di investimento di lusso",
+            continueWithGoogle: "Continua con Google",
+            secureAuth: "Autenticazione Sicura",
+            termsText: "Effettuando l'accesso, accetti i nostri Termini di Servizio e l'Informativa sulla Privacy. I tuoi dati sono crittografati e sicuri.",
+            encryption: "Crittografia a 256 bit",
+            certified: "Certificato SOC 2",
+        },
+        common: {
+            loading: "Caricamento...",
+            error: "Errore",
+            success: "Successo",
+            cancel: "Annulla",
+            confirm: "Conferma",
+            delete: "Elimina",
+            edit: "Modifica",
+            save: "Salva",
+        },
+    },
+    pt: {
+        nav: {
+            newChat: "Novo Chat",
+            recentChats: "Chats Recentes",
+            signOut: "Sair",
+            noConversations: "Ainda não há conversas",
+        },
+        chat: {
+            greeting: "Olá",
+            welcomeMessage: "Como posso ajudá-lo a investir com inteligência?",
+            placeholder: "Pergunte ao Prophetic",
+            send: "Enviar",
+            comingSoon: "em breve",
+            loading: "Carregando...",
+            loadingMarketplace: "Carregando dados do mercado...",
+            loadingRealEstate: "Carregando dados imobiliários...",
+        },
+        login: {
+            welcome: "Bem-vindo",
+            subtitle: "Faça login para acessar suas análises de investimento de luxo",
+            continueWithGoogle: "Continuar com Google",
+            secureAuth: "Autenticação Segura",
+            termsText: "Ao fazer login, você concorda com nossos Termos de Serviço e Política de Privacidade. Seus dados são criptografados e seguros.",
+            encryption: "Criptografia de 256 bits",
+            certified: "Certificado SOC 2",
+        },
+        common: {
+            loading: "Carregando...",
+            error: "Erro",
+            success: "Sucesso",
+            cancel: "Cancelar",
+            confirm: "Confirmar",
+            delete: "Excluir",
+            edit: "Editar",
+            save: "Salvar",
+        },
+    },
+    nl: {
+        nav: {
+            newChat: "Nieuwe Chat",
+            recentChats: "Recente Chats",
+            signOut: "Uitloggen",
+            noConversations: "Nog geen gesprekken",
+        },
+        chat: {
+            greeting: "Hallo",
+            welcomeMessage: "Hoe kan ik u helpen slim te investeren?",
+            placeholder: "Vraag aan Prophetic",
+            send: "Verzenden",
+            comingSoon: "binnenkort beschikbaar",
+            loading: "Laden...",
+            loadingMarketplace: "Marktgegevens laden...",
+            loadingRealEstate: "Vastgoedgegevens laden...",
+        },
+        login: {
+            welcome: "Welkom",
+            subtitle: "Log in om toegang te krijgen tot uw luxe investeringsanalyses",
+            continueWithGoogle: "Doorgaan met Google",
+            secureAuth: "Veilige Authenticatie",
+            termsText: "Door in te loggen, gaat u akkoord met onze Servicevoorwaarden en Privacybeleid. Uw gegevens zijn versleuteld en veilig.",
+            encryption: "256-bits versleuteling",
+            certified: "SOC 2 gecertificeerd",
+        },
+        common: {
+            loading: "Laden...",
+            error: "Fout",
+            success: "Succes",
+            cancel: "Annuleren",
+            confirm: "Bevestigen",
+            delete: "Verwijderen",
+            edit: "Bewerken",
+            save: "Opslaan",
+        },
+    },
+    ja: {
+        nav: {
+            newChat: "新しいチャット",
+            recentChats: "最近のチャット",
+            signOut: "サインアウト",
+            noConversations: "まだ会話がありません",
+        },
+        chat: {
+            greeting: "こんにちは",
+            welcomeMessage: "賢く投資するお手伝いをさせていただけますか？",
+            placeholder: "Propheticに質問する",
+            send: "送信",
+            comingSoon: "近日公開",
+            loading: "読み込み中...",
+            loadingMarketplace: "マーケットデータを読み込み中...",
+            loadingRealEstate: "不動産データを読み込み中...",
+        },
+        login: {
+            welcome: "ようこそ",
+            subtitle: "高級投資インサイトにアクセスするにはサインインしてください",
+            continueWithGoogle: "Googleで続ける",
+            secureAuth: "セキュアな認証",
+            termsText: "サインインすることで、利用規約とプライバシーポリシーに同意したことになります。お客様のデータは暗号化され、安全に保護されています。",
+            encryption: "256ビット暗号化",
+            certified: "SOC 2認定",
+        },
+        common: {
+            loading: "読み込み中...",
+            error: "エラー",
+            success: "成功",
+            cancel: "キャンセル",
+            confirm: "確認",
+            delete: "削除",
+            edit: "編集",
+            save: "保存",
+        },
+    },
+    zh: {
+        nav: {
+            newChat: "新聊天",
+            recentChats: "最近的聊天",
+            signOut: "登出",
+            noConversations: "还没有对话",
+        },
+        chat: {
+            greeting: "你好",
+            welcomeMessage: "我如何帮助您明智地投资？",
+            placeholder: "向Prophetic提问",
+            send: "发送",
+            comingSoon: "即将推出",
+            loading: "加载中...",
+            loadingMarketplace: "正在加载市场数据...",
+            loadingRealEstate: "正在加载房地产数据...",
+        },
+        login: {
+            welcome: "欢迎",
+            subtitle: "登录以访问您的奢侈品投资洞察",
+            continueWithGoogle: "使用Google继续",
+            secureAuth: "安全认证",
+            termsText: "登录即表示您同意我们的服务条款和隐私政策。您的数据已加密并受到保护。",
+            encryption: "256位加密",
+            certified: "SOC 2认证",
+        },
+        common: {
+            loading: "加载中...",
+            error: "错误",
+            success: "成功",
+            cancel: "取消",
+            confirm: "确认",
+            delete: "删除",
+            edit: "编辑",
+            save: "保存",
+        },
+    },
+} as const;
+
+// Type for supported languages
+export type Language = keyof typeof translations;
+
+// Type for translation keys (for type safety)
+export type TranslationKey = string;
+
+// Helper function to get nested translation value
+export function getTranslation(
+    lang: Language,
+    key: string,
+    fallbackLang: Language = "en"
+): string {
+    const keys = key.split(".");
+    let value: any = translations[lang];
+
+    for (const k of keys) {
+        if (value && typeof value === "object" && k in value) {
+            value = value[k];
+        } else {
+            // Fallback to English if key not found
+            value = translations[fallbackLang];
+            for (const fk of keys) {
+                if (value && typeof value === "object" && fk in value) {
+                    value = value[fk];
+                } else {
+                    return key; // Return key itself if not found
+                }
+            }
+            break;
+        }
+    }
+
+    return typeof value === "string" ? value : key;
+}

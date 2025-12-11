@@ -24,6 +24,7 @@ import { TypingIndicator } from "@/components/TypingIndicator";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ShareButton } from "@/components/ShareButton";
 import { toast } from "sonner";
+import { useI18n } from "@/contexts/i18n-context";
 
 // Lazy load Markdown component to reduce initial bundle size
 const Markdown = lazy(() =>
@@ -324,24 +325,12 @@ const isAdminUser = (
   return session?.user?.status === "admini";
 };
 
-// Translation dictionary for welcome messages
-const translations: Record<string, string> = {
-  fr: "Comment puis-je vous aider à investir intelligemment ?",
-  en: "How can I help you invest wisely?",
-  es: "¿Cómo puedo ayudarte a invertir inteligentemente?",
-  de: "Wie kann ich Ihnen helfen, intelligent zu investieren?",
-  it: "Come posso aiutarti a investire in modo intelligente?",
-  pt: "Como posso ajudá-lo a investir com inteligência?",
-  nl: "Hoe kan ik u helpen slim te investeren?",
-  ja: "賢く投資するお手伝いをさせていただけますか？",
-  zh: "我如何帮助您明智地投资？",
-};
-
 export default function Home() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const { theme, resolvedTheme } = useTheme();
   const isDark = theme === "dark" || resolvedTheme === "dark";
+  const { t } = useI18n();
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -371,7 +360,6 @@ export default function Home() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const [shouldAutoScroll, setShouldAutoScroll] = useState(true);
   const [mounted, setMounted] = useState(false);
-  const [userLanguage, setUserLanguage] = useState<string>("fr"); // Default to French
 
   // Redirect to login if not authenticated or to registration-pending if unauthorized
   useEffect(() => {
@@ -385,26 +373,6 @@ export default function Home() {
       router.push("/registration-pending");
     }
   }, [status, session, router]);
-
-  // Fetch user's geolocation and set language
-  useEffect(() => {
-    const fetchGeolocation = async () => {
-      try {
-        const response = await fetch("/api/geolocation");
-        if (response.ok) {
-          const data = await response.json();
-          setUserLanguage(data.language || "fr");
-          console.log("[Geolocation Debug] Full data:", data);
-          console.log(`[Geolocation Debug] Country: ${data.country}, Language: ${data.language}, IP: ${data.ip}, Source: ${data.source}`);
-        }
-      } catch (error) {
-        console.error("Error fetching geolocation:", error);
-        // Keep default French on error
-      }
-    };
-
-    fetchGeolocation();
-  }, []);
 
   // Enforce default model for non-admin users
   useEffect(() => {
@@ -621,7 +589,7 @@ export default function Home() {
               className="w-full h-full object-contain"
             />
           </div>
-          <p className="text-gray-600 dark:text-gray-400">Loading...</p>
+          <p className="text-gray-600 dark:text-gray-400">{t('chat.loading')}</p>
         </div>
       </div>
     );
@@ -916,18 +884,18 @@ export default function Home() {
             disabled={isLoading}
           >
             <Plus className="h-4 w-4 mr-2" />
-            New Chat
+            {t('nav.newChat')}
           </Button>
         </div>
 
         <div className="flex-1 overflow-y-auto p-4">
           <div className="space-y-2">
             <div className="text-xs text-gray-600 dark:text-gray-400 mb-2">
-              Recent Chats
+              {t('nav.recentChats')}
             </div>
             {conversations.length === 0 ? (
               <div className="text-xs text-gray-500 dark:text-gray-500 px-3 py-2">
-                No conversations yet
+                {t('nav.noConversations')}
               </div>
             ) : (
               conversations.map((conversation) => (
@@ -992,7 +960,7 @@ export default function Home() {
             className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-800/10 dark:hover:bg-white/10 text-sm transition-colors flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
           >
             <LogOut className="h-4 w-4" />
-            Sign Out
+            {t('nav.signOut')}
           </button>
         </div>
       </aside>
@@ -1068,10 +1036,10 @@ export default function Home() {
                     />
                   </div>
                   <h2 className="text-4xl sm:text-6xl font-light mb-4 sm:mb-6 dark:text-white px-4">
-                    Bonjour, {session?.user?.name?.split(" ")[0]}
+                    {t('chat.greeting')}, {session?.user?.name?.split(" ")[0]}
                   </h2>
                   <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 px-4">
-                    {translations[userLanguage] || translations.fr}
+                    {t('chat.welcomeMessage')}
                   </p>
                 </div>
 
@@ -1089,7 +1057,7 @@ export default function Home() {
                             handleSend();
                           }
                         }}
-                        placeholder="Ask to Prophetic"
+                        placeholder={t('chat.placeholder')}
                         className="w-full border-none rounded-[25px] focus:outline-none focus:ring-0 resize-none placeholder:text-sm sm:placeholder:text-base placeholder:text-gray-400 text-sm sm:text-base shadow-sm bg-[#f0e7dd] dark:bg-[#1e1f20] text-gray-900 dark:text-white"
                         style={{
                           height: "100px",
@@ -1104,7 +1072,7 @@ export default function Home() {
                           <Plus className="h-6 w-6" />
                         </button>
                         <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                          coming soon
+                          {t('chat.comingSoon')}
                         </div>
                       </div>
                       {/* Prophetic logo button - to the right of Plus */}
@@ -1123,7 +1091,7 @@ export default function Home() {
                           />
                         </button>
                         <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                          coming soon
+                          {t('chat.comingSoon')}
                         </div>
                       </div>
                       {/* Send button - bottom right */}
@@ -1247,7 +1215,7 @@ export default function Home() {
                         handleSend();
                       }
                     }}
-                    placeholder="Ask to Prophetic"
+                    placeholder={t('chat.placeholder')}
                     className="w-full border-none rounded-[25px] focus:outline-none focus:ring-0 resize-none placeholder:text-sm sm:placeholder:text-base placeholder:text-gray-400 text-sm sm:text-base shadow-sm bg-[#f0e7dd] dark:bg-[#1e1f20] text-gray-900 dark:text-white"
                     style={{
                       height: "100px",
@@ -1262,7 +1230,7 @@ export default function Home() {
                       <Plus className="h-6 w-6" />
                     </button>
                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                      coming soon
+                      {t('chat.comingSoon')}
                     </div>
                   </div>
                   {/* Prophetic logo button - to the right of Plus */}
@@ -1281,7 +1249,7 @@ export default function Home() {
                       />
                     </button>
                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                      coming soon
+                      {t('chat.comingSoon')}
                     </div>
                   </div>
                   {/* Send button - bottom right */}

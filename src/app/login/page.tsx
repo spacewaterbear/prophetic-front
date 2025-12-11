@@ -5,10 +5,12 @@ import { Card } from "@/components/ui/card";
 import { signIn } from "next-auth/react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
+import { useI18n } from "@/contexts/i18n-context";
 
 export default function LoginPage() {
   const { theme, resolvedTheme } = useTheme();
   const isDark = theme === "dark" || resolvedTheme === "dark";
+  const { t } = useI18n();
 
   const handleGoogleSignIn = async () => {
     try {
@@ -69,10 +71,10 @@ export default function LoginPage() {
           {/* Welcome Message */}
           <div className="mb-8 text-center">
             <h2 className="text-2xl font-light mb-2 text-gray-900 dark:text-white">
-              Welcome
+              {t('login.welcome')}
             </h2>
             <p className="text-gray-600 dark:text-gray-400 text-sm">
-              Sign in to access your luxury investment insights
+              {t('login.subtitle')}
             </p>
           </div>
 
@@ -100,7 +102,7 @@ export default function LoginPage() {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
               />
             </svg>
-            Continue with Google
+            {t('login.continueWithGoogle')}
           </Button>
 
           {/* Divider */}
@@ -110,7 +112,7 @@ export default function LoginPage() {
             </div>
             <div className="relative flex justify-center text-sm">
               <span className="px-4 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
-                Secure Authentication
+                {t('login.secureAuth')}
               </span>
             </div>
           </div>
@@ -118,8 +120,7 @@ export default function LoginPage() {
           {/* Footer Info */}
           <div className="text-center">
             <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
-              By signing in, you agree to our Terms of Service and Privacy
-              Policy. Your data is encrypted and secure.
+              {t('login.termsText')}
             </p>
           </div>
         </Card>
@@ -129,11 +130,11 @@ export default function LoginPage() {
           <div className="flex items-center justify-center gap-6 text-xs text-gray-600 dark:text-gray-400">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-green-500"></div>
-              <span>256-bit Encryption</span>
+              <span>{t('login.encryption')}</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-              <span>SOC 2 Certified</span>
+              <span>{t('login.certified')}</span>
             </div>
           </div>
         </div>

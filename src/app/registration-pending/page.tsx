@@ -6,10 +6,12 @@ import { signOut } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { Clock, Mail, Shield } from "lucide-react";
 import Image from "next/image";
+import { useI18n } from "@/contexts/i18n-context";
 
 export default function RegistrationPendingPage() {
   const { theme, resolvedTheme } = useTheme();
   const isDark = theme === "dark" || resolvedTheme === "dark";
+  const { t } = useI18n();
 
   const handleSignOut = async () => {
     await signOut({ callbackUrl: "/login" });
@@ -103,7 +105,7 @@ export default function RegistrationPendingPage() {
               variant="outline"
               className="w-full max-w-xs mx-auto h-12 rounded-xl font-medium border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-white transition-colors"
             >
-              Sign Out
+              {t('nav.signOut')}
             </Button>
           </div>
         </Card>
