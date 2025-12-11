@@ -1022,7 +1022,7 @@ export default function Home() {
             !streamingMarketplaceData && (
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 md:left-[calc(50%+128px)] w-full max-w-3xl px-4 sm:px-6">
                 <div className="text-center mb-8">
-                  <div className="w-24 h-24 sm:w-32 sm:h-32 mx-auto mb-6 sm:mb-8 rounded-full flex items-center justify-center overflow-hidden">
+                  <div className="w-[72px] h-[72px] sm:w-24 sm:h-24 mx-auto mb-6 sm:mb-8 rounded-full flex items-center justify-center overflow-hidden">
                     <Image
                       src={
                         mounted && isDark
@@ -1030,8 +1030,8 @@ export default function Home() {
                           : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_new.svg"
                       }
                       alt="Prophetic Orchestra"
-                      width={128}
-                      height={128}
+                      width={96}
+                      height={96}
                       className="w-full h-full object-cover"
                     />
                   </div>
