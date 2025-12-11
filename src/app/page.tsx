@@ -324,6 +324,19 @@ const isAdminUser = (
   return session?.user?.status === "admini";
 };
 
+// Translation dictionary for welcome messages
+const translations: Record<string, string> = {
+  fr: "Comment puis-je vous aider à investir intelligemment ?",
+  en: "How can I help you invest wisely?",
+  es: "¿Cómo puedo ayudarte a invertir inteligentemente?",
+  de: "Wie kann ich Ihnen helfen, intelligent zu investieren?",
+  it: "Come posso aiutarti a investire in modo intelligente?",
+  pt: "Como posso ajudá-lo a investir com inteligência?",
+  nl: "Hoe kan ik u helpen slim te investeren?",
+  ja: "賢く投資するお手伝いをさせていただけますか？",
+  zh: "我如何帮助您明智地投资？",
+};
+
 export default function Home() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -358,6 +371,7 @@ export default function Home() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const [shouldAutoScroll, setShouldAutoScroll] = useState(true);
   const [mounted, setMounted] = useState(false);
+  const [userLanguage, setUserLanguage] = useState<string>("fr"); // Default to French
 
   // Redirect to login if not authenticated or to registration-pending if unauthorized
   useEffect(() => {
@@ -371,6 +385,26 @@ export default function Home() {
       router.push("/registration-pending");
     }
   }, [status, session, router]);
+
+  // Fetch user's geolocation and set language
+  useEffect(() => {
+    const fetchGeolocation = async () => {
+      try {
+        const response = await fetch("/api/geolocation");
+        if (response.ok) {
+          const data = await response.json();
+          setUserLanguage(data.language || "fr");
+          console.log("[Geolocation Debug] Full data:", data);
+          console.log(`[Geolocation Debug] Country: ${data.country}, Language: ${data.language}, IP: ${data.ip}, Source: ${data.source}`);
+        }
+      } catch (error) {
+        console.error("Error fetching geolocation:", error);
+        // Keep default French on error
+      }
+    };
+
+    fetchGeolocation();
+  }, []);
 
   // Enforce default model for non-admin users
   useEffect(() => {
@@ -1036,6 +1070,9 @@ export default function Home() {
                   <h2 className="text-4xl sm:text-6xl font-light mb-4 sm:mb-6 dark:text-white px-4">
                     Bonjour, {session?.user?.name?.split(" ")[0]}
                   </h2>
+                  <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 px-4">
+                    {translations[userLanguage] || translations.fr}
+                  </p>
                 </div>
 
                 {/* Centered Input Area */}
