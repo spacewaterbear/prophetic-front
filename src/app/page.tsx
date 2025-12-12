@@ -220,11 +220,22 @@ const MessageItem = memo(
               </Suspense>
             ) : (
               <>
-                {/* Display marketplace data BEFORE text if position is 'before' or not specified (default) */}
+                {/* Display text content if present */}
+                {message.content && (
+                  <Suspense
+                    fallback={
+                      <div className="text-base text-gray-400">Loading...</div>
+                    }
+                  >
+                    <Markdown content={message.content} className="text-base" />
+                  </Suspense>
+                )}
+
+                {/* Display marketplace data AFTER text (default behavior) */}
                 {message.marketplace_data &&
                   (!message.marketplace_position ||
-                    message.marketplace_position === "before") && (
-                    <div className={message.content ? "mb-4" : ""}>
+                    message.marketplace_position === "after") && (
+                    <div className={message.content ? "mt-4" : ""}>
                       <Suspense
                         fallback={
                           <div className="text-base text-gray-400">
@@ -237,21 +248,10 @@ const MessageItem = memo(
                     </div>
                   )}
 
-                {/* Display text content if present */}
-                {message.content && (
-                  <Suspense
-                    fallback={
-                      <div className="text-base text-gray-400">Loading...</div>
-                    }
-                  >
-                    <Markdown content={message.content} className="text-base" />
-                  </Suspense>
-                )}
-
-                {/* Display marketplace data AFTER text if position is 'after' */}
+                {/* Display marketplace data BEFORE text if position is 'before' */}
                 {message.marketplace_data &&
-                  message.marketplace_position === "after" && (
-                    <div className={message.content ? "mt-4" : ""}>
+                  message.marketplace_position === "before" && (
+                    <div className={message.content ? "mb-4" : ""}>
                       <Suspense
                         fallback={
                           <div className="text-base text-gray-400">
@@ -1141,8 +1141,14 @@ export default function Home() {
                 <div className="flex gap-2 sm:gap-4 items-start justify-start">
                   <AIAvatar />
                   <div className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl pl-4 pr-12 py-4 sm:pl-8 sm:pr-14 sm:py-5 rounded-2xl bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] text-gray-900 dark:text-white">
+                    {streamingMessage && (
+                      <Markdown
+                        content={streamingMessage}
+                        className="text-base"
+                      />
+                    )}
                     {streamingMarketplaceData && (
-                      <div className="mb-4">
+                      <div className={streamingMessage ? "mt-4" : ""}>
                         <Suspense
                           fallback={
                             <div className="text-base text-gray-400">
@@ -1155,7 +1161,7 @@ export default function Home() {
                       </div>
                     )}
                     {streamingRealEstateData && (
-                      <div className="mb-4">
+                      <div className={streamingMessage || streamingMarketplaceData ? "mt-4" : ""}>
                         <Suspense
                           fallback={
                             <div className="text-base text-gray-400">
@@ -1166,12 +1172,6 @@ export default function Home() {
                           <RealEstateCard data={streamingRealEstateData} />
                         </Suspense>
                       </div>
-                    )}
-                    {streamingMessage && (
-                      <Markdown
-                        content={streamingMessage}
-                        className="text-base"
-                      />
                     )}
                     {!streamingMessage &&
                       !streamingMarketplaceData &&

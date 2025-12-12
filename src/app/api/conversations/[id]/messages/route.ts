@@ -371,8 +371,10 @@ export async function POST(
             // If we already have structured data (e.g., artist_info), create a combined metadata
             if (messageMetadata) {
               messageMetadata.marketplace_data = marketplaceData.data;
-              // Store marketplace_position if provided, default to "before"
-              messageMetadata.marketplace_position = marketplaceData.marketplace_position || marketplaceData.data?.marketplace_position || "before";
+              // For artist questions, put marketplace data at the end ("after")
+              // Otherwise, use provided position or default to "before"
+              const defaultPosition = messageMetadata.type === "artist_info" ? "after" : "before";
+              messageMetadata.marketplace_position = marketplaceData.marketplace_position || marketplaceData.data?.marketplace_position || defaultPosition;
             } else {
               messageMetadata = {
                 type: "marketplace_data",
