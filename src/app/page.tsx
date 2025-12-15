@@ -517,8 +517,10 @@ export default function Home() {
     setStreamingRealEstateData(null);
     setCurrentStatus("");
 
-    // Focus the input field
-    inputRef.current?.focus();
+    // Focus the input field after state updates
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
   };
 
   const deleteConversation = async (
