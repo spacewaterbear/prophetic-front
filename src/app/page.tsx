@@ -25,6 +25,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { ShareButton } from "@/components/ShareButton";
 import { toast } from "sonner";
 import { useI18n } from "@/contexts/i18n-context";
+import { ChatInput } from "@/components/ChatInput";
 
 // Lazy load Markdown component to reduce initial bundle size
 const Markdown = lazy(() =>
@@ -437,6 +438,8 @@ export default function Home() {
     isLoading,
     shouldAutoScroll,
   ]);
+
+
 
   const loadConversations = async () => {
     try {
@@ -1045,67 +1048,13 @@ export default function Home() {
 
                 {/* Centered Input Area */}
                 <div className="w-full">
-                  <div className="flex gap-2 sm:gap-3 items-start">
-                    <div className="flex-1 relative">
-                      <textarea
-                        ref={inputRef}
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" && !e.shiftKey) {
-                            e.preventDefault();
-                            handleSend();
-                          }
-                        }}
-                        placeholder={t('chat.placeholder')}
-                        className="w-full border-none rounded-[25px] focus:outline-none focus:ring-0 resize-none placeholder:text-sm sm:placeholder:text-base placeholder:text-gray-400 text-sm sm:text-base shadow-sm bg-[#f0e7dd] dark:bg-[#1e1f20] text-gray-900 dark:text-white"
-                        style={{
-                          height: "100px",
-                          padding: "20px",
-                          paddingRight: "60px",
-                        }}
-                        rows={1}
-                      />
-                      {/* Plus button - bottom left */}
-                      <div className="absolute bottom-5 left-5 group">
-                        <button disabled className="text-gray-500 cursor-not-allowed">
-                          <Plus className="h-6 w-6" />
-                        </button>
-                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                          {t('chat.comingSoon')}
-                        </div>
-                      </div>
-                      {/* Prophetic logo button - to the right of Plus */}
-                      <div className="absolute bottom-5 left-16 group">
-                        <button disabled className="cursor-not-allowed">
-                          <Image
-                            src={
-                              mounted && isDark
-                                ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_white.svg"
-                                : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_new.svg"
-                            }
-                            alt="Prophetic"
-                            width={24}
-                            height={24}
-                            className="w-6 h-6 opacity-50"
-                          />
-                        </button>
-                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                          {t('chat.comingSoon')}
-                        </div>
-                      </div>
-                      {/* Send button - bottom right */}
-                      {input.trim() && (
-                        <button
-                          onClick={() => handleSend()}
-                          disabled={isLoading}
-                          className="absolute bottom-6 right-5 text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors group"
-                        >
-                          <Send className="h-6 w-6 rotate-45" />
-                        </button>
-                      )}
-                    </div>
-                  </div>
+                  <ChatInput
+                    input={input}
+                    setInput={setInput}
+                    handleSend={() => handleSend()}
+                    isLoading={isLoading}
+                    textareaRef={inputRef}
+                  />
                 </div>
               </div>
             )}
@@ -1202,69 +1151,12 @@ export default function Home() {
         {/* Input Area - shown at bottom when there are messages */}
         {(messages.length > 0 || streamingMessage || streamingMarketplaceData) && (
           <div className="input-area px-3 sm:px-6 py-3 sm:py-4 bg-[rgb(247,240,232)] dark:bg-black">
-            <div className="max-w-3xl mx-auto">
-              <div className="flex gap-2 sm:gap-3 items-start">
-                <div className="flex-1 relative">
-                  <textarea
-                    ref={inputRef}
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && !e.shiftKey) {
-                        e.preventDefault();
-                        handleSend();
-                      }
-                    }}
-                    placeholder={t('chat.placeholder')}
-                    className="w-full border-none rounded-[25px] focus:outline-none focus:ring-0 resize-none placeholder:text-sm sm:placeholder:text-base placeholder:text-gray-400 text-sm sm:text-base shadow-sm bg-[#f0e7dd] dark:bg-[#1e1f20] text-gray-900 dark:text-white"
-                    style={{
-                      height: "100px",
-                      padding: "20px",
-                      paddingRight: "60px",
-                    }}
-                    rows={1}
-                  />
-                  {/* Plus button - bottom left */}
-                  <div className="absolute bottom-5 left-5 group">
-                    <button disabled className="text-gray-500 cursor-not-allowed">
-                      <Plus className="h-6 w-6" />
-                    </button>
-                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                      {t('chat.comingSoon')}
-                    </div>
-                  </div>
-                  {/* Prophetic logo button - to the right of Plus */}
-                  <div className="absolute bottom-5 left-16 group">
-                    <button disabled className="cursor-not-allowed">
-                      <Image
-                        src={
-                          mounted && isDark
-                            ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_white.svg"
-                            : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_new.svg"
-                        }
-                        alt="Prophetic"
-                        width={24}
-                        height={24}
-                        className="w-6 h-6 opacity-50"
-                      />
-                    </button>
-                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                      {t('chat.comingSoon')}
-                    </div>
-                  </div>
-                  {/* Send button - bottom right */}
-                  {input.trim() && (
-                    <button
-                      onClick={() => handleSend()}
-                      disabled={isLoading}
-                      className="absolute bottom-6 right-5 text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors group"
-                    >
-                      <Send className="h-6 w-6 rotate-45" />
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
+            <ChatInput
+              input={input}
+              setInput={setInput}
+              handleSend={() => handleSend()}
+              isLoading={isLoading}
+            />
           </div>
         )}
       </div>
