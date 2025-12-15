@@ -24,6 +24,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
     const internalRef = useRef<HTMLTextAreaElement>(null);
     const ref = textareaRef || internalRef;
     const [textareaHeight, setTextareaHeight] = useState<number>(24);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     useEffect(() => {
         setMounted(true);
@@ -97,9 +98,11 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                     {/* Prophetic Logo Button */}
                     <div className="relative">
                         <button
-                            disabled
+                            type="button"
                             data-dashlane-ignore="true"
-                            className="group flex items-center justify-center hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-full p-2 transition-colors cursor-not-allowed"
+                            className="flex items-center justify-center hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-full p-2 transition-colors cursor-pointer"
+                            onClick={(e) => e.preventDefault()}
+                            onMouseEnter={() => setIsDropdownOpen(true)}
                         >
                             <Image
                                 src={
@@ -115,7 +118,11 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                         </button>
 
                         {/* Orchestra Collections Dropdown */}
-                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                        <div
+                            className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 transition-opacity z-10 ${isDropdownOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                            onMouseEnter={() => setIsDropdownOpen(true)}
+                            onMouseLeave={() => setIsDropdownOpen(false)}
+                        >
                             <div className="bg-[#2a2b2c] text-white rounded-3xl p-4 w-[420px] shadow-2xl">
                                 {/* Orchestra Edge */}
                                 <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-700/50">
