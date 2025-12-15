@@ -145,16 +145,16 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 }, 100);
                             }}
                         >
-                            <div className="bg-[#2a2b2c] text-white rounded-3xl p-4 w-[420px] shadow-2xl">
+                            <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-3xl p-4 w-[420px] shadow-2xl border border-gray-200 dark:border-transparent">
                                 {/* Orchestra Edge */}
-                                <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-700/50">
+                                <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-200 dark:border-gray-700/50">
                                     <div className="flex items-center gap-3">
-                                        <span className="text-white font-medium">Orchestra Edge</span>
-                                        <span className="px-3 py-1 bg-blue-600/20 text-blue-400 text-xs font-medium rounded-full border border-blue-500/30">
+                                        <span className="text-gray-900 dark:text-white font-medium">Orchestra Edge</span>
+                                        <span className="px-3 py-1 bg-blue-600/20 text-blue-600 dark:text-blue-400 text-xs font-medium rounded-full border border-blue-500/30">
                                             Max
                                         </span>
                                     </div>
-                                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                                     </svg>
                                 </div>
@@ -162,12 +162,12 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 {/* Orchestra Vault */}
                                 <div className="flex items-center justify-between mb-4 pb-4">
                                     <div className="flex items-center gap-3">
-                                        <span className="text-white font-medium">Orchestra Vault</span>
-                                        <span className="px-3 py-1 bg-emerald-600/20 text-emerald-400 text-xs font-medium rounded-full border border-emerald-500/30">
+                                        <span className="text-gray-900 dark:text-white font-medium">Orchestra Vault</span>
+                                        <span className="px-3 py-1 bg-emerald-600/20 text-emerald-600 dark:text-emerald-400 text-xs font-medium rounded-full border border-emerald-500/30">
                                             Pro Max
                                         </span>
                                     </div>
-                                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                     </svg>
                                 </div>
@@ -176,55 +176,55 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 <div className="mb-3">
                                     <div className="flex items-center gap-2 mb-3">
                                         <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                                        <span className="text-sm text-gray-300">Orchestra Edge</span>
+                                        <span className="text-sm text-gray-700 dark:text-gray-300">Orchestra Edge</span>
                                     </div>
-                                    <p className="text-xs text-gray-400 leading-relaxed mb-4 italic">
+                                    <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed mb-4 italic">
                                         Lorem ipsum is simply dummy text of the printing and typesetting industry. Lorem ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
                                     </p>
                                 </div>
 
                                 {/* Collection Tags */}
                                 <div className="flex flex-wrap gap-2">
-                                    <span className="px-3 py-1.5 bg-transparent text-white text-xs font-medium rounded-full border border-gray-600 hover:border-gray-500 transition-colors">
+                                    <span className="px-3 py-1.5 bg-transparent text-gray-800 dark:text-white text-xs font-medium rounded-full border border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 transition-colors">
                                         FIRST COLLECTION
                                     </span>
-                                    <span className="px-3 py-1.5 bg-transparent text-white text-xs font-medium rounded-full border border-gray-600 hover:border-gray-500 transition-colors">
+                                    <span className="px-3 py-1.5 bg-transparent text-gray-800 dark:text-white text-xs font-medium rounded-full border border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 transition-colors">
                                         ARCHIVES TREASURES
                                     </span>
-                                    <span className="px-3 py-1.5 bg-transparent text-white text-xs font-medium rounded-full border border-gray-600 hover:border-gray-500 transition-colors">
+                                    <span className="px-3 py-1.5 bg-transparent text-gray-800 dark:text-white text-xs font-medium rounded-full border border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 transition-colors">
                                         ART SMALL
                                     </span>
-                                    <span className="px-3 py-1.5 bg-transparent text-white text-xs font-medium rounded-full border border-gray-600 hover:border-gray-500 transition-colors">
+                                    <span className="px-3 py-1.5 bg-transparent text-gray-800 dark:text-white text-xs font-medium rounded-full border border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 transition-colors">
                                         ARCHITECTE FLEX
                                     </span>
-                                    <span className="px-3 py-1.5 bg-transparent text-white text-xs font-medium rounded-full border border-gray-600 hover:border-gray-500 transition-colors">
+                                    <span className="px-3 py-1.5 bg-transparent text-gray-800 dark:text-white text-xs font-medium rounded-full border border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 transition-colors">
                                         CINEMA ICONS
                                     </span>
-                                    <span className="px-3 py-1.5 bg-transparent text-white text-xs font-medium rounded-full border border-gray-600 hover:border-gray-500 transition-colors">
+                                    <span className="px-3 py-1.5 bg-transparent text-gray-800 dark:text-white text-xs font-medium rounded-full border border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 transition-colors">
                                         LEGENDARY PIECES
                                     </span>
-                                    <span className="px-3 py-1.5 bg-transparent text-white text-xs font-medium rounded-full border border-gray-600 hover:border-gray-500 transition-colors">
+                                    <span className="px-3 py-1.5 bg-transparent text-gray-800 dark:text-white text-xs font-medium rounded-full border border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 transition-colors">
                                         PLACE VENDÔME POWER
                                     </span>
-                                    <span className="px-3 py-1.5 bg-transparent text-white text-xs font-medium rounded-full border border-gray-600 hover:border-gray-500 transition-colors">
+                                    <span className="px-3 py-1.5 bg-transparent text-gray-800 dark:text-white text-xs font-medium rounded-full border border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 transition-colors">
                                         ARTIST BOTTLES
                                     </span>
-                                    <span className="px-3 py-1.5 bg-transparent text-white text-xs font-medium rounded-full border border-gray-600 hover:border-gray-500 transition-colors">
+                                    <span className="px-3 py-1.5 bg-transparent text-gray-800 dark:text-white text-xs font-medium rounded-full border border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 transition-colors">
                                         DISTILLERY LEGENDS
                                     </span>
-                                    <span className="px-3 py-1.5 bg-transparent text-white text-xs font-medium rounded-full border border-gray-600 hover:border-gray-500 transition-colors">
+                                    <span className="px-3 py-1.5 bg-transparent text-gray-800 dark:text-white text-xs font-medium rounded-full border border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 transition-colors">
                                         CRAFT REVOLUTION
                                     </span>
-                                    <span className="px-3 py-1.5 bg-transparent text-white text-xs font-medium rounded-full border border-gray-600 hover:border-gray-500 transition-colors">
+                                    <span className="px-3 py-1.5 bg-transparent text-gray-800 dark:text-white text-xs font-medium rounded-full border border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 transition-colors">
                                         NATURAL WAVE
                                     </span>
-                                    <span className="px-3 py-1.5 bg-transparent text-white text-xs font-medium rounded-full border border-gray-600 hover:border-gray-500 transition-colors">
+                                    <span className="px-3 py-1.5 bg-transparent text-gray-800 dark:text-white text-xs font-medium rounded-full border border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 transition-colors">
                                         DAILY LUXURY
                                     </span>
                                 </div>
 
                                 {/* Footer */}
-                                <div className="mt-4 pt-3 border-t border-gray-700/50">
+                                <div className="mt-4 pt-3 border-t border-gray-200 dark:border-gray-700/50">
                                     <p className="text-xs text-gray-500">+1800 insights available</p>
                                 </div>
                             </div>
