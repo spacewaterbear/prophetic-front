@@ -25,6 +25,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
     const ref = textareaRef || internalRef;
     const [textareaHeight, setTextareaHeight] = useState<number>(24);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
         setMounted(true);
@@ -102,7 +103,18 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                             data-dashlane-ignore="true"
                             className="flex items-center justify-center hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-full p-2 transition-colors cursor-pointer"
                             onClick={(e) => e.preventDefault()}
-                            onMouseEnter={() => setIsDropdownOpen(true)}
+                            onMouseEnter={() => {
+                                if (closeTimeoutRef.current) {
+                                    clearTimeout(closeTimeoutRef.current);
+                                    closeTimeoutRef.current = null;
+                                }
+                                setIsDropdownOpen(true);
+                            }}
+                            onMouseLeave={() => {
+                                closeTimeoutRef.current = setTimeout(() => {
+                                    setIsDropdownOpen(false);
+                                }, 100);
+                            }}
                         >
                             <Image
                                 src={
@@ -120,8 +132,18 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                         {/* Orchestra Collections Dropdown */}
                         <div
                             className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 transition-opacity z-10 ${isDropdownOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
-                            onMouseEnter={() => setIsDropdownOpen(true)}
-                            onMouseLeave={() => setIsDropdownOpen(false)}
+                            onMouseEnter={() => {
+                                if (closeTimeoutRef.current) {
+                                    clearTimeout(closeTimeoutRef.current);
+                                    closeTimeoutRef.current = null;
+                                }
+                                setIsDropdownOpen(true);
+                            }}
+                            onMouseLeave={() => {
+                                closeTimeoutRef.current = setTimeout(() => {
+                                    setIsDropdownOpen(false);
+                                }, 100);
+                            }}
                         >
                             <div className="bg-[#2a2b2c] text-white rounded-3xl p-4 w-[420px] shadow-2xl">
                                 {/* Orchestra Edge */}
