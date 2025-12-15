@@ -98,6 +98,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                     <div className="relative group">
                         <button
                             disabled
+                            data-dashlane-ignore="true"
                             className="flex items-center justify-center hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-full p-2 transition-colors cursor-not-allowed"
                         >
                             <Image
@@ -112,8 +113,92 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 className="w-5 h-5 opacity-50"
                             />
                         </button>
-                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
-                            {t('chat.comingSoon')}
+
+                        {/* Orchestra Collections Dropdown */}
+                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                            <div className="bg-[#2a2b2c] text-white rounded-3xl p-4 w-[420px] shadow-2xl">
+                                {/* Orchestra Edge */}
+                                <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-700/50">
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-white font-medium">Orchestra Edge</span>
+                                        <span className="px-3 py-1 bg-blue-600/20 text-blue-400 text-xs font-medium rounded-full border border-blue-500/30">
+                                            Max
+                                        </span>
+                                    </div>
+                                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </div>
+
+                                {/* Orchestra Vault */}
+                                <div className="flex items-center justify-between mb-4 pb-4">
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-white font-medium">Orchestra Vault</span>
+                                        <span className="px-3 py-1 bg-emerald-600/20 text-emerald-400 text-xs font-medium rounded-full border border-emerald-500/30">
+                                            Pro Max
+                                        </span>
+                                    </div>
+                                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </div>
+
+                                {/* Selected: Orchestra Edge */}
+                                <div className="mb-3">
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                        <span className="text-sm text-gray-300">Orchestra Edge</span>
+                                    </div>
+                                    <p className="text-xs text-gray-400 leading-relaxed mb-4 italic">
+                                        Lorem ipsum is simply dummy text of the printing and typesetting industry. Lorem ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+                                    </p>
+                                </div>
+
+                                {/* Collection Tags */}
+                                <div className="flex flex-wrap gap-2">
+                                    <span className="px-3 py-1.5 bg-transparent text-white text-xs font-medium rounded-full border border-gray-600 hover:border-gray-500 transition-colors">
+                                        FIRST COLLECTION
+                                    </span>
+                                    <span className="px-3 py-1.5 bg-transparent text-white text-xs font-medium rounded-full border border-gray-600 hover:border-gray-500 transition-colors">
+                                        ARCHIVES TREASURES
+                                    </span>
+                                    <span className="px-3 py-1.5 bg-transparent text-white text-xs font-medium rounded-full border border-gray-600 hover:border-gray-500 transition-colors">
+                                        ART SMALL
+                                    </span>
+                                    <span className="px-3 py-1.5 bg-transparent text-white text-xs font-medium rounded-full border border-gray-600 hover:border-gray-500 transition-colors">
+                                        ARCHITECTE FLEX
+                                    </span>
+                                    <span className="px-3 py-1.5 bg-transparent text-white text-xs font-medium rounded-full border border-gray-600 hover:border-gray-500 transition-colors">
+                                        CINEMA ICONS
+                                    </span>
+                                    <span className="px-3 py-1.5 bg-transparent text-white text-xs font-medium rounded-full border border-gray-600 hover:border-gray-500 transition-colors">
+                                        LEGENDARY PIECES
+                                    </span>
+                                    <span className="px-3 py-1.5 bg-transparent text-white text-xs font-medium rounded-full border border-gray-600 hover:border-gray-500 transition-colors">
+                                        PLACE VENDÔME POWER
+                                    </span>
+                                    <span className="px-3 py-1.5 bg-transparent text-white text-xs font-medium rounded-full border border-gray-600 hover:border-gray-500 transition-colors">
+                                        ARTIST BOTTLES
+                                    </span>
+                                    <span className="px-3 py-1.5 bg-transparent text-white text-xs font-medium rounded-full border border-gray-600 hover:border-gray-500 transition-colors">
+                                        DISTILLERY LEGENDS
+                                    </span>
+                                    <span className="px-3 py-1.5 bg-transparent text-white text-xs font-medium rounded-full border border-gray-600 hover:border-gray-500 transition-colors">
+                                        CRAFT REVOLUTION
+                                    </span>
+                                    <span className="px-3 py-1.5 bg-transparent text-white text-xs font-medium rounded-full border border-gray-600 hover:border-gray-500 transition-colors">
+                                        NATURAL WAVE
+                                    </span>
+                                    <span className="px-3 py-1.5 bg-transparent text-white text-xs font-medium rounded-full border border-gray-600 hover:border-gray-500 transition-colors">
+                                        DAILY LUXURY
+                                    </span>
+                                </div>
+
+                                {/* Footer */}
+                                <div className="mt-4 pt-3 border-t border-gray-700/50">
+                                    <p className="text-xs text-gray-500">+1800 insights available</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
