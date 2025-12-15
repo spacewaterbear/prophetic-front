@@ -95,11 +95,11 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                     </div>
 
                     {/* Prophetic Logo Button */}
-                    <div className="relative group">
+                    <div className="relative">
                         <button
                             disabled
                             data-dashlane-ignore="true"
-                            className="flex items-center justify-center hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-full p-2 transition-colors cursor-not-allowed"
+                            className="group flex items-center justify-center hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-full p-2 transition-colors cursor-not-allowed"
                         >
                             <Image
                                 src={
