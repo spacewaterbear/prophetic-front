@@ -9,6 +9,93 @@ interface MarkdownProps {
 }
 
 export function Markdown({ content, className }: MarkdownProps) {
+  // Helper function to convert ASCII tables to markdown tables
+  const convertAsciiTableToMarkdown = (asciiTable: string): string => {
+    const lines = asciiTable.split('\n');
+
+    // Extract rows that contain data (have │ character)
+    const dataRows = lines
+      .filter(line => line.includes('│') && !line.trim().match(/^[┌┐└┘├┤┬┴┼─━╔╗╚╝╠╣╦╩╬═]+$/))
+      .map(line => {
+        // Split by │ and clean up each cell
+        return line
+          .split('│')
+          .map(cell => cell.trim())
+          .filter(cell => cell.length > 0);
+      })
+      .filter(row => row.length > 0);
+
+    if (dataRows.length === 0) return asciiTable;
+
+    // Determine if first row is a header (usually has different styling or is followed by separator)
+    const hasHeaderSeparator = lines.some(line =>
+      line.includes('├') || line.includes('╠') || line.match(/^[━─]+$/)
+    );
+
+    let markdownLines: string[] = [];
+
+    if (hasHeaderSeparator && dataRows.length > 1) {
+      // First row is header
+      const header = dataRows[0];
+      const separator = header.map(() => '---');
+
+      markdownLines.push(`| ${header.join(' | ')} |`);
+      markdownLines.push(`| ${separator.join(' | ')} |`);
+
+      // Rest are body rows
+      dataRows.slice(1).forEach(row => {
+        // Pad row to match header length
+        while (row.length < header.length) row.push('');
+        markdownLines.push(`| ${row.join(' | ')} |`);
+      });
+    } else {
+      // No clear header, treat all as body with first row as header
+      const header = dataRows[0];
+      const separator = header.map(() => '---');
+
+      markdownLines.push(`| ${header.join(' | ')} |`);
+      markdownLines.push(`| ${separator.join(' | ')} |`);
+
+      dataRows.slice(1).forEach(row => {
+        while (row.length < header.length) row.push('');
+        markdownLines.push(`| ${row.join(' | ')} |`);
+      });
+    }
+
+    return markdownLines.join('\n');
+  };
+
+  // Post-processing to remove wrapping markdown code blocks if present
+  // This handles cases where the AI wraps the entire response in ```markdown ... ```
+  const processedContent = React.useMemo(() => {
+    const trimmed = content.trim();
+    // Regex to match content wrapped in triple backticks, optionally with a language
+    // e.g. ```markdown ... ``` or just ``` ... ```
+    const match = trimmed.match(/^```(?:\w+)?\s*([\s\S]*?)\s*```$/);
+    let unwrapped = match ? match[1] : content;
+
+    // Convert ASCII tables to markdown tables
+    // Match code blocks that contain ASCII tables
+    unwrapped = unwrapped.replace(/```\n([\s\S]*?)```/g, (match, codeContent) => {
+      const trimmedCode = codeContent.trim();
+      // Check if this is an ASCII table
+      const isAsciiTable =
+        trimmedCode.startsWith('┌') ||
+        trimmedCode.startsWith('╔') ||
+        trimmedCode.startsWith('┏') ||
+        trimmedCode.startsWith('━') ||
+        trimmedCode.startsWith('─') ||
+        (trimmedCode.includes('│') && (trimmedCode.includes('─') || trimmedCode.includes('━')));
+
+      if (isAsciiTable) {
+        return '\n' + convertAsciiTableToMarkdown(trimmedCode) + '\n';
+      }
+      return match;
+    });
+
+    return unwrapped;
+  }, [content]);
+
   return (
     <div className={cn("prose prose-sm dark:prose-invert max-w-none", className)}>
       <ReactMarkdown
@@ -66,15 +153,49 @@ export function Markdown({ content, className }: MarkdownProps) {
           ),
           // Code
           code: ({ node, className, children, ...props }) => {
-            const isInline = !className;
-            return isInline ? (
-              <code
-                className="bg-gray-100 dark:bg-gray-800 text-pink-600 dark:text-pink-400 px-1.5 py-0.5 rounded text-sm font-mono"
-                {...props}
-              >
-                {children}
-              </code>
-            ) : (
+            // In react-markdown v10, the `inline` prop indicates if it's inline code
+            const { inline } = props as any;
+
+            // Helper to check for ASCII table/box patterns in block code
+            const content = String(children).trim();
+            const isAsciiTable = !inline && (
+              content.startsWith('┌') ||
+              content.startsWith('╔') ||
+              content.startsWith('┏') ||
+              content.startsWith('+') ||
+              content.startsWith('━') ||
+              content.startsWith('─') ||
+              (content.includes('│') && content.includes('─')) ||
+              (content.includes('│') && content.includes('━')) ||
+              (content.includes('├') || content.includes('┤') || content.includes('┼'))
+            );
+
+            if (inline) {
+              return (
+                <code
+                  className="bg-gray-100 dark:bg-gray-800 text-pink-600 dark:text-pink-400 px-1.5 py-0.5 rounded text-sm font-mono"
+                  {...props}
+                >
+                  {children}
+                </code>
+              );
+            }
+
+            // Custom styling for ASCII tables to make them look cleaner
+            if (isAsciiTable) {
+              return (
+                <code
+                  className="block bg-gray-50 dark:bg-gray-800/30 text-gray-900 dark:text-gray-100 overflow-x-auto text-sm my-4 whitespace-pre leading-tight p-3 rounded"
+                  style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace' }}
+                  {...props}
+                >
+                  {children}
+                </code>
+              );
+            }
+
+            // Standard block code styling
+            return (
               <code
                 className="block bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono my-4"
                 {...props}
@@ -83,9 +204,41 @@ export function Markdown({ content, className }: MarkdownProps) {
               </code>
             );
           },
-          pre: ({ node, ...props }) => (
-            <pre className="bg-gray-100 dark:bg-gray-900 rounded-lg overflow-hidden my-4" {...props} />
-          ),
+          pre: ({ node, children, ...props }) => {
+            // Check if the content is an ASCII table to remove the background styling
+            // We need to peek into the children (usually a code element)
+            const firstChild = React.Children.toArray(children)[0];
+            let isAsciiTable = false;
+
+            if (React.isValidElement(firstChild) && firstChild.props.children) {
+              const content = String(firstChild.props.children).trim();
+              isAsciiTable =
+                content.startsWith('┌') ||
+                content.startsWith('╔') ||
+                content.startsWith('┏') ||
+                content.startsWith('+') ||
+                content.startsWith('━') ||
+                content.startsWith('─') ||
+                (content.includes('│') && content.includes('─')) ||
+                (content.includes('│') && content.includes('━')) ||
+                (content.includes('├') || content.includes('┤') || content.includes('┼'));
+            }
+
+            return (
+              <pre
+                className={cn(
+                  "overflow-hidden my-4 block",
+                  // Different styling for ASCII tables vs regular code blocks
+                  isAsciiTable
+                    ? "bg-gray-50 dark:bg-gray-800/30 rounded"
+                    : "bg-gray-100 dark:bg-gray-900 rounded-lg"
+                )}
+                {...props}
+              >
+                {children}
+              </pre>
+            );
+          },
           // Blockquote
           blockquote: ({ node, ...props }) => (
             <blockquote
@@ -165,7 +318,7 @@ export function Markdown({ content, className }: MarkdownProps) {
           ),
         }}
       >
-        {content}
+        {processedContent}
       </ReactMarkdown>
     </div>
   );
