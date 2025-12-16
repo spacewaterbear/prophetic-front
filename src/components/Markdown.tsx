@@ -1,3 +1,4 @@
+import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { cn } from "@/lib/utils";
@@ -33,9 +34,26 @@ export function Markdown({ content, className }: MarkdownProps) {
             <h6 className="text-sm font-semibold mt-3 mb-2 text-gray-700 dark:text-gray-300" {...props} />
           ),
           // Paragraphs
-          p: ({ node, ...props }) => (
-            <p className="mb-4 leading-relaxed" {...props} />
-          ),
+          p: ({ node, children, ...props }) => {
+            // Helper to check for ASCII table/box patterns
+            // Use React.Children to safely handle children, looking at the first child if it's a string
+            const firstChild = React.Children.toArray(children)[0];
+            const isAsciiTable =
+              typeof firstChild === 'string' &&
+              firstChild.trim().startsWith('┌');
+
+            return (
+              <p
+                className={cn(
+                  "mb-4 leading-relaxed",
+                  isAsciiTable && "font-mono whitespace-pre overflow-x-auto leading-tight"
+                )}
+                {...props}
+              >
+                {children}
+              </p>
+            );
+          },
           // Lists
           ul: ({ node, ...props }) => (
             <ul className="list-disc list-inside mb-4 space-y-2" {...props} />
