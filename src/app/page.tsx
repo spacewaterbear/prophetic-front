@@ -1124,24 +1124,10 @@ export default function Home() {
                         </Suspense>
                       </div>
                     )}
-                    {!streamingMessage &&
-                      !streamingMarketplaceData &&
-                      !streamingRealEstateData && (
-                        <div className="flex space-x-2 h-6 items-center">
-                          <div
-                            className="w-2 h-2 bg-gray-900 dark:bg-white rounded-full animate-bounce"
-                            style={{ animationDelay: "0ms" }}
-                          />
-                          <div
-                            className="w-2 h-2 bg-gray-900 dark:bg-white rounded-full animate-bounce"
-                            style={{ animationDelay: "150ms" }}
-                          />
-                          <div
-                            className="w-2 h-2 bg-gray-900 dark:bg-white rounded-full animate-bounce"
-                            style={{ animationDelay: "300ms" }}
-                          />
-                        </div>
-                      )}
+                    {/* Show typing indicator when loading and no streaming message yet */}
+                    {isLoading && !streamingMessage && (
+                      <TypingIndicator />
+                    )}
                   </div>
                 </div>
               )}

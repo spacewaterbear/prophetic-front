@@ -104,6 +104,42 @@ export function Markdown({ content, className }: MarkdownProps) {
       return match;
     });
 
+    // Convert pipe-separated lines into markdown tables
+    // Look for consecutive lines that all contain multiple pipes
+    unwrapped = unwrapped.replace(/^((?:^.+\|.+\|.+$\n?)+)/gm, (match) => {
+      const lines = match.trim().split('\n');
+
+      // Check if this looks like table data (multiple lines with pipes)
+      if (lines.length >= 2 && lines.every(line => (line.match(/\|/g) || []).length >= 2)) {
+        // Split each line by pipe and clean up
+        const rows = lines.map(line =>
+          line.split('|').map(cell => cell.trim()).filter(cell => cell.length > 0)
+        );
+
+        // Find the maximum number of columns
+        const maxCols = Math.max(...rows.map(row => row.length));
+
+        // Create markdown table
+        const header = rows[0];
+        while (header.length < maxCols) header.push('');
+
+        const separator = Array(maxCols).fill('---');
+
+        const tableLines = [
+          `| ${header.join(' | ')} |`,
+          `| ${separator.join(' | ')} |`,
+          ...rows.slice(1).map(row => {
+            while (row.length < maxCols) row.push('');
+            return `| ${row.join(' | ')} |`;
+          })
+        ];
+
+        return '\n' + tableLines.join('\n') + '\n';
+      }
+
+      return match;
+    });
+
     return unwrapped;
   }, [content]);
 
