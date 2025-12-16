@@ -109,7 +109,7 @@ export function Markdown({ content, className }: MarkdownProps) {
           // Tables
           table: ({ node, ...props }) => (
             <div className="overflow-x-auto my-4">
-              <table className="w-full table-fixed divide-y divide-gray-300 dark:divide-gray-600 border border-gray-300 dark:border-gray-600" {...props} />
+              <table className="w-full min-w-[600px] divide-y divide-gray-300 dark:divide-gray-600 border border-gray-300 dark:border-gray-600" {...props} />
             </div>
           ),
           thead: ({ node, ...props }) => (
