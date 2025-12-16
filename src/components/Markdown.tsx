@@ -27,6 +27,9 @@ export function Markdown({ content, className }: MarkdownProps) {
 
     if (dataRows.length === 0) return asciiTable;
 
+    // Check if this is a key-value table (2 columns, no clear header row)
+    const isKeyValueTable = dataRows.every(row => row.length === 2) && dataRows.length > 2;
+
     // Determine if first row is a header (usually has different styling or is followed by separator)
     const hasHeaderSeparator = lines.some(line =>
       line.includes('├') || line.includes('╠') || line.match(/^[━─]+$/)
@@ -34,7 +37,15 @@ export function Markdown({ content, className }: MarkdownProps) {
 
     let markdownLines: string[] = [];
 
-    if (hasHeaderSeparator && dataRows.length > 1) {
+    if (isKeyValueTable && !hasHeaderSeparator) {
+      // Key-value table: create empty header and use all rows as data
+      markdownLines.push('|   |   |');
+      markdownLines.push('| --- | --- |');
+
+      dataRows.forEach(row => {
+        markdownLines.push(`| ${row[0]} | ${row[1]} |`);
+      });
+    } else if (hasHeaderSeparator && dataRows.length > 1) {
       // First row is header
       const header = dataRows[0];
       const separator = header.map(() => '---');
@@ -49,7 +60,7 @@ export function Markdown({ content, className }: MarkdownProps) {
         markdownLines.push(`| ${row.join(' | ')} |`);
       });
     } else {
-      // No clear header, treat all as body with first row as header
+      // No clear header, treat first row as header
       const header = dataRows[0];
       const separator = header.map(() => '---');
 
