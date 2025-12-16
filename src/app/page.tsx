@@ -287,7 +287,7 @@ const MessageItem = memo(
             size="icon"
             onClick={handleCopy}
             className={`absolute bottom-2 right-2 h-7 w-7 sm:h-8 sm:w-8 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity ${message.sender === "user"
-              ? "text-white hover:bg-white/20"
+              ? "text-gray-500 hover:bg-black/5 dark:text-white dark:hover:bg-white/20"
               : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
               }`}
             aria-label="Copy message"
