@@ -97,7 +97,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                     </div>
 
                     {/* Prophetic Logo Button */}
-                    <div className="relative">
+                    <div className="static sm:relative">
                         <button
                             type="button"
                             data-dashlane-ignore="true"
@@ -145,7 +145,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 }, 100);
                             }}
                         >
-                            <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-3xl p-4 w-[420px] shadow-2xl border border-gray-200 dark:border-transparent">
+                            <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-3xl p-4 w-[90vw] sm:w-[420px] max-h-[50vh] overflow-y-auto shadow-2xl border border-gray-200 dark:border-transparent">
                                 {/* Orchestra Edge */}
                                 <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-200 dark:border-gray-700/50">
                                     <div className="flex items-center gap-3">
