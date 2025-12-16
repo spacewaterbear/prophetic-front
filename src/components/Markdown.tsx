@@ -109,7 +109,7 @@ export function Markdown({ content, className }: MarkdownProps) {
           // Tables
           table: ({ node, ...props }) => (
             <div className="overflow-x-auto my-4">
-              <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-600 border border-gray-300 dark:border-gray-600" {...props} />
+              <table className="w-full table-fixed divide-y divide-gray-300 dark:divide-gray-600 border border-gray-300 dark:border-gray-600" {...props} />
             </div>
           ),
           thead: ({ node, ...props }) => (
@@ -118,15 +118,44 @@ export function Markdown({ content, className }: MarkdownProps) {
           tbody: ({ node, ...props }) => (
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-[rgb(242,235,225)] dark:bg-gray-900" {...props} />
           ),
-          tr: ({ node, ...props }) => (
-            <tr {...props} />
-          ),
+          tr: ({ node, children, ...props }) => {
+            // Check if this row is just a horizontal divider
+            const isDividerRow = React.Children.toArray(children).some((child) => {
+              if (React.isValidElement(child) && child.props.children) {
+                const content = React.Children.toArray(child.props.children)[0];
+                return (
+                  typeof content === "string" && /^[\u2500-\u257F-=]+$/.test(content.trim())
+                );
+              }
+              return false;
+            });
+
+            if (isDividerRow) return null;
+
+            return <tr {...props}>{children}</tr>;
+          },
           th: ({ node, ...props }) => (
-            <th className="px-4 py-2 text-left text-sm font-semibold text-gray-900 dark:text-gray-100" {...props} />
+            <th className="px-4 py-2 text-center text-sm font-semibold text-gray-900 dark:text-gray-100" {...props} />
           ),
-          td: ({ node, ...props }) => (
-            <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300" {...props} />
-          ),
+          td: ({ node, children, ...props }) => {
+            const hasLongUnbreakableWord = React.Children.toArray(children).some(
+              (child) =>
+                typeof child === "string" &&
+                child.split(" ").some((word) => word.length > 30)
+            );
+
+            return (
+              <td
+                className={cn(
+                  "px-4 py-2 text-center text-sm text-gray-700 dark:text-gray-300",
+                  hasLongUnbreakableWord ? "break-all" : "break-words"
+                )}
+                {...props}
+              >
+                {children}
+              </td>
+            );
+          },
           // Strong and emphasis
           strong: ({ node, ...props }) => (
             <strong className="font-semibold text-gray-900 dark:text-gray-100" {...props} />
