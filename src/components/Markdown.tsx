@@ -229,6 +229,16 @@ export function Markdown({ content, className }: MarkdownProps) {
               typeof firstChild === 'string' &&
               firstChild.trim().startsWith('┌');
 
+            // Check if this is a horizontal separator line (long sequence of dashes or equals)
+            const isHorizontalSeparator =
+              typeof firstChild === 'string' &&
+              /^[-=─━]{10,}$/.test(firstChild.trim());
+
+            // Check if content contains long dash lines (even with text in between)
+            const containsLongDashLines =
+              typeof firstChild === 'string' &&
+              firstChild.split('\n').some(line => /^[-=─━]{30,}$/.test(line.trim()));
+
             if (isAsciiTable) {
               return (
                 <div className="table-scroll-wrapper my-4">
@@ -240,6 +250,52 @@ export function Markdown({ content, className }: MarkdownProps) {
                   </p>
                 </div>
               );
+            }
+
+            if (isHorizontalSeparator) {
+              return (
+                <div className="my-4 w-full max-w-full overflow-hidden">
+                  <div className="border-t-2 border-gray-300 dark:border-gray-600" />
+                </div>
+              );
+            }
+
+            if (containsLongDashLines && typeof firstChild === 'string') {
+              // Split content by lines and replace long dash lines with HR elements
+              const lines = firstChild.split('\n');
+              const elements: React.ReactNode[] = [];
+              let textBuffer: string[] = [];
+
+              lines.forEach((line, index) => {
+                if (/^[-=─━]{30,}$/.test(line.trim())) {
+                  // Flush text buffer if any
+                  if (textBuffer.length > 0) {
+                    elements.push(
+                      <p key={`text-${index}`} className="mb-2 leading-relaxed">
+                        {textBuffer.join('\n')}
+                      </p>
+                    );
+                    textBuffer = [];
+                  }
+                  // Add horizontal rule
+                  elements.push(
+                    <hr key={`hr-${index}`} className="my-2 border-gray-300 dark:border-gray-600" />
+                  );
+                } else {
+                  textBuffer.push(line);
+                }
+              });
+
+              // Flush remaining text
+              if (textBuffer.length > 0) {
+                elements.push(
+                  <p key="text-final" className="mb-2 leading-relaxed">
+                    {textBuffer.join('\n')}
+                  </p>
+                );
+              }
+
+              return <div className="mb-4">{elements}</div>;
             }
 
             return (
