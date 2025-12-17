@@ -425,11 +425,49 @@ export function Markdown({ content, className }: MarkdownProps) {
             <hr className="my-6 border-gray-300 dark:border-gray-600" {...props} />
           ),
           // Tables
-          table: ({ node, ...props }) => (
-            <div className="table-scroll-wrapper my-4">
-              <table className="w-full min-w-[600px] divide-y divide-gray-300 dark:divide-gray-600 border border-gray-300 dark:border-gray-600" {...props} />
-            </div>
-          ),
+          table: ({ node, children, ...props }) => {
+            // Simpler approach: check if table has only 1 column by counting th/td in first row
+            let isSingleColumn = false;
+
+            try {
+              // Convert children to array and look for thead/tbody
+              const childArray = React.Children.toArray(children);
+
+              for (const section of childArray) {
+                if (React.isValidElement(section)) {
+                  const sectionChildren = React.Children.toArray(section.props?.children || []);
+
+                  for (const row of sectionChildren) {
+                    if (React.isValidElement(row)) {
+                      const cells = React.Children.toArray(row.props?.children || []);
+                      // Count valid cell elements
+                      const cellCount = cells.filter(cell => React.isValidElement(cell)).length;
+
+                      if (cellCount > 0) {
+                        isSingleColumn = cellCount === 1;
+                        break;
+                      }
+                    }
+                  }
+
+                  if (isSingleColumn !== false) break;
+                }
+              }
+            } catch (e) {
+              isSingleColumn = false;
+            }
+
+            return (
+              <div className="table-scroll-wrapper my-4">
+                <table
+                  className={`w-full divide-y divide-gray-300 dark:divide-gray-600 border border-gray-300 dark:border-gray-600 ${isSingleColumn ? '' : 'min-w-[500px]'}`}
+                  {...props}
+                >
+                  {children}
+                </table>
+              </div>
+            );
+          },
           thead: ({ node, ...props }) => (
             <thead className="bg-[rgb(235,225,215)] dark:bg-gray-800" {...props} />
           ),
@@ -453,7 +491,7 @@ export function Markdown({ content, className }: MarkdownProps) {
             return <tr {...props}>{children}</tr>;
           },
           th: ({ node, ...props }) => (
-            <th className="px-4 py-2 text-center text-sm font-semibold text-gray-900 dark:text-gray-100" {...props} />
+            <th className="px-2 py-1 sm:px-4 sm:py-2 text-center text-xs sm:text-sm font-semibold text-gray-900 dark:text-gray-100" {...props} />
           ),
           td: ({ node, children, ...props }) => {
             const hasLongUnbreakableWord = React.Children.toArray(children).some(
@@ -465,7 +503,7 @@ export function Markdown({ content, className }: MarkdownProps) {
             return (
               <td
                 className={cn(
-                  "px-4 py-2 text-center text-sm text-gray-700 dark:text-gray-300",
+                  "px-2 py-1 sm:px-4 sm:py-2 text-center text-xs sm:text-sm text-gray-700 dark:text-gray-300",
                   hasLongUnbreakableWord ? "break-all" : "break-words"
                 )}
                 {...props}
