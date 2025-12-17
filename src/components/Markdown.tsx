@@ -144,7 +144,7 @@ export function Markdown({ content, className }: MarkdownProps) {
   }, [content]);
 
   return (
-    <div className={cn("prose prose-sm dark:prose-invert max-w-none", className)}>
+    <div className={cn("prose prose-sm dark:prose-invert max-w-none overflow-hidden", className)}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{

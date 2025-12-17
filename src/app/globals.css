@@ -146,6 +146,8 @@ html {
   /* Enable momentum scrolling on iOS */
   width: 100%;
   /* Ensure full width */
+  max-width: 100%;
+  /* Prevent expanding beyond container */
   position: relative;
   /* Create stacking context */
 }
