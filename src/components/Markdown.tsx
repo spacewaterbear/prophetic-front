@@ -308,7 +308,7 @@ export function Markdown({ content, className }: MarkdownProps) {
           ),
           // Tables
           table: ({ node, ...props }) => (
-            <div className="overflow-x-auto my-4">
+            <div className="table-scroll-wrapper my-4">
               <table className="w-full min-w-[600px] divide-y divide-gray-300 dark:divide-gray-600 border border-gray-300 dark:border-gray-600" {...props} />
             </div>
           ),

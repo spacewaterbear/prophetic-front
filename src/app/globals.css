@@ -138,3 +138,31 @@ html {
 .dark ::-webkit-scrollbar-thumb:hover {
   background-color: rgba(75, 85, 99, 0.8);
 }
+
+/* iOS Safari-compatible table scrolling */
+.table-scroll-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  /* Enable momentum scrolling on iOS */
+  width: 100%;
+  /* Ensure full width */
+  position: relative;
+  /* Create stacking context */
+}
+
+/* Ensure scrollbar is visible on iOS Safari */
+.table-scroll-wrapper::-webkit-scrollbar {
+  -webkit-appearance: none;
+  height: 8px;
+}
+
+.table-scroll-wrapper::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.3);
+  /* Visible on light backgrounds */
+}
+
+.dark .table-scroll-wrapper::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3);
+  /* Visible on dark backgrounds */
+}
