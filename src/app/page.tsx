@@ -361,6 +361,8 @@ export default function Home() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const [shouldAutoScroll, setShouldAutoScroll] = useState(true);
   const [mounted, setMounted] = useState(false);
+  const [lastStreamingActivity, setLastStreamingActivity] = useState<number>(0);
+  const [showStreamingIndicator, setShowStreamingIndicator] = useState(false);
 
   // Redirect to login if not authenticated or to registration-pending if unauthorized
   useEffect(() => {
@@ -438,6 +440,31 @@ export default function Home() {
     isLoading,
     shouldAutoScroll,
   ]);
+
+  // Detect streaming pauses and show typing indicator
+  useEffect(() => {
+    if (!isLoading) {
+      setShowStreamingIndicator(false);
+      return;
+    }
+
+    const interval = setInterval(() => {
+      const now = Date.now();
+      const timeSinceLastActivity = now - lastStreamingActivity;
+
+      // Show indicator if:
+      // - We're loading
+      // - There's a streaming message (initial text received)
+      // - No activity for more than 500ms
+      if (isLoading && streamingMessage && timeSinceLastActivity > 500) {
+        setShowStreamingIndicator(true);
+      } else {
+        setShowStreamingIndicator(false);
+      }
+    }, 300);
+
+    return () => clearInterval(interval);
+  }, [isLoading, streamingMessage, lastStreamingActivity]);
 
 
 
@@ -615,6 +642,8 @@ export default function Home() {
     setStreamingMarketplaceData(null);
     setStreamingRealEstateData(null);
     setCurrentStatus("");
+    setLastStreamingActivity(Date.now());
+    setShowStreamingIndicator(false);
 
     // Add user message to UI immediately
     const tempUserMessage: Message = {
@@ -701,6 +730,7 @@ export default function Home() {
             if (data.type === "chunk") {
               streamContent += data.content;
               setStreamingMessage(streamContent);
+              setLastStreamingActivity(Date.now());
               // Clear status when content starts streaming
               setCurrentStatus("");
             } else if (data.type === "artist_info") {
@@ -850,6 +880,7 @@ export default function Home() {
               // Handle status messages
               console.log("[FRONTEND DEBUG] Received status:", data.message);
               setCurrentStatus(data.message);
+              setLastStreamingActivity(Date.now());
             } else if (data.type === "error") {
               console.error("Stream error:", data.error);
             }
@@ -1122,6 +1153,12 @@ export default function Home() {
                         >
                           <RealEstateCard data={streamingRealEstateData} />
                         </Suspense>
+                      </div>
+                    )}
+                    {/* Show typing indicator when there's a pause in streaming */}
+                    {showStreamingIndicator && (
+                      <div className="mt-2">
+                        <TypingIndicator />
                       </div>
                     )}
                     {/* Show typing indicator when loading and no streaming message yet */}
