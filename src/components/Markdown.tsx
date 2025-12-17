@@ -234,10 +234,13 @@ export function Markdown({ content, className }: MarkdownProps) {
               typeof firstChild === 'string' &&
               /^[-=─━]{10,}$/.test(firstChild.trim());
 
-            // Check if content contains long dash lines (even with text in between)
-            const containsLongDashLines =
-              typeof firstChild === 'string' &&
-              firstChild.split('\n').some(line => /^[-=─━]{30,}$/.test(line.trim()));
+            // Check if content contains long dash lines (even with text in between or mixed with other elements)
+            let containsLongDashLines = false;
+            React.Children.forEach(children, (child) => {
+              if (typeof child === 'string' && /[-=─━]{30,}/.test(child)) {
+                containsLongDashLines = true;
+              }
+            });
 
             if (isAsciiTable) {
               return (
@@ -257,6 +260,40 @@ export function Markdown({ content, className }: MarkdownProps) {
                 <div className="my-4 w-full max-w-full overflow-hidden">
                   <div className="border-t-2 border-gray-300 dark:border-gray-600" />
                 </div>
+              );
+            }
+
+            // Handle paragraphs with long separator lines mixed with other content
+            if (containsLongDashLines) {
+              // Process children to replace long dash sequences with HR elements
+              const processedChildren: React.ReactNode[] = [];
+
+              React.Children.forEach(children, (child, index) => {
+                if (typeof child === 'string') {
+                  // Split by long dash sequences
+                  const parts = child.split(/([-=─━]{30,})/);
+                  parts.forEach((part, partIndex) => {
+                    if (/^[-=─━]{30,}$/.test(part)) {
+                      // Replace with HR
+                      processedChildren.push(
+                        <React.Fragment key={`${index}-${partIndex}`}>
+                          <br />
+                          <hr className="my-2 border-gray-300 dark:border-gray-600" />
+                        </React.Fragment>
+                      );
+                    } else if (part) {
+                      processedChildren.push(part);
+                    }
+                  });
+                } else {
+                  processedChildren.push(child);
+                }
+              });
+
+              return (
+                <p className="mb-4 leading-relaxed overflow-hidden" {...props}>
+                  {processedChildren}
+                </p>
               );
             }
 
