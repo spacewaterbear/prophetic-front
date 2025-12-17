@@ -126,14 +126,47 @@ export function Markdown({ content, className }: MarkdownProps) {
     });
   };
 
+  // Helper function to decode HTML entities
+  const decodeHtmlEntities = (text: string): string => {
+    const textarea = document.createElement('textarea');
+    textarea.innerHTML = text;
+    return textarea.value;
+  };
+
   // Post-processing to remove wrapping markdown code blocks if present
   // This handles cases where the AI wraps the entire response in ```markdown ... ```
   const processedContent = React.useMemo(() => {
-    const trimmed = content.trim();
-    // Regex to match content wrapped in triple backticks, optionally with a language
-    // e.g. ```markdown ... ``` or just ``` ... ```
-    const match = trimmed.match(/^```(?:\w+)?\s*([\s\S]*?)\s*```$/);
-    let unwrapped = match ? match[1] : content;
+    // First, decode HTML entities
+    const decoded = decodeHtmlEntities(content);
+    let trimmed = decoded.trim();
+
+    // Try multiple patterns to unwrap code blocks
+    // Pattern 1: Standard triple backticks with optional language
+    let codeBlockMatch = trimmed.match(/^```(?:\w+)?\n?([\s\S]*?)\n?```$/);
+
+    // Pattern 2: Code blocks with extra whitespace
+    if (!codeBlockMatch) {
+      codeBlockMatch = trimmed.match(/^```\s*(?:\w+)?\s*\n([\s\S]*?)\n\s*```\s*$/);
+    }
+
+    // Pattern 3: Just backticks without language specifier
+    if (!codeBlockMatch) {
+      codeBlockMatch = trimmed.match(/^```\n([\s\S]*?)\n```$/);
+    }
+
+    let unwrapped = codeBlockMatch ? codeBlockMatch[1].trim() : decoded;
+
+    // Additional check: if content starts with markdown headers or separators,
+    // it's likely markdown that should be unwrapped
+    const looksLikeMarkdown = /^(#{1,6}\s|─{3,}|━{3,}|┌|╔)/.test(unwrapped);
+
+    // If it looks like markdown but is still wrapped in a code block pattern, force unwrap
+    if (looksLikeMarkdown && unwrapped.includes('```')) {
+      const forceUnwrap = unwrapped.match(/```[\s\S]*?\n([\s\S]*?)\n```/);
+      if (forceUnwrap) {
+        unwrapped = forceUnwrap[1].trim();
+      }
+    }
 
     // First, convert pipe-delimited ASCII tables to markdown tables
     unwrapped = convertPipeTableToMarkdown(unwrapped);
