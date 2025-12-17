@@ -7,11 +7,18 @@ import { useTheme } from "next-themes";
 import { Clock, Mail, Shield } from "lucide-react";
 import Image from "next/image";
 import { useI18n } from "@/contexts/i18n-context";
+import { useState, useEffect } from "react";
 
 export default function RegistrationPendingPage() {
   const { theme, resolvedTheme } = useTheme();
-  const isDark = theme === "dark" || resolvedTheme === "dark";
+  const [mounted, setMounted] = useState(false);
   const { t } = useI18n();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isDark = mounted && (theme === "dark" || resolvedTheme === "dark");
 
   const handleSignOut = async () => {
     await signOut({ callbackUrl: "/login" });
@@ -33,13 +40,14 @@ export default function RegistrationPendingPage() {
             <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden flex items-center justify-center">
               <Image
                 src={isDark
-                  ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_white.svg"
+                  ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/logo_form_blanc.svg"
                   : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_new.svg"
                 }
                 alt="Prophetic Orchestra"
                 width={96}
                 height={96}
                 className="w-full h-full object-cover"
+                suppressHydrationWarning
                 priority
               />
             </div>
