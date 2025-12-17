@@ -197,7 +197,7 @@ export function Markdown({ content, className }: MarkdownProps) {
   }, [content]);
 
   return (
-    <div className={cn("prose prose-sm dark:prose-invert max-w-none overflow-hidden", className)}>
+    <div className={cn("prose prose-sm dark:prose-invert max-w-none", className)}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
@@ -229,14 +229,21 @@ export function Markdown({ content, className }: MarkdownProps) {
               typeof firstChild === 'string' &&
               firstChild.trim().startsWith('┌');
 
+            if (isAsciiTable) {
+              return (
+                <div className="table-scroll-wrapper my-4">
+                  <p
+                    className="font-mono whitespace-pre leading-tight mb-0"
+                    {...props}
+                  >
+                    {children}
+                  </p>
+                </div>
+              );
+            }
+
             return (
-              <p
-                className={cn(
-                  "mb-4 leading-relaxed",
-                  isAsciiTable && "font-mono whitespace-pre overflow-x-auto leading-tight"
-                )}
-                {...props}
-              >
+              <p className="mb-4 leading-relaxed" {...props}>
                 {children}
               </p>
             );
@@ -284,13 +291,15 @@ export function Markdown({ content, className }: MarkdownProps) {
             // Custom styling for ASCII tables to make them look cleaner
             if (isAsciiTable) {
               return (
-                <code
-                  className="block bg-gray-50 dark:bg-gray-800/30 text-gray-900 dark:text-gray-100 overflow-x-auto text-sm my-4 whitespace-pre leading-tight p-3 rounded"
-                  style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace' }}
-                  {...props}
-                >
-                  {children}
-                </code>
+                <div className="table-scroll-wrapper my-4">
+                  <code
+                    className="block bg-gray-50 dark:bg-gray-800/30 text-gray-900 dark:text-gray-100 text-sm whitespace-pre leading-tight p-3 rounded"
+                    style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace' }}
+                    {...props}
+                  >
+                    {children}
+                  </code>
+                </div>
               );
             }
 
