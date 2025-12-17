@@ -195,7 +195,7 @@ const MessageItem = memo(
         {message.sender === "ai" && <AIAvatar />}
         <div className="group relative">
           <div
-            className={`max-w-[90vw] sm:max-w-3xl lg:max-w-4xl pl-4 pr-3 pt-4 pb-10 sm:pl-8 sm:pr-14 sm:py-5 rounded-2xl ${message.sender === "user"
+            className={`max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-1.5 pt-4 pb-10 sm:py-5 rounded-2xl ${message.sender === "user"
               ? "bg-[rgb(230,220,210)] dark:bg-gray-700 text-gray-900 dark:text-white"
               : "bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] text-gray-900 dark:text-white"
               }`}
