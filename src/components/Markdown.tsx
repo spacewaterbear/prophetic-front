@@ -237,7 +237,7 @@ export function Markdown({ content, className }: MarkdownProps) {
             // Check if content contains long dash lines (even with text in between or mixed with other elements)
             let containsLongDashLines = false;
             React.Children.forEach(children, (child) => {
-              if (typeof child === 'string' && /[-=─━]{30,}/.test(child)) {
+              if (typeof child === 'string' && /[\-=\u2500-\u257F]{30,}/.test(child)) {
                 containsLongDashLines = true;
               }
             });
@@ -265,69 +265,43 @@ export function Markdown({ content, className }: MarkdownProps) {
 
             // Handle paragraphs with long separator lines mixed with other content
             if (containsLongDashLines) {
-              // Process children to replace long dash sequences with HR elements
-              const processedChildren: React.ReactNode[] = [];
+              // Process children to split text and separators into separate elements
+              const elements: React.ReactNode[] = [];
+              let textBuffer: React.ReactNode[] = [];
 
               React.Children.forEach(children, (child, index) => {
                 if (typeof child === 'string') {
-                  // Split by long dash sequences
-                  const parts = child.split(/([-=─━]{30,})/);
+                  // Split by long dash sequences using Unicode escape sequences
+                  const parts = child.split(/([\-=\u2500-\u257F]{30,})/);
                   parts.forEach((part, partIndex) => {
-                    if (/^[-=─━]{30,}$/.test(part)) {
-                      // Replace with HR
-                      processedChildren.push(
-                        <React.Fragment key={`${index}-${partIndex}`}>
-                          <br />
-                          <hr className="my-2 border-gray-300 dark:border-gray-600" />
-                        </React.Fragment>
+                    if (/^[\-=\u2500-\u257F]{30,}$/.test(part)) {
+                      // Flush text buffer if any
+                      if (textBuffer.length > 0) {
+                        elements.push(
+                          <p key={`text-${index}-${partIndex}`} className="mb-2 leading-relaxed overflow-hidden">
+                            {textBuffer}
+                          </p>
+                        );
+                        textBuffer = [];
+                      }
+                      // Add horizontal rule as a separate element
+                      elements.push(
+                        <hr key={`hr-${index}-${partIndex}`} className="my-2 border-gray-300 dark:border-gray-600" />
                       );
                     } else if (part) {
-                      processedChildren.push(part);
+                      textBuffer.push(part);
                     }
                   });
                 } else {
-                  processedChildren.push(child);
+                  textBuffer.push(child);
                 }
               });
 
-              return (
-                <p className="mb-4 leading-relaxed overflow-hidden" {...props}>
-                  {processedChildren}
-                </p>
-              );
-            }
-
-            if (containsLongDashLines && typeof firstChild === 'string') {
-              // Split content by lines and replace long dash lines with HR elements
-              const lines = firstChild.split('\n');
-              const elements: React.ReactNode[] = [];
-              let textBuffer: string[] = [];
-
-              lines.forEach((line, index) => {
-                if (/^[-=─━]{30,}$/.test(line.trim())) {
-                  // Flush text buffer if any
-                  if (textBuffer.length > 0) {
-                    elements.push(
-                      <p key={`text-${index}`} className="mb-2 leading-relaxed">
-                        {textBuffer.join('\n')}
-                      </p>
-                    );
-                    textBuffer = [];
-                  }
-                  // Add horizontal rule
-                  elements.push(
-                    <hr key={`hr-${index}`} className="my-2 border-gray-300 dark:border-gray-600" />
-                  );
-                } else {
-                  textBuffer.push(line);
-                }
-              });
-
-              // Flush remaining text
+              // Flush remaining text buffer
               if (textBuffer.length > 0) {
                 elements.push(
-                  <p key="text-final" className="mb-2 leading-relaxed">
-                    {textBuffer.join('\n')}
+                  <p key="text-final" className="mb-2 leading-relaxed overflow-hidden">
+                    {textBuffer}
                   </p>
                 );
               }
