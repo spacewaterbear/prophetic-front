@@ -76,6 +76,56 @@ export function Markdown({ content, className }: MarkdownProps) {
     return markdownLines.join('\n');
   };
 
+  // Helper function to convert pipe-delimited ASCII tables to markdown tables
+  const convertPipeTableToMarkdown = (content: string): string => {
+    // Match tables with pipe delimiters and dash separator lines
+    // Pattern: lines with |---| or similar horizontal separators
+    const tablePattern = /^(\|[-=]+\|[\r\n]+)((?:\|.+\|[\r\n]+)+)(\|[-=]+\|)?/gm;
+
+    return content.replace(tablePattern, (match) => {
+      const lines = match.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+
+      // Filter out separator lines (lines with only pipes and dashes/equals)
+      const dataRows = lines.filter(line => {
+        const withoutPipes = line.replace(/\|/g, '').trim();
+        return withoutPipes.length > 0 && !withoutPipes.match(/^[-=]+$/);
+      });
+
+      if (dataRows.length === 0) return match;
+
+      // Extract cells from each row
+      const rows = dataRows.map(line => {
+        return line
+          .split('|')
+          .map(cell => cell.trim())
+          .filter(cell => cell.length > 0);
+      });
+
+      if (rows.length === 0) return match;
+
+      // Determine the maximum number of columns
+      const maxCols = Math.max(...rows.map(row => row.length));
+
+      // Treat first row as header (or create empty header for key-value tables)
+      const header = rows[0];
+      while (header.length < maxCols) header.push('');
+
+      const separator = Array(maxCols).fill('---');
+
+      // Build markdown table
+      const markdownLines = [
+        `| ${header.join(' | ')} |`,
+        `| ${separator.join(' | ')} |`,
+        ...rows.slice(1).map(row => {
+          while (row.length < maxCols) row.push('');
+          return `| ${row.join(' | ')} |`;
+        })
+      ];
+
+      return '\n' + markdownLines.join('\n') + '\n';
+    });
+  };
+
   // Post-processing to remove wrapping markdown code blocks if present
   // This handles cases where the AI wraps the entire response in ```markdown ... ```
   const processedContent = React.useMemo(() => {
@@ -84,6 +134,9 @@ export function Markdown({ content, className }: MarkdownProps) {
     // e.g. ```markdown ... ``` or just ``` ... ```
     const match = trimmed.match(/^```(?:\w+)?\s*([\s\S]*?)\s*```$/);
     let unwrapped = match ? match[1] : content;
+
+    // First, convert pipe-delimited ASCII tables to markdown tables
+    unwrapped = convertPipeTableToMarkdown(unwrapped);
 
     // Convert ASCII tables to markdown tables
     // Match code blocks that contain ASCII tables
