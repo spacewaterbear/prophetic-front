@@ -201,7 +201,7 @@ const MessageItem = memo(
               }`}
           >
             {message.sender === "user" ? (
-              <p className="text-base leading-relaxed whitespace-pre-wrap">
+              <p className="text-base leading-relaxed whitespace-pre-wrap px-[10px]">
                 {message.content}
               </p>
             ) : message.type === "artist_info" && message.artist ? (
