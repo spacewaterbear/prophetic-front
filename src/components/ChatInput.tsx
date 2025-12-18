@@ -97,24 +97,12 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                     </div>
 
                     {/* Prophetic Logo Button */}
-                    <div className="static sm:relative">
+                    <div className="relative group">
                         <button
                             type="button"
                             data-dashlane-ignore="true"
                             className="flex items-center justify-center hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-full p-2 transition-colors cursor-pointer"
                             onClick={(e) => e.preventDefault()}
-                            onMouseEnter={() => {
-                                if (closeTimeoutRef.current) {
-                                    clearTimeout(closeTimeoutRef.current);
-                                    closeTimeoutRef.current = null;
-                                }
-                                setIsDropdownOpen(true);
-                            }}
-                            onMouseLeave={() => {
-                                closeTimeoutRef.current = setTimeout(() => {
-                                    setIsDropdownOpen(false);
-                                }, 100);
-                            }}
                         >
                             <Image
                                 src={
@@ -128,8 +116,12 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 className="w-5 h-5 opacity-50"
                             />
                         </button>
+                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
+                            Bientôt disponible
+                        </div>
 
-                        {/* Orchestra Collections Dropdown */}
+                        {/* Orchestra Collections Dropdown - PRESERVED FOR LATER USE */}
+                        {/* 
                         <div
                             className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 transition-opacity z-10 ${isDropdownOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
                             onMouseEnter={() => {
@@ -146,7 +138,6 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                             }}
                         >
                             <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-3xl p-4 w-[90vw] sm:w-[420px] max-h-[50vh] overflow-y-auto shadow-2xl border border-gray-200 dark:border-transparent">
-                                {/* Orchestra Edge */}
                                 <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-200 dark:border-gray-700/50">
                                     <div className="flex items-center gap-3">
                                         <span className="text-gray-900 dark:text-white font-medium">Orchestra Edge</span>
@@ -159,7 +150,6 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                     </svg>
                                 </div>
 
-                                {/* Orchestra Vault */}
                                 <div className="flex items-center justify-between mb-4 pb-4">
                                     <div className="flex items-center gap-3">
                                         <span className="text-gray-900 dark:text-white font-medium">Orchestra Vault</span>
@@ -172,7 +162,6 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                     </svg>
                                 </div>
 
-                                {/* Selected: Orchestra Edge */}
                                 <div className="mb-3">
                                     <div className="flex items-center gap-2 mb-3">
                                         <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
@@ -183,7 +172,6 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                     </p>
                                 </div>
 
-                                {/* Collection Tags */}
                                 <div className="flex flex-wrap gap-2">
                                     <span className="px-3 py-1.5 bg-transparent text-gray-800 dark:text-white text-xs font-medium rounded-full border border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 transition-colors">
                                         FIRST COLLECTION
@@ -223,12 +211,12 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                     </span>
                                 </div>
 
-                                {/* Footer */}
                                 <div className="mt-4 pt-3 border-t border-gray-200 dark:border-gray-700/50">
                                     <p className="text-xs text-gray-500">+1800 insights available</p>
                                 </div>
                             </div>
                         </div>
+                        */}
                     </div>
                 </div>
 
