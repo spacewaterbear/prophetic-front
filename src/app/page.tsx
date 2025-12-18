@@ -193,9 +193,9 @@ const MessageItem = memo(
         className={`flex gap-2 sm:gap-4 items-start ${message.sender === "user" ? "justify-end" : "justify-start"}`}
       >
         {message.sender === "ai" && <AIAvatar />}
-        <div className="group relative">
+        <div className="group flex flex-col gap-2">
           <div
-            className={`max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-1.5 pt-4 pb-10 sm:py-5 rounded-2xl ${message.sender === "user"
+            className={`max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-1.5 py-4 sm:py-5 rounded-2xl ${message.sender === "user"
               ? "bg-[rgb(230,220,210)] dark:bg-gray-700 text-gray-900 dark:text-white"
               : "bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] text-gray-900 dark:text-white"
               }`}
@@ -286,7 +286,7 @@ const MessageItem = memo(
             variant="ghost"
             size="icon"
             onClick={handleCopy}
-            className={`absolute bottom-2 right-2 h-7 w-7 sm:h-8 sm:w-8 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity ${message.sender === "user"
+            className={`h-7 w-7 sm:h-8 sm:w-8 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity self-end ${message.sender === "user"
               ? "text-gray-500 hover:bg-black/5 dark:text-white dark:hover:bg-white/20"
               : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
               }`}
