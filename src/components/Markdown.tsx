@@ -140,6 +140,13 @@ export function Markdown({ content, className }: MarkdownProps) {
     const decoded = decodeHtmlEntities(content);
     let trimmed = decoded.trim();
 
+    // Check if content is wrapped in HTML pre/code tags and unwrap it
+    // Pattern: <pre ...><code ...>content</code></pre>
+    const htmlWrapperMatch = trimmed.match(/^<pre[^>]*>\s*<code[^>]*>([\s\S]*?)<\/code>\s*<\/pre>$/i);
+    if (htmlWrapperMatch) {
+      trimmed = htmlWrapperMatch[1].trim();
+    }
+
     // Try multiple patterns to unwrap code blocks
     // Pattern 1: Standard triple backticks with optional language
     let codeBlockMatch = trimmed.match(/^```(?:\w+)?\n?([\s\S]*?)\n?```$/);
@@ -154,7 +161,7 @@ export function Markdown({ content, className }: MarkdownProps) {
       codeBlockMatch = trimmed.match(/^```\n([\s\S]*?)\n```$/);
     }
 
-    let unwrapped = codeBlockMatch ? codeBlockMatch[1].trim() : decoded;
+    let unwrapped = codeBlockMatch ? codeBlockMatch[1].trim() : trimmed;
 
     // Additional check: if content starts with markdown headers or separators,
     // it's likely markdown that should be unwrapped
