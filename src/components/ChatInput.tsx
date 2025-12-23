@@ -102,18 +102,27 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                             type="button"
                             data-dashlane-ignore="true"
                             className="flex items-center justify-center hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-full p-2 transition-colors cursor-pointer"
-                            onClick={(e) => e.preventDefault()}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                setIsDropdownOpen(!isDropdownOpen);
+                            }}
                             onMouseEnter={() => {
                                 if (closeTimeoutRef.current) {
                                     clearTimeout(closeTimeoutRef.current);
                                     closeTimeoutRef.current = null;
                                 }
-                                setIsDropdownOpen(true);
+                                // Only auto-open on hover for desktop (non-touch devices)
+                                if (window.matchMedia('(hover: hover)').matches) {
+                                    setIsDropdownOpen(true);
+                                }
                             }}
                             onMouseLeave={() => {
-                                closeTimeoutRef.current = setTimeout(() => {
-                                    setIsDropdownOpen(false);
-                                }, 100);
+                                // Only auto-close on hover for desktop
+                                if (window.matchMedia('(hover: hover)').matches) {
+                                    closeTimeoutRef.current = setTimeout(() => {
+                                        setIsDropdownOpen(false);
+                                    }, 100);
+                                }
                             }}
                         >
                             <Image
@@ -129,23 +138,46 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                             />
                         </button>
 
-                        {/* Subscription Tiers Dropdown */}
+                        {/* Subscription Tiers Dropdown/Bottom Sheet */}
+                        {/* Backdrop for mobile */}
+                        {isDropdownOpen && (
+                            <div
+                                className="sm:hidden fixed inset-0 bg-black/50 z-40 transition-opacity"
+                                onClick={() => setIsDropdownOpen(false)}
+                            />
+                        )}
+
                         <div
-                            className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 transition-opacity z-10 ${isDropdownOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                            className={`
+                                sm:absolute sm:bottom-full sm:left-1/2 sm:-translate-x-1/2 sm:mb-2
+                                fixed bottom-0 left-0 right-0 sm:static
+                                transition-all duration-300 ease-out
+                                z-50 sm:z-10
+                                ${isDropdownOpen
+                                    ? 'opacity-100 translate-y-0 sm:translate-y-0'
+                                    : 'opacity-0 translate-y-full sm:translate-y-0 pointer-events-none'
+                                }
+                            `}
                             onMouseEnter={() => {
                                 if (closeTimeoutRef.current) {
                                     clearTimeout(closeTimeoutRef.current);
                                     closeTimeoutRef.current = null;
                                 }
-                                setIsDropdownOpen(true);
+                                // Only keep open on hover for desktop
+                                if (window.matchMedia('(hover: hover)').matches) {
+                                    setIsDropdownOpen(true);
+                                }
                             }}
                             onMouseLeave={() => {
-                                closeTimeoutRef.current = setTimeout(() => {
-                                    setIsDropdownOpen(false);
-                                }, 100);
+                                // Only auto-close on hover for desktop
+                                if (window.matchMedia('(hover: hover)').matches) {
+                                    closeTimeoutRef.current = setTimeout(() => {
+                                        setIsDropdownOpen(false);
+                                    }, 100);
+                                }
                             }}
                         >
-                            <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-3xl p-5 w-[90vw] sm:w-[420px] shadow-2xl border border-gray-200 dark:border-transparent">
+                            <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl sm:rounded-3xl p-5 w-full sm:w-[420px] shadow-2xl border-t border-gray-200 sm:border dark:border-transparent max-h-[80vh] overflow-y-auto">
                                 {/* Discover - Free (Active) */}
                                 <div className="mb-4 p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer">
                                     <div className="flex items-center justify-between mb-2">
