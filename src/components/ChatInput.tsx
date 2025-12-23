@@ -147,7 +147,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                         >
                             <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-3xl p-5 w-[90vw] sm:w-[420px] shadow-2xl border border-gray-200 dark:border-transparent">
                                 {/* Discover - Free (Active) */}
-                                <div className="mb-4 p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl">
+                                <div className="mb-4 p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer">
                                     <div className="flex items-center justify-between mb-2">
                                         <div className="flex items-center gap-2">
                                             <span className="text-blue-600 dark:text-blue-400 font-semibold text-base">Discover - Free</span>
@@ -163,7 +163,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 </div>
 
                                 {/* Intelligence - $29.99 / month */}
-                                <div className="mb-4 p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl">
+                                <div className="mb-4 p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer">
                                     <div className="flex items-center justify-between mb-2">
                                         <div className="flex items-center gap-2">
                                             <span className="text-gray-900 dark:text-white font-semibold text-base">Intelligence - $29.99 / month</span>
@@ -178,7 +178,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 </div>
 
                                 {/* Oracle - $149.99 / month */}
-                                <div className="p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl">
+                                <div className="p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer">
                                     <div className="flex items-center justify-between mb-2">
                                         <div className="flex items-center gap-2">
                                             <span className="text-gray-900 dark:text-white font-semibold text-base">Oracle - $149.99 / month</span>
