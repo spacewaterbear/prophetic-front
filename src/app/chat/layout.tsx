@@ -26,12 +26,7 @@ export default function ChatLayout({
     const { t } = useI18n();
 
     const [conversations, setConversations] = useState<Conversation[]>([]);
-    const [sidebarOpen, setSidebarOpen] = useState(() => {
-        if (typeof window !== "undefined") {
-            return window.innerWidth >= 768;
-        }
-        return false;
-    });
+    const [sidebarOpen, setSidebarOpen] = useState(false);
 
     // Extract conversation ID from pathname
     const currentConversationId = pathname?.match(/\/chat\/(\d+)/)?.[1];
@@ -46,6 +41,10 @@ export default function ChatLayout({
 
     // Handle responsive sidebar behavior
     useEffect(() => {
+        // Set initial state based on window width
+        const isDesktop = window.innerWidth >= 768;
+        setSidebarOpen(isDesktop);
+
         const handleResize = () => {
             const isDesktop = window.innerWidth >= 768;
             setSidebarOpen(isDesktop);
