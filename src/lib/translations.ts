@@ -10,8 +10,9 @@ export const translations = {
         },
         // Chat Interface
         chat: {
-            greeting: "Bonjour",
+            greeting: "Bonjour, {name}",
             welcomeMessage: "Comment puis-je vous aider à investir intelligemment ?",
+            welcomeSubtitle: "Comment puis-je vous aider à investir intelligemment ?",
             placeholder: "Demandez à Prophetic",
             send: "Envoyer",
             comingSoon: "bientôt disponible",
@@ -49,8 +50,9 @@ export const translations = {
             noConversations: "No conversations yet",
         },
         chat: {
-            greeting: "Hello",
+            greeting: "Hello, {name}",
             welcomeMessage: "How can I help you invest wisely?",
+            welcomeSubtitle: "How can I help you invest wisely?",
             placeholder: "Ask to Prophetic",
             send: "Send",
             comingSoon: "coming soon",
@@ -352,17 +354,17 @@ export function getTranslation(
     fallbackLang: Language = "en"
 ): string {
     const keys = key.split(".");
-    let value: any = translations[lang];
+    let value: Record<string, unknown> | string = translations[lang];
 
     for (const k of keys) {
         if (value && typeof value === "object" && k in value) {
-            value = value[k];
+            value = (value as Record<string, unknown>)[k] as Record<string, unknown> | string;
         } else {
             // Fallback to English if key not found
             value = translations[fallbackLang];
             for (const fk of keys) {
                 if (value && typeof value === "object" && fk in value) {
-                    value = value[fk];
+                    value = (value as Record<string, unknown>)[fk] as Record<string, unknown> | string;
                 } else {
                     return key; // Return key itself if not found
                 }

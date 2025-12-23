@@ -323,7 +323,7 @@ export default function ChatPage() {
             router.push("/login");
         } else if (
             status === "authenticated" &&
-            (session?.user as any)?.status === "unauthorized"
+            (session?.user as { status?: string })?.status === "unauthorized"
         ) {
             router.push("/registration-pending");
         }
@@ -337,10 +337,12 @@ export default function ChatPage() {
     }, [session]);
 
     // Load conversation from URL parameter
+    // Load conversation from URL parameter
     useEffect(() => {
         if (conversationId && session?.user) {
             loadConversation(conversationId);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [conversationId, session]);
 
     useEffect(() => {

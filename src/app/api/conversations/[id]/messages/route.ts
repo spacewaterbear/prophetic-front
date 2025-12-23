@@ -151,6 +151,7 @@ export async function POST(
           let structuredData: any = null; // Capture artist_info or other structured responses
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           let marketplaceData: any = null; // Capture marketplace_data separately
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           let realEstateData: any = null; // Capture real_estate_data separately
 
           // Read and stream the response

@@ -69,7 +69,9 @@ export default function ChatLayout({
     };
 
     const createNewConversation = () => {
-        router.push("/");
+        // Just redirect to the welcome screen
+        // Conversation will be created when user sends their first message
+        router.push("/chat");
     };
 
     const deleteConversation = async (id: number, e: React.MouseEvent) => {

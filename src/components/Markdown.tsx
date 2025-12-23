@@ -35,7 +35,7 @@ export function Markdown({ content, className }: MarkdownProps) {
       line.includes('├') || line.includes('╠') || line.match(/^[━─]+$/)
     );
 
-    let markdownLines: string[] = [];
+    const markdownLines: string[] = [];
 
     if (isKeyValueTable && !hasHeaderSeparator) {
       // Key-value table: create empty header and use all rows as data
@@ -368,7 +368,7 @@ export function Markdown({ content, className }: MarkdownProps) {
           // Code
           code: ({ node, className, children, ...props }) => {
             // In react-markdown v10, the `inline` prop indicates if it's inline code
-            const { inline } = props as any;
+            const { inline } = props as { inline?: boolean };
 
             // Helper to check for ASCII table/box patterns in block code
             const content = String(children).trim();
