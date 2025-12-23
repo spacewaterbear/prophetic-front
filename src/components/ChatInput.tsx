@@ -104,6 +104,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                             className="flex items-center justify-center hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-full p-2 transition-colors cursor-pointer"
                             onClick={(e) => {
                                 e.preventDefault();
+                                e.stopPropagation(); // Prevent parent onClick from focusing textarea
                                 setIsDropdownOpen(!isDropdownOpen);
                             }}
                             onMouseEnter={() => {
