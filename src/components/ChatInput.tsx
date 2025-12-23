@@ -162,32 +162,30 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                     </p>
                                 </div>
 
-                                {/* Intelligence - $29.99 / month (Inactive) */}
+                                {/* Intelligence - $29.99 / month */}
                                 <div className="mb-4 p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl">
                                     <div className="flex items-center justify-between mb-2">
                                         <div className="flex items-center gap-2">
                                             <span className="text-gray-900 dark:text-white font-semibold text-base">Intelligence - $29.99 / month</span>
                                         </div>
-                                        <div className="flex items-center gap-1.5">
-                                            <div className="w-2 h-2 border-2 border-gray-400 dark:border-gray-500 rounded-full"></div>
-                                            <span className="text-gray-500 dark:text-gray-400 text-sm font-medium">Inactive</span>
-                                        </div>
+                                        <button className="px-4 py-1.5 bg-[#352ee8] text-white text-sm font-medium rounded-full hover:bg-[#2920c7] transition-colors">
+                                            Upgrade
+                                        </button>
                                     </div>
                                     <p className="text-sm text-gray-600 dark:text-gray-400 italic">
                                         Predict value. Invest smarter
                                     </p>
                                 </div>
 
-                                {/* Oracle - $149.99 / month (Inactive) */}
+                                {/* Oracle - $149.99 / month */}
                                 <div className="p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl">
                                     <div className="flex items-center justify-between mb-2">
                                         <div className="flex items-center gap-2">
                                             <span className="text-gray-900 dark:text-white font-semibold text-base">Oracle - $149.99 / month</span>
                                         </div>
-                                        <div className="flex items-center gap-1.5">
-                                            <div className="w-2 h-2 border-2 border-gray-400 dark:border-gray-500 rounded-full"></div>
-                                            <span className="text-gray-500 dark:text-gray-400 text-sm font-medium">Inactive</span>
-                                        </div>
+                                        <button className="px-4 py-1.5 bg-[#352ee8] text-white text-sm font-medium rounded-full hover:bg-[#2920c7] transition-colors">
+                                            Upgrade
+                                        </button>
                                     </div>
                                     <p className="text-sm text-gray-600 dark:text-gray-400 italic">
                                         Lead the market. Multiply wealth
