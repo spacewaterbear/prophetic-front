@@ -886,7 +886,17 @@ export default function Home() {
               setCurrentStatus(data.message);
               setLastStreamingActivity(Date.now());
             } else if (data.type === "error") {
-              console.error("Stream error:", data.error);
+              console.log("Stream error:", data.error);
+              // Display error to user
+              const errorMessage: Message = {
+                id: Date.now(),
+                content: data.error,
+                sender: "ai",
+                created_at: new Date().toISOString(),
+              };
+              setMessages((prev) => [...prev, errorMessage]);
+              setStreamingMessage("");
+              setIsLoading(false);
             }
           } catch (error) {
             console.error("Error parsing chunk:", error);
@@ -897,6 +907,14 @@ export default function Home() {
       }
     } catch (error) {
       console.error("Error sending message:", error);
+      // Display error to user
+      const errorMessage: Message = {
+        id: Date.now(),
+        content: `Failed to send message: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        sender: "ai",
+        created_at: new Date().toISOString(),
+      };
+      setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }
