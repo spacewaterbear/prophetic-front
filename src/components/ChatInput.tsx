@@ -216,7 +216,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 >
                                     <div className="flex items-center justify-between mb-2">
                                         <div className="flex items-center gap-2">
-                                            <span className="text-gray-900 dark:text-white font-semibold text-base">Discover</span>
+                                            <span className="text-gray-900 dark:text-white font-semibold text-base">DISCOVER</span>
                                         </div>
                                         {selectedAgent === 'discover' && (
                                             <div className="flex items-center gap-1.5">
@@ -239,7 +239,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 >
                                     <div className="flex items-center justify-between mb-2">
                                         <div className="flex items-center gap-2">
-                                            <span className="text-gray-900 dark:text-white font-semibold text-base">Intelligence</span>
+                                            <span className="text-gray-900 dark:text-white font-semibold text-base">INTELLIGENCE</span>
                                         </div>
                                         {availableAgents.includes('intelligence') ? (
                                             selectedAgent === 'intelligence' && (
@@ -271,7 +271,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 >
                                     <div className="flex items-center justify-between mb-2">
                                         <div className="flex items-center gap-2">
-                                            <span className="text-gray-900 dark:text-white font-semibold text-base">Oracle</span>
+                                            <span className="text-gray-900 dark:text-white font-semibold text-base">ORACLE</span>
                                         </div>
                                         {availableAgents.includes('oracle') ? (
                                             selectedAgent === 'oracle' && (
