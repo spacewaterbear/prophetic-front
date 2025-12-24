@@ -2,6 +2,32 @@ import { NextRequest } from "next/server";
 import { auth } from "@/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 
+// Helper function to extract clean error message from nested error structures
+function extractErrorMessage(errorText: string): string {
+  try {
+    // Try to find JSON in the error text
+    const jsonMatch = errorText.match(/\{.*\}/);
+    if (jsonMatch) {
+      const parsed = JSON.parse(jsonMatch[0]);
+      // Check for detail.message pattern (common in FastAPI)
+      if (parsed.detail?.message) {
+        return parsed.detail.message;
+      }
+      // Check for detail as string
+      if (typeof parsed.detail === 'string') {
+        return parsed.detail;
+      }
+      // Check for message field
+      if (parsed.message) {
+        return parsed.message;
+      }
+    }
+  } catch {
+    // If JSON parsing fails, continue to return original
+  }
+  return errorText;
+}
+
 // POST /api/conversations/[id]/messages - Add a message and stream AI response
 export async function POST(
   request: NextRequest,
@@ -20,7 +46,7 @@ export async function POST(
     const { id } = await params;
     const conversationId = parseInt(id);
     const body = await request.json();
-    const { content } = body;
+    const { content, agent_type } = body;
 
     if (!content) {
       return new Response(JSON.stringify({ error: "Content is required" }), {
@@ -51,6 +77,10 @@ export async function POST(
     const modelToUse = requestedModel || "anthropic/claude-3.7-sonnet";
 
     console.log(`[API] Requested model: ${requestedModel}, Using model: ${modelToUse} for conversation ${conversationId}`);
+
+    // Use agent_type for tiers_level (in uppercase)
+    const tiersLevel = (agent_type || 'discover').toUpperCase(); // DISCOVER, INTELLIGENCE, or ORACLE
+    console.log(`[API] Tiers level (from agent): ${tiersLevel}`);
 
     // Insert user message
     const { data: userMessage, error: userMessageError } = await supabase
@@ -118,10 +148,14 @@ export async function POST(
             model: modelToUse,
             session_id: conversationId.toString(),
             user_id: conversation.user_id,
-            conversation_history: conversationHistory
+            conversation_history: conversationHistory,
+            tiers_level: tiersLevel // DISCOVER, INTELLIGENCE, or ORACLE in uppercase
           };
 
           console.log(`[Prophetic API] Request to langchain_agent/query:`, JSON.stringify(requestBody, null, 2));
+          console.log(`[Prophetic API] API URL configured:`, !!process.env.PROPHETIC_API_URL);
+          console.log(`[Prophetic API] API Token configured:`, !!process.env.PROPHETIC_API_TOKEN);
+          console.log(`[Prophetic API] Full endpoint:`, `${process.env.PROPHETIC_API_URL}/prophetic/langchain_agent/query`);
 
           const response = await fetch(`${process.env.PROPHETIC_API_URL}/prophetic/langchain_agent/query`, {
             method: "POST",
@@ -337,9 +371,10 @@ export async function POST(
                 // Handle error messages
                 if (parsed.error) {
                   console.error("[Prophetic API] Error in stream:", parsed.error);
+                  const cleanError = extractErrorMessage(parsed.error);
                   const errorChunk = `data: ${JSON.stringify({
                     type: "error",
-                    error: parsed.error
+                    error: cleanError
                   })}\n\n`;
                   controller.enqueue(encoder.encode(errorChunk));
                 }
@@ -459,10 +494,36 @@ export async function POST(
 
           controller.close();
         } catch (error) {
-          console.error("Error in stream:", error);
+          console.error("[Stream Error] Detailed error information:", {
+            error,
+            errorMessage: error instanceof Error ? error.message : String(error),
+            errorStack: error instanceof Error ? error.stack : undefined,
+            conversationId,
+            userId: conversation.user_id,
+            model: modelToUse
+          });
+
+          // Determine specific error message
+          let errorMessage = "Failed to generate AI response";
+          if (error instanceof Error) {
+            if (error.message.includes("API URL is not configured")) {
+              errorMessage = "API configuration error: Missing API URL";
+            } else if (error.message.includes("API token is not configured")) {
+              errorMessage = "API configuration error: Missing API token";
+            } else if (error.message.includes("Prophetic API error")) {
+              // Extract clean message from nested error structure
+              const cleanMessage = extractErrorMessage(error.message);
+              errorMessage = cleanMessage;
+            } else if (error.message.includes("No response body")) {
+              errorMessage = "No response received from backend";
+            } else {
+              errorMessage = extractErrorMessage(error.message);
+            }
+          }
+
           const errorChunk = `data: ${JSON.stringify({
             type: "error",
-            error: "Failed to generate AI response"
+            error: errorMessage
           })}\n\n`;
           controller.enqueue(encoder.encode(errorChunk));
           controller.close();

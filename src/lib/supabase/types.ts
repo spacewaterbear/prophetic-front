@@ -203,7 +203,7 @@ export type Database = {
     }
     Enums: {
       message_sender: "user" | "ai"
-      user_status: "unauthorized" | "free" | "paid" | "admini"
+      user_status: "unauthorized" | "free" | "paid" | "admini" | "discover" | "intelligence" | "oracle"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -332,7 +332,7 @@ export const Constants = {
   public: {
     Enums: {
       message_sender: ["user", "ai"],
-      user_status: ["unauthorized", "free", "paid", "admini"],
+      user_status: ["unauthorized", "free", "paid", "admini", "discover", "intelligence", "oracle"],
     },
   },
 } as const

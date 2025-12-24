@@ -14,9 +14,12 @@ interface ChatInputProps {
     isLoading: boolean;
     className?: string;
     textareaRef?: React.RefObject<HTMLTextAreaElement>;
+    userStatus?: 'unauthorized' | 'free' | 'paid' | 'admini' | 'discover' | 'intelligence' | 'oracle';
+    selectedAgent?: 'discover' | 'intelligence' | 'oracle';
+    onAgentChange?: (agent: 'discover' | 'intelligence' | 'oracle') => void;
 }
 
-export function ChatInput({ input, setInput, handleSend, isLoading, className = "", textareaRef }: ChatInputProps) {
+export function ChatInput({ input, setInput, handleSend, isLoading, className = "", textareaRef, userStatus = 'discover', selectedAgent = 'discover', onAgentChange }: ChatInputProps) {
     const { theme, resolvedTheme } = useTheme();
     const isDark = theme === "dark" || resolvedTheme === "dark";
     const { t } = useI18n();
@@ -26,6 +29,32 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
     const [textareaHeight, setTextareaHeight] = useState<number>(24);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+    // Helper function to determine which agents are available based on user status
+    const getAvailableAgents = () => {
+        // Treat 'free' as 'discover' (deprecated status)
+        const status = userStatus === 'free' ? 'discover' : userStatus;
+
+        switch (status) {
+            case 'discover':
+                return ['discover'];
+            case 'intelligence':
+                return ['discover', 'intelligence'];
+            case 'oracle':
+            case 'admini':
+                return ['discover', 'intelligence', 'oracle'];
+            default:
+                return ['discover']; // Default to discover for unauthorized or unknown
+        }
+    };
+
+    const availableAgents = getAvailableAgents();
+
+    const handleAgentClick = (agent: 'discover' | 'intelligence' | 'oracle') => {
+        if (availableAgents.includes(agent) && onAgentChange) {
+            onAgentChange(agent);
+        }
+    };
 
     useEffect(() => {
         setMounted(true);
@@ -179,46 +208,86 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                             }}
                         >
                             <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl sm:rounded-3xl p-5 w-full sm:w-[420px] shadow-2xl border-t border-gray-200 sm:border dark:border-transparent max-h-[80vh] overflow-y-auto">
-                                {/* Discover - Free (Active) */}
-                                <div className="mb-4 p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer">
+                                {/* Discover Agent */}
+                                <div
+                                    className={`mb-4 p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer ${selectedAgent === 'discover' ? 'ring-2 ring-blue-500' : ''
+                                        }`}
+                                    onClick={() => handleAgentClick('discover')}
+                                >
                                     <div className="flex items-center justify-between mb-2">
                                         <div className="flex items-center gap-2">
-                                            <span className="text-blue-600 dark:text-blue-400 font-semibold text-base">Discover - Free</span>
+                                            <span className="text-gray-900 dark:text-white font-semibold text-base">DISCOVER</span>
                                         </div>
-                                        <div className="flex items-center gap-1.5">
-                                            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                                            <span className="text-blue-600 dark:text-blue-400 text-sm font-medium">Active</span>
-                                        </div>
+                                        {selectedAgent === 'discover' && (
+                                            <div className="flex items-center gap-1.5">
+                                                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                                <span className="text-blue-600 dark:text-blue-400 text-sm font-medium">Active</span>
+                                            </div>
+                                        )}
                                     </div>
                                     <p className="text-sm text-gray-600 dark:text-gray-400 italic">
-                                        Explore assests. Spot trends
+                                        Explore assets. Spot trends
                                     </p>
                                 </div>
 
-                                {/* Intelligence - $29.99 / month */}
-                                <div className="mb-4 p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer">
+                                {/* Intelligence Agent */}
+                                <div
+                                    className={`mb-4 p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl hover:shadow-lg hover:scale-[1.02] transition-all duration-200 ${availableAgents.includes('intelligence') ? 'cursor-pointer' : 'opacity-60 cursor-not-allowed'
+                                        } ${selectedAgent === 'intelligence' ? 'ring-2 ring-blue-500' : ''
+                                        }`}
+                                    onClick={() => handleAgentClick('intelligence')}
+                                >
                                     <div className="flex items-center justify-between mb-2">
                                         <div className="flex items-center gap-2">
-                                            <span className="text-gray-900 dark:text-white font-semibold text-base">Intelligence - $29.99 / month</span>
+                                            <span className="text-gray-900 dark:text-white font-semibold text-base">INTELLIGENCE</span>
                                         </div>
-                                        <button className="px-4 py-1.5 bg-[#352ee8] text-white text-sm font-medium rounded-full hover:bg-[#2920c7] transition-colors">
-                                            Upgrade
-                                        </button>
+                                        {availableAgents.includes('intelligence') ? (
+                                            selectedAgent === 'intelligence' && (
+                                                <div className="flex items-center gap-1.5">
+                                                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                                    <span className="text-blue-600 dark:text-blue-400 text-sm font-medium">Active</span>
+                                                </div>
+                                            )
+                                        ) : (
+                                            <button
+                                                className="px-4 py-1.5 bg-[#352ee8] text-white text-sm font-medium rounded-full hover:bg-[#2920c7] transition-colors"
+                                                onClick={(e) => e.stopPropagation()}
+                                            >
+                                                Upgrade
+                                            </button>
+                                        )}
                                     </div>
                                     <p className="text-sm text-gray-600 dark:text-gray-400 italic">
                                         Predict value. Invest smarter
                                     </p>
                                 </div>
 
-                                {/* Oracle - $149.99 / month */}
-                                <div className="p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer">
+                                {/* Oracle Agent */}
+                                <div
+                                    className={`p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl hover:shadow-lg hover:scale-[1.02] transition-all duration-200 ${availableAgents.includes('oracle') ? 'cursor-pointer' : 'opacity-60 cursor-not-allowed'
+                                        } ${selectedAgent === 'oracle' ? 'ring-2 ring-blue-500' : ''
+                                        }`}
+                                    onClick={() => handleAgentClick('oracle')}
+                                >
                                     <div className="flex items-center justify-between mb-2">
                                         <div className="flex items-center gap-2">
-                                            <span className="text-gray-900 dark:text-white font-semibold text-base">Oracle - $149.99 / month</span>
+                                            <span className="text-gray-900 dark:text-white font-semibold text-base">ORACLE</span>
                                         </div>
-                                        <button className="px-4 py-1.5 bg-[#352ee8] text-white text-sm font-medium rounded-full hover:bg-[#2920c7] transition-colors">
-                                            Upgrade
-                                        </button>
+                                        {availableAgents.includes('oracle') ? (
+                                            selectedAgent === 'oracle' && (
+                                                <div className="flex items-center gap-1.5">
+                                                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                                    <span className="text-blue-600 dark:text-blue-400 text-sm font-medium">Active</span>
+                                                </div>
+                                            )
+                                        ) : (
+                                            <button
+                                                className="px-4 py-1.5 bg-[#352ee8] text-white text-sm font-medium rounded-full hover:bg-[#2920c7] transition-colors"
+                                                onClick={(e) => e.stopPropagation()}
+                                            >
+                                                Upgrade
+                                            </button>
+                                        )}
                                     </div>
                                     <p className="text-sm text-gray-600 dark:text-gray-400 italic">
                                         Lead the market. Multiply wealth
