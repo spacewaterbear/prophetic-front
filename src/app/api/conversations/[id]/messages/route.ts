@@ -20,7 +20,7 @@ export async function POST(
     const { id } = await params;
     const conversationId = parseInt(id);
     const body = await request.json();
-    const { content } = body;
+    const { content, agent_type } = body;
 
     if (!content) {
       return new Response(JSON.stringify({ error: "Content is required" }), {
@@ -51,6 +51,16 @@ export async function POST(
     const modelToUse = requestedModel || "anthropic/claude-3.7-sonnet";
 
     console.log(`[API] Requested model: ${requestedModel}, Using model: ${modelToUse} for conversation ${conversationId}`);
+
+    // Fetch user's tier level (status) from profiles
+    const { data: userProfile } = await supabase
+      .from("profiles")
+      .select("status")
+      .eq("id", session.user.id)
+      .single();
+
+    const tiersLevel = userProfile?.status || "free"; // Default to free if not found
+    console.log(`[API] User tier level: ${tiersLevel}`);
 
     // Insert user message
     const { data: userMessage, error: userMessageError } = await supabase
@@ -118,7 +128,9 @@ export async function POST(
             model: modelToUse,
             session_id: conversationId.toString(),
             user_id: conversation.user_id,
-            conversation_history: conversationHistory
+            conversation_history: conversationHistory,
+            tiers_level: tiersLevel,
+            agent_type: agent_type || 'discover' // Default to discover if not provided
           };
 
           console.log(`[Prophetic API] Request to langchain_agent/query:`, JSON.stringify(requestBody, null, 2));

@@ -356,6 +356,7 @@ export default function Home() {
   const [selectedModel, setSelectedModel] = useState<string>(
     DEFAULT_NON_ADMIN_MODEL,
   );
+  const [selectedAgent, setSelectedAgent] = useState<'discover' | 'intelligence' | 'oracle'>('discover');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -691,7 +692,10 @@ export default function Home() {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ content: userInput }),
+          body: JSON.stringify({
+            content: userInput,
+            agent_type: selectedAgent
+          }),
         },
       );
 
@@ -1087,6 +1091,9 @@ export default function Home() {
                     handleSend={() => handleSend()}
                     isLoading={isLoading}
                     textareaRef={inputRef}
+                    userStatus={session?.user?.status}
+                    selectedAgent={selectedAgent}
+                    onAgentChange={setSelectedAgent}
                   />
                 </div>
               </div>
@@ -1181,6 +1188,9 @@ export default function Home() {
               setInput={setInput}
               handleSend={() => handleSend()}
               isLoading={isLoading}
+              userStatus={session?.user?.status}
+              selectedAgent={selectedAgent}
+              onAgentChange={setSelectedAgent}
             />
           </div>
         )}
