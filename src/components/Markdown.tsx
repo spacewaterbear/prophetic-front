@@ -233,6 +233,13 @@ export function Markdown({ content, className }: MarkdownProps) {
       return match;
     });
 
+    // Fix markdown headers that are not on their own line
+    // This ensures headers starting with # have proper line breaks before them
+    unwrapped = unwrapped.replace(/([^\n])(#{1,6}\s+)/g, (match, before, header) => {
+      // If the character before the # is not a newline, add two newlines
+      return before + '\n\n' + header;
+    });
+
     return unwrapped;
   }, [content]);
 
