@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Plus, Send } from "lucide-react";
+import { Plus, Send, ChevronDown } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useTheme } from "next-themes";
@@ -130,7 +130,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                         <button
                             type="button"
                             data-dashlane-ignore="true"
-                            className="flex items-center justify-center hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-full p-2 transition-colors cursor-pointer"
+                            className="flex items-center gap-2 bg-[#352ee8] hover:bg-[#2920c7] rounded-full px-3 py-2 transition-colors cursor-pointer"
                             onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation(); // Prevent parent onClick from focusing textarea
@@ -156,16 +156,14 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                             }}
                         >
                             <Image
-                                src={
-                                    mounted && isDark
-                                        ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_white.svg"
-                                        : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_new.svg"
-                                }
+                                src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_white.svg"
                                 alt="Prophetic"
                                 width={20}
                                 height={20}
-                                className="w-5 h-5 opacity-50"
+                                className="w-5 h-5"
                             />
+                            <span className="text-white font-medium text-sm capitalize">{selectedAgent} mode</span>
+                            <ChevronDown className="h-4 w-4 text-white" />
                         </button>
 
                         {/* Subscription Tiers Dropdown/Bottom Sheet */}
