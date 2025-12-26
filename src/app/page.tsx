@@ -1094,7 +1094,7 @@ export default function Home() {
                     />
                   </div>
                   <h2 className="text-4xl sm:text-6xl font-light mb-4 sm:mb-6 dark:text-white px-4">
-                    {t('chat.greeting')}, {session?.user?.name?.split(" ")[0]}
+                    {t('chat.greeting').replace('{name}', session?.user?.name?.split(' ')[0] || '')}
                   </h2>
                   <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 px-4">
                     {t('chat.welcomeMessage')}
