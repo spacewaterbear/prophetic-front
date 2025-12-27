@@ -343,7 +343,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                             <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-3xl p-5 w-[320px] shadow-2xl border dark:border-transparent">
                                 {/* Add Files Option */}
                                 <div
-                                    className="mb-4 p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer flex items-center gap-3"
+                                    className="mb-4 p-3 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer flex items-center gap-3"
                                     onClick={() => {
                                         fileInputRef.current?.click();
                                         setIsFileUploadOpen(false);
@@ -442,7 +442,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 >
                                     <div className="flex items-center justify-between mb-2">
                                         <div className="flex items-center gap-2">
-                                            <span className="text-gray-900 dark:text-white font-semibold text-base">DISCOVER</span>
+                                            <span className="text-gray-900 dark:text-white font-semibold text-base">DISCOVER - Free</span>
                                         </div>
                                         {selectedAgent === 'discover' && (
                                             <div className="flex items-center gap-1.5">
@@ -465,7 +465,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 >
                                     <div className="flex items-center justify-between mb-2">
                                         <div className="flex items-center gap-2">
-                                            <span className="text-gray-900 dark:text-white font-semibold text-base">INTELLIGENCE</span>
+                                            <span className="text-gray-900 dark:text-white font-semibold text-base">INTELLIGENCE - $29.99 / month</span>
                                         </div>
                                         {availableAgents.includes('intelligence') ? (
                                             selectedAgent === 'intelligence' && (
@@ -497,7 +497,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 >
                                     <div className="flex items-center justify-between mb-2">
                                         <div className="flex items-center gap-2">
-                                            <span className="text-gray-900 dark:text-white font-semibold text-base">ORACLE</span>
+                                            <span className="text-gray-900 dark:text-white font-semibold text-base">ORACLE - $149.99 / month</span>
                                         </div>
                                         {availableAgents.includes('oracle') ? (
                                             selectedAgent === 'oracle' && (
@@ -573,7 +573,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                             >
                                 <div className="flex items-center justify-between mb-2">
                                     <div className="flex items-center gap-2">
-                                        <span className="text-gray-900 dark:text-white font-semibold text-base">DISCOVER</span>
+                                        <span className="text-gray-900 dark:text-white font-semibold text-base">DISCOVER - Free</span>
                                     </div>
                                     {selectedAgent === 'discover' && (
                                         <div className="flex items-center gap-1.5">
@@ -604,7 +604,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                             >
                                 <div className="flex items-center justify-between mb-2">
                                     <div className="flex items-center gap-2">
-                                        <span className="text-gray-900 dark:text-white font-semibold text-base">INTELLIGENCE</span>
+                                        <span className="text-gray-900 dark:text-white font-semibold text-base">INTELLIGENCE - $29.99 / month</span>
                                     </div>
                                     {availableAgents.includes('intelligence') ? (
                                         selectedAgent === 'intelligence' && (
@@ -644,7 +644,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                             >
                                 <div className="flex items-center justify-between mb-2">
                                     <div className="flex items-center gap-2">
-                                        <span className="text-gray-900 dark:text-white font-semibold text-base">ORACLE</span>
+                                        <span className="text-gray-900 dark:text-white font-semibold text-base">ORACLE - $149.99 / month</span>
                                     </div>
                                     {availableAgents.includes('oracle') ? (
                                         selectedAgent === 'oracle' && (
@@ -687,7 +687,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                         <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl p-6 w-full shadow-2xl border-t border-gray-200 dark:border-transparent">
                             {/* Add Files Option */}
                             <div
-                                className="mb-4 p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl active:scale-95 active:brightness-95 transition-all duration-150 cursor-pointer flex items-center gap-3"
+                                className="mb-4 p-3 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl active:scale-95 active:brightness-95 transition-all duration-150 cursor-pointer flex items-center gap-3"
                                 onClick={(e) => {
                                     const element = e.currentTarget;
                                     element.style.transform = 'scale(0.95)';
