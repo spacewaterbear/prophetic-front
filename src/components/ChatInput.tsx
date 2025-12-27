@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import { useI18n } from "@/contexts/i18n-context";
+import { createPortal } from "react-dom";
 
 interface ChatInputProps {
     input: string;
@@ -167,23 +168,17 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                         </button>
 
                         {/* Subscription Tiers Dropdown/Bottom Sheet */}
-                        {/* Backdrop for mobile */}
-                        {isDropdownOpen && (
-                            <div
-                                className="sm:hidden fixed inset-0 bg-black/50 z-40 transition-opacity"
-                                onClick={() => setIsDropdownOpen(false)}
-                            />
-                        )}
 
+                        {/* Desktop Dropdown */}
                         <div
                             className={`
-                                sm:absolute sm:bottom-full sm:left-1/2 sm:-translate-x-1/2 sm:mb-2
-                                fixed bottom-0 left-0 right-0 sm:static
+                                hidden sm:block
+                                absolute left-1/2 bottom-full -translate-x-1/2 mb-2
                                 transition-all duration-300 ease-out
-                                z-50 sm:z-10
+                                z-10
                                 ${isDropdownOpen
-                                    ? 'opacity-100 translate-y-0 sm:translate-y-0'
-                                    : 'opacity-0 translate-y-full sm:translate-y-0 pointer-events-none'
+                                    ? 'opacity-100 pointer-events-auto'
+                                    : 'opacity-0 pointer-events-none'
                                 }
                             `}
                             onMouseEnter={() => {
@@ -316,6 +311,135 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                     )}
                 </div>
             </div>
+
+            {/* Mobile Bottom Sheet - Rendered via Portal */}
+            {mounted && createPortal(
+                <>
+                    {/* Backdrop */}
+                    <div
+                        className={`sm:hidden fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 ${
+                            isDropdownOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+                        }`}
+                        onClick={() => setIsDropdownOpen(false)}
+                    />
+                    {/* Bottom Sheet */}
+                    <div className={`sm:hidden fixed inset-x-0 bottom-0 z-50 transition-transform duration-300 ease-out ${
+                        isDropdownOpen ? 'translate-y-0' : 'translate-y-full'
+                    }`}>
+                        <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl p-5 w-full shadow-2xl border-t border-gray-200 dark:border-transparent max-h-[70vh] overflow-y-auto">
+                            {/* Discover Agent */}
+                            <div
+                                className={`mb-4 p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl active:scale-95 active:brightness-95 transition-all duration-150 cursor-pointer ${selectedAgent === 'discover' ? 'ring-2 ring-blue-500' : ''}`}
+                                onClick={(e) => {
+                                    const element = e.currentTarget;
+                                    element.style.transform = 'scale(0.95)';
+                                    setTimeout(() => {
+                                        element.style.transform = '';
+                                        handleAgentClick('discover');
+                                        setTimeout(() => setIsDropdownOpen(false), 150);
+                                    }, 100);
+                                }}
+                            >
+                                <div className="flex items-center justify-between mb-2">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-gray-900 dark:text-white font-semibold text-base">DISCOVER</span>
+                                    </div>
+                                    {selectedAgent === 'discover' && (
+                                        <div className="flex items-center gap-1.5">
+                                            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                            <span className="text-blue-600 dark:text-blue-400 text-sm font-medium">Active</span>
+                                        </div>
+                                    )}
+                                </div>
+                                <p className="text-sm text-gray-600 dark:text-gray-400 italic">
+                                    Explore assets. Spot trends
+                                </p>
+                            </div>
+
+                            {/* Intelligence Agent */}
+                            <div
+                                className={`mb-4 p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl active:scale-95 active:brightness-95 transition-all duration-150 ${availableAgents.includes('intelligence') ? 'cursor-pointer' : 'opacity-60 cursor-not-allowed'} ${selectedAgent === 'intelligence' ? 'ring-2 ring-blue-500' : ''}`}
+                                onClick={(e) => {
+                                    if (availableAgents.includes('intelligence')) {
+                                        const element = e.currentTarget;
+                                        element.style.transform = 'scale(0.95)';
+                                        setTimeout(() => {
+                                            element.style.transform = '';
+                                            handleAgentClick('intelligence');
+                                            setTimeout(() => setIsDropdownOpen(false), 150);
+                                        }, 100);
+                                    }
+                                }}
+                            >
+                                <div className="flex items-center justify-between mb-2">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-gray-900 dark:text-white font-semibold text-base">INTELLIGENCE</span>
+                                    </div>
+                                    {availableAgents.includes('intelligence') ? (
+                                        selectedAgent === 'intelligence' && (
+                                            <div className="flex items-center gap-1.5">
+                                                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                                <span className="text-blue-600 dark:text-blue-400 text-sm font-medium">Active</span>
+                                            </div>
+                                        )
+                                    ) : (
+                                        <button
+                                            className="px-4 py-1.5 bg-[#352ee8] text-white text-sm font-medium rounded-full hover:bg-[#2920c7] transition-colors"
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            Upgrade
+                                        </button>
+                                    )}
+                                </div>
+                                <p className="text-sm text-gray-600 dark:text-gray-400 italic">
+                                    Predict value. Invest smarter
+                                </p>
+                            </div>
+
+                            {/* Oracle Agent */}
+                            <div
+                                className={`p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl active:scale-95 active:brightness-95 transition-all duration-150 ${availableAgents.includes('oracle') ? 'cursor-pointer' : 'opacity-60 cursor-not-allowed'} ${selectedAgent === 'oracle' ? 'ring-2 ring-blue-500' : ''}`}
+                                onClick={(e) => {
+                                    if (availableAgents.includes('oracle')) {
+                                        const element = e.currentTarget;
+                                        element.style.transform = 'scale(0.95)';
+                                        setTimeout(() => {
+                                            element.style.transform = '';
+                                            handleAgentClick('oracle');
+                                            setTimeout(() => setIsDropdownOpen(false), 150);
+                                        }, 100);
+                                    }
+                                }}
+                            >
+                                <div className="flex items-center justify-between mb-2">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-gray-900 dark:text-white font-semibold text-base">ORACLE</span>
+                                    </div>
+                                    {availableAgents.includes('oracle') ? (
+                                        selectedAgent === 'oracle' && (
+                                            <div className="flex items-center gap-1.5">
+                                                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                                <span className="text-blue-600 dark:text-blue-400 text-sm font-medium">Active</span>
+                                            </div>
+                                        )
+                                    ) : (
+                                        <button
+                                            className="px-4 py-1.5 bg-[#352ee8] text-white text-sm font-medium rounded-full hover:bg-[#2920c7] transition-colors"
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            Upgrade
+                                        </button>
+                                    )}
+                                </div>
+                                <p className="text-sm text-gray-600 dark:text-gray-400 italic">
+                                    Lead the market. Multiply wealth
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </>,
+                document.body
+            )}
         </div>
     );
 }
