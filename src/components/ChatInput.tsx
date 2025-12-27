@@ -277,8 +277,8 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
             {/* Toolbar Area - Icons below text */}
             <div className="flex justify-between items-center w-full">
                 {/* Leading Actions (Left side) */}
-                <div className="flex items-center gap-2">
-                    <div className="relative">
+                <div className="flex items-center gap-3">
+                    <div className="relative flex-shrink-0">
                         <button
                             className="flex items-center justify-center text-gray-900 dark:text-gray-100 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-full p-2.5 transition-colors"
                             aria-label="Add file"
@@ -286,6 +286,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 e.preventDefault();
                                 e.stopPropagation();
                                 setIsFileUploadOpen(!isFileUploadOpen);
+                                setIsDropdownOpen(false);
                             }}
                             onMouseEnter={() => {
                                 if (closeTimeoutRef.current) {
@@ -295,6 +296,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 // Only auto-open on hover for desktop (non-touch devices)
                                 if (window.matchMedia('(hover: hover)').matches) {
                                     setIsFileUploadOpen(true);
+                                    setIsDropdownOpen(false);
                                 }
                             }}
                             onMouseLeave={() => {
@@ -329,6 +331,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 // Only keep open on hover for desktop
                                 if (window.matchMedia('(hover: hover)').matches) {
                                     setIsFileUploadOpen(true);
+                                    setIsDropdownOpen(false);
                                 }
                             }}
                             onMouseLeave={() => {
@@ -360,15 +363,16 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
 
 
                     {/* Prophetic Logo Button */}
-                    <div className="static sm:relative">
+                    <div className="static sm:relative flex-shrink-0">
                         <button
                             type="button"
                             data-dashlane-ignore="true"
-                            className="flex items-center gap-2 bg-[#352ee8] hover:bg-[#2920c7] rounded-full px-3 py-2 transition-colors cursor-pointer"
+                            className="flex items-center gap-2 bg-[#352ee8] hover:bg-[#2920c7] rounded-full px-3 py-2 transition-colors cursor-pointer max-w-[200px] sm:max-w-none"
                             onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation(); // Prevent parent onClick from focusing textarea
                                 setIsDropdownOpen(!isDropdownOpen);
+                                setIsFileUploadOpen(false);
                             }}
                             onMouseEnter={() => {
                                 if (closeTimeoutRef.current) {
@@ -378,6 +382,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 // Only auto-open on hover for desktop (non-touch devices)
                                 if (window.matchMedia('(hover: hover)').matches) {
                                     setIsDropdownOpen(true);
+                                    setIsFileUploadOpen(false);
                                 }
                             }}
                             onMouseLeave={() => {
@@ -396,7 +401,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 height={20}
                                 className="w-5 h-5"
                             />
-                            <span className="text-white font-medium text-sm capitalize">{selectedAgent} mode</span>
+                            <span className="text-white font-medium text-sm capitalize truncate whitespace-nowrap">{selectedAgent} mode</span>
                             <ChevronDown className="h-4 w-4 text-white" />
                         </button>
 
@@ -422,6 +427,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 // Only keep open on hover for desktop
                                 if (window.matchMedia('(hover: hover)').matches) {
                                     setIsDropdownOpen(true);
+                                    setIsFileUploadOpen(false);
                                 }
                             }}
                             onMouseLeave={() => {
