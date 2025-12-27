@@ -11,6 +11,7 @@ import { FileUploadPreview, AttachedFile } from "@/components/FileUploadPreview"
 import { uploadWithRetry, deleteFile } from "@/lib/supabase/storage";
 import { validateFile } from "@/lib/utils/fileValidation";
 import { toast } from "sonner";
+// import { useGoogleDrivePicker } from "@/components/GoogleDrivePicker"; // Removed for now, will be implemented later
 
 interface ChatInputProps {
     input: string;
@@ -41,6 +42,12 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
     const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
+    // Google Drive picker hook - Commented out for now, will be implemented later
+    // const { openGoogleDrivePicker } = useGoogleDrivePicker(
+    //     (files) => handleGoogleDriveFiles(files),
+    //     (error) => toast.error(`Google Drive error: ${error}`)
+    // );
+
     // Helper function to determine which agents are available based on user status
     const getAvailableAgents = () => {
         // Treat 'free' as 'discover' (deprecated status)
@@ -67,10 +74,24 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
         }
     };
 
+    // Google Drive file handler - Commented out for now, will be implemented later
+    // const handleGoogleDriveFiles = async (files: File[]) => {
+    //     await processFiles(files);
+    // };
+
     const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(e.target.files || []);
         if (files.length === 0) return;
 
+        await processFiles(files);
+
+        // Reset file input
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    };
+
+    const processFiles = async (files: File[]) => {
         if (!userId) {
             toast.error("Please log in to upload files");
             return;
@@ -126,10 +147,6 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                 );
                 toast.error(`Failed to upload ${file.name}`);
             }
-        }
-
-        if (fileInputRef.current) {
-            fileInputRef.current.value = '';
         }
     };
 
@@ -336,23 +353,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                     <span className="text-gray-900 dark:text-white font-medium text-base">Ajouter fichiers</span>
                                 </div>
 
-                                {/* Add from Google Drive Option */}
-                                <div
-                                    className="p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer flex items-center gap-3"
-                                    onClick={() => {
-                                        // TODO: Implement Google Drive integration
-                                        setIsFileUploadOpen(false);
-                                    }}
-                                >
-                                    <Image
-                                        src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/google-drive.png"
-                                        alt="Google Drive"
-                                        width={24}
-                                        height={24}
-                                        className="h-6 w-6"
-                                    />
-                                    <span className="text-gray-900 dark:text-white font-medium text-base">Ajouter depuis Google Drive</span>
-                                </div>
+                                {/* Google Drive option removed - will be implemented later */}
                             </div>
                         </div>
                     </div>
@@ -701,28 +702,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 <span className="text-gray-900 dark:text-white font-medium text-base">Ajouter fichiers</span>
                             </div>
 
-                            {/* Add from Google Drive Option */}
-                            <div
-                                className="p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl active:scale-95 active:brightness-95 transition-all duration-150 cursor-pointer flex items-center gap-3"
-                                onClick={(e) => {
-                                    const element = e.currentTarget;
-                                    element.style.transform = 'scale(0.95)';
-                                    setTimeout(() => {
-                                        element.style.transform = '';
-                                        // TODO: Implement Google Drive integration
-                                        setTimeout(() => setIsFileUploadOpen(false), 150);
-                                    }, 100);
-                                }}
-                            >
-                                <Image
-                                    src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/google-drive.png"
-                                    alt="Google Drive"
-                                    width={24}
-                                    height={24}
-                                    className="h-6 w-6"
-                                />
-                                <span className="text-gray-900 dark:text-white font-medium text-base">Ajouter depuis Google Drive</span>
-                            </div>
+                            {/* Google Drive option removed - will be implemented later */}
                         </div>
                     </div>
                 </>,
