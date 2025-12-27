@@ -346,7 +346,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                             <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-3xl p-5 w-[320px] shadow-2xl border dark:border-transparent">
                                 {/* Add Files Option */}
                                 <div
-                                    className="mb-4 p-3 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer flex items-center gap-3"
+                                    className="m-0 p-3 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer flex items-center gap-3"
                                     onClick={() => {
                                         fileInputRef.current?.click();
                                         setIsFileUploadOpen(false);
