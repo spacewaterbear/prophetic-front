@@ -46,7 +46,7 @@ export async function POST(
     const { id } = await params;
     const conversationId = parseInt(id);
     const body = await request.json();
-    const { content, agent_type } = body;
+    const { content, agent_type, attachments } = body;
 
     if (!content) {
       return new Response(JSON.stringify({ error: "Content is required" }), {
@@ -89,6 +89,7 @@ export async function POST(
         conversation_id: conversationId,
         content,
         sender: "user",
+        metadata: attachments && attachments.length > 0 ? { attachments } : null,
       })
       .select()
       .single();
@@ -149,7 +150,8 @@ export async function POST(
             session_id: conversationId.toString(),
             user_id: conversation.user_id,
             conversation_history: conversationHistory,
-            tiers_level: tiersLevel // DISCOVER, INTELLIGENCE, or ORACLE in uppercase
+            tiers_level: tiersLevel, // DISCOVER, INTELLIGENCE, or ORACLE in uppercase
+            attachments: attachments || [] // Include file attachments
           };
 
           console.log(`[Prophetic API] Request to langchain_agent/query:`, JSON.stringify(requestBody, null, 2));

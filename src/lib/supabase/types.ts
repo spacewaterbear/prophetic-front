@@ -336,3 +336,11 @@ export const Constants = {
     },
   },
 } as const
+
+export interface FileAttachment {
+  url: string;
+  name: string;
+  size: number;
+  type: string;
+  path?: string;
+}

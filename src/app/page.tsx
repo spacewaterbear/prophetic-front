@@ -26,6 +26,7 @@ import { ShareButton } from "@/components/ShareButton";
 import { toast } from "sonner";
 import { useI18n } from "@/contexts/i18n-context";
 import { ChatInput } from "@/components/ChatInput";
+import { FileAttachment } from "@/components/FileAttachment";
 
 // Lazy load Markdown component to reduce initial bundle size
 const Markdown = lazy(() =>
@@ -117,6 +118,15 @@ interface Message {
   marketplace_data?: MarketplaceData;
   marketplace_position?: "before" | "after"; // Position of marketplace data relative to text
   real_estate_data?: RealEstateData;
+  metadata?: {
+    attachments?: Array<{
+      url: string;
+      name: string;
+      size: number;
+      type: string;
+      path?: string;
+    }>;
+  };
 }
 
 interface Conversation {
@@ -201,9 +211,24 @@ const MessageItem = memo(
               }`}
           >
             {message.sender === "user" ? (
-              <p className="text-base leading-relaxed whitespace-pre-wrap px-[10px]">
-                {message.content}
-              </p>
+              <>
+                <p className="text-base leading-relaxed whitespace-pre-wrap px-[10px]">
+                  {message.content}
+                </p>
+                {message.metadata?.attachments && message.metadata.attachments.length > 0 && (
+                  <div className="mt-3 space-y-2 px-[10px]">
+                    {message.metadata.attachments.map((file, idx) => (
+                      <FileAttachment
+                        key={idx}
+                        url={file.url}
+                        name={file.name}
+                        size={file.size}
+                        type={file.type}
+                      />
+                    ))}
+                  </div>
+                )}
+              </>
             ) : message.type === "artist_info" && message.artist ? (
               <Suspense
                 fallback={
@@ -357,6 +382,7 @@ export default function Home() {
     DEFAULT_NON_ADMIN_MODEL,
   );
   const [selectedAgent, setSelectedAgent] = useState<'discover' | 'intelligence' | 'oracle'>('discover');
+  const [attachedFiles, setAttachedFiles] = useState<import("@/components/FileUploadPreview").AttachedFile[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -637,6 +663,15 @@ export default function Home() {
     const userInput = messageToSend || input;
     if (!userInput.trim() || isLoading) return;
 
+    // Check if all files are uploaded
+    const hasUploadingFiles = attachedFiles.some(f => f.uploadStatus === 'uploading');
+    if (hasUploadingFiles) {
+      toast.error("Please wait for all files to finish uploading");
+      return;
+    }
+
+    const completedFiles = attachedFiles.filter(f => f.uploadStatus === 'completed');
+
     setInput("");
     setIsLoading(true);
     setStreamingMessage("");
@@ -646,12 +681,21 @@ export default function Home() {
     setLastStreamingActivity(Date.now());
     setShowStreamingIndicator(false);
 
-    // Add user message to UI immediately
+    // Add user message to UI immediately with attachments
     const tempUserMessage: Message = {
       id: Date.now(), // Temporary ID
       content: userInput,
       sender: "user",
       created_at: new Date().toISOString(),
+      metadata: completedFiles.length > 0 ? {
+        attachments: completedFiles.map(f => ({
+          url: f.url!,
+          name: f.name,
+          size: f.size,
+          type: f.type,
+          path: f.path
+        }))
+      } : undefined
     };
     setMessages((prev) => [...prev, tempUserMessage]);
 
@@ -694,7 +738,14 @@ export default function Home() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             content: userInput,
-            agent_type: selectedAgent
+            agent_type: selectedAgent,
+            attachments: completedFiles.map(f => ({
+              url: f.url!,
+              name: f.name,
+              size: f.size,
+              type: f.type,
+              path: f.path
+            }))
           }),
         },
       );
@@ -917,6 +968,8 @@ export default function Home() {
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
+      // Clear attached files after send (success or failure)
+      setAttachedFiles([]);
     }
   };
 
@@ -1112,6 +1165,10 @@ export default function Home() {
                     userStatus={session?.user?.status}
                     selectedAgent={selectedAgent}
                     onAgentChange={setSelectedAgent}
+                    userId={session?.user?.id}
+                    conversationId={currentConversationId || undefined}
+                    attachedFiles={attachedFiles}
+                    onFilesChange={setAttachedFiles}
                   />
                 </div>
               </div>
@@ -1209,6 +1266,10 @@ export default function Home() {
               userStatus={session?.user?.status}
               selectedAgent={selectedAgent}
               onAgentChange={setSelectedAgent}
+              userId={session?.user?.id}
+              conversationId={currentConversationId || undefined}
+              attachedFiles={attachedFiles}
+              onFilesChange={setAttachedFiles}
             />
           </div>
         )}

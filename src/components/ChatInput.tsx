@@ -7,6 +7,10 @@ import { useEffect, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import { useI18n } from "@/contexts/i18n-context";
 import { createPortal } from "react-dom";
+import { FileUploadPreview, AttachedFile } from "@/components/FileUploadPreview";
+import { uploadWithRetry, deleteFile } from "@/lib/supabase/storage";
+import { validateFile } from "@/lib/utils/fileValidation";
+import { toast } from "sonner";
 
 interface ChatInputProps {
     input: string;
@@ -18,9 +22,13 @@ interface ChatInputProps {
     userStatus?: 'unauthorized' | 'free' | 'paid' | 'admini' | 'discover' | 'intelligence' | 'oracle';
     selectedAgent?: 'discover' | 'intelligence' | 'oracle';
     onAgentChange?: (agent: 'discover' | 'intelligence' | 'oracle') => void;
+    userId?: string;
+    conversationId?: number | null;
+    attachedFiles?: AttachedFile[];
+    onFilesChange?: (files: AttachedFile[]) => void;
 }
 
-export function ChatInput({ input, setInput, handleSend, isLoading, className = "", textareaRef, userStatus = 'discover', selectedAgent = 'discover', onAgentChange }: ChatInputProps) {
+export function ChatInput({ input, setInput, handleSend, isLoading, className = "", textareaRef, userStatus = 'discover', selectedAgent = 'discover', onAgentChange, userId, conversationId, attachedFiles = [], onFilesChange }: ChatInputProps) {
     const { theme, resolvedTheme } = useTheme();
     const isDark = theme === "dark" || resolvedTheme === "dark";
     const { t } = useI18n();
@@ -31,6 +39,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isFileUploadOpen, setIsFileUploadOpen] = useState(false);
     const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     // Helper function to determine which agents are available based on user status
     const getAvailableAgents = () => {
@@ -55,6 +64,127 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
     const handleAgentClick = (agent: 'discover' | 'intelligence' | 'oracle') => {
         if (availableAgents.includes(agent) && onAgentChange) {
             onAgentChange(agent);
+        }
+    };
+
+    const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = Array.from(e.target.files || []);
+        if (files.length === 0) return;
+
+        if (!userId) {
+            toast.error("Please log in to upload files");
+            return;
+        }
+
+        for (const file of files) {
+            const validation = validateFile(file);
+            if (!validation.valid) {
+                toast.error(validation.error || "Invalid file");
+                continue;
+            }
+
+            const fileId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+            const newFile: AttachedFile = {
+                id: fileId,
+                file,
+                name: file.name,
+                size: file.size,
+                type: file.type,
+                uploadStatus: 'uploading',
+                uploadProgress: 0
+            };
+
+            const updatedFiles = [...attachedFiles, newFile];
+            onFilesChange?.(updatedFiles);
+
+            try {
+                const uploaded = await uploadWithRetry(file, userId, conversationId || null, 3, (progress) => {
+                    onFilesChange?.(
+                        updatedFiles.map(f =>
+                            f.id === fileId ? { ...f, uploadProgress: progress } : f
+                        )
+                    );
+                });
+
+                onFilesChange?.(
+                    updatedFiles.map(f =>
+                        f.id === fileId
+                            ? { ...f, uploadStatus: 'completed', uploadProgress: 100, url: uploaded.url, path: uploaded.path }
+                            : f
+                    )
+                );
+
+                toast.success(`${file.name} uploaded successfully`);
+            } catch (error) {
+                console.error('Upload error:', error);
+                onFilesChange?.(
+                    updatedFiles.map(f =>
+                        f.id === fileId
+                            ? { ...f, uploadStatus: 'error', error: error instanceof Error ? error.message : 'Upload failed' }
+                            : f
+                    )
+                );
+                toast.error(`Failed to upload ${file.name}`);
+            }
+        }
+
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    };
+
+    const handleRemoveFile = async (fileId: string) => {
+        const file = attachedFiles.find(f => f.id === fileId);
+        if (file?.path) {
+            try {
+                await deleteFile(file.path);
+            } catch (error) {
+                console.error('Delete error:', error);
+            }
+        }
+        onFilesChange?.(attachedFiles.filter(f => f.id !== fileId));
+    };
+
+    const handleRetryUpload = async (fileId: string) => {
+        if (!userId) return;
+
+        const file = attachedFiles.find(f => f.id === fileId);
+        if (!file) return;
+
+        onFilesChange?.(
+            attachedFiles.map(f =>
+                f.id === fileId ? { ...f, uploadStatus: 'uploading', uploadProgress: 0, error: undefined } : f
+            )
+        );
+
+        try {
+            const uploaded = await uploadWithRetry(file.file, userId, conversationId || null, 3, (progress) => {
+                onFilesChange?.(
+                    attachedFiles.map(f =>
+                        f.id === fileId ? { ...f, uploadProgress: progress } : f
+                    )
+                );
+            });
+
+            onFilesChange?.(
+                attachedFiles.map(f =>
+                    f.id === fileId
+                        ? { ...f, uploadStatus: 'completed', uploadProgress: 100, url: uploaded.url, path: uploaded.path }
+                        : f
+                )
+            );
+
+            toast.success(`${file.name} uploaded successfully`);
+        } catch (error) {
+            console.error('Upload error:', error);
+            onFilesChange?.(
+                attachedFiles.map(f =>
+                    f.id === fileId
+                        ? { ...f, uploadStatus: 'error', error: error instanceof Error ? error.message : 'Upload failed' }
+                        : f
+                )
+            );
+            toast.error(`Failed to upload ${file.name}`);
         }
     };
 
@@ -95,6 +225,22 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
             className={`relative flex flex-col w-full max-w-3xl mx-auto bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-[24px] p-4 shadow-sm transition-colors ${className}`}
             onClick={() => ref.current?.focus()}
         >
+            {/* Hidden file input */}
+            <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                multiple
+                onChange={handleFileSelect}
+            />
+
+            {/* File Upload Preview */}
+            <FileUploadPreview
+                files={attachedFiles}
+                onRemove={handleRemoveFile}
+                onRetry={handleRetryUpload}
+            />
+
             {/* Textarea Area */}
             <div className="w-full mb-2">
                 <textarea
@@ -182,7 +328,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 <div
                                     className="mb-4 p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer flex items-center gap-3"
                                     onClick={() => {
-                                        // TODO: Implement file upload functionality
+                                        fileInputRef.current?.click();
                                         setIsFileUploadOpen(false);
                                     }}
                                 >
@@ -546,7 +692,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                     element.style.transform = 'scale(0.95)';
                                     setTimeout(() => {
                                         element.style.transform = '';
-                                        // TODO: Implement file upload functionality
+                                        fileInputRef.current?.click();
                                         setTimeout(() => setIsFileUploadOpen(false), 150);
                                     }, 100);
                                 }}
