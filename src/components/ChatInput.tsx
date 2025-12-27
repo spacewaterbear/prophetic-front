@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Plus, Send, ChevronDown } from "lucide-react";
+import { Plus, Send, ChevronDown, Paperclip } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useTheme } from "next-themes";
@@ -29,6 +29,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
     const ref = textareaRef || internalRef;
     const [textareaHeight, setTextareaHeight] = useState<number>(24);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [isFileUploadOpen, setIsFileUploadOpen] = useState(false);
     const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     // Helper function to determine which agents are available based on user status
@@ -114,17 +115,102 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
             <div className="flex justify-between items-center w-full">
                 {/* Leading Actions (Left side) */}
                 <div className="flex items-center gap-2">
-                    <div className="relative group">
+                    <div className="relative">
                         <button
                             className="flex items-center justify-center text-gray-900 dark:text-gray-100 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-full p-2.5 transition-colors"
                             aria-label="Add file"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setIsFileUploadOpen(!isFileUploadOpen);
+                            }}
+                            onMouseEnter={() => {
+                                if (closeTimeoutRef.current) {
+                                    clearTimeout(closeTimeoutRef.current);
+                                    closeTimeoutRef.current = null;
+                                }
+                                // Only auto-open on hover for desktop (non-touch devices)
+                                if (window.matchMedia('(hover: hover)').matches) {
+                                    setIsFileUploadOpen(true);
+                                }
+                            }}
+                            onMouseLeave={() => {
+                                // Only auto-close on hover for desktop
+                                if (window.matchMedia('(hover: hover)').matches) {
+                                    closeTimeoutRef.current = setTimeout(() => {
+                                        setIsFileUploadOpen(false);
+                                    }, 100);
+                                }
+                            }}
                         >
                             <Plus className="h-5 w-5" />
                         </button>
-                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
-                            {t('chat.comingSoon')}
+
+                        {/* Desktop Dropdown */}
+                        <div
+                            className={`
+                                hidden sm:block
+                                absolute left-1/2 bottom-full -translate-x-1/2 mb-2
+                                transition-all duration-300 ease-out
+                                z-10
+                                ${isFileUploadOpen
+                                    ? 'opacity-100 pointer-events-auto'
+                                    : 'opacity-0 pointer-events-none'
+                                }
+                            `}
+                            onMouseEnter={() => {
+                                if (closeTimeoutRef.current) {
+                                    clearTimeout(closeTimeoutRef.current);
+                                    closeTimeoutRef.current = null;
+                                }
+                                // Only keep open on hover for desktop
+                                if (window.matchMedia('(hover: hover)').matches) {
+                                    setIsFileUploadOpen(true);
+                                }
+                            }}
+                            onMouseLeave={() => {
+                                // Only auto-close on hover for desktop
+                                if (window.matchMedia('(hover: hover)').matches) {
+                                    closeTimeoutRef.current = setTimeout(() => {
+                                        setIsFileUploadOpen(false);
+                                    }, 100);
+                                }
+                            }}
+                        >
+                            <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-3xl p-5 w-[320px] shadow-2xl border dark:border-transparent">
+                                {/* Add Files Option */}
+                                <div
+                                    className="mb-4 p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer flex items-center gap-3"
+                                    onClick={() => {
+                                        // TODO: Implement file upload functionality
+                                        setIsFileUploadOpen(false);
+                                    }}
+                                >
+                                    <Paperclip className="h-6 w-6 text-gray-900 dark:text-white" />
+                                    <span className="text-gray-900 dark:text-white font-medium text-base">Ajouter fichiers</span>
+                                </div>
+
+                                {/* Add from Google Drive Option */}
+                                <div
+                                    className="p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer flex items-center gap-3"
+                                    onClick={() => {
+                                        // TODO: Implement Google Drive integration
+                                        setIsFileUploadOpen(false);
+                                    }}
+                                >
+                                    <Image
+                                        src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/google-drive.png"
+                                        alt="Google Drive"
+                                        width={24}
+                                        height={24}
+                                        className="h-6 w-6"
+                                    />
+                                    <span className="text-gray-900 dark:text-white font-medium text-base">Ajouter depuis Google Drive</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
+
 
                     {/* Prophetic Logo Button */}
                     <div className="static sm:relative">
@@ -317,15 +403,13 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                 <>
                     {/* Backdrop */}
                     <div
-                        className={`sm:hidden fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 ${
-                            isDropdownOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
-                        }`}
+                        className={`sm:hidden fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 ${isDropdownOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+                            }`}
                         onClick={() => setIsDropdownOpen(false)}
                     />
                     {/* Bottom Sheet */}
-                    <div className={`sm:hidden fixed inset-x-0 bottom-0 z-50 transition-transform duration-300 ease-out ${
-                        isDropdownOpen ? 'translate-y-0' : 'translate-y-full'
-                    }`}>
+                    <div className={`sm:hidden fixed inset-x-0 bottom-0 z-50 transition-transform duration-300 ease-out ${isDropdownOpen ? 'translate-y-0' : 'translate-y-full'
+                        }`}>
                         <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl p-5 w-full shadow-2xl border-t border-gray-200 dark:border-transparent max-h-[70vh] overflow-y-auto">
                             {/* Discover Agent */}
                             <div
@@ -434,6 +518,64 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 <p className="text-sm text-gray-600 dark:text-gray-400 italic">
                                     Lead the market. Multiply wealth
                                 </p>
+                            </div>
+                        </div>
+                    </div>
+                </>,
+                document.body
+            )}
+
+            {/* File Upload Modal - Rendered via Portal */}
+            {mounted && createPortal(
+                <>
+                    {/* Backdrop */}
+                    <div
+                        className={`sm:hidden fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 ${isFileUploadOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+                            }`}
+                        onClick={() => setIsFileUploadOpen(false)}
+                    />
+                    {/* Bottom Sheet */}
+                    <div className={`sm:hidden fixed inset-x-0 bottom-0 z-50 transition-transform duration-300 ease-out ${isFileUploadOpen ? 'translate-y-0' : 'translate-y-full'
+                        }`}>
+                        <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl p-6 w-full shadow-2xl border-t border-gray-200 dark:border-transparent">
+                            {/* Add Files Option */}
+                            <div
+                                className="mb-4 p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl active:scale-95 active:brightness-95 transition-all duration-150 cursor-pointer flex items-center gap-3"
+                                onClick={(e) => {
+                                    const element = e.currentTarget;
+                                    element.style.transform = 'scale(0.95)';
+                                    setTimeout(() => {
+                                        element.style.transform = '';
+                                        // TODO: Implement file upload functionality
+                                        setTimeout(() => setIsFileUploadOpen(false), 150);
+                                    }, 100);
+                                }}
+                            >
+                                <Paperclip className="h-6 w-6 text-gray-900 dark:text-white" />
+                                <span className="text-gray-900 dark:text-white font-medium text-base">Ajouter fichiers</span>
+                            </div>
+
+                            {/* Add from Google Drive Option */}
+                            <div
+                                className="p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl active:scale-95 active:brightness-95 transition-all duration-150 cursor-pointer flex items-center gap-3"
+                                onClick={(e) => {
+                                    const element = e.currentTarget;
+                                    element.style.transform = 'scale(0.95)';
+                                    setTimeout(() => {
+                                        element.style.transform = '';
+                                        // TODO: Implement Google Drive integration
+                                        setTimeout(() => setIsFileUploadOpen(false), 150);
+                                    }, 100);
+                                }}
+                            >
+                                <Image
+                                    src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/google-drive.png"
+                                    alt="Google Drive"
+                                    width={24}
+                                    height={24}
+                                    className="h-6 w-6"
+                                />
+                                <span className="text-gray-900 dark:text-white font-medium text-base">Ajouter depuis Google Drive</span>
                             </div>
                         </div>
                     </div>
