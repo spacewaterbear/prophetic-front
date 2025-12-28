@@ -87,19 +87,7 @@ export const RealEstateCard = memo(({ data }: RealEstateCardProps) => {
     const displayedProperties = properties.slice(0, 4);
 
     return (
-        <div className="space-y-8">
-            {/* Header */}
-            <div className="flex items-end justify-between border-b-2 border-gray-900 dark:border-white pb-6">
-                <div>
-                    <h2
-                        className="text-4xl md:text-5xl font-normal text-gray-900 dark:text-white"
-                        style={{ fontFamily: "'Spectral', serif" }}
-                    >
-                        {location}
-                    </h2>
-                </div>
-            </div>
-
+        <div>
             {/* Properties Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {displayedProperties.map((property, index) => (

@@ -103,50 +103,7 @@ export const MarketplaceCard = memo(({ data }: MarketplaceCardProps) => {
     }
 
     return (
-        <div className="space-y-4">
-            {/* Marketplace Header */}
-            <Card className={`overflow-hidden border ${style.border} bg-gradient-to-r ${style.gradient} backdrop-blur-sm`}>
-                <div className="p-6">
-                    <div className="flex items-start gap-4">
-                        {/* Success Icon */}
-                        <div className={`p-3 rounded-full bg-gradient-to-br ${style.gradient} border ${style.border}`}>
-                            <CheckCircle2 className={`w-6 h-6 ${style.icon}`} />
-                        </div>
-
-                        {/* Artist Profile Info */}
-                        <div className="flex-1 min-w-0">
-                            {artist_profile && (
-                                <>
-                                    <a
-                                        href={artist_profile.url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className={`text-2xl font-bold ${style.text} hover:underline inline-flex items-center gap-2 group mb-2`}
-                                    >
-                                        {artist_profile.name}
-                                        <ExternalLink className="w-5 h-5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                    </a>
-
-                                    <div className="flex flex-wrap gap-2 mt-3">
-                                        {artist_profile.artwork_count !== undefined && (
-                                            <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border ${style.badge}`}>
-                                                <Package className="w-3.5 h-3.5" />
-                                                {artist_profile.artwork_count} artworks in profile
-                                            </span>
-                                        )}
-                                        {total_artworks > 0 && (
-                                            <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border ${style.badge}`}>
-                                                {total_artworks} available {total_artworks === 1 ? 'artwork' : 'artworks'}
-                                            </span>
-                                        )}
-                                    </div>
-                                </>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            </Card>
-
+        <div>
             {/* Artworks Grid */}
             {artworks.length > 0 && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
