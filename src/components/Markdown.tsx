@@ -244,7 +244,7 @@ export function Markdown({ content, className }: MarkdownProps) {
   }, [content]);
 
   return (
-    <div className={cn("prose prose-sm dark:prose-invert max-w-none px-1.5 sm:px-0", className)}>
+    <div className={cn("prose prose-sm dark:prose-invert max-w-none px-0", className)}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
