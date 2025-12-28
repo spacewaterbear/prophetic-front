@@ -346,14 +346,13 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                             <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-3xl p-5 w-[320px] shadow-2xl border dark:border-transparent">
                                 {/* Add Files Option */}
                                 <div
-                                    className="m-0 p-3 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer flex items-center gap-3"
-                                    onClick={() => {
-                                        fileInputRef.current?.click();
-                                        setIsFileUploadOpen(false);
-                                    }}
+                                    className="m-0 p-3 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl opacity-60 cursor-not-allowed flex items-center gap-3 relative"
                                 >
                                     <Paperclip className="h-6 w-6 text-gray-900 dark:text-white" />
-                                    <span className="text-gray-900 dark:text-white font-medium text-base">Ajouter fichiers</span>
+                                    <div className="flex flex-col flex-1">
+                                        <span className="text-gray-900 dark:text-white font-medium text-base">Ajouter fichiers</span>
+                                        <span className="text-xs text-gray-500 dark:text-gray-400 italic">Coming soon</span>
+                                    </div>
                                 </div>
 
                                 {/* Google Drive option removed - will be implemented later */}
@@ -693,19 +692,13 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                         <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl p-6 w-full shadow-2xl border-t border-gray-200 dark:border-transparent">
                             {/* Add Files Option */}
                             <div
-                                className="mb-4 p-3 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl active:scale-95 active:brightness-95 transition-all duration-150 cursor-pointer flex items-center gap-3"
-                                onClick={(e) => {
-                                    const element = e.currentTarget;
-                                    element.style.transform = 'scale(0.95)';
-                                    setTimeout(() => {
-                                        element.style.transform = '';
-                                        fileInputRef.current?.click();
-                                        setTimeout(() => setIsFileUploadOpen(false), 150);
-                                    }, 100);
-                                }}
+                                className="mb-4 p-3 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl opacity-60 cursor-not-allowed flex items-center gap-3"
                             >
                                 <Paperclip className="h-6 w-6 text-gray-900 dark:text-white" />
-                                <span className="text-gray-900 dark:text-white font-medium text-base">Ajouter fichiers</span>
+                                <div className="flex flex-col flex-1">
+                                    <span className="text-gray-900 dark:text-white font-medium text-base">Ajouter fichiers</span>
+                                    <span className="text-xs text-gray-500 dark:text-gray-400 italic">Coming soon</span>
+                                </div>
                             </div>
 
                             {/* Google Drive option removed - will be implemented later */}
