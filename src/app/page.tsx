@@ -200,14 +200,14 @@ const MessageItem = memo(
 
     return (
       <div
-        className={`flex gap-2 sm:gap-4 items-start ${message.sender === "user" ? "justify-end" : "justify-start"}`}
+        className={`flex gap-2 sm:gap-4 items-start ${message.sender === "user" ? "justify-end" : "justify-start w-full"}`}
       >
         {message.sender === "ai" && <AIAvatar />}
-        <div className="group flex flex-col gap-2">
+        <div className={`group flex flex-col gap-2 ${message.sender === "ai" ? "w-full" : ""}`}>
           <div
-            className={`max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-1.5 py-4 sm:py-5 rounded-2xl ${message.sender === "user"
-              ? "bg-[rgb(230,220,210)] dark:bg-gray-700 text-gray-900 dark:text-white"
-              : "bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] text-gray-900 dark:text-white"
+            className={`py-4 sm:py-5 rounded-2xl ${message.sender === "user"
+              ? "bg-[rgb(230,220,210)] dark:bg-gray-700 text-gray-900 dark:text-white max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-1.5"
+              : "bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] text-gray-900 dark:text-white w-full"
               }`}
           >
             {message.sender === "user" ? (
@@ -1174,7 +1174,7 @@ export default function Home() {
               </div>
             )}
 
-          <div className="max-w-5xl mx-auto space-y-6 md:pr-32 lg:pr-40">
+          <div className="max-w-5xl mx-auto space-y-6">
             {messages.map((message) => (
               <MessageItem
                 key={message.id}
