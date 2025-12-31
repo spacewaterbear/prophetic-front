@@ -165,13 +165,13 @@ const MessageItem = memo(
                 {message.sender === "ai" && <AIAvatar />}
                 <div className="group flex flex-col gap-2">
                     <div
-                        className={`max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-1.5 py-4 sm:py-5 rounded-2xl ${message.sender === "user"
+                        className={`max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-3 sm:px-4 py-4 sm:py-5 rounded-2xl overflow-hidden ${message.sender === "user"
                             ? "bg-[rgb(230,220,210)] dark:bg-gray-700 text-gray-900 dark:text-white"
                             : "bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] text-gray-900 dark:text-white"
                             }`}
                     >
                         {message.sender === "user" ? (
-                            <p className="text-base leading-relaxed whitespace-pre-wrap px-[10px]">
+                            <p className="text-base leading-relaxed whitespace-pre-wrap">
                                 {message.content}
                             </p>
                         ) : message.type === "artist_info" && message.artist ? (
@@ -677,7 +677,7 @@ export default function ChatPage() {
                     {isLoading && !streamingMessage && !streamingMarketplaceData && (
                         <div className="flex gap-2 sm:gap-4 items-start justify-start">
                             <AIAvatar />
-                            <div className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-4 py-4 sm:px-8 sm:py-5 rounded-2xl bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)]">
+                            <div className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-3 sm:px-4 py-4 sm:py-5 rounded-2xl overflow-hidden bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)]">
                                 <TypingIndicator />
                                 {currentStatus && (
                                     <p className="text-sm text-gray-500 dark:text-gray-400 italic mt-2">
@@ -694,7 +694,7 @@ export default function ChatPage() {
                         streamingRealEstateData) && (
                             <div className="flex gap-2 sm:gap-4 items-start justify-start">
                                 <AIAvatar />
-                                <div className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl pl-4 pr-12 py-4 sm:pl-8 sm:pr-14 sm:py-5 rounded-2xl bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] text-gray-900 dark:text-white">
+                                <div className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-3 sm:px-4 py-4 sm:py-5 rounded-2xl overflow-hidden bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] text-gray-900 dark:text-white">
                                     {streamingMessage && (
                                         <Markdown
                                             content={streamingMessage}
