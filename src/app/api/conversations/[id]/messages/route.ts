@@ -2,30 +2,78 @@ import { NextRequest } from "next/server";
 import { auth } from "@/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 
+// Helper function to check if error is an API/maintenance error
+function isMaintenanceError(errorText: unknown): boolean {
+  // Convert to string if it's not already
+  const errorString = typeof errorText === 'string'
+    ? errorText
+    : JSON.stringify(errorText);
+
+  const maintenanceKeywords = [
+    'error generating insight',
+    'error code: 400',
+    'error code: 429',
+    'error code: 500',
+    'credit balance',
+    'credit_balance',
+    'too low',
+    'Plans & Billing',
+    'invalid_request_error',
+    'api error',
+    'api_error',
+    'rate limit',
+    'rate_limit',
+    'anthropic api'
+  ];
+
+  const lowerErrorText = errorString.toLowerCase();
+  return maintenanceKeywords.some(keyword => lowerErrorText.includes(keyword));
+}
+
 // Helper function to extract clean error message from nested error structures
-function extractErrorMessage(errorText: string): string {
+function extractErrorMessage(errorText: unknown): string {
+  // Convert to string if needed
+  const errorString = typeof errorText === 'string'
+    ? errorText
+    : JSON.stringify(errorText);
+
+  // Check if this is a maintenance/API error first
+  if (isMaintenanceError(errorString)) {
+    return "My brain is in maintenance right now, please wait";
+  }
+
   try {
     // Try to find JSON in the error text
-    const jsonMatch = errorText.match(/\{.*\}/);
+    const jsonMatch = errorString.match(/\{.*\}/);
     if (jsonMatch) {
       const parsed = JSON.parse(jsonMatch[0]);
       // Check for detail.message pattern (common in FastAPI)
       if (parsed.detail?.message) {
+        // Check if the detail message is also a maintenance error
+        if (isMaintenanceError(parsed.detail.message)) {
+          return "My brain is in maintenance right now, please wait";
+        }
         return parsed.detail.message;
       }
       // Check for detail as string
       if (typeof parsed.detail === 'string') {
+        if (isMaintenanceError(parsed.detail)) {
+          return "My brain is in maintenance right now, please wait";
+        }
         return parsed.detail;
       }
       // Check for message field
       if (parsed.message) {
+        if (isMaintenanceError(parsed.message)) {
+          return "My brain is in maintenance right now, please wait";
+        }
         return parsed.message;
       }
     }
   } catch {
     // If JSON parsing fails, continue to return original
   }
-  return errorText;
+  return errorString;
 }
 
 // POST /api/conversations/[id]/messages - Add a message and stream AI response
@@ -172,6 +220,12 @@ export async function POST(
           if (!response.ok) {
             const errorBody = await response.text();
             console.error(`[Prophetic API Error] Status: ${response.status}, Model: ${modelToUse}, Body: ${errorBody}`);
+
+            // Check if this is a maintenance error and provide friendly message
+            if (isMaintenanceError(errorBody)) {
+              throw new Error("My brain is in maintenance right now, please wait");
+            }
+
             throw new Error(`Prophetic API error: ${response.status} - ${errorBody}`);
           }
 
@@ -359,6 +413,17 @@ export async function POST(
                     continue;
                   }
 
+                  // Check if content is actually an error message
+                  if (isMaintenanceError(content)) {
+                    console.log("[ERROR DETECTION] Content contains error, converting to error type");
+                    const errorChunk = `data: ${JSON.stringify({
+                      type: "error",
+                      error: "My brain is in maintenance right now, please wait"
+                    })}\n\n`;
+                    controller.enqueue(encoder.encode(errorChunk));
+                    continue;
+                  }
+
                   // Normal text content - add to response and send to client
                   fullResponse += content;
 
@@ -508,14 +573,16 @@ export async function POST(
           // Determine specific error message
           let errorMessage = "Failed to generate AI response";
           if (error instanceof Error) {
-            if (error.message.includes("API URL is not configured")) {
+            // Check for maintenance errors first (highest priority)
+            if (isMaintenanceError(error.message)) {
+              errorMessage = "My brain is in maintenance right now, please wait";
+            } else if (error.message.includes("API URL is not configured")) {
               errorMessage = "API configuration error: Missing API URL";
             } else if (error.message.includes("API token is not configured")) {
               errorMessage = "API configuration error: Missing API token";
             } else if (error.message.includes("Prophetic API error")) {
               // Extract clean message from nested error structure
-              const cleanMessage = extractErrorMessage(error.message);
-              errorMessage = cleanMessage;
+              errorMessage = extractErrorMessage(error.message);
             } else if (error.message.includes("No response body")) {
               errorMessage = "No response received from backend";
             } else {

@@ -114,8 +114,8 @@ html {
 
 /* Global Scrollbar Styling */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 2px;
+  height: 2px;
 }
 
 ::-webkit-scrollbar-track {
@@ -157,7 +157,7 @@ html {
 /* Ensure scrollbar is visible on iOS Safari */
 .table-scroll-wrapper::-webkit-scrollbar {
   -webkit-appearance: none;
-  height: 8px;
+  height: 2px;
 }
 
 .table-scroll-wrapper::-webkit-scrollbar-thumb {
