@@ -172,7 +172,7 @@ const MessageItem = memo(
                     <div
                         className={`py-4 sm:py-5 rounded-2xl overflow-hidden ${message.sender === "user"
                             ? "bg-[rgb(230,220,210)] dark:bg-gray-700 text-gray-900 dark:text-white max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-3 sm:px-4"
-                            : "bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] text-gray-900 dark:text-white w-full"
+                            : "bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] text-gray-900 dark:text-white max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-3 sm:px-4"
                             }`}
                     >
                         {message.sender === "user" ? (
