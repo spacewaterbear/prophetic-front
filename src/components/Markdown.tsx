@@ -250,13 +250,13 @@ export function Markdown({ content, className }: MarkdownProps) {
         components={{
           // Headings
           h1: ({ node, ...props }) => (
-            <h1 className="text-2xl font-bold mt-6 mb-4 text-gray-900 dark:text-gray-100" style={{ fontFamily: 'Halant, serif' }} {...props} />
+            <h1 className="text-2xl font-bold mt-6 mb-4 text-gray-900 dark:text-gray-100" style={{ fontFamily: 'EB Garamond, serif' }} {...props} />
           ),
           h2: ({ node, ...props }) => (
-            <h2 className="text-xl font-bold mt-5 mb-3 text-gray-900 dark:text-gray-100" style={{ fontFamily: 'Halant, serif' }} {...props} />
+            <h2 className="text-xl font-bold mt-5 mb-3 text-gray-900 dark:text-gray-100" style={{ fontFamily: 'EB Garamond, serif' }} {...props} />
           ),
           h3: ({ node, ...props }) => (
-            <h3 className="text-lg font-semibold mt-4 mb-2 text-gray-900 dark:text-gray-100" style={{ fontFamily: 'Halant, serif' }} {...props} />
+            <h3 className="text-lg font-semibold mt-4 mb-2 text-gray-900 dark:text-gray-100" style={{ fontFamily: 'EB Garamond, serif' }} {...props} />
           ),
           h4: ({ node, ...props }) => (
             <h4 className="text-base font-semibold mt-3 mb-2 text-gray-900 dark:text-gray-100" {...props} />
