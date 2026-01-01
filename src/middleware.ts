@@ -8,7 +8,7 @@ export default auth((req) => {
   const userStatus = (req.auth?.user as any)?.status;
 
   // Public routes that don't require authentication
-  const isPublicRoute = nextUrl.pathname === "/login" || nextUrl.pathname.startsWith("/share/") || nextUrl.pathname === "/test-verification";
+  const isPublicRoute = nextUrl.pathname === "/login" || nextUrl.pathname.startsWith("/share/") || nextUrl.pathname === "/test-verification" || nextUrl.pathname === "/test_visi";
   const isRegistrationPending = nextUrl.pathname === "/registration-pending";
 
   // If not logged in and trying to access protected route, redirect to login

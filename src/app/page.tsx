@@ -27,6 +27,7 @@ import { toast } from "sonner";
 import { useI18n } from "@/contexts/i18n-context";
 import { ChatInput } from "@/components/ChatInput";
 import { FileAttachment } from "@/components/FileAttachment";
+import { AIAvatar } from "@/components/chat/AIAvatar";
 
 // Lazy load Markdown component to reduce initial bundle size
 const Markdown = lazy(() =>
@@ -136,36 +137,6 @@ interface Conversation {
   created_at: string | null;
   updated_at: string | null;
 }
-
-// Reusable AI Avatar component to prevent duplicate image loads
-const AIAvatar = memo(() => {
-  const { theme, resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  const isDark = theme === "dark" || resolvedTheme === "dark";
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  return (
-    <div className="hidden sm:flex w-8 h-8 sm:w-10 sm:h-10 mt-1 rounded-full items-center justify-center flex-shrink-0 overflow-hidden">
-      <Image
-        src={
-          mounted && isDark
-            ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_white.svg"
-            : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_new.svg"
-        }
-        alt="Prophetic Orchestra"
-        width={40}
-        height={40}
-        className="w-full h-full object-cover"
-        priority
-      />
-    </div>
-  );
-});
-
-AIAvatar.displayName = "AIAvatar";
 
 // Memoized message component to prevent unnecessary re-renders
 const MessageItem = memo(
