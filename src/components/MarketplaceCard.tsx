@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ExternalLink, Store, CheckCircle2, XCircle, Package } from "lucide-react";
+import { ExternalLink, Store, CheckCircle2, XCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { memo } from "react";
 
@@ -146,18 +146,6 @@ export const MarketplaceCard = memo(({ data }: MarketplaceCardProps) => {
                         </a>
                     ))}
                 </div>
-            )}
-
-            {/* No artworks available message */}
-            {found && artworks.length === 0 && (
-                <Card className="border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-                    <div className="p-6 text-center">
-                        <Package className="w-12 h-12 text-gray-400 dark:text-gray-600 mx-auto mb-3" />
-                        <p className="text-gray-600 dark:text-gray-400">
-                            Artist found, but no artworks are currently available.
-                        </p>
-                    </div>
-                </Card>
             )}
         </div>
     );
