@@ -408,7 +408,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                         <div
                             className={`
                                 hidden sm:block
-                                absolute left-1/2 bottom-full -translate-x-1/2 mb-2
+                                absolute left-0 bottom-full mb-2
                                 transition-all duration-300 ease-out
                                 z-10
                                 ${isFileUploadOpen
@@ -505,7 +505,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                         <div
                             className={`
                                 hidden sm:block
-                                absolute left-1/2 bottom-full -translate-x-1/2 mb-2
+                                absolute left-0 bottom-full mb-2
                                 transition-all duration-300 ease-out
                                 z-10
                                 ${isDropdownOpen
@@ -614,7 +614,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                         <div
                             className={`
                                 hidden sm:block
-                                absolute left-1/2 bottom-full -translate-x-1/2 mb-2
+                                absolute left-0 bottom-full mb-2
                                 transition-all duration-300 ease-out
                                 z-10
                                 ${isChronoOpen
