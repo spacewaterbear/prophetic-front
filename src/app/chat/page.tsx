@@ -84,6 +84,22 @@ export default function ChatWelcome() {
                     </div>
                 </div>
                 <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+                    <button
+                        className="h-9 w-9 flex items-center justify-center rounded-md hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
+                        aria-label="Chrono"
+                    >
+                        <Image
+                            src={
+                                mounted && isDark
+                                    ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/chrono_b.svg"
+                                    : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/chrono.svg"
+                            }
+                            alt="Chrono"
+                            width={24}
+                            height={24}
+                            className="h-5 w-5"
+                        />
+                    </button>
                     <ThemeToggle />
                 </div>
             </header>

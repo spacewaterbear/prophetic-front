@@ -39,6 +39,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
     const [textareaHeight, setTextareaHeight] = useState<number>(24);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isFileUploadOpen, setIsFileUploadOpen] = useState(false);
+    const [isChronoOpen, setIsChronoOpen] = useState(false);
     const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -297,6 +298,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 if (window.matchMedia('(hover: hover)').matches) {
                                     setIsFileUploadOpen(true);
                                     setIsDropdownOpen(false);
+                                    setIsChronoOpen(false);
                                 }
                             }}
                             onMouseLeave={() => {
@@ -332,6 +334,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 if (window.matchMedia('(hover: hover)').matches) {
                                     setIsFileUploadOpen(true);
                                     setIsDropdownOpen(false);
+                                    setIsChronoOpen(false);
                                 }
                             }}
                             onMouseLeave={() => {
@@ -382,6 +385,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 if (window.matchMedia('(hover: hover)').matches) {
                                     setIsDropdownOpen(true);
                                     setIsFileUploadOpen(false);
+                                    setIsChronoOpen(false);
                                 }
                             }}
                             onMouseLeave={() => {
@@ -427,6 +431,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 if (window.matchMedia('(hover: hover)').matches) {
                                     setIsDropdownOpen(true);
                                     setIsFileUploadOpen(false);
+                                    setIsChronoOpen(false);
                                 }
                             }}
                             onMouseLeave={() => {
@@ -523,6 +528,136 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                     <p className="text-sm text-gray-600 dark:text-gray-400 italic">
                                         Lead the market. Multiply wealth
                                     </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Chrono Button */}
+                    <div className="static sm:relative flex-shrink-0">
+                        <button
+                            className="flex items-center justify-center text-gray-900 dark:text-gray-100 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-full px-1 py-2.5 transition-colors"
+                            aria-label="Chrono"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setIsChronoOpen(!isChronoOpen);
+                                setIsDropdownOpen(false);
+                                setIsFileUploadOpen(false);
+                            }}
+                            onMouseEnter={() => {
+                                if (closeTimeoutRef.current) {
+                                    clearTimeout(closeTimeoutRef.current);
+                                    closeTimeoutRef.current = null;
+                                }
+                                // Only auto-open on hover for desktop (non-touch devices)
+                                if (window.matchMedia('(hover: hover)').matches) {
+                                    setIsChronoOpen(true);
+                                    setIsDropdownOpen(false);
+                                    setIsFileUploadOpen(false);
+                                }
+                            }}
+                            onMouseLeave={() => {
+                                // Only auto-close on hover for desktop
+                                if (window.matchMedia('(hover: hover)').matches) {
+                                    closeTimeoutRef.current = setTimeout(() => {
+                                        setIsChronoOpen(false);
+                                    }, 100);
+                                }
+                            }}
+                        >
+                            <Image
+                                src={
+                                    mounted && isDark
+                                        ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/chrono_b.svg"
+                                        : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/chrono.svg"
+                                }
+                                alt="Chrono"
+                                width={24}
+                                height={24}
+                                className="w-9 h-9"
+                            />
+                        </button>
+
+                        {/* Desktop Dropdown */}
+                        <div
+                            className={`
+                                hidden sm:block
+                                absolute left-1/2 bottom-full -translate-x-1/2 mb-2
+                                transition-all duration-300 ease-out
+                                z-10
+                                ${isChronoOpen
+                                    ? 'opacity-100 pointer-events-auto'
+                                    : 'opacity-0 pointer-events-none'
+                                }
+                            `}
+                            onMouseEnter={() => {
+                                if (closeTimeoutRef.current) {
+                                    clearTimeout(closeTimeoutRef.current);
+                                    closeTimeoutRef.current = null;
+                                }
+                                // Only keep open on hover for desktop
+                                if (window.matchMedia('(hover: hover)').matches) {
+                                    setIsChronoOpen(true);
+                                    setIsDropdownOpen(false);
+                                    setIsFileUploadOpen(false);
+                                }
+                            }}
+                            onMouseLeave={() => {
+                                // Only auto-close on hover for desktop
+                                if (window.matchMedia('(hover: hover)').matches) {
+                                    closeTimeoutRef.current = setTimeout(() => {
+                                        setIsChronoOpen(false);
+                                    }, 100);
+                                }
+                            }}
+                        >
+                            <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-3xl p-5 w-[420px] shadow-2xl border dark:border-transparent">
+                                {/* Header */}
+                                <div className="mb-4">
+                                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">Investment Flashcards</h3>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400 italic">Diversify your portfolio</p>
+                                </div>
+
+                                {/* Investment Categories Grid */}
+                                <div className="grid grid-cols-3 gap-2 mb-4">
+                                    <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
+                                        Contemporary Art
+                                    </button>
+                                    <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
+                                        Luxury Bags
+                                    </button>
+                                    <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
+                                        Prestigious Wines
+                                    </button>
+                                    <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
+                                        Precious Jewelry
+                                    </button>
+                                    <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
+                                        Luxury Watch
+                                    </button>
+                                    <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
+                                        Collectible Cars
+                                    </button>
+                                    <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
+                                        Limited Sneakers
+                                    </button>
+                                    <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
+                                        Rare Whiskey
+                                    </button>
+                                    <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
+                                        Real Estate
+                                    </button>
+                                </div>
+
+                                {/* Additional Categories */}
+                                <div className="grid grid-cols-2 gap-2">
+                                    <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
+                                        US sports cards
+                                    </button>
+                                    <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
+                                        All Segments
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -702,6 +837,71 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                             </div>
 
                             {/* Google Drive option removed - will be implemented later */}
+                        </div>
+                    </div>
+                </>,
+                document.body
+            )}
+
+            {/* Chrono Investment Flashcards Modal - Rendered via Portal */}
+            {mounted && createPortal(
+                <>
+                    {/* Backdrop */}
+                    <div
+                        className={`sm:hidden fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 ${isChronoOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+                            }`}
+                        onClick={() => setIsChronoOpen(false)}
+                    />
+                    {/* Bottom Sheet */}
+                    <div className={`sm:hidden fixed inset-x-0 bottom-0 z-50 transition-transform duration-300 ease-out ${isChronoOpen ? 'translate-y-0' : 'translate-y-full'
+                        }`}>
+                        <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl p-6 w-full shadow-2xl border-t border-gray-200 dark:border-transparent max-h-[70vh] overflow-y-auto">
+                            {/* Header */}
+                            <div className="mb-4">
+                                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">Investment Flashcards</h3>
+                                <p className="text-sm text-gray-600 dark:text-gray-400 italic">Diversify your portfolio</p>
+                            </div>
+
+                            {/* Investment Categories Grid */}
+                            <div className="grid grid-cols-3 gap-2 mb-4">
+                                <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
+                                    Contemp. Art
+                                </button>
+                                <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
+                                    Luxury Bags
+                                </button>
+                                <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
+                                    Prestigious Wines
+                                </button>
+                                <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
+                                    Precious Jewelry
+                                </button>
+                                <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
+                                    Luxury Watch
+                                </button>
+                                <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
+                                    Collectible Cars
+                                </button>
+                                <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
+                                    Limited Sneakers
+                                </button>
+                                <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
+                                    Rare Whiskey
+                                </button>
+                                <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
+                                    Real Estate
+                                </button>
+                            </div>
+
+                            {/* Additional Categories */}
+                            <div className="grid grid-cols-2 gap-2">
+                                <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
+                                    US sports cards
+                                </button>
+                                <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
+                                    All Segments
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </>,
