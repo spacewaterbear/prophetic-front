@@ -29,6 +29,96 @@ interface ChatInputProps {
     onFilesChange?: (files: AttachedFile[]) => void;
 }
 
+// Shared button styles - single source of truth for all modal buttons
+const CARD_BUTTON_STYLES = "p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] text-gray-900 dark:text-white text-sm font-semibold rounded-2xl hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer";
+
+const MODE_CARD_BASE_STYLES = "mb-4 p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl hover:shadow-lg hover:scale-[1.02] transition-all duration-200";
+
+// Reusable CategoryButton component for investment categories
+interface CategoryButtonProps {
+    children: React.ReactNode;
+    onClick?: () => void;
+    isActive?: boolean;
+}
+
+const CategoryButton: React.FC<CategoryButtonProps> = ({ children, onClick, isActive = false }) => {
+    const activeStyles = isActive ? 'ring-2 ring-blue-500' : '';
+    return (
+        <button className={`${CARD_BUTTON_STYLES} ${activeStyles}`} onClick={onClick}>
+            {children}
+        </button>
+    );
+};
+
+// Reusable ModeCard component for mode selection
+interface ModeCardProps {
+    title: string;
+    price: string;
+    description: string;
+    isActive: boolean;
+    isAvailable: boolean;
+    onClick: () => void;
+    isMobile?: boolean;
+}
+
+const ModeCard: React.FC<ModeCardProps> = ({
+    title,
+    price,
+    description,
+    isActive,
+    isAvailable,
+    onClick,
+    isMobile = false
+}) => {
+    const availabilityStyles = !isAvailable ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer';
+    const activeStyles = isActive ? 'ring-2 ring-blue-500' : '';
+    const mobileStyles = isMobile ? 'active:scale-95 active:brightness-95 transition-all duration-150' : '';
+
+    const handleClick = (e: React.MouseEvent) => {
+        if (isMobile && isAvailable) {
+            const element = e.currentTarget as HTMLElement;
+            element.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                element.style.transform = '';
+                onClick();
+            }, 100);
+        } else if (isAvailable) {
+            onClick();
+        }
+    };
+
+    return (
+        <div
+            className={`${MODE_CARD_BASE_STYLES} ${availabilityStyles} ${activeStyles} ${mobileStyles}`}
+            onClick={handleClick}
+        >
+            <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                    <span className="text-gray-900 dark:text-white font-semibold text-base">
+                        {title} - {price}
+                    </span>
+                </div>
+                {isAvailable ? (
+                    isActive && (
+                        <div className="flex items-center gap-1.5">
+                            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                            <span className="text-blue-600 dark:text-blue-400 text-sm font-medium">Active</span>
+                        </div>
+                    )
+                ) : (
+                    <button
+                        className="px-4 py-1.5 bg-[#352ee8] text-white text-sm font-medium rounded-full hover:bg-[#2920c7] transition-colors"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        Upgrade
+                    </button>
+                )}
+            </div>
+            <p className="text-sm text-gray-600 dark:text-gray-400 italic">{description}</p>
+        </div>
+    );
+};
+
 export function ChatInput({ input, setInput, handleSend, isLoading, className = "", textareaRef, userStatus = 'discover', selectedAgent = 'discover', onAgentChange, userId, conversationId, attachedFiles = [], onFilesChange }: ChatInputProps) {
     const { theme, resolvedTheme } = useTheme();
     const isDark = theme === "dark" || resolvedTheme === "dark";
@@ -42,6 +132,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
     const [isChronoOpen, setIsChronoOpen] = useState(false);
     const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
     // Google Drive picker hook - Commented out for now, will be implemented later
     // const { openGoogleDrivePicker } = useGoogleDrivePicker(
@@ -444,91 +535,31 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                             }}
                         >
                             <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl sm:rounded-3xl p-5 w-full sm:w-[420px] shadow-2xl border-t border-gray-200 sm:border dark:border-transparent max-h-[80vh] overflow-y-auto">
-                                {/* Discover Agent */}
-                                <div
-                                    className={`mb-4 p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer ${selectedAgent === 'discover' ? 'ring-2 ring-blue-500' : ''
-                                        }`}
+                                {/* Mode Selection Cards */}
+                                <ModeCard
+                                    title="DISCOVER"
+                                    price="Free"
+                                    description="Explore assets. Spot trends"
+                                    isActive={selectedAgent === 'discover'}
+                                    isAvailable={true}
                                     onClick={() => handleAgentClick('discover')}
-                                >
-                                    <div className="flex items-center justify-between mb-2">
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-gray-900 dark:text-white font-semibold text-base">DISCOVER - Free</span>
-                                        </div>
-                                        {selectedAgent === 'discover' && (
-                                            <div className="flex items-center gap-1.5">
-                                                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                                                <span className="text-blue-600 dark:text-blue-400 text-sm font-medium">Active</span>
-                                            </div>
-                                        )}
-                                    </div>
-                                    <p className="text-sm text-gray-600 dark:text-gray-400 italic">
-                                        Explore assets. Spot trends
-                                    </p>
-                                </div>
-
-                                {/* Intelligence Agent */}
-                                <div
-                                    className={`mb-4 p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl hover:shadow-lg hover:scale-[1.02] transition-all duration-200 ${availableAgents.includes('intelligence') ? 'cursor-pointer' : 'opacity-60 cursor-not-allowed'
-                                        } ${selectedAgent === 'intelligence' ? 'ring-2 ring-blue-500' : ''
-                                        }`}
+                                />
+                                <ModeCard
+                                    title="INTELLIGENCE"
+                                    price="$29.99 / month"
+                                    description="Predict value. Invest smarter"
+                                    isActive={selectedAgent === 'intelligence'}
+                                    isAvailable={availableAgents.includes('intelligence')}
                                     onClick={() => handleAgentClick('intelligence')}
-                                >
-                                    <div className="flex items-center justify-between mb-2">
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-gray-900 dark:text-white font-semibold text-base">INTELLIGENCE - $29.99 / month</span>
-                                        </div>
-                                        {availableAgents.includes('intelligence') ? (
-                                            selectedAgent === 'intelligence' && (
-                                                <div className="flex items-center gap-1.5">
-                                                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                                                    <span className="text-blue-600 dark:text-blue-400 text-sm font-medium">Active</span>
-                                                </div>
-                                            )
-                                        ) : (
-                                            <button
-                                                className="px-4 py-1.5 bg-[#352ee8] text-white text-sm font-medium rounded-full hover:bg-[#2920c7] transition-colors"
-                                                onClick={(e) => e.stopPropagation()}
-                                            >
-                                                Upgrade
-                                            </button>
-                                        )}
-                                    </div>
-                                    <p className="text-sm text-gray-600 dark:text-gray-400 italic">
-                                        Predict value. Invest smarter
-                                    </p>
-                                </div>
-
-                                {/* Oracle Agent */}
-                                <div
-                                    className={`p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl hover:shadow-lg hover:scale-[1.02] transition-all duration-200 ${availableAgents.includes('oracle') ? 'cursor-pointer' : 'opacity-60 cursor-not-allowed'
-                                        } ${selectedAgent === 'oracle' ? 'ring-2 ring-blue-500' : ''
-                                        }`}
+                                />
+                                <ModeCard
+                                    title="ORACLE"
+                                    price="$149.99 / month"
+                                    description="Lead the market. Multiply wealth"
+                                    isActive={selectedAgent === 'oracle'}
+                                    isAvailable={availableAgents.includes('oracle')}
                                     onClick={() => handleAgentClick('oracle')}
-                                >
-                                    <div className="flex items-center justify-between mb-2">
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-gray-900 dark:text-white font-semibold text-base">ORACLE - $149.99 / month</span>
-                                        </div>
-                                        {availableAgents.includes('oracle') ? (
-                                            selectedAgent === 'oracle' && (
-                                                <div className="flex items-center gap-1.5">
-                                                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                                                    <span className="text-blue-600 dark:text-blue-400 text-sm font-medium">Active</span>
-                                                </div>
-                                            )
-                                        ) : (
-                                            <button
-                                                className="px-4 py-1.5 bg-[#352ee8] text-white text-sm font-medium rounded-full hover:bg-[#2920c7] transition-colors"
-                                                onClick={(e) => e.stopPropagation()}
-                                            >
-                                                Upgrade
-                                            </button>
-                                        )}
-                                    </div>
-                                    <p className="text-sm text-gray-600 dark:text-gray-400 italic">
-                                        Lead the market. Multiply wealth
-                                    </p>
-                                </div>
+                                />
                             </div>
                         </div>
                     </div>
@@ -621,43 +652,21 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
 
                                 {/* Investment Categories Grid */}
                                 <div className="grid grid-cols-3 gap-2 mb-4">
-                                    <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
-                                        Contemporary Art
-                                    </button>
-                                    <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
-                                        Luxury Bags
-                                    </button>
-                                    <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
-                                        Prestigious Wines
-                                    </button>
-                                    <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
-                                        Precious Jewelry
-                                    </button>
-                                    <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
-                                        Luxury Watch
-                                    </button>
-                                    <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
-                                        Collectible Cars
-                                    </button>
-                                    <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
-                                        Limited Sneakers
-                                    </button>
-                                    <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
-                                        Rare Whiskey
-                                    </button>
-                                    <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
-                                        Real Estate
-                                    </button>
+                                    <CategoryButton isActive={selectedCategory === 'Contemporary Art'} onClick={() => setSelectedCategory('Contemporary Art')}>Contemporary Art</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'Luxury Bags'} onClick={() => setSelectedCategory('Luxury Bags')}>Luxury Bags</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'Prestigious Wines'} onClick={() => setSelectedCategory('Prestigious Wines')}>Prestigious Wines</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'Precious Jewelry'} onClick={() => setSelectedCategory('Precious Jewelry')}>Precious Jewelry</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'Luxury Watch'} onClick={() => setSelectedCategory('Luxury Watch')}>Luxury Watch</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'Collectible Cars'} onClick={() => setSelectedCategory('Collectible Cars')}>Collectible Cars</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'Limited Sneakers'} onClick={() => setSelectedCategory('Limited Sneakers')}>Limited Sneakers</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'Rare Whiskey'} onClick={() => setSelectedCategory('Rare Whiskey')}>Rare Whiskey</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'Real Estate'} onClick={() => setSelectedCategory('Real Estate')}>Real Estate</CategoryButton>
                                 </div>
 
                                 {/* Additional Categories */}
                                 <div className="grid grid-cols-2 gap-2">
-                                    <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
-                                        US sports cards
-                                    </button>
-                                    <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
-                                        All Segments
-                                    </button>
+                                    <CategoryButton isActive={selectedCategory === 'US sports cards'} onClick={() => setSelectedCategory('US sports cards')}>US sports cards</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'All Segments'} onClick={() => setSelectedCategory('All Segments')}>All Segments</CategoryButton>
                                 </div>
                             </div>
                         </div>
@@ -698,114 +707,43 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                     <div className={`sm:hidden fixed inset-x-0 bottom-0 z-50 transition-transform duration-300 ease-out ${isDropdownOpen ? 'translate-y-0' : 'translate-y-full'
                         }`}>
                         <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl p-5 w-full shadow-2xl border-t border-gray-200 dark:border-transparent max-h-[70vh] overflow-y-auto">
-                            {/* Discover Agent */}
-                            <div
-                                className={`mb-4 p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl active:scale-95 active:brightness-95 transition-all duration-150 cursor-pointer ${selectedAgent === 'discover' ? 'ring-2 ring-blue-500' : ''}`}
-                                onClick={(e) => {
-                                    const element = e.currentTarget;
-                                    element.style.transform = 'scale(0.95)';
-                                    setTimeout(() => {
-                                        element.style.transform = '';
-                                        handleAgentClick('discover');
-                                        setTimeout(() => setIsDropdownOpen(false), 150);
-                                    }, 100);
+                            {/* Mode Selection Cards - Mobile */}
+                            <ModeCard
+                                title="DISCOVER"
+                                price="Free"
+                                description="Explore assets. Spot trends"
+                                isActive={selectedAgent === 'discover'}
+                                isAvailable={true}
+                                onClick={() => {
+                                    handleAgentClick('discover');
+                                    setTimeout(() => setIsDropdownOpen(false), 150);
                                 }}
-                            >
-                                <div className="flex items-center justify-between mb-2">
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-gray-900 dark:text-white font-semibold text-base">DISCOVER - Free</span>
-                                    </div>
-                                    {selectedAgent === 'discover' && (
-                                        <div className="flex items-center gap-1.5">
-                                            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                                            <span className="text-blue-600 dark:text-blue-400 text-sm font-medium">Active</span>
-                                        </div>
-                                    )}
-                                </div>
-                                <p className="text-sm text-gray-600 dark:text-gray-400 italic">
-                                    Explore assets. Spot trends
-                                </p>
-                            </div>
-
-                            {/* Intelligence Agent */}
-                            <div
-                                className={`mb-4 p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl active:scale-95 active:brightness-95 transition-all duration-150 ${availableAgents.includes('intelligence') ? 'cursor-pointer' : 'opacity-60 cursor-not-allowed'} ${selectedAgent === 'intelligence' ? 'ring-2 ring-blue-500' : ''}`}
-                                onClick={(e) => {
-                                    if (availableAgents.includes('intelligence')) {
-                                        const element = e.currentTarget;
-                                        element.style.transform = 'scale(0.95)';
-                                        setTimeout(() => {
-                                            element.style.transform = '';
-                                            handleAgentClick('intelligence');
-                                            setTimeout(() => setIsDropdownOpen(false), 150);
-                                        }, 100);
-                                    }
+                                isMobile={true}
+                            />
+                            <ModeCard
+                                title="INTELLIGENCE"
+                                price="$29.99 / month"
+                                description="Predict value. Invest smarter"
+                                isActive={selectedAgent === 'intelligence'}
+                                isAvailable={availableAgents.includes('intelligence')}
+                                onClick={() => {
+                                    handleAgentClick('intelligence');
+                                    setTimeout(() => setIsDropdownOpen(false), 150);
                                 }}
-                            >
-                                <div className="flex items-center justify-between mb-2">
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-gray-900 dark:text-white font-semibold text-base">INTELLIGENCE - $29.99 / month</span>
-                                    </div>
-                                    {availableAgents.includes('intelligence') ? (
-                                        selectedAgent === 'intelligence' && (
-                                            <div className="flex items-center gap-1.5">
-                                                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                                                <span className="text-blue-600 dark:text-blue-400 text-sm font-medium">Active</span>
-                                            </div>
-                                        )
-                                    ) : (
-                                        <button
-                                            className="px-4 py-1.5 bg-[#352ee8] text-white text-sm font-medium rounded-full hover:bg-[#2920c7] transition-colors"
-                                            onClick={(e) => e.stopPropagation()}
-                                        >
-                                            Upgrade
-                                        </button>
-                                    )}
-                                </div>
-                                <p className="text-sm text-gray-600 dark:text-gray-400 italic">
-                                    Predict value. Invest smarter
-                                </p>
-                            </div>
-
-                            {/* Oracle Agent */}
-                            <div
-                                className={`p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl active:scale-95 active:brightness-95 transition-all duration-150 ${availableAgents.includes('oracle') ? 'cursor-pointer' : 'opacity-60 cursor-not-allowed'} ${selectedAgent === 'oracle' ? 'ring-2 ring-blue-500' : ''}`}
-                                onClick={(e) => {
-                                    if (availableAgents.includes('oracle')) {
-                                        const element = e.currentTarget;
-                                        element.style.transform = 'scale(0.95)';
-                                        setTimeout(() => {
-                                            element.style.transform = '';
-                                            handleAgentClick('oracle');
-                                            setTimeout(() => setIsDropdownOpen(false), 150);
-                                        }, 100);
-                                    }
+                                isMobile={true}
+                            />
+                            <ModeCard
+                                title="ORACLE"
+                                price="$149.99 / month"
+                                description="Lead the market. Multiply wealth"
+                                isActive={selectedAgent === 'oracle'}
+                                isAvailable={availableAgents.includes('oracle')}
+                                onClick={() => {
+                                    handleAgentClick('oracle');
+                                    setTimeout(() => setIsDropdownOpen(false), 150);
                                 }}
-                            >
-                                <div className="flex items-center justify-between mb-2">
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-gray-900 dark:text-white font-semibold text-base">ORACLE - $149.99 / month</span>
-                                    </div>
-                                    {availableAgents.includes('oracle') ? (
-                                        selectedAgent === 'oracle' && (
-                                            <div className="flex items-center gap-1.5">
-                                                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                                                <span className="text-blue-600 dark:text-blue-400 text-sm font-medium">Active</span>
-                                            </div>
-                                        )
-                                    ) : (
-                                        <button
-                                            className="px-4 py-1.5 bg-[#352ee8] text-white text-sm font-medium rounded-full hover:bg-[#2920c7] transition-colors"
-                                            onClick={(e) => e.stopPropagation()}
-                                        >
-                                            Upgrade
-                                        </button>
-                                    )}
-                                </div>
-                                <p className="text-sm text-gray-600 dark:text-gray-400 italic">
-                                    Lead the market. Multiply wealth
-                                </p>
-                            </div>
+                                isMobile={true}
+                            />
                         </div>
                     </div>
                 </>,
@@ -864,43 +802,21 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
 
                             {/* Investment Categories Grid */}
                             <div className="grid grid-cols-3 gap-2 mb-4">
-                                <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
-                                    Contemp. Art
-                                </button>
-                                <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
-                                    Luxury Bags
-                                </button>
-                                <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
-                                    Prestigious Wines
-                                </button>
-                                <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
-                                    Precious Jewelry
-                                </button>
-                                <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
-                                    Luxury Watch
-                                </button>
-                                <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
-                                    Collectible Cars
-                                </button>
-                                <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
-                                    Limited Sneakers
-                                </button>
-                                <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
-                                    Rare Whiskey
-                                </button>
-                                <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
-                                    Real Estate
-                                </button>
+                                <CategoryButton isActive={selectedCategory === 'Contemp. Art'} onClick={() => setSelectedCategory('Contemp. Art')}>Contemp. Art</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'Luxury Bags'} onClick={() => setSelectedCategory('Luxury Bags')}>Luxury Bags</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'Prestigious Wines'} onClick={() => setSelectedCategory('Prestigious Wines')}>Prestigious Wines</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'Precious Jewelry'} onClick={() => setSelectedCategory('Precious Jewelry')}>Precious Jewelry</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'Luxury Watch'} onClick={() => setSelectedCategory('Luxury Watch')}>Luxury Watch</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'Collectible Cars'} onClick={() => setSelectedCategory('Collectible Cars')}>Collectible Cars</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'Limited Sneakers'} onClick={() => setSelectedCategory('Limited Sneakers')}>Limited Sneakers</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'Rare Whiskey'} onClick={() => setSelectedCategory('Rare Whiskey')}>Rare Whiskey</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'Real Estate'} onClick={() => setSelectedCategory('Real Estate')}>Real Estate</CategoryButton>
                             </div>
 
                             {/* Additional Categories */}
                             <div className="grid grid-cols-2 gap-2">
-                                <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
-                                    US sports cards
-                                </button>
-                                <button className="px-4 py-2.5 bg-gray-600 dark:bg-gray-700 text-white text-sm font-medium rounded-full hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
-                                    All Segments
-                                </button>
+                                <CategoryButton isActive={selectedCategory === 'US sports cards'} onClick={() => setSelectedCategory('US sports cards')}>US sports cards</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'All Segments'} onClick={() => setSelectedCategory('All Segments')}>All Segments</CategoryButton>
                             </div>
                         </div>
                     </div>
