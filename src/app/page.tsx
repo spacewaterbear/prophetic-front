@@ -601,6 +601,10 @@ export default function Home() {
     }
   };
 
+  const handleFlashcardClick = (flashCardType: string, question: string) => {
+    handleSend(question, { flash_cards: flashCardType, question });
+  };
+
   // Show loading while checking authentication
   if (status === "loading") {
     return (
@@ -630,7 +634,7 @@ export default function Home() {
     return null;
   }
 
-  const handleSend = async (messageToSend?: string) => {
+  const handleSend = async (messageToSend?: string, flashcardData?: { flash_cards: string; question: string }) => {
     const userInput = messageToSend || input;
     if (!userInput.trim() || isLoading) return;
 
@@ -716,7 +720,9 @@ export default function Home() {
               size: f.size,
               type: f.type,
               path: f.path
-            }))
+            })),
+            flash_cards: flashcardData?.flash_cards,
+            flash_card_question: flashcardData?.question
           }),
         },
       );
@@ -1140,6 +1146,7 @@ export default function Home() {
                     conversationId={currentConversationId || undefined}
                     attachedFiles={attachedFiles}
                     onFilesChange={setAttachedFiles}
+                    onFlashcardClick={handleFlashcardClick}
                   />
                 </div>
               </div>
@@ -1241,6 +1248,7 @@ export default function Home() {
               conversationId={currentConversationId || undefined}
               attachedFiles={attachedFiles}
               onFilesChange={setAttachedFiles}
+              onFlashcardClick={handleFlashcardClick}
             />
           </div>
         )}

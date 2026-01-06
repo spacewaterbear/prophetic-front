@@ -27,7 +27,15 @@ interface ChatInputProps {
     conversationId?: number | null;
     attachedFiles?: AttachedFile[];
     onFilesChange?: (files: AttachedFile[]) => void;
+    onFlashcardClick?: (flashCardType: string, question: string) => void;
 }
+
+// Flashcard category mapping to API enum values
+const FLASHCARD_MAPPING: Record<string, { flash_cards: string; question: string }> = {
+    "Contemporary Art": { flash_cards: "art", question: "art" },
+    "Contemp. Art": { flash_cards: "art", question: "art" },
+    "Prestigious Wines": { flash_cards: "wine", question: "wine" }
+};
 
 // Shared button styles - single source of truth for all modal buttons
 const CARD_BUTTON_STYLES = "p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] text-gray-900 dark:text-white text-sm font-semibold rounded-2xl hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer border border-gray-400/60 dark:border-gray-600/60";
@@ -132,7 +140,7 @@ const ModeCard: React.FC<ModeCardProps> = ({
     );
 };
 
-export function ChatInput({ input, setInput, handleSend, isLoading, className = "", textareaRef, userStatus = 'discover', selectedAgent = 'discover', onAgentChange, userId, conversationId, attachedFiles = [], onFilesChange }: ChatInputProps) {
+export function ChatInput({ input, setInput, handleSend, isLoading, className = "", textareaRef, userStatus = 'discover', selectedAgent = 'discover', onAgentChange, userId, conversationId, attachedFiles = [], onFilesChange, onFlashcardClick }: ChatInputProps) {
     const { theme, resolvedTheme } = useTheme();
     const isDark = theme === "dark" || resolvedTheme === "dark";
     const { t } = useI18n();
@@ -176,6 +184,14 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
     const handleAgentClick = (agent: 'discover' | 'intelligence' | 'oracle') => {
         if (availableAgents.includes(agent) && onAgentChange) {
             onAgentChange(agent);
+        }
+    };
+
+    const handleFlashcardClick = (category: string) => {
+        const mapping = FLASHCARD_MAPPING[category];
+        if (mapping && onFlashcardClick) {
+            onFlashcardClick(mapping.flash_cards, mapping.question);
+            setIsChronoOpen(false);
         }
     };
 
@@ -665,8 +681,8 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
 
                                 {/* Investment Categories Grid */}
                                 <div className="grid grid-cols-2 gap-2 mb-4">
-                                    <CategoryButton isActive={selectedCategory === 'Contemporary Art'} onClick={() => { setSelectedCategory('Contemporary Art'); setIsChronoOpen(false); }}>Contemporary Art</CategoryButton>
-                                    <CategoryButton isActive={selectedCategory === 'Prestigious Wines'} onClick={() => { setSelectedCategory('Prestigious Wines'); setIsChronoOpen(false); }}>Prestigious Wines</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'Contemporary Art'} onClick={() => { setSelectedCategory('Contemporary Art'); handleFlashcardClick('Contemporary Art'); }}>Contemporary Art</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'Prestigious Wines'} onClick={() => { setSelectedCategory('Prestigious Wines'); handleFlashcardClick('Prestigious Wines'); }}>Prestigious Wines</CategoryButton>
                                     <CategoryButton isActive={selectedCategory === 'Luxury Bags'} onClick={() => { setSelectedCategory('Luxury Bags'); setIsChronoOpen(false); }} isDisabled={true}>Luxury Bags</CategoryButton>
                                     <CategoryButton isActive={selectedCategory === 'Precious Jewelry'} onClick={() => { setSelectedCategory('Precious Jewelry'); setIsChronoOpen(false); }} isDisabled={true}>Precious Jewelry</CategoryButton>
                                     <CategoryButton isActive={selectedCategory === 'Luxury Watch'} onClick={() => { setSelectedCategory('Luxury Watch'); setIsChronoOpen(false); }} isDisabled={true}>Luxury Watch</CategoryButton>
@@ -815,9 +831,9 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
 
                             {/* Investment Categories Grid */}
                             <div className="grid grid-cols-2 gap-2 mb-4">
-                                <CategoryButton isActive={selectedCategory === 'Contemp. Art'} onClick={() => { setSelectedCategory('Contemp. Art'); setIsChronoOpen(false); }}>Contemp. Art</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'Contemp. Art'} onClick={() => { setSelectedCategory('Contemp. Art'); handleFlashcardClick('Contemp. Art'); }}>Contemp. Art</CategoryButton>
                                 <CategoryButton isActive={selectedCategory === 'Luxury Bags'} onClick={() => { setSelectedCategory('Luxury Bags'); setIsChronoOpen(false); }} isDisabled={true}>Luxury Bags</CategoryButton>
-                                <CategoryButton isActive={selectedCategory === 'Prestigious Wines'} onClick={() => { setSelectedCategory('Prestigious Wines'); setIsChronoOpen(false); }}>Prestigious Wines</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'Prestigious Wines'} onClick={() => { setSelectedCategory('Prestigious Wines'); handleFlashcardClick('Prestigious Wines'); }}>Prestigious Wines</CategoryButton>
                                 <CategoryButton isActive={selectedCategory === 'Precious Jewelry'} onClick={() => { setSelectedCategory('Precious Jewelry'); setIsChronoOpen(false); }} isDisabled={true}>Precious Jewelry</CategoryButton>
                                 <CategoryButton isActive={selectedCategory === 'Luxury Watch'} onClick={() => { setSelectedCategory('Luxury Watch'); setIsChronoOpen(false); }} isDisabled={true}>Luxury Watch</CategoryButton>
                                 <CategoryButton isActive={selectedCategory === 'Collectible Cars'} onClick={() => { setSelectedCategory('Collectible Cars'); setIsChronoOpen(false); }} isDisabled={true}>Collectible Cars</CategoryButton>

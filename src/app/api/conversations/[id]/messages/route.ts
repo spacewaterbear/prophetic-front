@@ -94,7 +94,7 @@ export async function POST(
     const { id } = await params;
     const conversationId = parseInt(id);
     const body = await request.json();
-    const { content, agent_type, attachments } = body;
+    const { content, agent_type, attachments, flash_cards, flash_card_question } = body;
 
     if (!content) {
       return new Response(JSON.stringify({ error: "Content is required" }), {
@@ -193,13 +193,14 @@ export async function POST(
 
           // Call Prophetic API with the selected model
           const requestBody = {
-            question: content,
+            question: flash_card_question || content,
             model: modelToUse,
             session_id: conversationId.toString(),
             user_id: conversation.user_id,
             conversation_history: conversationHistory,
             tiers_level: tiersLevel, // DISCOVER, INTELLIGENCE, or ORACLE in uppercase
-            attachments: attachments || [] // Include file attachments
+            attachments: attachments || [], // Include file attachments
+            flash_cards: flash_cards || undefined // Include flashcard type if provided
           };
 
           console.log(`[Prophetic API] Request to langchain_agent/query:`, JSON.stringify(requestBody, null, 2));
