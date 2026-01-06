@@ -39,12 +39,25 @@ interface CategoryButtonProps {
     children: React.ReactNode;
     onClick?: () => void;
     isActive?: boolean;
+    isDisabled?: boolean;
 }
 
-const CategoryButton: React.FC<CategoryButtonProps> = ({ children, onClick, isActive = false }) => {
+const CategoryButton: React.FC<CategoryButtonProps> = ({ children, onClick, isActive = false, isDisabled = false }) => {
     const activeStyles = isActive ? 'ring-2 ring-blue-500' : '';
+
+    // Build className conditionally to avoid hover effects when disabled
+    const buttonStyles = isDisabled
+        ? 'p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] text-gray-900 dark:text-white text-sm font-semibold rounded-2xl border border-gray-400/60 dark:border-gray-600/60 opacity-50 cursor-not-allowed'
+        : `${CARD_BUTTON_STYLES}`;
+
+    const handleClick = () => {
+        if (!isDisabled && onClick) {
+            onClick();
+        }
+    };
+
     return (
-        <button className={`${CARD_BUTTON_STYLES} ${activeStyles}`} onClick={onClick}>
+        <button className={`${buttonStyles} ${activeStyles}`} onClick={handleClick} disabled={isDisabled}>
             {children}
         </button>
     );
@@ -653,20 +666,20 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 {/* Investment Categories Grid */}
                                 <div className="grid grid-cols-2 gap-2 mb-4">
                                     <CategoryButton isActive={selectedCategory === 'Contemporary Art'} onClick={() => { setSelectedCategory('Contemporary Art'); setIsChronoOpen(false); }}>Contemporary Art</CategoryButton>
-                                    <CategoryButton isActive={selectedCategory === 'Luxury Bags'} onClick={() => { setSelectedCategory('Luxury Bags'); setIsChronoOpen(false); }}>Luxury Bags</CategoryButton>
                                     <CategoryButton isActive={selectedCategory === 'Prestigious Wines'} onClick={() => { setSelectedCategory('Prestigious Wines'); setIsChronoOpen(false); }}>Prestigious Wines</CategoryButton>
-                                    <CategoryButton isActive={selectedCategory === 'Precious Jewelry'} onClick={() => { setSelectedCategory('Precious Jewelry'); setIsChronoOpen(false); }}>Precious Jewelry</CategoryButton>
-                                    <CategoryButton isActive={selectedCategory === 'Luxury Watch'} onClick={() => { setSelectedCategory('Luxury Watch'); setIsChronoOpen(false); }}>Luxury Watch</CategoryButton>
-                                    <CategoryButton isActive={selectedCategory === 'Collectible Cars'} onClick={() => { setSelectedCategory('Collectible Cars'); setIsChronoOpen(false); }}>Collectible Cars</CategoryButton>
-                                    <CategoryButton isActive={selectedCategory === 'Limited Sneakers'} onClick={() => { setSelectedCategory('Limited Sneakers'); setIsChronoOpen(false); }}>Limited Sneakers</CategoryButton>
-                                    <CategoryButton isActive={selectedCategory === 'Rare Whiskey'} onClick={() => { setSelectedCategory('Rare Whiskey'); setIsChronoOpen(false); }}>Rare Whiskey</CategoryButton>
-                                    <CategoryButton isActive={selectedCategory === 'Real Estate'} onClick={() => { setSelectedCategory('Real Estate'); setIsChronoOpen(false); }}>Real Estate</CategoryButton>
-                                    <CategoryButton isActive={selectedCategory === 'US sports cards'} onClick={() => { setSelectedCategory('US sports cards'); setIsChronoOpen(false); }}>US sports cards</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'Luxury Bags'} onClick={() => { setSelectedCategory('Luxury Bags'); setIsChronoOpen(false); }} isDisabled={true}>Luxury Bags</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'Precious Jewelry'} onClick={() => { setSelectedCategory('Precious Jewelry'); setIsChronoOpen(false); }} isDisabled={true}>Precious Jewelry</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'Luxury Watch'} onClick={() => { setSelectedCategory('Luxury Watch'); setIsChronoOpen(false); }} isDisabled={true}>Luxury Watch</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'Collectible Cars'} onClick={() => { setSelectedCategory('Collectible Cars'); setIsChronoOpen(false); }} isDisabled={true}>Collectible Cars</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'Limited Sneakers'} onClick={() => { setSelectedCategory('Limited Sneakers'); setIsChronoOpen(false); }} isDisabled={true}>Limited Sneakers</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'Rare Whiskey'} onClick={() => { setSelectedCategory('Rare Whiskey'); setIsChronoOpen(false); }} isDisabled={true}>Rare Whiskey</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'Real Estate'} onClick={() => { setSelectedCategory('Real Estate'); setIsChronoOpen(false); }} isDisabled={true}>Real Estate</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'US sports cards'} onClick={() => { setSelectedCategory('US sports cards'); setIsChronoOpen(false); }} isDisabled={true}>US sports cards</CategoryButton>
                                 </div>
 
                                 {/* All Segments - Full Width */}
                                 <div className="grid grid-cols-1 gap-2">
-                                    <CategoryButton isActive={selectedCategory === 'All Segments'} onClick={() => { setSelectedCategory('All Segments'); setIsChronoOpen(false); }}>All Segments</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'All Segments'} onClick={() => { setSelectedCategory('All Segments'); setIsChronoOpen(false); }} isDisabled={true}>All Segments</CategoryButton>
                                 </div>
                             </div>
                         </div>
@@ -803,20 +816,20 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                             {/* Investment Categories Grid */}
                             <div className="grid grid-cols-2 gap-2 mb-4">
                                 <CategoryButton isActive={selectedCategory === 'Contemp. Art'} onClick={() => { setSelectedCategory('Contemp. Art'); setIsChronoOpen(false); }}>Contemp. Art</CategoryButton>
-                                <CategoryButton isActive={selectedCategory === 'Luxury Bags'} onClick={() => { setSelectedCategory('Luxury Bags'); setIsChronoOpen(false); }}>Luxury Bags</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'Luxury Bags'} onClick={() => { setSelectedCategory('Luxury Bags'); setIsChronoOpen(false); }} isDisabled={true}>Luxury Bags</CategoryButton>
                                 <CategoryButton isActive={selectedCategory === 'Prestigious Wines'} onClick={() => { setSelectedCategory('Prestigious Wines'); setIsChronoOpen(false); }}>Prestigious Wines</CategoryButton>
-                                <CategoryButton isActive={selectedCategory === 'Precious Jewelry'} onClick={() => { setSelectedCategory('Precious Jewelry'); setIsChronoOpen(false); }}>Precious Jewelry</CategoryButton>
-                                <CategoryButton isActive={selectedCategory === 'Luxury Watch'} onClick={() => { setSelectedCategory('Luxury Watch'); setIsChronoOpen(false); }}>Luxury Watch</CategoryButton>
-                                <CategoryButton isActive={selectedCategory === 'Collectible Cars'} onClick={() => { setSelectedCategory('Collectible Cars'); setIsChronoOpen(false); }}>Collectible Cars</CategoryButton>
-                                <CategoryButton isActive={selectedCategory === 'Limited Sneakers'} onClick={() => { setSelectedCategory('Limited Sneakers'); setIsChronoOpen(false); }}>Limited Sneakers</CategoryButton>
-                                <CategoryButton isActive={selectedCategory === 'Rare Whiskey'} onClick={() => { setSelectedCategory('Rare Whiskey'); setIsChronoOpen(false); }}>Rare Whiskey</CategoryButton>
-                                <CategoryButton isActive={selectedCategory === 'Real Estate'} onClick={() => { setSelectedCategory('Real Estate'); setIsChronoOpen(false); }}>Real Estate</CategoryButton>
-                                <CategoryButton isActive={selectedCategory === 'US sports cards'} onClick={() => { setSelectedCategory('US sports cards'); setIsChronoOpen(false); }}>US sports cards</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'Precious Jewelry'} onClick={() => { setSelectedCategory('Precious Jewelry'); setIsChronoOpen(false); }} isDisabled={true}>Precious Jewelry</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'Luxury Watch'} onClick={() => { setSelectedCategory('Luxury Watch'); setIsChronoOpen(false); }} isDisabled={true}>Luxury Watch</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'Collectible Cars'} onClick={() => { setSelectedCategory('Collectible Cars'); setIsChronoOpen(false); }} isDisabled={true}>Collectible Cars</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'Limited Sneakers'} onClick={() => { setSelectedCategory('Limited Sneakers'); setIsChronoOpen(false); }} isDisabled={true}>Limited Sneakers</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'Rare Whiskey'} onClick={() => { setSelectedCategory('Rare Whiskey'); setIsChronoOpen(false); }} isDisabled={true}>Rare Whiskey</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'Real Estate'} onClick={() => { setSelectedCategory('Real Estate'); setIsChronoOpen(false); }} isDisabled={true}>Real Estate</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'US sports cards'} onClick={() => { setSelectedCategory('US sports cards'); setIsChronoOpen(false); }} isDisabled={true}>US sports cards</CategoryButton>
                             </div>
 
                             {/* All Segments - Full Width */}
                             <div className="grid grid-cols-1 gap-2">
-                                <CategoryButton isActive={selectedCategory === 'All Segments'} onClick={() => { setSelectedCategory('All Segments'); setIsChronoOpen(false); }}>All Segments</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'All Segments'} onClick={() => { setSelectedCategory('All Segments'); setIsChronoOpen(false); }} isDisabled={true}>All Segments</CategoryButton>
                             </div>
                         </div>
                     </div>
