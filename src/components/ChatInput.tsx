@@ -30,9 +30,9 @@ interface ChatInputProps {
 }
 
 // Shared button styles - single source of truth for all modal buttons
-const CARD_BUTTON_STYLES = "p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] text-gray-900 dark:text-white text-sm font-semibold rounded-2xl hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer";
+const CARD_BUTTON_STYLES = "p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] text-gray-900 dark:text-white text-sm font-semibold rounded-2xl hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer border border-gray-400/60 dark:border-gray-600/60";
 
-const MODE_CARD_BASE_STYLES = "mb-4 p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl hover:shadow-lg hover:scale-[1.02] transition-all duration-200";
+const MODE_CARD_BASE_STYLES = "mb-4 p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl hover:shadow-lg hover:scale-[1.02] transition-all duration-200 border border-gray-400/60 dark:border-gray-600/60";
 
 // Reusable CategoryButton component for investment categories
 interface CategoryButtonProps {
