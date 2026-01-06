@@ -651,7 +651,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 </div>
 
                                 {/* Investment Categories Grid */}
-                                <div className="grid grid-cols-3 gap-2 mb-4">
+                                <div className="grid grid-cols-2 gap-2 mb-2">
                                     <CategoryButton isActive={selectedCategory === 'Contemporary Art'} onClick={() => { setSelectedCategory('Contemporary Art'); setIsChronoOpen(false); }}>Contemporary Art</CategoryButton>
                                     <CategoryButton isActive={selectedCategory === 'Luxury Bags'} onClick={() => { setSelectedCategory('Luxury Bags'); setIsChronoOpen(false); }}>Luxury Bags</CategoryButton>
                                     <CategoryButton isActive={selectedCategory === 'Prestigious Wines'} onClick={() => { setSelectedCategory('Prestigious Wines'); setIsChronoOpen(false); }}>Prestigious Wines</CategoryButton>
@@ -660,12 +660,16 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                     <CategoryButton isActive={selectedCategory === 'Collectible Cars'} onClick={() => { setSelectedCategory('Collectible Cars'); setIsChronoOpen(false); }}>Collectible Cars</CategoryButton>
                                     <CategoryButton isActive={selectedCategory === 'Limited Sneakers'} onClick={() => { setSelectedCategory('Limited Sneakers'); setIsChronoOpen(false); }}>Limited Sneakers</CategoryButton>
                                     <CategoryButton isActive={selectedCategory === 'Rare Whiskey'} onClick={() => { setSelectedCategory('Rare Whiskey'); setIsChronoOpen(false); }}>Rare Whiskey</CategoryButton>
-                                    <CategoryButton isActive={selectedCategory === 'Real Estate'} onClick={() => { setSelectedCategory('Real Estate'); setIsChronoOpen(false); }}>Real Estate</CategoryButton>
                                 </div>
 
-                                {/* Additional Categories */}
-                                <div className="grid grid-cols-2 gap-2">
+                                {/* Real Estate and US Sports Cards */}
+                                <div className="grid grid-cols-2 gap-2 mb-2">
+                                    <CategoryButton isActive={selectedCategory === 'Real Estate'} onClick={() => { setSelectedCategory('Real Estate'); setIsChronoOpen(false); }}>Real Estate</CategoryButton>
                                     <CategoryButton isActive={selectedCategory === 'US sports cards'} onClick={() => { setSelectedCategory('US sports cards'); setIsChronoOpen(false); }}>US sports cards</CategoryButton>
+                                </div>
+
+                                {/* All Segments - Full Width */}
+                                <div className="grid grid-cols-1 gap-2">
                                     <CategoryButton isActive={selectedCategory === 'All Segments'} onClick={() => { setSelectedCategory('All Segments'); setIsChronoOpen(false); }}>All Segments</CategoryButton>
                                 </div>
                             </div>
@@ -801,7 +805,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                             </div>
 
                             {/* Investment Categories Grid */}
-                            <div className="grid grid-cols-3 gap-2 mb-4">
+                            <div className="grid grid-cols-2 gap-2 mb-2">
                                 <CategoryButton isActive={selectedCategory === 'Contemp. Art'} onClick={() => { setSelectedCategory('Contemp. Art'); setIsChronoOpen(false); }}>Contemp. Art</CategoryButton>
                                 <CategoryButton isActive={selectedCategory === 'Luxury Bags'} onClick={() => { setSelectedCategory('Luxury Bags'); setIsChronoOpen(false); }}>Luxury Bags</CategoryButton>
                                 <CategoryButton isActive={selectedCategory === 'Prestigious Wines'} onClick={() => { setSelectedCategory('Prestigious Wines'); setIsChronoOpen(false); }}>Prestigious Wines</CategoryButton>
@@ -810,12 +814,16 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 <CategoryButton isActive={selectedCategory === 'Collectible Cars'} onClick={() => { setSelectedCategory('Collectible Cars'); setIsChronoOpen(false); }}>Collectible Cars</CategoryButton>
                                 <CategoryButton isActive={selectedCategory === 'Limited Sneakers'} onClick={() => { setSelectedCategory('Limited Sneakers'); setIsChronoOpen(false); }}>Limited Sneakers</CategoryButton>
                                 <CategoryButton isActive={selectedCategory === 'Rare Whiskey'} onClick={() => { setSelectedCategory('Rare Whiskey'); setIsChronoOpen(false); }}>Rare Whiskey</CategoryButton>
-                                <CategoryButton isActive={selectedCategory === 'Real Estate'} onClick={() => { setSelectedCategory('Real Estate'); setIsChronoOpen(false); }}>Real Estate</CategoryButton>
                             </div>
 
-                            {/* Additional Categories */}
-                            <div className="grid grid-cols-2 gap-2">
+                            {/* Real Estate and US Sports Cards */}
+                            <div className="grid grid-cols-2 gap-2 mb-2">
+                                <CategoryButton isActive={selectedCategory === 'Real Estate'} onClick={() => { setSelectedCategory('Real Estate'); setIsChronoOpen(false); }}>Real Estate</CategoryButton>
                                 <CategoryButton isActive={selectedCategory === 'US sports cards'} onClick={() => { setSelectedCategory('US sports cards'); setIsChronoOpen(false); }}>US sports cards</CategoryButton>
+                            </div>
+
+                            {/* All Segments - Full Width */}
+                            <div className="grid grid-cols-1 gap-2">
                                 <CategoryButton isActive={selectedCategory === 'All Segments'} onClick={() => { setSelectedCategory('All Segments'); setIsChronoOpen(false); }}>All Segments</CategoryButton>
                             </div>
                         </div>
