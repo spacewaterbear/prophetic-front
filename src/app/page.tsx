@@ -127,6 +127,7 @@ interface Message {
       type: string;
       path?: string;
     }>;
+    is_flashcard?: boolean;
   };
 }
 
@@ -168,6 +169,11 @@ const MessageItem = memo(
         toast.error("Failed to copy to clipboard");
       }
     };
+
+    // Hide user messages that are from flashcards
+    if (message.sender === "user" && message.metadata?.is_flashcard) {
+      return null;
+    }
 
     return (
       <div
@@ -662,15 +668,18 @@ export default function Home() {
       content: userInput,
       sender: "user",
       created_at: new Date().toISOString(),
-      metadata: completedFiles.length > 0 ? {
-        attachments: completedFiles.map(f => ({
-          url: f.url!,
-          name: f.name,
-          size: f.size,
-          type: f.type,
-          path: f.path
-        }))
-      } : undefined
+      metadata: {
+        ...(completedFiles.length > 0 ? {
+          attachments: completedFiles.map(f => ({
+            url: f.url!,
+            name: f.name,
+            size: f.size,
+            type: f.type,
+            path: f.path
+          }))
+        } : {}),
+        ...(flashcardData ? { is_flashcard: true } : {})
+      }
     };
     setMessages((prev) => [...prev, tempUserMessage]);
 

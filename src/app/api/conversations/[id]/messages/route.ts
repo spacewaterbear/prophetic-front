@@ -137,7 +137,10 @@ export async function POST(
         conversation_id: conversationId,
         content,
         sender: "user",
-        metadata: attachments && attachments.length > 0 ? { attachments } : null,
+        metadata: {
+          ...(attachments && attachments.length > 0 ? { attachments } : {}),
+          ...(flash_cards ? { is_flashcard: true } : {})
+        },
       })
       .select()
       .single();
