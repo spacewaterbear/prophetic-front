@@ -20,10 +20,57 @@ const GOOGLE_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
 const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 const GOOGLE_APP_ID = process.env.NEXT_PUBLIC_GOOGLE_APP_ID;
 
+interface PickerBuilder {
+  addView: (view: unknown) => PickerBuilder;
+  setOAuthToken: (token: string) => PickerBuilder;
+  setDeveloperKey: (key: string) => PickerBuilder;
+  setAppId: (appId: string) => PickerBuilder;
+  setCallback: (callback: (data: GooglePickerData) => void) => PickerBuilder;
+  build: () => { setVisible: (visible: boolean) => void };
+}
+
+interface GooglePickerApi {
+  load: (api: string, callback: () => void) => void;
+  client: unknown;
+  picker: {
+    PickerBuilder: new () => PickerBuilder;
+    ViewId: {
+      DOCS: unknown;
+    };
+    Action: {
+      PICKED: string;
+    };
+  };
+}
+
+interface GoogleAuthResponse {
+  access_token?: string;
+  error?: string;
+}
+
+interface GooglePickerData {
+  action: string;
+  docs?: GoogleDriveFile[];
+}
+
 declare global {
   interface Window {
-    gapi?: any;
-    google?: any;
+    gapi?: GooglePickerApi;
+    google?: {
+      accounts: {
+        oauth2: {
+          initTokenClient: (config: {
+            client_id: string;
+            scope: string;
+            callback: (response: GoogleAuthResponse) => void;
+          }) => {
+            callback: (response: GoogleAuthResponse) => void;
+            requestAccessToken: () => void;
+          };
+        };
+      };
+      picker: GooglePickerApi['picker'];
+    };
   }
 }
 
@@ -74,20 +121,26 @@ export function GoogleDrivePicker({ onFilesSelected, onError }: GoogleDrivePicke
       const client = window.google?.accounts.oauth2.initTokenClient({
         client_id: GOOGLE_CLIENT_ID,
         scope: 'https://www.googleapis.com/auth/drive.readonly',
-        callback: (response: any) => {
+        callback: (response: GoogleAuthResponse) => {
           if (response.access_token) {
             setOauthToken(response.access_token);
           }
         },
       });
 
+      if (!client) {
+        throw new Error('Failed to initialize Google OAuth client');
+      }
+
       return new Promise<string>((resolve, reject) => {
-        client.callback = (response: any) => {
+        client.callback = (response: GoogleAuthResponse) => {
           if (response.error) {
             reject(response.error);
             return;
           }
-          resolve(response.access_token);
+          if (response.access_token) {
+            resolve(response.access_token);
+          }
         };
         client.requestAccessToken();
       });
@@ -117,6 +170,10 @@ export function GoogleDrivePicker({ onFilesSelected, onError }: GoogleDrivePicke
 
       setOauthToken(token);
 
+      if (!window.google?.picker) {
+        throw new Error('Google Picker API not loaded');
+      }
+
       // Create and render the picker
       const picker = new window.google.picker.PickerBuilder()
         .addView(window.google.picker.ViewId.DOCS)
@@ -134,9 +191,9 @@ export function GoogleDrivePicker({ onFilesSelected, onError }: GoogleDrivePicke
     }
   };
 
-  const pickerCallback = async (data: any) => {
-    if (data.action === window.google.picker.Action.PICKED) {
-      const selectedFiles = data.docs as GoogleDriveFile[];
+  const pickerCallback = async (data: GooglePickerData) => {
+    if (data.action === window.google?.picker.Action.PICKED) {
+      const selectedFiles = data.docs || [];
 
       toast.info(`Downloading ${selectedFiles.length} file(s) from Google Drive...`);
 

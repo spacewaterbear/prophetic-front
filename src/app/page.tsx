@@ -372,10 +372,9 @@ export default function Home() {
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/login");
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } else if (
       status === "authenticated" &&
-      (session?.user as any)?.status === "unauthorized"
+      (session?.user as { status?: string })?.status === "unauthorized"
     ) {
       router.push("/registration-pending");
     }
