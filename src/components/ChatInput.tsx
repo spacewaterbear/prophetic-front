@@ -398,7 +398,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
             {/* Toolbar Area - Icons below text */}
             <div className="flex justify-between items-center w-full">
                 {/* Leading Actions (Left side) */}
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-0.5">
                     <div className="relative flex-shrink-0">
                         <button
                             className="flex items-center justify-center text-gray-900 dark:text-gray-100 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-full p-2.5 transition-colors"
@@ -699,6 +699,54 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 </div>
                             </div>
                         </div>
+                    </div>
+
+                    {/* Ranking Button */}
+                    <div className="flex-shrink-0">
+                        <button
+                            className="flex items-center justify-center text-gray-900 dark:text-gray-100 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-full px-1 py-2.5 transition-colors"
+                            aria-label="Ranking"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                            }}
+                        >
+                            <Image
+                                src={
+                                    mounted && isDark
+                                        ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/ranking_b.svg"
+                                        : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/ranking.svg"
+                                }
+                                alt="Ranking"
+                                width={24}
+                                height={24}
+                                className="w-9 h-9"
+                            />
+                        </button>
+                    </div>
+
+                    {/* Portfolio Button */}
+                    <div className="flex-shrink-0">
+                        <button
+                            className="flex items-center justify-center text-gray-900 dark:text-gray-100 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-full px-1 py-2.5 transition-colors"
+                            aria-label="Portfolio"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                            }}
+                        >
+                            <Image
+                                src={
+                                    mounted && isDark
+                                        ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/portfolio_b.svg"
+                                        : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/portfolio.svg"
+                                }
+                                alt="Portfolio"
+                                width={24}
+                                height={24}
+                                className="w-9 h-9"
+                            />
+                        </button>
                     </div>
                 </div>
 
