@@ -34,7 +34,15 @@ interface ChatInputProps {
 const FLASHCARD_MAPPING: Record<string, { flash_cards: string; question: string }> = {
     "Contemporary Art": { flash_cards: "art", question: "art" },
     "Contemp. Art": { flash_cards: "art", question: "art" },
-    "Prestigious Wines": { flash_cards: "wine", question: "wine" }
+    "Prestigious Wines": { flash_cards: "wine", question: "wine" },
+    "Luxury Bags": { flash_cards: "sacs", question: "sacs" },
+    "Precious Jewelry": { flash_cards: "bijoux", question: "bijoux" },
+    "Luxury Watch": { flash_cards: "montres_luxe", question: "montres_luxe" },
+    "Collectible Cars": { flash_cards: "cars", question: "cars" },
+    "Limited Sneakers": { flash_cards: "sneakers", question: "sneakers" },
+    "Rare Whiskey": { flash_cards: "whisky", question: "whisky" },
+    "Real Estate": { flash_cards: "immo_luxe", question: "immo_luxe" },
+    "US sports cards": { flash_cards: "cards_us", question: "cards_us" }
 };
 
 // Shared button styles - single source of truth for all modal buttons
@@ -683,19 +691,14 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 <div className="grid grid-cols-2 gap-2 mb-4">
                                     <CategoryButton isActive={selectedCategory === 'Contemporary Art'} onClick={() => { setSelectedCategory('Contemporary Art'); handleFlashcardClick('Contemporary Art'); }}>Contemporary Art</CategoryButton>
                                     <CategoryButton isActive={selectedCategory === 'Prestigious Wines'} onClick={() => { setSelectedCategory('Prestigious Wines'); handleFlashcardClick('Prestigious Wines'); }}>Prestigious Wines</CategoryButton>
-                                    <CategoryButton isActive={selectedCategory === 'Luxury Bags'} onClick={() => { setSelectedCategory('Luxury Bags'); setIsChronoOpen(false); }} isDisabled={true}>Luxury Bags</CategoryButton>
-                                    <CategoryButton isActive={selectedCategory === 'Precious Jewelry'} onClick={() => { setSelectedCategory('Precious Jewelry'); setIsChronoOpen(false); }} isDisabled={true}>Precious Jewelry</CategoryButton>
-                                    <CategoryButton isActive={selectedCategory === 'Luxury Watch'} onClick={() => { setSelectedCategory('Luxury Watch'); setIsChronoOpen(false); }} isDisabled={true}>Luxury Watch</CategoryButton>
-                                    <CategoryButton isActive={selectedCategory === 'Collectible Cars'} onClick={() => { setSelectedCategory('Collectible Cars'); setIsChronoOpen(false); }} isDisabled={true}>Collectible Cars</CategoryButton>
-                                    <CategoryButton isActive={selectedCategory === 'Limited Sneakers'} onClick={() => { setSelectedCategory('Limited Sneakers'); setIsChronoOpen(false); }} isDisabled={true}>Limited Sneakers</CategoryButton>
-                                    <CategoryButton isActive={selectedCategory === 'Rare Whiskey'} onClick={() => { setSelectedCategory('Rare Whiskey'); setIsChronoOpen(false); }} isDisabled={true}>Rare Whiskey</CategoryButton>
-                                    <CategoryButton isActive={selectedCategory === 'Real Estate'} onClick={() => { setSelectedCategory('Real Estate'); setIsChronoOpen(false); }} isDisabled={true}>Real Estate</CategoryButton>
-                                    <CategoryButton isActive={selectedCategory === 'US sports cards'} onClick={() => { setSelectedCategory('US sports cards'); setIsChronoOpen(false); }} isDisabled={true}>US sports cards</CategoryButton>
-                                </div>
-
-                                {/* All Segments - Full Width */}
-                                <div className="grid grid-cols-1 gap-2">
-                                    <CategoryButton isActive={selectedCategory === 'All Segments'} onClick={() => { setSelectedCategory('All Segments'); setIsChronoOpen(false); }} isDisabled={true}>All Segments</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'Luxury Bags'} onClick={() => { setSelectedCategory('Luxury Bags'); handleFlashcardClick('Luxury Bags'); }}>Luxury Bags</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'Precious Jewelry'} onClick={() => { setSelectedCategory('Precious Jewelry'); handleFlashcardClick('Precious Jewelry'); }}>Precious Jewelry</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'Luxury Watch'} onClick={() => { setSelectedCategory('Luxury Watch'); handleFlashcardClick('Luxury Watch'); }}>Luxury Watch</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'Collectible Cars'} onClick={() => { setSelectedCategory('Collectible Cars'); handleFlashcardClick('Collectible Cars'); }}>Collectible Cars</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'Limited Sneakers'} onClick={() => { setSelectedCategory('Limited Sneakers'); handleFlashcardClick('Limited Sneakers'); }}>Limited Sneakers</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'Rare Whiskey'} onClick={() => { setSelectedCategory('Rare Whiskey'); handleFlashcardClick('Rare Whiskey'); }}>Rare Whiskey</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'Real Estate'} onClick={() => { setSelectedCategory('Real Estate'); handleFlashcardClick('Real Estate'); }}>Real Estate</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'US sports cards'} onClick={() => { setSelectedCategory('US sports cards'); handleFlashcardClick('US sports cards'); }}>US sports cards</CategoryButton>
                                 </div>
                             </div>
                         </div>
@@ -880,20 +883,15 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                             {/* Investment Categories Grid */}
                             <div className="grid grid-cols-2 gap-2 mb-4">
                                 <CategoryButton isActive={selectedCategory === 'Contemp. Art'} onClick={() => { setSelectedCategory('Contemp. Art'); handleFlashcardClick('Contemp. Art'); }}>Contemp. Art</CategoryButton>
-                                <CategoryButton isActive={selectedCategory === 'Luxury Bags'} onClick={() => { setSelectedCategory('Luxury Bags'); setIsChronoOpen(false); }} isDisabled={true}>Luxury Bags</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'Luxury Bags'} onClick={() => { setSelectedCategory('Luxury Bags'); handleFlashcardClick('Luxury Bags'); }}>Luxury Bags</CategoryButton>
                                 <CategoryButton isActive={selectedCategory === 'Prestigious Wines'} onClick={() => { setSelectedCategory('Prestigious Wines'); handleFlashcardClick('Prestigious Wines'); }}>Prestigious Wines</CategoryButton>
-                                <CategoryButton isActive={selectedCategory === 'Precious Jewelry'} onClick={() => { setSelectedCategory('Precious Jewelry'); setIsChronoOpen(false); }} isDisabled={true}>Precious Jewelry</CategoryButton>
-                                <CategoryButton isActive={selectedCategory === 'Luxury Watch'} onClick={() => { setSelectedCategory('Luxury Watch'); setIsChronoOpen(false); }} isDisabled={true}>Luxury Watch</CategoryButton>
-                                <CategoryButton isActive={selectedCategory === 'Collectible Cars'} onClick={() => { setSelectedCategory('Collectible Cars'); setIsChronoOpen(false); }} isDisabled={true}>Collectible Cars</CategoryButton>
-                                <CategoryButton isActive={selectedCategory === 'Limited Sneakers'} onClick={() => { setSelectedCategory('Limited Sneakers'); setIsChronoOpen(false); }} isDisabled={true}>Limited Sneakers</CategoryButton>
-                                <CategoryButton isActive={selectedCategory === 'Rare Whiskey'} onClick={() => { setSelectedCategory('Rare Whiskey'); setIsChronoOpen(false); }} isDisabled={true}>Rare Whiskey</CategoryButton>
-                                <CategoryButton isActive={selectedCategory === 'Real Estate'} onClick={() => { setSelectedCategory('Real Estate'); setIsChronoOpen(false); }} isDisabled={true}>Real Estate</CategoryButton>
-                                <CategoryButton isActive={selectedCategory === 'US sports cards'} onClick={() => { setSelectedCategory('US sports cards'); setIsChronoOpen(false); }} isDisabled={true}>US sports cards</CategoryButton>
-                            </div>
-
-                            {/* All Segments - Full Width */}
-                            <div className="grid grid-cols-1 gap-2">
-                                <CategoryButton isActive={selectedCategory === 'All Segments'} onClick={() => { setSelectedCategory('All Segments'); setIsChronoOpen(false); }} isDisabled={true}>All Segments</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'Precious Jewelry'} onClick={() => { setSelectedCategory('Precious Jewelry'); handleFlashcardClick('Precious Jewelry'); }}>Precious Jewelry</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'Luxury Watch'} onClick={() => { setSelectedCategory('Luxury Watch'); handleFlashcardClick('Luxury Watch'); }}>Luxury Watch</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'Collectible Cars'} onClick={() => { setSelectedCategory('Collectible Cars'); handleFlashcardClick('Collectible Cars'); }}>Collectible Cars</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'Limited Sneakers'} onClick={() => { setSelectedCategory('Limited Sneakers'); handleFlashcardClick('Limited Sneakers'); }}>Limited Sneakers</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'Rare Whiskey'} onClick={() => { setSelectedCategory('Rare Whiskey'); handleFlashcardClick('Rare Whiskey'); }}>Rare Whiskey</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'Real Estate'} onClick={() => { setSelectedCategory('Real Estate'); handleFlashcardClick('Real Estate'); }}>Real Estate</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'US sports cards'} onClick={() => { setSelectedCategory('US sports cards'); handleFlashcardClick('US sports cards'); }}>US sports cards</CategoryButton>
                             </div>
                         </div>
                     </div>
