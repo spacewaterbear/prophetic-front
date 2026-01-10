@@ -27,7 +27,7 @@ interface ChatInputProps {
     conversationId?: number | null;
     attachedFiles?: AttachedFile[];
     onFilesChange?: (files: AttachedFile[]) => void;
-    onFlashcardClick?: (flashCardType: string, question: string) => void;
+    onFlashcardClick?: (flashCards: string, question: string, flashCardType: 'flash_invest' | 'ranking') => void;
 }
 
 // Flashcard category mapping to API enum values
@@ -159,6 +159,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isFileUploadOpen, setIsFileUploadOpen] = useState(false);
     const [isChronoOpen, setIsChronoOpen] = useState(false);
+    const [isRankingOpen, setIsRankingOpen] = useState(false);
     const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -195,11 +196,12 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
         }
     };
 
-    const handleFlashcardClick = (category: string) => {
+    const handleFlashcardClick = (category: string, flashCardType: 'flash_invest' | 'ranking' = 'flash_invest') => {
         const mapping = FLASHCARD_MAPPING[category];
         if (mapping && onFlashcardClick) {
-            onFlashcardClick(mapping.flash_cards, mapping.question);
+            onFlashcardClick(mapping.flash_cards, mapping.question, flashCardType);
             setIsChronoOpen(false);
+            setIsRankingOpen(false);
         }
     };
 
@@ -705,13 +707,38 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                     </div>
 
                     {/* Ranking Button */}
-                    <div className="flex-shrink-0">
+                    <div className="static sm:relative flex-shrink-0">
                         <button
                             className="flex items-center justify-center text-gray-900 dark:text-gray-100 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-full px-1 py-2.5 transition-colors"
                             aria-label="Ranking"
                             onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
+                                setIsRankingOpen(!isRankingOpen);
+                                setIsDropdownOpen(false);
+                                setIsFileUploadOpen(false);
+                                setIsChronoOpen(false);
+                            }}
+                            onMouseEnter={() => {
+                                if (closeTimeoutRef.current) {
+                                    clearTimeout(closeTimeoutRef.current);
+                                    closeTimeoutRef.current = null;
+                                }
+                                // Only auto-open on hover for desktop (non-touch devices)
+                                if (window.matchMedia('(hover: hover)').matches) {
+                                    setIsRankingOpen(true);
+                                    setIsDropdownOpen(false);
+                                    setIsFileUploadOpen(false);
+                                    setIsChronoOpen(false);
+                                }
+                            }}
+                            onMouseLeave={() => {
+                                // Only auto-close on hover for desktop
+                                if (window.matchMedia('(hover: hover)').matches) {
+                                    closeTimeoutRef.current = setTimeout(() => {
+                                        setIsRankingOpen(false);
+                                    }, 100);
+                                }
                             }}
                         >
                             <Image
@@ -726,13 +753,71 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 className="w-9 h-9"
                             />
                         </button>
+
+                        {/* Desktop Dropdown */}
+                        <div
+                            className={`
+                                hidden sm:block
+                                absolute left-0 bottom-full mb-2
+                                transition-all duration-300 ease-out
+                                z-10
+                                ${isRankingOpen
+                                    ? 'opacity-100 pointer-events-auto'
+                                    : 'opacity-0 pointer-events-none'
+                                }
+                            `}
+                            onMouseEnter={() => {
+                                if (closeTimeoutRef.current) {
+                                    clearTimeout(closeTimeoutRef.current);
+                                    closeTimeoutRef.current = null;
+                                }
+                                // Only keep open on hover for desktop
+                                if (window.matchMedia('(hover: hover)').matches) {
+                                    setIsRankingOpen(true);
+                                    setIsDropdownOpen(false);
+                                    setIsFileUploadOpen(false);
+                                    setIsChronoOpen(false);
+                                }
+                            }}
+                            onMouseLeave={() => {
+                                // Only auto-close on hover for desktop
+                                if (window.matchMedia('(hover: hover)').matches) {
+                                    closeTimeoutRef.current = setTimeout(() => {
+                                        setIsRankingOpen(false);
+                                    }, 100);
+                                }
+                            }}
+                        >
+                            <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-3xl p-5 w-[420px] shadow-2xl border dark:border-transparent">
+                                {/* Header */}
+                                <div className="mb-4">
+                                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">Investment Rankings</h3>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400 italic">Discover market leaders</p>
+                                </div>
+
+                                {/* Investment Categories Grid */}
+                                <div className="grid grid-cols-2 gap-2 mb-4">
+                                    <CategoryButton isActive={selectedCategory === 'Contemporary Art'} onClick={() => { setSelectedCategory('Contemporary Art'); handleFlashcardClick('Contemporary Art', 'ranking'); }}>Contemporary Art</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'Prestigious Wines'} onClick={() => { setSelectedCategory('Prestigious Wines'); handleFlashcardClick('Prestigious Wines', 'ranking'); }}>Prestigious Wines</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'Luxury Bags'} onClick={() => { setSelectedCategory('Luxury Bags'); handleFlashcardClick('Luxury Bags', 'ranking'); }}>Luxury Bags</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'Precious Jewelry'} onClick={() => { setSelectedCategory('Precious Jewelry'); handleFlashcardClick('Precious Jewelry', 'ranking'); }}>Precious Jewelry</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'Luxury Watch'} onClick={() => { setSelectedCategory('Luxury Watch'); handleFlashcardClick('Luxury Watch', 'ranking'); }}>Luxury Watch</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'Collectible Cars'} onClick={() => { setSelectedCategory('Collectible Cars'); handleFlashcardClick('Collectible Cars', 'ranking'); }}>Collectible Cars</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'Limited Sneakers'} onClick={() => { setSelectedCategory('Limited Sneakers'); handleFlashcardClick('Limited Sneakers', 'ranking'); }}>Limited Sneakers</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'Rare Whiskey'} onClick={() => { setSelectedCategory('Rare Whiskey'); handleFlashcardClick('Rare Whiskey', 'ranking'); }}>Rare Whiskey</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'Real Estate'} onClick={() => { setSelectedCategory('Real Estate'); handleFlashcardClick('Real Estate', 'ranking'); }}>Real Estate</CategoryButton>
+                                    <CategoryButton isActive={selectedCategory === 'US sports cards'} onClick={() => { setSelectedCategory('US sports cards'); handleFlashcardClick('US sports cards', 'ranking'); }}>US sports cards</CategoryButton>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Portfolio Button */}
                     <div className="flex-shrink-0">
                         <button
-                            className="flex items-center justify-center text-gray-900 dark:text-gray-100 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-full px-1 py-2.5 transition-colors"
+                            className="flex items-center justify-center text-gray-900 dark:text-gray-100 rounded-full px-1 py-2.5 opacity-50 cursor-not-allowed"
                             aria-label="Portfolio"
+                            disabled
                             onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
@@ -892,6 +977,44 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 <CategoryButton isActive={selectedCategory === 'Rare Whiskey'} onClick={() => { setSelectedCategory('Rare Whiskey'); handleFlashcardClick('Rare Whiskey'); }}>Rare Whiskey</CategoryButton>
                                 <CategoryButton isActive={selectedCategory === 'Real Estate'} onClick={() => { setSelectedCategory('Real Estate'); handleFlashcardClick('Real Estate'); }}>Real Estate</CategoryButton>
                                 <CategoryButton isActive={selectedCategory === 'US sports cards'} onClick={() => { setSelectedCategory('US sports cards'); handleFlashcardClick('US sports cards'); }}>US sports cards</CategoryButton>
+                            </div>
+                        </div>
+                    </div>
+                </>,
+                document.body
+            )}
+
+            {/* Ranking Modal - Rendered via Portal */}
+            {mounted && createPortal(
+                <>
+                    {/* Backdrop */}
+                    <div
+                        className={`sm:hidden fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 ${isRankingOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+                            }`}
+                        onClick={() => setIsRankingOpen(false)}
+                    />
+                    {/* Bottom Sheet */}
+                    <div className={`sm:hidden fixed inset-x-0 bottom-0 z-50 transition-transform duration-300 ease-out ${isRankingOpen ? 'translate-y-0' : 'translate-y-full'
+                        }`}>
+                        <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl p-6 w-full shadow-2xl border-t border-gray-200 dark:border-transparent max-h-[70vh] overflow-y-auto">
+                            {/* Header */}
+                            <div className="mb-4">
+                                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">Investment Rankings</h3>
+                                <p className="text-sm text-gray-600 dark:text-gray-400 italic">Discover market leaders</p>
+                            </div>
+
+                            {/* Investment Categories Grid */}
+                            <div className="grid grid-cols-2 gap-2 mb-4">
+                                <CategoryButton isActive={selectedCategory === 'Contemp. Art'} onClick={() => { setSelectedCategory('Contemp. Art'); handleFlashcardClick('Contemp. Art', 'ranking'); }}>Contemp. Art</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'Luxury Bags'} onClick={() => { setSelectedCategory('Luxury Bags'); handleFlashcardClick('Luxury Bags', 'ranking'); }}>Luxury Bags</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'Prestigious Wines'} onClick={() => { setSelectedCategory('Prestigious Wines'); handleFlashcardClick('Prestigious Wines', 'ranking'); }}>Prestigious Wines</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'Precious Jewelry'} onClick={() => { setSelectedCategory('Precious Jewelry'); handleFlashcardClick('Precious Jewelry', 'ranking'); }}>Precious Jewelry</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'Luxury Watch'} onClick={() => { setSelectedCategory('Luxury Watch'); handleFlashcardClick('Luxury Watch', 'ranking'); }}>Luxury Watch</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'Collectible Cars'} onClick={() => { setSelectedCategory('Collectible Cars'); handleFlashcardClick('Collectible Cars', 'ranking'); }}>Collectible Cars</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'Limited Sneakers'} onClick={() => { setSelectedCategory('Limited Sneakers'); handleFlashcardClick('Limited Sneakers', 'ranking'); }}>Limited Sneakers</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'Rare Whiskey'} onClick={() => { setSelectedCategory('Rare Whiskey'); handleFlashcardClick('Rare Whiskey', 'ranking'); }}>Rare Whiskey</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'Real Estate'} onClick={() => { setSelectedCategory('Real Estate'); handleFlashcardClick('Real Estate', 'ranking'); }}>Real Estate</CategoryButton>
+                                <CategoryButton isActive={selectedCategory === 'US sports cards'} onClick={() => { setSelectedCategory('US sports cards'); handleFlashcardClick('US sports cards', 'ranking'); }}>US sports cards</CategoryButton>
                             </div>
                         </div>
                     </div>

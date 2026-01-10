@@ -24,10 +24,10 @@ export default function ChatWelcome() {
     }, []);
 
     // Handle sending message from welcome screen
-    const handleWelcomeSend = async () => {
-        if (!input.trim() || isLoading) return;
+    const handleWelcomeSend = async (messageToSend?: string, flashCards?: string, flashCardType?: 'flash_invest' | 'ranking') => {
+        const userMessage = messageToSend || input;
+        if (!userMessage.trim() || isLoading) return;
 
-        const userMessage = input;
         setIsLoading(true);
         try {
             const title = userMessage.length > 50 ? userMessage.substring(0, 50) + "..." : userMessage;
@@ -50,7 +50,11 @@ export default function ChatWelcome() {
                 await fetch(`/api/conversations/${newConversationId}/messages`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ content: userMessage }),
+                    body: JSON.stringify({
+                        content: userMessage,
+                        flash_cards: flashCards,
+                        flash_card_type: flashCardType
+                    }),
                 });
 
                 // Refresh conversations list in sidebar
@@ -62,6 +66,10 @@ export default function ChatWelcome() {
             console.error("Error creating conversation:", error);
             setIsLoading(false);
         }
+    };
+
+    const handleFlashcardClick = (flashCards: string, question: string, flashCardType: 'flash_invest' | 'ranking') => {
+        handleWelcomeSend(question, flashCards, flashCardType);
     };
 
     return (
@@ -137,8 +145,9 @@ export default function ChatWelcome() {
                         <ChatInput
                             input={input}
                             setInput={setInput}
-                            handleSend={handleWelcomeSend}
+                            handleSend={() => handleWelcomeSend()}
                             isLoading={isLoading}
+                            onFlashcardClick={handleFlashcardClick}
                         />
                     </div>
                 </div>

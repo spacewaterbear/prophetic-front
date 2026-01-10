@@ -461,7 +461,7 @@ export default function ChatPage() {
         return null;
     }
 
-    const handleSend = async (messageToSend?: string) => {
+    const handleSend = async (messageToSend?: string, flashCards?: string, flashCardType?: 'flash_invest' | 'ranking') => {
         const userInput = messageToSend || input;
         if (!userInput.trim() || isLoading) return;
 
@@ -521,7 +521,11 @@ export default function ChatPage() {
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ content: userInput }),
+                    body: JSON.stringify({
+                        content: userInput,
+                        flash_cards: flashCards,
+                        flash_card_type: flashCardType
+                    }),
                 },
             );
 
@@ -621,6 +625,10 @@ export default function ChatPage() {
         } finally {
             setIsLoading(false);
         }
+    };
+
+    const handleFlashcardClick = (flashCards: string, question: string, flashCardType: 'flash_invest' | 'ranking') => {
+        handleSend(question, flashCards, flashCardType);
     };
 
     return (
@@ -765,6 +773,7 @@ export default function ChatPage() {
                     setInput={setInput}
                     handleSend={() => handleSend()}
                     isLoading={isLoading}
+                    onFlashcardClick={handleFlashcardClick}
                 />
             </div>
         </>
