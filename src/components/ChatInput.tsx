@@ -429,6 +429,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                     setIsFileUploadOpen(true);
                                     setIsDropdownOpen(false);
                                     setIsChronoOpen(false);
+                                    setIsRankingOpen(false);
                                 }
                             }}
                             onMouseLeave={() => {
@@ -465,6 +466,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                     setIsFileUploadOpen(true);
                                     setIsDropdownOpen(false);
                                     setIsChronoOpen(false);
+                                    setIsRankingOpen(false);
                                 }
                             }}
                             onMouseLeave={() => {
@@ -516,6 +518,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                     setIsDropdownOpen(true);
                                     setIsFileUploadOpen(false);
                                     setIsChronoOpen(false);
+                                    setIsRankingOpen(false);
                                 }
                             }}
                             onMouseLeave={() => {
@@ -562,6 +565,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                     setIsDropdownOpen(true);
                                     setIsFileUploadOpen(false);
                                     setIsChronoOpen(false);
+                                    setIsRankingOpen(false);
                                 }
                             }}
                             onMouseLeave={() => {
@@ -625,6 +629,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                     setIsChronoOpen(true);
                                     setIsDropdownOpen(false);
                                     setIsFileUploadOpen(false);
+                                    setIsRankingOpen(false);
                                 }
                             }}
                             onMouseLeave={() => {
@@ -671,6 +676,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                     setIsChronoOpen(true);
                                     setIsDropdownOpen(false);
                                     setIsFileUploadOpen(false);
+                                    setIsRankingOpen(false);
                                 }
                             }}
                             onMouseLeave={() => {
