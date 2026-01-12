@@ -537,7 +537,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 height={20}
                                 className="w-5 h-5"
                             />
-                            <span className="text-white font-medium text-sm capitalize truncate whitespace-nowrap">{selectedAgent} mode</span>
+                            <span className="text-white font-medium text-sm capitalize truncate whitespace-nowrap">{selectedAgent}</span>
                             <ChevronDown className="h-4 w-4 text-white" />
                         </button>
 
