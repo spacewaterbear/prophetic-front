@@ -32,8 +32,8 @@ export const WhiskeyGridCard = memo(({ data }: WhiskeyGridCardProps) => {
 
     return (
         <div className="w-full">
-            {/* Whiskey Grid - 2x2 on desktop, 1 column on mobile */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+            {/* Whiskey Grid - 2x2 on all screen sizes */}
+            <div className="grid grid-cols-2 gap-4 sm:gap-6">
                 {items.map((item, index) => (
                     <div
                         key={index}
