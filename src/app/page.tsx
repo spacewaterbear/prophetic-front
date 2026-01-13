@@ -48,6 +48,11 @@ const RealEstateCard = lazy(() =>
     default: mod.RealEstateCard,
   })),
 );
+const WhiskeyGridCard = lazy(() =>
+  import("@/components/WhiskeyGridCard").then((mod) => ({
+    default: mod.WhiskeyGridCard,
+  })),
+);
 
 interface Artist {
   artist_name: string;
@@ -103,6 +108,14 @@ interface RealEstateData {
   error_message?: string | null;
 }
 
+interface WhiskeyGridData {
+  items: Array<{
+    title: string;
+    subtitle?: string;
+    image_url: string;
+  }>;
+}
+
 interface Message {
   id: number;
   content: string;
@@ -119,6 +132,7 @@ interface Message {
   marketplace_data?: MarketplaceData;
   marketplace_position?: "before" | "after"; // Position of marketplace data relative to text
   real_estate_data?: RealEstateData;
+  whiskey_grid_data?: WhiskeyGridData;
   metadata?: {
     attachments?: Array<{
       url: string;
@@ -278,6 +292,21 @@ const MessageItem = memo(
                       }
                     >
                       <RealEstateCard data={message.real_estate_data} />
+                    </Suspense>
+                  </div>
+                )}
+
+                {/* Display whiskey grid */}
+                {message.whiskey_grid_data && (
+                  <div className={message.content ? "mt-4" : ""}>
+                    <Suspense
+                      fallback={
+                        <div className="text-base text-gray-400">
+                          Loading whiskey grid...
+                        </div>
+                      }
+                    >
+                      <WhiskeyGridCard data={message.whiskey_grid_data} />
                     </Suspense>
                   </div>
                 )}
@@ -608,6 +637,41 @@ export default function Home() {
 
   const handleFlashcardClick = (flashCardType: string, question: string) => {
     handleSend(question, { flash_cards: flashCardType, question });
+  };
+
+  const handleWhiskeyGridTest = () => {
+    // Create a whiskey grid message without making an API call
+    const whiskeyGridMessage: Message = {
+      id: Date.now(),
+      content: "",
+      sender: "ai",
+      created_at: new Date().toISOString(),
+      whiskey_grid_data: {
+        items: [
+          {
+            title: "Chichibu",
+            subtitle: "X Insights",
+            image_url: "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/test/chichibu.png"
+          },
+          {
+            title: "Karuizawa",
+            subtitle: "X Insights",
+            image_url: "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/test/karuizawa.png"
+          },
+          {
+            title: "Macallan",
+            subtitle: "X Insights",
+            image_url: "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/test/macalan.png"
+          },
+          {
+            title: "Yamazaki",
+            subtitle: "X Insights",
+            image_url: "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/test/yamazaki.png"
+          }
+        ]
+      }
+    };
+    setMessages((prev) => [...prev, whiskeyGridMessage]);
   };
 
   // Show loading while checking authentication
@@ -1155,6 +1219,7 @@ export default function Home() {
                     attachedFiles={attachedFiles}
                     onFilesChange={setAttachedFiles}
                     onFlashcardClick={handleFlashcardClick}
+                    onWhiskeyGridTest={handleWhiskeyGridTest}
                   />
                 </div>
               </div>
@@ -1257,6 +1322,7 @@ export default function Home() {
               attachedFiles={attachedFiles}
               onFilesChange={setAttachedFiles}
               onFlashcardClick={handleFlashcardClick}
+              onWhiskeyGridTest={handleWhiskeyGridTest}
             />
           </div>
         )}

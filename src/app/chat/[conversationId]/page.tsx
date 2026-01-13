@@ -39,6 +39,11 @@ const RealEstateCard = lazy(() =>
         default: mod.RealEstateCard,
     })),
 );
+const WhiskeyGridCard = lazy(() =>
+    import("@/components/WhiskeyGridCard").then((mod) => ({
+        default: mod.WhiskeyGridCard,
+    })),
+);
 
 interface Artist {
     artist_name: string;
@@ -94,6 +99,14 @@ interface RealEstateData {
     error_message?: string | null;
 }
 
+interface WhiskeyGridData {
+    items: Array<{
+        title: string;
+        subtitle?: string;
+        image_url: string;
+    }>;
+}
+
 interface Message {
     id: number;
     content: string;
@@ -109,6 +122,7 @@ interface Message {
     marketplace_data?: MarketplaceData;
     marketplace_position?: "before" | "after";
     real_estate_data?: RealEstateData;
+    whiskey_grid_data?: WhiskeyGridData;
 }
 
 // Reusable AI Avatar component
@@ -247,6 +261,20 @@ const MessageItem = memo(
                                             }
                                         >
                                             <RealEstateCard data={message.real_estate_data} />
+                                        </Suspense>
+                                    </div>
+                                )}
+
+                                {message.whiskey_grid_data && (
+                                    <div className={message.content ? "mt-4" : ""}>
+                                        <Suspense
+                                            fallback={
+                                                <div className="text-base text-gray-400">
+                                                    Loading whiskey grid...
+                                                </div>
+                                            }
+                                        >
+                                            <WhiskeyGridCard data={message.whiskey_grid_data} />
                                         </Suspense>
                                     </div>
                                 )}
@@ -631,6 +659,41 @@ export default function ChatPage() {
         handleSend(question, flashCards, flashCardType);
     };
 
+    const handleWhiskeyGridTest = () => {
+        // Create a whiskey grid message without making an API call
+        const whiskeyGridMessage: Message = {
+            id: Date.now(),
+            content: "",
+            sender: "ai",
+            created_at: new Date().toISOString(),
+            whiskey_grid_data: {
+                items: [
+                    {
+                        title: "Chichibu",
+                        subtitle: "X Insights",
+                        image_url: "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/test/chichibu.png"
+                    },
+                    {
+                        title: "Karuizawa",
+                        subtitle: "X Insights",
+                        image_url: "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/test/karuizawa.png"
+                    },
+                    {
+                        title: "Macallan",
+                        subtitle: "X Insights",
+                        image_url: "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/test/macalan.png"
+                    },
+                    {
+                        title: "Yamazaki",
+                        subtitle: "X Insights",
+                        image_url: "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/test/yamazaki.png"
+                    }
+                ]
+            }
+        };
+        setMessages((prev) => [...prev, whiskeyGridMessage]);
+    };
+
     return (
         <>
             {/* Header */}
@@ -774,6 +837,7 @@ export default function ChatPage() {
                     handleSend={() => handleSend()}
                     isLoading={isLoading}
                     onFlashcardClick={handleFlashcardClick}
+                    onWhiskeyGridTest={handleWhiskeyGridTest}
                 />
             </div>
         </>
