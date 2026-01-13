@@ -163,6 +163,8 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
     const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+    // Mobile menu state: 'main' | 'flashcards' | 'ranking'
+    const [mobileMenuLevel, setMobileMenuLevel] = useState<'main' | 'flashcards' | 'ranking'>('main');
 
     // Google Drive picker hook - Commented out for now, will be implemented later
     // const { openGoogleDrivePicker } = useGoogleDrivePicker(
@@ -479,16 +481,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                             }}
                         >
                             <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-3xl p-5 w-[320px] shadow-2xl border dark:border-transparent">
-                                {/* Add Files Option */}
-                                <div
-                                    className="m-0 p-3 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl opacity-60 cursor-not-allowed flex items-center gap-3 relative"
-                                >
-                                    <Paperclip className="h-6 w-6 text-gray-900 dark:text-white" />
-                                    <div className="flex flex-col flex-1">
-                                        <span className="text-gray-900 dark:text-white font-medium text-base">Ajouter fichiers</span>
-                                        <span className="text-xs text-gray-500 dark:text-gray-400 italic">Coming soon</span>
-                                    </div>
-                                </div>
+                                {/* Add Files Option - Hidden as requested */}
 
                                 {/* Google Drive option removed - will be implemented later */}
                             </div>
@@ -607,8 +600,8 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                         </div>
                     </div>
 
-                    {/* Chrono Button */}
-                    <div className="static sm:relative flex-shrink-0">
+                    {/* Chrono Button - Hidden on mobile */}
+                    <div className="hidden sm:block static sm:relative flex-shrink-0">
                         <button
                             className="flex items-center justify-center text-gray-900 dark:text-gray-100 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-full px-1 py-2.5 transition-colors"
                             aria-label="Chrono"
@@ -712,8 +705,8 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                         </div>
                     </div>
 
-                    {/* Ranking Button */}
-                    <div className="static sm:relative flex-shrink-0">
+                    {/* Ranking Button - Hidden on mobile */}
+                    <div className="hidden sm:block static sm:relative flex-shrink-0">
                         <button
                             className="flex items-center justify-center text-gray-900 dark:text-gray-100 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-full px-1 py-2.5 transition-colors"
                             aria-label="Ranking"
@@ -818,8 +811,8 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                         </div>
                     </div>
 
-                    {/* Portfolio Button */}
-                    <div className="flex-shrink-0">
+                    {/* Portfolio Button - Hidden on mobile */}
+                    <div className="hidden sm:block flex-shrink-0">
                         <button
                             className="flex items-center justify-center text-gray-900 dark:text-gray-100 rounded-full px-1 py-2.5 opacity-50 cursor-not-allowed"
                             aria-label="Portfolio"
@@ -921,31 +914,125 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                 document.body
             )}
 
-            {/* File Upload Modal - Rendered via Portal */}
+            {/* File Upload Modal - Two-level menu for mobile */}
             {mounted && createPortal(
                 <>
                     {/* Backdrop */}
                     <div
                         className={`sm:hidden fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 ${isFileUploadOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
                             }`}
-                        onClick={() => setIsFileUploadOpen(false)}
+                        onClick={() => {
+                            setIsFileUploadOpen(false);
+                            setMobileMenuLevel('main');
+                        }}
                     />
                     {/* Bottom Sheet */}
                     <div className={`sm:hidden fixed inset-x-0 bottom-0 z-50 transition-transform duration-300 ease-out ${isFileUploadOpen ? 'translate-y-0' : 'translate-y-full'
                         }`}>
-                        <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl p-6 w-full shadow-2xl border-t border-gray-200 dark:border-transparent">
-                            {/* Add Files Option */}
-                            <div
-                                className="mb-4 p-3 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl opacity-60 cursor-not-allowed flex items-center gap-3"
-                            >
-                                <Paperclip className="h-6 w-6 text-gray-900 dark:text-white" />
-                                <div className="flex flex-col flex-1">
-                                    <span className="text-gray-900 dark:text-white font-medium text-base">Ajouter fichiers</span>
-                                    <span className="text-xs text-gray-500 dark:text-gray-400 italic">Coming soon</span>
-                                </div>
-                            </div>
-
-                            {/* Google Drive option removed - will be implemented later */}
+                        <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl p-6 w-full shadow-2xl border-t border-gray-200 dark:border-transparent max-h-[70vh] overflow-y-auto">
+                            {mobileMenuLevel === 'main' && (
+                                <>
+                                    {/* Main Menu - Flashcards and Ranking buttons */}
+                                    <div className="mb-4">
+                                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">Investment Tools</h3>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400 italic">Choose your tool</p>
+                                    </div>
+                                    <div className="grid grid-cols-1 gap-3">
+                                        <button
+                                            className={CARD_BUTTON_STYLES}
+                                            onClick={() => setMobileMenuLevel('flashcards')}
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <Image
+                                                    src={
+                                                        mounted && isDark
+                                                            ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/chrono_b.svg"
+                                                            : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/chrono.svg"
+                                                    }
+                                                    alt="Flashcards"
+                                                    width={24}
+                                                    height={24}
+                                                    className="w-6 h-6"
+                                                />
+                                                <span>Investment Flashcards</span>
+                                            </div>
+                                        </button>
+                                        <button
+                                            className={CARD_BUTTON_STYLES}
+                                            onClick={() => setMobileMenuLevel('ranking')}
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <Image
+                                                    src={
+                                                        mounted && isDark
+                                                            ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/ranking_b.svg"
+                                                            : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/ranking.svg"
+                                                    }
+                                                    alt="Rankings"
+                                                    width={24}
+                                                    height={24}
+                                                    className="w-6 h-6"
+                                                />
+                                                <span>Investment Rankings</span>
+                                            </div>
+                                        </button>
+                                    </div>
+                                </>
+                            )}
+                            {mobileMenuLevel === 'flashcards' && (
+                                <>
+                                    {/* Flashcards submenu */}
+                                    <div className="mb-4">
+                                        <button
+                                            onClick={() => setMobileMenuLevel('main')}
+                                            className="text-sm text-gray-600 dark:text-gray-400 mb-2 hover:text-gray-900 dark:hover:text-white"
+                                        >
+                                            ← Back
+                                        </button>
+                                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">Investment Flashcards</h3>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400 italic">Diversify your portfolio</p>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <CategoryButton isActive={selectedCategory === 'Contemp. Art'} onClick={() => { setSelectedCategory('Contemp. Art'); handleFlashcardClick('Contemp. Art'); setIsFileUploadOpen(false); setMobileMenuLevel('main'); }}>Contemp. Art</CategoryButton>
+                                        <CategoryButton isActive={selectedCategory === 'Luxury Bags'} onClick={() => { setSelectedCategory('Luxury Bags'); handleFlashcardClick('Luxury Bags'); setIsFileUploadOpen(false); setMobileMenuLevel('main'); }}>Luxury Bags</CategoryButton>
+                                        <CategoryButton isActive={selectedCategory === 'Prestigious Wines'} onClick={() => { setSelectedCategory('Prestigious Wines'); handleFlashcardClick('Prestigious Wines'); setIsFileUploadOpen(false); setMobileMenuLevel('main'); }}>Prestigious Wines</CategoryButton>
+                                        <CategoryButton isActive={selectedCategory === 'Precious Jewelry'} onClick={() => { setSelectedCategory('Precious Jewelry'); handleFlashcardClick('Precious Jewelry'); setIsFileUploadOpen(false); setMobileMenuLevel('main'); }}>Precious Jewelry</CategoryButton>
+                                        <CategoryButton isActive={selectedCategory === 'Luxury Watch'} onClick={() => { setSelectedCategory('Luxury Watch'); handleFlashcardClick('Luxury Watch'); setIsFileUploadOpen(false); setMobileMenuLevel('main'); }}>Luxury Watch</CategoryButton>
+                                        <CategoryButton isActive={selectedCategory === 'Collectible Cars'} onClick={() => { setSelectedCategory('Collectible Cars'); handleFlashcardClick('Collectible Cars'); setIsFileUploadOpen(false); setMobileMenuLevel('main'); }}>Collectible Cars</CategoryButton>
+                                        <CategoryButton isActive={selectedCategory === 'Limited Sneakers'} onClick={() => { setSelectedCategory('Limited Sneakers'); handleFlashcardClick('Limited Sneakers'); setIsFileUploadOpen(false); setMobileMenuLevel('main'); }}>Limited Sneakers</CategoryButton>
+                                        <CategoryButton isActive={selectedCategory === 'Rare Whiskey'} onClick={() => { setSelectedCategory('Rare Whiskey'); handleFlashcardClick('Rare Whiskey'); setIsFileUploadOpen(false); setMobileMenuLevel('main'); }}>Rare Whiskey</CategoryButton>
+                                        <CategoryButton isActive={selectedCategory === 'Real Estate'} onClick={() => { setSelectedCategory('Real Estate'); handleFlashcardClick('Real Estate'); setIsFileUploadOpen(false); setMobileMenuLevel('main'); }}>Real Estate</CategoryButton>
+                                        <CategoryButton isActive={selectedCategory === 'US sports cards'} onClick={() => { setSelectedCategory('US sports cards'); handleFlashcardClick('US sports cards'); setIsFileUploadOpen(false); setMobileMenuLevel('main'); }}>US sports cards</CategoryButton>
+                                    </div>
+                                </>
+                            )}
+                            {mobileMenuLevel === 'ranking' && (
+                                <>
+                                    {/* Rankings submenu */}
+                                    <div className="mb-4">
+                                        <button
+                                            onClick={() => setMobileMenuLevel('main')}
+                                            className="text-sm text-gray-600 dark:text-gray-400 mb-2 hover:text-gray-900 dark:hover:text-white"
+                                        >
+                                            ← Back
+                                        </button>
+                                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">Investment Rankings</h3>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400 italic">Discover market leaders</p>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <CategoryButton isActive={selectedCategory === 'Contemp. Art'} onClick={() => { setSelectedCategory('Contemp. Art'); handleFlashcardClick('Contemp. Art', 'ranking'); setIsFileUploadOpen(false); setMobileMenuLevel('main'); }}>Contemp. Art</CategoryButton>
+                                        <CategoryButton isActive={selectedCategory === 'Luxury Bags'} onClick={() => { setSelectedCategory('Luxury Bags'); handleFlashcardClick('Luxury Bags', 'ranking'); setIsFileUploadOpen(false); setMobileMenuLevel('main'); }}>Luxury Bags</CategoryButton>
+                                        <CategoryButton isActive={selectedCategory === 'Prestigious Wines'} onClick={() => { setSelectedCategory('Prestigious Wines'); handleFlashcardClick('Prestigious Wines', 'ranking'); setIsFileUploadOpen(false); setMobileMenuLevel('main'); }}>Prestigious Wines</CategoryButton>
+                                        <CategoryButton isActive={selectedCategory === 'Precious Jewelry'} onClick={() => { setSelectedCategory('Precious Jewelry'); handleFlashcardClick('Precious Jewelry', 'ranking'); setIsFileUploadOpen(false); setMobileMenuLevel('main'); }}>Precious Jewelry</CategoryButton>
+                                        <CategoryButton isActive={selectedCategory === 'Luxury Watch'} onClick={() => { setSelectedCategory('Luxury Watch'); handleFlashcardClick('Luxury Watch', 'ranking'); setIsFileUploadOpen(false); setMobileMenuLevel('main'); }}>Luxury Watch</CategoryButton>
+                                        <CategoryButton isActive={selectedCategory === 'Collectible Cars'} onClick={() => { setSelectedCategory('Collectible Cars'); handleFlashcardClick('Collectible Cars', 'ranking'); setIsFileUploadOpen(false); setMobileMenuLevel('main'); }}>Collectible Cars</CategoryButton>
+                                        <CategoryButton isActive={selectedCategory === 'Limited Sneakers'} onClick={() => { setSelectedCategory('Limited Sneakers'); handleFlashcardClick('Limited Sneakers', 'ranking'); setIsFileUploadOpen(false); setMobileMenuLevel('main'); }}>Limited Sneakers</CategoryButton>
+                                        <CategoryButton isActive={selectedCategory === 'Rare Whiskey'} onClick={() => { setSelectedCategory('Rare Whiskey'); handleFlashcardClick('Rare Whiskey', 'ranking'); setIsFileUploadOpen(false); setMobileMenuLevel('main'); }}>Rare Whiskey</CategoryButton>
+                                        <CategoryButton isActive={selectedCategory === 'Real Estate'} onClick={() => { setSelectedCategory('Real Estate'); handleFlashcardClick('Real Estate', 'ranking'); setIsFileUploadOpen(false); setMobileMenuLevel('main'); }}>Real Estate</CategoryButton>
+                                        <CategoryButton isActive={selectedCategory === 'US sports cards'} onClick={() => { setSelectedCategory('US sports cards'); handleFlashcardClick('US sports cards', 'ranking'); setIsFileUploadOpen(false); setMobileMenuLevel('main'); }}>US sports cards</CategoryButton>
+                                    </div>
+                                </>
+                            )}
                         </div>
                     </div>
                 </>,
