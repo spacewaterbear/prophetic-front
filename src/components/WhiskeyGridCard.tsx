@@ -39,15 +39,15 @@ export const WhiskeyGridCard = memo(({ data }: WhiskeyGridCardProps) => {
                         key={index}
                         className="group"
                     >
-                        <div className="overflow-hidden border border-gray-200/20 bg-[#e6e6e6] dark:bg-gray-800 rounded-[24px] p-3 transition-all duration-300 hover:shadow-xl hover:scale-[1.02]">
+                        <div className="overflow-hidden border border-gray-200/20 bg-[#e6e6e6] dark:bg-gray-800 rounded-[24px] p-3">
                             {/* Image Container */}
-                            <div className="relative w-full aspect-square rounded-[24px] overflow-hidden bg-white dark:bg-black p-3 mb-2">
+                            <div className="relative w-full aspect-square rounded-[24px] overflow-hidden bg-white p-3 mb-2">
                                 <div className="relative w-full h-full">
                                     <Image
                                         src={item.image_url}
                                         alt={item.title}
                                         fill
-                                        className="object-contain transition-transform duration-500 group-hover:scale-110"
+                                        className="object-contain"
                                         sizes="(max-width: 640px) 100vw, 50vw"
                                     />
                                 </div>
