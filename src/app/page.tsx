@@ -635,8 +635,12 @@ export default function Home() {
     }
   };
 
-  const handleFlashcardClick = (flashCardType: string, question: string) => {
-    handleSend(question, { flash_cards: flashCardType, question });
+  const handleFlashcardClick = (flashCards: string, question: string, flashCardType: 'flash_invest' | 'ranking') => {
+    handleSend(question, { flash_cards: flashCards, question, flash_card_type: flashCardType });
+  };
+
+  const handlePortfolioClick = () => {
+    handleSend("Show me portfolio recommendations", { flash_card_type: 'portfolio' });
   };
 
   const handleWhiskeyGridTest = () => {
@@ -703,7 +707,7 @@ export default function Home() {
     return null;
   }
 
-  const handleSend = async (messageToSend?: string, flashcardData?: { flash_cards: string; question: string }) => {
+  const handleSend = async (messageToSend?: string, flashcardData?: { flash_cards?: string; question?: string; flash_card_type?: 'flash_invest' | 'ranking' | 'portfolio' }) => {
     const userInput = messageToSend || input;
     if (!userInput.trim() || isLoading) return;
 
@@ -794,7 +798,8 @@ export default function Home() {
               path: f.path
             })),
             flash_cards: flashcardData?.flash_cards,
-            flash_card_question: flashcardData?.question
+            flash_card_question: flashcardData?.question,
+            flash_card_type: flashcardData?.flash_card_type
           }),
         },
       );
@@ -1220,6 +1225,7 @@ export default function Home() {
                     onFilesChange={setAttachedFiles}
                     onFlashcardClick={handleFlashcardClick}
                     onWhiskeyGridTest={handleWhiskeyGridTest}
+                    onPortfolioClick={handlePortfolioClick}
                   />
                 </div>
               </div>
@@ -1323,6 +1329,7 @@ export default function Home() {
               onFilesChange={setAttachedFiles}
               onFlashcardClick={handleFlashcardClick}
               onWhiskeyGridTest={handleWhiskeyGridTest}
+              onPortfolioClick={handlePortfolioClick}
             />
           </div>
         )}

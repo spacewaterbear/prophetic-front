@@ -29,6 +29,7 @@ interface ChatInputProps {
     onFilesChange?: (files: AttachedFile[]) => void;
     onFlashcardClick?: (flashCards: string, question: string, flashCardType: 'flash_invest' | 'ranking') => void;
     onWhiskeyGridTest?: () => void;
+    onPortfolioClick?: () => void;
 }
 
 // Flashcard category mapping to API enum values
@@ -149,7 +150,7 @@ const ModeCard: React.FC<ModeCardProps> = ({
     );
 };
 
-export function ChatInput({ input, setInput, handleSend, isLoading, className = "", textareaRef, userStatus = 'discover', selectedAgent = 'discover', onAgentChange, userId, conversationId, attachedFiles = [], onFilesChange, onFlashcardClick, onWhiskeyGridTest }: ChatInputProps) {
+export function ChatInput({ input, setInput, handleSend, isLoading, className = "", textareaRef, userStatus = 'discover', selectedAgent = 'discover', onAgentChange, userId, conversationId, attachedFiles = [], onFilesChange, onFlashcardClick, onWhiskeyGridTest, onPortfolioClick }: ChatInputProps) {
     const { theme, resolvedTheme } = useTheme();
     const isDark = theme === "dark" || resolvedTheme === "dark";
     const { t } = useI18n();
@@ -813,14 +814,16 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                     </div>
 
                     {/* Portfolio Button - Hidden on mobile */}
-                    <div className="hidden sm:block flex-shrink-0">
+                    <div className="hidden sm:block static sm:relative flex-shrink-0">
                         <button
                             className="flex items-center justify-center text-gray-900 dark:text-gray-100 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-full px-1 py-2.5 transition-colors"
                             aria-label="Portfolio"
                             onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
-                                // TODO: Add portfolio functionality here
+                                if (onPortfolioClick) {
+                                    onPortfolioClick();
+                                }
                             }}
                         >
                             <Image
@@ -950,7 +953,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                         <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl p-6 w-full shadow-2xl border-t border-gray-200 dark:border-transparent max-h-[70vh] overflow-y-auto">
                             {mobileMenuLevel === 'main' && (
                                 <>
-                                    {/* Main Menu - Flashcards and Ranking buttons */}
+                                    {/* Main Menu - Flashcards, Ranking, and Portfolio buttons */}
                                     <div className="mb-4">
                                         <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">Investment Tools</h3>
                                         <p className="text-sm text-gray-600 dark:text-gray-400 italic">Choose your tool</p>
@@ -992,6 +995,31 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                                     className="w-6 h-6"
                                                 />
                                                 <span>Investment Rankings</span>
+                                            </div>
+                                        </button>
+                                        <button
+                                            className={CARD_BUTTON_STYLES}
+                                            onClick={() => {
+                                                if (onPortfolioClick) {
+                                                    onPortfolioClick();
+                                                }
+                                                setIsFileUploadOpen(false);
+                                                setMobileMenuLevel('main');
+                                            }}
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <Image
+                                                    src={
+                                                        mounted && isDark
+                                                            ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/portfolio_b.svg"
+                                                            : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/portfolio.svg"
+                                                    }
+                                                    alt="Portfolio"
+                                                    width={24}
+                                                    height={24}
+                                                    className="w-6 h-6"
+                                                />
+                                                <span>Portfolio</span>
                                             </div>
                                         </button>
                                     </div>
