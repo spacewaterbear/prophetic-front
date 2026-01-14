@@ -143,7 +143,7 @@ export default function ChatLayout({
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-4">
-                    <div className="space-y-2">
+                    <div className="space-y-0.5">
                         {/* Consultations Section - Contains conversation history */}
                         <div>
                             <button
@@ -226,7 +226,8 @@ export default function ChatLayout({
                         ].map((category) => (
                             <button
                                 key={category}
-                                className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-colors"
+                                className="w-full text-left px-3 py-1 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-colors"
+                                style={{ lineHeight: '15px' }}
                             >
                                 {category}
                             </button>
