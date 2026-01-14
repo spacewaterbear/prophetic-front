@@ -4,8 +4,10 @@ import { useEffect, useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { LogOut, Menu, MessageSquare, Plus, X } from "lucide-react";
+import { LogOut, Menu, MessageSquare, Plus, X, ChevronDown, ChevronRight } from "lucide-react";
 import { useI18n } from "@/contexts/i18n-context";
+import { useTheme } from "next-themes";
+import Image from "next/image";
 
 interface Conversation {
     id: number;
@@ -24,9 +26,11 @@ export default function ChatLayout({
     const router = useRouter();
     const pathname = usePathname();
     const { t } = useI18n();
+    const { theme } = useTheme();
 
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [consultationsExpanded, setConsultationsExpanded] = useState(true);
 
     // Extract conversation ID from pathname
     const currentConversationId = pathname?.match(/\/chat\/(\d+)/)?.[1];
@@ -140,48 +144,117 @@ export default function ChatLayout({
 
                 <div className="flex-1 overflow-y-auto p-4">
                     <div className="space-y-2">
-                        <div className="text-xs text-gray-600 dark:text-gray-400 mb-2">
-                            {t('nav.recentChats')}
-                        </div>
-                        {conversations.length === 0 ? (
-                            <div className="text-xs text-gray-500 dark:text-gray-500 px-3 py-2">
-                                {t('nav.noConversations')}
-                            </div>
-                        ) : (
-                            conversations.map((conversation) => (
-                                <div key={conversation.id} className="relative group">
-                                    <button
-                                        onClick={() => router.push(`/chat/${conversation.id}`)}
-                                        className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all flex items-center gap-2 ${conversationId === conversation.id
-                                            ? "bg-gray-700 border border-gray-600 shadow-sm text-white dark:bg-white/20 dark:border-white/30"
-                                            : "hover:bg-gray-600/30 border border-transparent dark:hover:bg-white/10"
-                                            }`}
-                                    >
-                                        <MessageSquare
-                                            className={`h-4 w-4 flex-shrink-0 ${conversationId === conversation.id
-                                                ? "text-gray-300 dark:text-gray-400"
-                                                : ""
-                                                }`}
-                                        />
-                                        <span
-                                            className={`truncate ${conversationId === conversation.id
-                                                ? "font-medium"
-                                                : ""
-                                                }`}
-                                        >
-                                            {conversation.title}
-                                        </span>
-                                    </button>
-                                    <button
-                                        onClick={(e) => deleteConversation(conversation.id, e)}
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-red-500/20 text-gray-600 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400"
-                                        aria-label="Delete conversation"
-                                    >
-                                        <X className="h-4 w-4" />
-                                    </button>
+                        {/* Consultations Section - Contains conversation history */}
+                        <div>
+                            <button
+                                onClick={() => setConsultationsExpanded(!consultationsExpanded)}
+                                className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2"
+                            >
+                                <Image
+                                    src={`https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/consultations_${theme === 'dark' ? 'b' : 'n'}.svg`}
+                                    alt="Consultations"
+                                    width={20}
+                                    height={20}
+                                    className="flex-shrink-0"
+                                />
+                                <span className="flex-1">Consultations</span>
+                                {consultationsExpanded ? (
+                                    <ChevronDown className="h-4 w-4" />
+                                ) : (
+                                    <ChevronRight className="h-4 w-4" />
+                                )}
+                            </button>
+
+                            {/* Conversation History */}
+                            {consultationsExpanded && (
+                                <div className="ml-8 mt-1 space-y-1">
+                                    {conversations.length === 0 ? (
+                                        <div className="text-xs text-gray-500 dark:text-gray-500 px-3 py-2">
+                                            {t('nav.noConversations')}
+                                        </div>
+                                    ) : (
+                                        conversations.map((conversation) => (
+                                            <div key={conversation.id} className="relative group">
+                                                <button
+                                                    onClick={() => router.push(`/chat/${conversation.id}`)}
+                                                    className={`w-full text-left px-3 py-1.5 rounded-lg text-sm transition-all flex items-center gap-2 ${conversationId === conversation.id
+                                                        ? "bg-gray-700 border border-gray-600 shadow-sm text-white dark:bg-white/20 dark:border-white/30"
+                                                        : "hover:bg-gray-600/20 border border-transparent dark:hover:bg-white/5"
+                                                        }`}
+                                                >
+                                                    <MessageSquare
+                                                        className={`h-3 w-3 flex-shrink-0 ${conversationId === conversation.id
+                                                            ? "text-gray-300 dark:text-gray-400"
+                                                            : ""
+                                                            }`}
+                                                    />
+                                                    <span
+                                                        className={`truncate text-xs ${conversationId === conversation.id
+                                                            ? "font-medium"
+                                                            : ""
+                                                            }`}
+                                                    >
+                                                        {conversation.title}
+                                                    </span>
+                                                </button>
+                                                <button
+                                                    onClick={(e) => deleteConversation(conversation.id, e)}
+                                                    className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-red-500/20 text-gray-600 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400"
+                                                    aria-label="Delete conversation"
+                                                >
+                                                    <X className="h-3 w-3" />
+                                                </button>
+                                            </div>
+                                        ))
+                                    )}
                                 </div>
-                            ))
-                        )}
+                            )}
+                        </div>
+
+                        {/* Investment Categories - Top Level */}
+                        {[
+                            "Marché de l'Art",
+                            "Vins Patrimoniaux",
+                            "Sacs de Luxe",
+                            "Immobilier de Prestige",
+                            "Montres Iconiques",
+                            "Voitures de Collection",
+                            "Sneakers Heritage",
+                            "Whisky Rares",
+                            "Bijoux Précieux",
+                            "Cartes Sportives"
+                        ].map((category) => (
+                            <button
+                                key={category}
+                                className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-colors"
+                            >
+                                {category}
+                            </button>
+                        ))}
+
+                        {/* Cash-Flow Leasing */}
+                        <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2">
+                            <Image
+                                src={`https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/coin_${theme === 'dark' ? 'b' : 'n'}.svg`}
+                                alt="Cash-Flow Leasing"
+                                width={20}
+                                height={20}
+                                className="flex-shrink-0"
+                            />
+                            <span>Cash-Flow Leasing</span>
+                        </button>
+
+                        {/* Cahiers Prophetic */}
+                        <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2">
+                            <Image
+                                src={`https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/book_${theme === 'dark' ? 'b' : 'n'}.svg`}
+                                alt="Cahiers Prophetic"
+                                width={20}
+                                height={20}
+                                className="flex-shrink-0"
+                            />
+                            <span>Cahiers Prophetic</span>
+                        </button>
                     </div>
                 </div>
 
