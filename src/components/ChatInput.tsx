@@ -840,8 +840,8 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                         </button>
                     </div>
 
-                    {/* Test Button */}
-                    <div className="flex-shrink-0">
+                    {/* Test Button - Commented out for later use */}
+                    {/* <div className="flex-shrink-0">
                         <button
                             className="flex items-center justify-center text-gray-900 dark:text-gray-100 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-full px-3 py-2 transition-colors"
                             aria-label="Test"
@@ -855,7 +855,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                         >
                             <span className="text-sm font-medium">Test</span>
                         </button>
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* Trailing Actions (Right side) */}

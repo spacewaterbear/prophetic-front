@@ -237,8 +237,8 @@ export default function ChatLayout({
                             <Image
                                 src={`https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/coin_${theme === 'dark' ? 'b' : 'n'}.svg`}
                                 alt="Cash-Flow Leasing"
-                                width={20}
-                                height={20}
+                                width={22}
+                                height={22}
                                 className="flex-shrink-0"
                             />
                             <span>Cash-Flow Leasing</span>
@@ -249,8 +249,8 @@ export default function ChatLayout({
                             <Image
                                 src={`https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/book_${theme === 'dark' ? 'b' : 'n'}.svg`}
                                 alt="Cahiers Prophetic"
-                                width={20}
-                                height={20}
+                                width={22}
+                                height={22}
                                 className="flex-shrink-0"
                             />
                             <span>Cahiers Prophetic</span>
