@@ -162,6 +162,9 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
     const [isFileUploadOpen, setIsFileUploadOpen] = useState(false);
     const [isChronoOpen, setIsChronoOpen] = useState(false);
     const [isRankingOpen, setIsRankingOpen] = useState(false);
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+    const [marketScoutEnabled, setMarketScoutEnabled] = useState(false);
+    const [communityRadarEnabled, setCommunityRadarEnabled] = useState(false);
     const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -719,6 +722,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 setIsDropdownOpen(false);
                                 setIsFileUploadOpen(false);
                                 setIsChronoOpen(false);
+                                setIsSettingsOpen(false);
                             }}
                             onMouseEnter={() => {
                                 if (closeTimeoutRef.current) {
@@ -731,6 +735,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                     setIsDropdownOpen(false);
                                     setIsFileUploadOpen(false);
                                     setIsChronoOpen(false);
+                                    setIsSettingsOpen(false);
                                 }
                             }}
                             onMouseLeave={() => {
@@ -778,6 +783,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                     setIsDropdownOpen(false);
                                     setIsFileUploadOpen(false);
                                     setIsChronoOpen(false);
+                                    setIsSettingsOpen(false);
                                 }
                             }}
                             onMouseLeave={() => {
@@ -838,6 +844,174 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 className="w-9 h-9"
                             />
                         </button>
+                    </div>
+
+                    {/* Settings Button */}
+                    <div className="static sm:relative flex-shrink-0">
+                        <button
+                            className="flex items-center justify-center text-gray-900 dark:text-gray-100 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-full px-1 py-2.5 transition-colors"
+                            aria-label="Settings"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setIsSettingsOpen(!isSettingsOpen);
+                                setIsDropdownOpen(false);
+                                setIsFileUploadOpen(false);
+                                setIsChronoOpen(false);
+                                setIsRankingOpen(false);
+                            }}
+                            onMouseEnter={() => {
+                                if (closeTimeoutRef.current) {
+                                    clearTimeout(closeTimeoutRef.current);
+                                    closeTimeoutRef.current = null;
+                                }
+                                // Only auto-open on hover for desktop (non-touch devices)
+                                if (window.matchMedia('(hover: hover)').matches) {
+                                    setIsSettingsOpen(true);
+                                    setIsDropdownOpen(false);
+                                    setIsFileUploadOpen(false);
+                                    setIsChronoOpen(false);
+                                    setIsRankingOpen(false);
+                                }
+                            }}
+                            onMouseLeave={() => {
+                                // Only auto-close on hover for desktop
+                                if (window.matchMedia('(hover: hover)').matches) {
+                                    closeTimeoutRef.current = setTimeout(() => {
+                                        setIsSettingsOpen(false);
+                                    }, 100);
+                                }
+                            }}
+                        >
+                            <Image
+                                src={
+                                    mounted && isDark
+                                        ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/settings_b.svg"
+                                        : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/settings_n.svg"
+                                }
+                                alt="Settings"
+                                width={24}
+                                height={24}
+                                className="w-9 h-9"
+                            />
+                        </button>
+
+                        {/* Desktop Dropdown */}
+                        <div
+                            className={`
+                                hidden sm:block
+                                absolute left-0 bottom-full mb-2
+                                transition-all duration-300 ease-out
+                                z-10
+                                ${isSettingsOpen
+                                    ? 'opacity-100 pointer-events-auto'
+                                    : 'opacity-0 pointer-events-none'
+                                }
+                            `}
+                            onMouseEnter={() => {
+                                if (closeTimeoutRef.current) {
+                                    clearTimeout(closeTimeoutRef.current);
+                                    closeTimeoutRef.current = null;
+                                }
+                                // Only keep open on hover for desktop
+                                if (window.matchMedia('(hover: hover)').matches) {
+                                    setIsSettingsOpen(true);
+                                    setIsDropdownOpen(false);
+                                    setIsFileUploadOpen(false);
+                                    setIsChronoOpen(false);
+                                    setIsRankingOpen(false);
+                                }
+                            }}
+                            onMouseLeave={() => {
+                                // Only auto-close on hover for desktop
+                                if (window.matchMedia('(hover: hover)').matches) {
+                                    closeTimeoutRef.current = setTimeout(() => {
+                                        setIsSettingsOpen(false);
+                                    }, 100);
+                                }
+                            }}
+                        >
+                            <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-3xl p-5 w-[420px] shadow-2xl border dark:border-transparent">
+                                {/* Header */}
+                                <div className="mb-4">
+                                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">Settings</h3>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400 italic">Customize your experience</p>
+                                </div>
+
+                                {/* Settings Options */}
+                                <div className="space-y-4">
+                                    {/* Market Scout Toggle */}
+                                    <div className="flex items-center justify-between p-4 bg-[#e8dfd5] dark:bg-[#1e1f20] rounded-2xl">
+                                        <div className="flex items-center gap-3">
+                                            <Image
+                                                src={
+                                                    mounted && isDark
+                                                        ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/scout_b.svg"
+                                                        : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/scout_n.svg"
+                                                }
+                                                alt="Market Scout"
+                                                width={24}
+                                                height={24}
+                                                className="w-6 h-6"
+                                            />
+                                            <div>
+                                                <div className="font-semibold text-gray-900 dark:text-white">
+                                                    Market Scout
+                                                </div>
+                                                <div className="text-sm text-gray-600 dark:text-gray-400">
+                                                    Les opportunités avant le marché
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button
+                                            onClick={() => setMarketScoutEnabled(!marketScoutEnabled)}
+                                            className={`flex-shrink-0 relative inline-flex h-8 w-14 items-center rounded-full transition-colors ${marketScoutEnabled ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
+                                                }`}
+                                        >
+                                            <span
+                                                className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${marketScoutEnabled ? 'translate-x-7' : 'translate-x-1'
+                                                    }`}
+                                            />
+                                        </button>
+                                    </div>
+
+                                    {/* Community Radar Toggle */}
+                                    <div className="flex items-center justify-between p-4 bg-[#e8dfd5] dark:bg-[#1e1f20] rounded-2xl">
+                                        <div className="flex items-center gap-3">
+                                            <Image
+                                                src={
+                                                    mounted && isDark
+                                                        ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/radar_b.svg"
+                                                        : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/radar_n.svg"
+                                                }
+                                                alt="Community Radar"
+                                                width={24}
+                                                height={24}
+                                                className="w-6 h-6"
+                                            />
+                                            <div>
+                                                <div className="font-semibold text-gray-900 dark:text-white">
+                                                    Community Radar
+                                                </div>
+                                                <div className="text-sm text-gray-600 dark:text-gray-400">
+                                                    Le buzz social en signal d'investissement
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button
+                                            onClick={() => setCommunityRadarEnabled(!communityRadarEnabled)}
+                                            className={`flex-shrink-0 relative inline-flex h-8 w-14 items-center rounded-full transition-colors ${communityRadarEnabled ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
+                                                }`}
+                                        >
+                                            <span
+                                                className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${communityRadarEnabled ? 'translate-x-7' : 'translate-x-1'
+                                                    }`}
+                                            />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Test Button - Commented out for later use */}
@@ -1022,6 +1196,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                                 <span>Portfolio</span>
                                             </div>
                                         </button>
+
                                     </div>
                                 </>
                             )}
@@ -1116,6 +1291,109 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 <CategoryButton isActive={selectedCategory === 'Rare Whiskey'} onClick={() => { setSelectedCategory('Rare Whiskey'); handleFlashcardClick('Rare Whiskey'); }}>Rare Whiskey</CategoryButton>
                                 <CategoryButton isActive={selectedCategory === 'Real Estate'} onClick={() => { setSelectedCategory('Real Estate'); handleFlashcardClick('Real Estate'); }}>Real Estate</CategoryButton>
                                 <CategoryButton isActive={selectedCategory === 'US sports cards'} onClick={() => { setSelectedCategory('US sports cards'); handleFlashcardClick('US sports cards'); }}>US sports cards</CategoryButton>
+                            </div>
+                        </div>
+                    </div>
+                </>,
+                document.body
+            )}
+
+            {/* Settings Modal - Rendered via Portal */}
+            {mounted && createPortal(
+                <>
+                    {/* Backdrop */}
+                    <div
+                        className={`sm:hidden fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 ${isSettingsOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+                            }`}
+                        onClick={() => setIsSettingsOpen(false)}
+                    />
+                    {/* Bottom Sheet */}
+                    <div
+                        className={`sm:hidden fixed inset-x-0 bottom-0 z-50 transition-transform duration-300 ease-out ${isSettingsOpen ? 'translate-y-0' : 'translate-y-full'
+                            }`}
+                    >
+                        <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl p-6 w-full shadow-2xl border-t border-gray-200 dark:border-transparent">
+                            {/* Header */}
+                            <div className="mb-6">
+                                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">
+                                    Settings
+                                </h3>
+                                <p className="text-sm text-gray-600 dark:text-gray-400 italic">
+                                    Customize your experience
+                                </p>
+                            </div>
+
+                            {/* Settings Options */}
+                            <div className="space-y-4">
+                                {/* Market Scout Toggle */}
+                                <div className="flex items-center justify-between p-4 bg-[#e8dfd5] dark:bg-[#1e1f20] rounded-2xl">
+                                    <div className="flex items-center gap-3">
+                                        <Image
+                                            src={
+                                                mounted && isDark
+                                                    ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/scout_b.svg"
+                                                    : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/scout_n.svg"
+                                            }
+                                            alt="Market Scout"
+                                            width={24}
+                                            height={24}
+                                            className="w-6 h-6"
+                                        />
+                                        <div>
+                                            <div className="font-semibold text-gray-900 dark:text-white">
+                                                Market Scout
+                                            </div>
+                                            <div className="text-sm text-gray-600 dark:text-gray-400">
+                                                Les opportunités avant le marché
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={() => setMarketScoutEnabled(!marketScoutEnabled)}
+                                        className={`flex-shrink-0 relative inline-flex h-8 w-14 items-center rounded-full transition-colors ${marketScoutEnabled ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
+                                            }`}
+                                    >
+                                        <span
+                                            className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${marketScoutEnabled ? 'translate-x-7' : 'translate-x-1'
+                                                }`}
+                                        />
+                                    </button>
+                                </div>
+
+                                {/* Community Radar Toggle */}
+                                <div className="flex items-center justify-between p-4 bg-[#e8dfd5] dark:bg-[#1e1f20] rounded-2xl">
+                                    <div className="flex items-center gap-3">
+                                        <Image
+                                            src={
+                                                mounted && isDark
+                                                    ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/radar_b.svg"
+                                                    : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/radar_n.svg"
+                                            }
+                                            alt="Community Radar"
+                                            width={24}
+                                            height={24}
+                                            className="w-6 h-6"
+                                        />
+                                        <div>
+                                            <div className="font-semibold text-gray-900 dark:text-white">
+                                                Community Radar
+                                            </div>
+                                            <div className="text-sm text-gray-600 dark:text-gray-400">
+                                                Le buzz social en signal d'investissement
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={() => setCommunityRadarEnabled(!communityRadarEnabled)}
+                                        className={`flex-shrink-0 relative inline-flex h-8 w-14 items-center rounded-full transition-colors ${communityRadarEnabled ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
+                                            }`}
+                                    >
+                                        <span
+                                            className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${communityRadarEnabled ? 'translate-x-7' : 'translate-x-1'
+                                                }`}
+                                        />
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
