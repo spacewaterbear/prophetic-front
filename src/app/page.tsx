@@ -1072,12 +1072,12 @@ export default function Home() {
               >
                 <Image
                   src={`https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/consultations_${theme === 'dark' ? 'b' : 'n'}.svg`}
-                  alt="Consultations"
+                  alt="Conversations"
                   width={22}
                   height={22}
                   className="flex-shrink-0"
                 />
-                <span className="flex-1">Consultations</span>
+                <span className="flex-1">Conversations</span>
                 {consultationsExpanded ? (
                   <ChevronDown className="h-4 w-4" />
                 ) : (
