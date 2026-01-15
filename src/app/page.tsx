@@ -404,7 +404,7 @@ export default function Home() {
   const [mounted, setMounted] = useState(false);
   const [lastStreamingActivity, setLastStreamingActivity] = useState<number>(0);
   const [showStreamingIndicator, setShowStreamingIndicator] = useState(false);
-  const [consultationsExpanded, setConsultationsExpanded] = useState(true);
+  const [consultationsExpanded, setConsultationsExpanded] = useState(false);
 
   // Redirect to login if not authenticated or to registration-pending if unauthorized
   useEffect(() => {

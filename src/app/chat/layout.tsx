@@ -36,7 +36,7 @@ export default function ChatLayout({
 
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [consultationsExpanded, setConsultationsExpanded] = useState(true);
+    const [consultationsExpanded, setConsultationsExpanded] = useState(false);
 
     // Extract conversation ID from pathname
     const currentConversationId = pathname?.match(/\/chat\/(\d+)/)?.[1];
