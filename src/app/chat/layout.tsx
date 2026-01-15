@@ -143,7 +143,7 @@ export default function ChatLayout({
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-4">
-                    <div className="space-y-0.5">
+                    <div className="space-y-2">
                         {/* Consultations Section - Contains conversation history */}
                         <div>
                             <button
