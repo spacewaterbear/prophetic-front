@@ -1147,7 +1147,7 @@ export default function Home() {
               <button
                 key={category}
                 className="w-full text-left px-3 py-1 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-colors"
-                style={{ lineHeight: '18px' }}
+                style={{ lineHeight: '20px' }}
               >
                 {category}
               </button>
