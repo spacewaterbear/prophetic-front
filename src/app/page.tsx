@@ -1146,7 +1146,7 @@ export default function Home() {
             ].map((category) => (
               <button
                 key={category}
-                className="w-full text-left px-3 py-1 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-colors"
+                className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-colors"
                 style={{ lineHeight: '20px' }}
               >
                 {category}
