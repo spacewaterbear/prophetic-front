@@ -14,13 +14,13 @@ export async function GET() {
     const supabase = createAdminClient();
 
     // Using admin client, so we manually filter by user_id for security
-    // Limit to 10 most recent conversations
+    // Limit to 5 most recent conversations
     const { data: conversations, error } = await supabase
       .from("conversations")
       .select("*")
       .eq("user_id", session.user.id)
       .order("updated_at", { ascending: false })
-      .limit(10);
+      .limit(5);
 
     if (error) {
       console.error("Error fetching conversations:", error);
