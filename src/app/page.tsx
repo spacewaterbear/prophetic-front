@@ -30,6 +30,12 @@ import { useI18n } from "@/contexts/i18n-context";
 import { ChatInput } from "@/components/ChatInput";
 import { FileAttachment } from "@/components/FileAttachment";
 import { AIAvatar } from "@/components/chat/AIAvatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 // Lazy load Markdown component to reduce initial bundle size
 const Markdown = lazy(() =>
@@ -1173,33 +1179,43 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="p-4 border-t border-gray-400 dark:border-gray-800 space-y-2">
+        <div className="p-4 border-t border-gray-400 dark:border-gray-800">
           {session?.user && (
-            <div className="px-3 py-2 rounded-lg bg-gray-600/20 dark:bg-white/5 mb-2">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-gray-800 dark:bg-white/10 flex items-center justify-center text-white font-medium text-sm">
-                  {session.user.name?.[0]?.toUpperCase() ||
-                    session.user.email?.[0]?.toUpperCase() ||
-                    "U"}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">
-                    {session.user.name}
-                  </p>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
-                    {session.user.email}
-                  </p>
-                </div>
-              </div>
-            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="w-full px-3 py-2 rounded-lg bg-gray-600/20 dark:bg-white/5 hover:bg-gray-600/30 dark:hover:bg-white/10 transition-colors cursor-pointer">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-gray-800 dark:bg-white/10 flex items-center justify-center text-white font-medium text-sm">
+                      {session.user.name?.[0]?.toUpperCase() ||
+                        session.user.email?.[0]?.toUpperCase() ||
+                        "U"}
+                    </div>
+                    <div className="flex-1 min-w-0 text-left">
+                      <p className="text-sm font-medium truncate">
+                        {session.user.name}
+                      </p>
+                      <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
+                        {session.user.email}
+                      </p>
+                    </div>
+                    <ChevronDown className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                  </div>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                className="w-56 bg-white dark:bg-[#1e1f20] border-gray-300 dark:border-gray-700"
+              >
+                <DropdownMenuItem
+                  onClick={handleSignOut}
+                  className="cursor-pointer text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 focus:bg-gray-100 dark:focus:bg-white/10"
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  {t('nav.signOut')}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
-          <button
-            onClick={handleSignOut}
-            className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-800/10 dark:hover:bg-white/10 text-sm transition-colors flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
-          >
-            <LogOut className="h-4 w-4" />
-            {t('nav.signOut')}
-          </button>
         </div>
       </aside>
 
