@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
@@ -11,7 +11,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { VignetteGridCard } from "@/components/VignetteGridCard";
 import { VignetteData } from "@/types/vignettes";
 
-export default function ChatWelcome() {
+function ChatWelcomeContent() {
     const { data: session } = useSession();
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -224,5 +224,17 @@ export default function ChatWelcome() {
                 </div>
             </div>
         </>
+    );
+}
+
+export default function ChatWelcome() {
+    return (
+        <Suspense fallback={
+            <div className="flex-1 flex items-center justify-center bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)]">
+                <div className="w-12 h-12 border-4 border-gray-300 dark:border-gray-700 border-t-gray-900 dark:border-t-white rounded-full animate-spin" />
+            </div>
+        }>
+            <ChatWelcomeContent />
+        </Suspense>
     );
 }
