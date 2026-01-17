@@ -849,7 +849,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                     {/* Settings Button */}
                     <div className="static sm:relative flex-shrink-0">
                         <button
-                            className="flex items-center justify-center text-gray-900 dark:text-gray-100 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-full px-1 py-2.5 transition-colors"
+                            className="flex items-center justify-center text-gray-900 dark:text-gray-100 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-full pl-11 pr-1 py-2.5 transition-colors"
                             aria-label="Settings"
                             onClick={(e) => {
                                 e.preventDefault();
