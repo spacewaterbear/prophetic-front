@@ -24,6 +24,7 @@ function ChatWelcomeContent() {
     const [vignettes, setVignettes] = useState<VignetteData[]>([]);
     const [vignetteLoading, setVignetteLoading] = useState(false);
     const [vignetteError, setVignetteError] = useState<string | null>(null);
+    const [selectedAgent, setSelectedAgent] = useState<'discover' | 'intelligence' | 'oracle'>('discover');
 
     useEffect(() => {
         setMounted(true);
@@ -125,7 +126,7 @@ function ChatWelcomeContent() {
     return (
         <>
             {/* Header */}
-            <header className="relative z-10 bg-[rgba(247,240,232,0.8)] dark:bg-black backdrop-blur-md border-b border-gray-300 dark:border-gray-800 px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+            <header className="relative z-10 bg-[rgba(247,240,232,0.8)] dark:bg-black backdrop-blur-md border-b border-gray-300 dark:border-gray-800 px-6 py-3 sm:py-4 flex items-center justify-between">
                 <div className="flex items-center gap-2 sm:gap-4 min-w-0">
                     <div className="flex items-center gap-3 min-w-0">
                         <Image
@@ -163,7 +164,7 @@ function ChatWelcomeContent() {
             </header>
 
             {/* Welcome Content */}
-            <div className="relative flex-1 bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] px-4 overflow-y-auto">
+            <div className="relative flex-1 bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] px-6 overflow-y-auto">
                 <div className="w-full max-w-4xl flex flex-col items-center py-10 mx-auto">
                     {vignettes.length > 0 ? (
                         /* Vignettes Display */
@@ -210,15 +211,17 @@ function ChatWelcomeContent() {
                             </p>
 
                             {/* Chat Input */}
-                            <div className="w-full max-w-3xl">
-                                <ChatInput
-                                    input={input}
-                                    setInput={setInput}
-                                    handleSend={() => handleWelcomeSend()}
-                                    isLoading={isLoading}
-                                    onFlashcardClick={handleFlashcardClick}
-                                />
-                            </div>
+                            <ChatInput
+                                input={input}
+                                setInput={setInput}
+                                handleSend={() => handleWelcomeSend()}
+                                isLoading={isLoading}
+                                onFlashcardClick={handleFlashcardClick}
+                                userStatus={(session?.user as { status?: string })?.status as 'unauthorized' | 'free' | 'paid' | 'admini' | 'discover' | 'intelligence' | 'oracle' | undefined}
+                                selectedAgent={selectedAgent}
+                                onAgentChange={setSelectedAgent}
+                                className="max-w-3xl"
+                            />
                         </>
                     )}
                 </div>

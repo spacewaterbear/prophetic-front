@@ -338,6 +338,7 @@ export default function ChatPage() {
     const [mounted, setMounted] = useState(false);
     const [lastStreamingActivity, setLastStreamingActivity] = useState<number>(0);
     const [showStreamingIndicator, setShowStreamingIndicator] = useState(false);
+    const [selectedAgent, setSelectedAgent] = useState<'discover' | 'intelligence' | 'oracle'>('discover');
 
     // Redirect to login if not authenticated
     useEffect(() => {
@@ -658,7 +659,7 @@ export default function ChatPage() {
     return (
         <>
             {/* Header */}
-            <header className="bg-[rgba(247,240,232,0.8)] dark:bg-black backdrop-blur-md border-b border-gray-300 dark:border-gray-800 px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+            <header className="bg-[rgba(247,240,232,0.8)] dark:bg-black backdrop-blur-md border-b border-gray-300 dark:border-gray-800 px-6 py-3 sm:py-4 flex items-center justify-between">
                 <div className="flex items-center gap-2 sm:gap-4 min-w-0">
                     <div className="flex items-center gap-3 min-w-0">
                         <Image
@@ -791,13 +792,17 @@ export default function ChatPage() {
             </div>
 
             {/* Input Area */}
-            <div className="input-area px-3 sm:px-6 py-3 sm:py-4 bg-[rgb(247,240,232)] dark:bg-black">
+            <div className="input-area px-6 py-3 sm:py-4 bg-[rgb(247,240,232)] dark:bg-black flex justify-center">
                 <ChatInput
                     input={input}
                     setInput={setInput}
                     handleSend={() => handleSend()}
                     isLoading={isLoading}
                     onFlashcardClick={handleFlashcardClick}
+                    userStatus={(session?.user as { status?: string })?.status as 'unauthorized' | 'free' | 'paid' | 'admini' | 'discover' | 'intelligence' | 'oracle' | undefined}
+                    selectedAgent={selectedAgent}
+                    onAgentChange={setSelectedAgent}
+                    className="max-w-3xl"
                 />
             </div>
         </>
