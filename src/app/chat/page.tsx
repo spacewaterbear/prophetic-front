@@ -125,7 +125,7 @@ export default function ChatWelcome() {
     return (
         <>
             {/* Header */}
-            <header className="bg-[rgba(247,240,232,0.8)] dark:bg-black backdrop-blur-md border-b border-gray-300 dark:border-gray-800 px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+            <header className="relative z-10 bg-[rgba(247,240,232,0.8)] dark:bg-black backdrop-blur-md border-b border-gray-300 dark:border-gray-800 px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
                 <div className="flex items-center gap-2 sm:gap-4 min-w-0">
                     <div className="flex items-center gap-3 min-w-0">
                         <Image
@@ -163,11 +163,11 @@ export default function ChatWelcome() {
             </header>
 
             {/* Welcome Content */}
-            <div className="flex-1 flex items-center justify-center bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] px-4 overflow-y-auto">
-                <div className="w-full max-w-4xl flex flex-col items-center py-8">
+            <div className="relative flex-1 bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] px-4 overflow-y-auto">
+                <div className="w-full max-w-4xl flex flex-col items-center py-10 mx-auto">
                     {vignettes.length > 0 ? (
                         /* Vignettes Display */
-                        <div className="w-full">
+                        <div className="w-full relative">
                             <VignetteGridCard data={vignettes} />
                         </div>
                     ) : vignetteLoading ? (

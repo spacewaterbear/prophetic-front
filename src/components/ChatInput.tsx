@@ -28,7 +28,6 @@ interface ChatInputProps {
     attachedFiles?: AttachedFile[];
     onFilesChange?: (files: AttachedFile[]) => void;
     onFlashcardClick?: (flashCards: string, question: string, flashCardType: 'flash_invest' | 'ranking') => void;
-    onWhiskeyGridTest?: () => void;
     onPortfolioClick?: () => void;
 }
 
@@ -150,7 +149,7 @@ const ModeCard: React.FC<ModeCardProps> = ({
     );
 };
 
-export function ChatInput({ input, setInput, handleSend, isLoading, className = "", textareaRef, userStatus = 'discover', selectedAgent = 'discover', onAgentChange, userId, conversationId, attachedFiles = [], onFilesChange, onFlashcardClick, onWhiskeyGridTest, onPortfolioClick }: ChatInputProps) {
+export function ChatInput({ input, setInput, handleSend, isLoading, className = "", textareaRef, userStatus = 'discover', selectedAgent = 'discover', onAgentChange, userId, conversationId, attachedFiles = [], onFilesChange, onFlashcardClick, onPortfolioClick }: ChatInputProps) {
     const { theme, resolvedTheme } = useTheme();
     const isDark = theme === "dark" || resolvedTheme === "dark";
     const { t } = useI18n();
@@ -1014,22 +1013,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                         </div>
                     </div>
 
-                    {/* Test Button - Commented out for later use */}
-                    {/* <div className="flex-shrink-0">
-                        <button
-                            className="flex items-center justify-center text-gray-900 dark:text-gray-100 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-full px-3 py-2 transition-colors"
-                            aria-label="Test"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                if (onWhiskeyGridTest) {
-                                    onWhiskeyGridTest();
-                                }
-                            }}
-                        >
-                            <span className="text-sm font-medium">Test</span>
-                        </button>
-                    </div> */}
+
                 </div>
 
                 {/* Trailing Actions (Right side) */}

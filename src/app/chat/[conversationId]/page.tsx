@@ -39,9 +39,9 @@ const RealEstateCard = lazy(() =>
         default: mod.RealEstateCard,
     })),
 );
-const WhiskeyGridCard = lazy(() =>
-    import("@/components/WhiskeyGridCard").then((mod) => ({
-        default: mod.WhiskeyGridCard,
+const VignetteGridCard = lazy(() =>
+    import("@/components/VignetteGridCard").then((mod) => ({
+        default: mod.VignetteGridCard,
     })),
 );
 
@@ -99,13 +99,7 @@ interface RealEstateData {
     error_message?: string | null;
 }
 
-interface WhiskeyGridData {
-    items: Array<{
-        title: string;
-        subtitle?: string;
-        image_url: string;
-    }>;
-}
+import { VignetteData } from "@/types/vignettes";
 
 interface Message {
     id: number;
@@ -122,7 +116,7 @@ interface Message {
     marketplace_data?: MarketplaceData;
     marketplace_position?: "before" | "after";
     real_estate_data?: RealEstateData;
-    whiskey_grid_data?: WhiskeyGridData;
+    vignette_data?: VignetteData[];
 }
 
 // Reusable AI Avatar component
@@ -265,16 +259,16 @@ const MessageItem = memo(
                                     </div>
                                 )}
 
-                                {message.whiskey_grid_data && (
+                                {message.vignette_data && (
                                     <div className={message.content ? "mt-4" : ""}>
                                         <Suspense
                                             fallback={
                                                 <div className="text-base text-gray-400">
-                                                    Loading whiskey grid...
+                                                    Loading vignettes...
                                                 </div>
                                             }
                                         >
-                                            <WhiskeyGridCard data={message.whiskey_grid_data} />
+                                            <VignetteGridCard data={message.vignette_data} />
                                         </Suspense>
                                     </div>
                                 )}
@@ -659,40 +653,7 @@ export default function ChatPage() {
         handleSend(question, flashCards, flashCardType);
     };
 
-    const handleWhiskeyGridTest = () => {
-        // Create a whiskey grid message without making an API call
-        const whiskeyGridMessage: Message = {
-            id: Date.now(),
-            content: "",
-            sender: "ai",
-            created_at: new Date().toISOString(),
-            whiskey_grid_data: {
-                items: [
-                    {
-                        title: "Chichibu",
-                        subtitle: "X Insights",
-                        image_url: "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/test/chichibu.png"
-                    },
-                    {
-                        title: "Karuizawa",
-                        subtitle: "X Insights",
-                        image_url: "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/test/karuizawa.png"
-                    },
-                    {
-                        title: "Macallan",
-                        subtitle: "X Insights",
-                        image_url: "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/test/macalan.png"
-                    },
-                    {
-                        title: "Yamazaki",
-                        subtitle: "X Insights",
-                        image_url: "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/test/yamazaki.png"
-                    }
-                ]
-            }
-        };
-        setMessages((prev) => [...prev, whiskeyGridMessage]);
-    };
+
 
     return (
         <>
@@ -837,7 +798,6 @@ export default function ChatPage() {
                     handleSend={() => handleSend()}
                     isLoading={isLoading}
                     onFlashcardClick={handleFlashcardClick}
-                    onWhiskeyGridTest={handleWhiskeyGridTest}
                 />
             </div>
         </>
