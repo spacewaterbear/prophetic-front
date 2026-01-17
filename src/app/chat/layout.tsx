@@ -219,29 +219,36 @@ export default function ChatLayout({
 
                         {/* Investment Categories - Top Level */}
                         {[
-                            { label: "Marché de l'Art", category: "ART" },
-                            { label: "Vins Patrimoniaux", category: "WINE" },
-                            { label: "Sacs de Luxe", category: "SACS" },
-                            { label: "Immobilier de Prestige", category: "IMMO_LUXE" },
-                            { label: "Montres Iconiques", category: "MONTRES_LUXE" },
-                            { label: "Voitures de Collection", category: "CARS" },
-                            { label: "Sneakers Heritage", category: "SNEAKERS" },
-                            { label: "Whisky Rares", category: "WHISKY" },
-                            { label: "Bijoux Précieux", category: "BIJOUX" },
-                            { label: "Cartes Sportives", category: "CARDS_US" }
-                        ].map(({ label, category }) => (
+                            { label: "Marché de l'Art", category: "ART", disabled: false },
+                            { label: "Vins Patrimoniaux", category: "WINE", disabled: false },
+                            { label: "Sacs de Luxe", category: "SACS", disabled: false },
+                            { label: "Immobilier de Prestige", category: "IMMO_LUXE", disabled: false },
+                            { label: "Montres Iconiques", category: "MONTRES_LUXE", disabled: false },
+                            { label: "Voitures de Collection", category: "CARS", disabled: false },
+                            { label: "Sneakers Heritage", category: "SNEAKERS", disabled: false },
+                            { label: "Whisky Rares", category: "WHISKY", disabled: false },
+                            { label: "Bijoux Précieux", category: "BIJOUX", disabled: false },
+                            { label: "Cartes Sportives", category: "CARDS_US", disabled: true }
+                        ].map(({ label, category, disabled }) => (
                             <button
                                 key={category}
                                 onClick={() => {
+                                    if (disabled) return;
                                     console.log(`[Sidebar] Clicked ${label}, category: ${category}`);
                                     router.push(`/chat?category=${category}`, { scroll: false });
                                 }}
-                                className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-colors cursor-pointer"
+                                disabled={disabled}
+                                className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${disabled
+                                        ? 'opacity-50 cursor-not-allowed text-gray-400 dark:text-gray-600'
+                                        : 'hover:bg-gray-600/30 dark:hover:bg-white/10 cursor-pointer'
+                                    }`}
                                 style={{ lineHeight: '15px' }}
                             >
                                 {label}
                             </button>
                         ))}
+
+
 
 
                         {/* Cash-Flow Leasing */}
