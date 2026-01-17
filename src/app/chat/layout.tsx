@@ -219,25 +219,30 @@ export default function ChatLayout({
 
                         {/* Investment Categories - Top Level */}
                         {[
-                            "Marché de l'Art",
-                            "Vins Patrimoniaux",
-                            "Sacs de Luxe",
-                            "Immobilier de Prestige",
-                            "Montres Iconiques",
-                            "Voitures de Collection",
-                            "Sneakers Heritage",
-                            "Whisky Rares",
-                            "Bijoux Précieux",
-                            "Cartes Sportives"
-                        ].map((category) => (
+                            { label: "Marché de l'Art", category: "ART" },
+                            { label: "Vins Patrimoniaux", category: "WINE" },
+                            { label: "Sacs de Luxe", category: "SACS" },
+                            { label: "Immobilier de Prestige", category: "IMMO_LUXE" },
+                            { label: "Montres Iconiques", category: "MONTRES_LUXE" },
+                            { label: "Voitures de Collection", category: "CARS" },
+                            { label: "Sneakers Heritage", category: "SNEAKERS" },
+                            { label: "Whisky Rares", category: "WHISKY" },
+                            { label: "Bijoux Précieux", category: "BIJOUX" },
+                            { label: "Cartes Sportives", category: "CARDS_US" }
+                        ].map(({ label, category }) => (
                             <button
                                 key={category}
-                                className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-colors"
+                                onClick={() => {
+                                    console.log(`[Sidebar] Clicked ${label}, category: ${category}`);
+                                    router.push(`/chat?category=${category}`, { scroll: false });
+                                }}
+                                className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-colors cursor-pointer"
                                 style={{ lineHeight: '15px' }}
                             >
-                                {category}
+                                {label}
                             </button>
                         ))}
+
 
                         {/* Cash-Flow Leasing */}
                         <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2">

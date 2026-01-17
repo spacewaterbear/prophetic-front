@@ -2,26 +2,76 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useI18n } from "@/contexts/i18n-context";
 import { ChatInput } from "@/components/ChatInput";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { VignetteGridCard } from "@/components/VignetteGridCard";
+import { VignetteData } from "@/types/vignettes";
 
 export default function ChatWelcome() {
     const { data: session } = useSession();
     const router = useRouter();
+    const searchParams = useSearchParams();
     const { theme, resolvedTheme } = useTheme();
     const isDark = theme === "dark" || resolvedTheme === "dark";
     const { t } = useI18n();
     const [mounted, setMounted] = useState(false);
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [vignettes, setVignettes] = useState<VignetteData[]>([]);
+    const [vignetteLoading, setVignetteLoading] = useState(false);
+    const [vignetteError, setVignetteError] = useState<string | null>(null);
 
     useEffect(() => {
         setMounted(true);
     }, []);
+
+    // Fetch vignettes when category changes
+    useEffect(() => {
+        const category = searchParams.get("category");
+        console.log("[Chat Page] useEffect triggered, category:", category);
+
+        if (!category) {
+            console.log("[Chat Page] No category, clearing vignettes");
+            setVignettes([]);
+            setVignetteError(null);
+            return;
+        }
+
+        const fetchVignettes = async () => {
+            console.log(`[Chat Page] Starting fetch for category: ${category}`);
+            setVignetteLoading(true);
+            setVignetteError(null);
+
+            try {
+                const url = `/api/vignettes?category=${category}`;
+                console.log(`[Chat Page] Fetching from: ${url}`);
+                const response = await fetch(url);
+                console.log(`[Chat Page] Response status: ${response.status}`);
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch vignettes: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log(`[Chat Page] Received data:`, data);
+                console.log(`[Chat Page] Number of vignettes: ${data.vignettes?.length || 0}`);
+                setVignettes(data.vignettes || []);
+            } catch (error) {
+                console.error("[Chat Page] Error fetching vignettes:", error);
+                setVignetteError("Failed to load vignettes");
+                setVignettes([]);
+            } finally {
+                setVignetteLoading(false);
+                console.log("[Chat Page] Fetch complete");
+            }
+        };
+
+        fetchVignettes();
+    }, [searchParams]);
 
     // Handle sending message from welcome screen
     const handleWelcomeSend = async (messageToSend?: string, flashCards?: string, flashCardType?: 'flash_invest' | 'ranking') => {
@@ -113,43 +163,64 @@ export default function ChatWelcome() {
             </header>
 
             {/* Welcome Content */}
-            <div className="flex-1 flex items-center justify-center bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] px-4">
-                <div className="w-full max-w-4xl flex flex-col items-center">
-                    {/* Logo */}
-                    <div className="w-20 h-20 mb-8 flex items-center justify-center">
-                        <Image
-                            src={
-                                mounted && isDark
-                                    ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_white.svg"
-                                    : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_new.svg"
-                            }
-                            alt="Prophetic Orchestra"
-                            width={80}
-                            height={80}
-                            className="w-full h-full object-contain"
-                        />
-                    </div>
+            <div className="flex-1 flex items-center justify-center bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] px-4 overflow-y-auto">
+                <div className="w-full max-w-4xl flex flex-col items-center py-8">
+                    {vignettes.length > 0 ? (
+                        /* Vignettes Display */
+                        <div className="w-full">
+                            <VignetteGridCard data={vignettes} />
+                        </div>
+                    ) : vignetteLoading ? (
+                        /* Loading State */
+                        <div className="flex flex-col items-center gap-4">
+                            <div className="w-12 h-12 border-4 border-gray-300 dark:border-gray-700 border-t-gray-900 dark:border-t-white rounded-full animate-spin" />
+                            <p className="text-gray-600 dark:text-gray-400">Loading vignettes...</p>
+                        </div>
+                    ) : vignetteError ? (
+                        /* Error State */
+                        <div className="flex flex-col items-center gap-4">
+                            <p className="text-red-600 dark:text-red-400">{vignetteError}</p>
+                        </div>
+                    ) : (
+                        /* Welcome Screen */
+                        <>
+                            {/* Logo */}
+                            <div className="w-20 h-20 mb-8 flex items-center justify-center">
+                                <Image
+                                    src={
+                                        mounted && isDark
+                                            ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_white.svg"
+                                            : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_new.svg"
+                                    }
+                                    alt="Prophetic Orchestra"
+                                    width={80}
+                                    height={80}
+                                    className="w-full h-full object-contain"
+                                />
+                            </div>
 
-                    {/* Greeting */}
-                    <h1 className="text-3xl sm:text-4xl font-medium text-gray-900 dark:text-white mb-3">
-                        {t('chat.greeting').replace('{name}', session?.user?.name?.split(' ')[0] || '')}
-                    </h1>
+                            {/* Greeting */}
+                            <h1 className="text-3xl sm:text-4xl font-medium text-gray-900 dark:text-white mb-3">
+                                {t('chat.greeting').replace('{name}', session?.user?.name?.split(' ')[0] || '')}
+                            </h1>
 
-                    {/* Subtitle */}
-                    <p className="text-base text-gray-600 dark:text-gray-400 mb-12">
-                        {t('chat.welcomeSubtitle')}
-                    </p>
+                            {/* Subtitle */}
+                            <p className="text-base text-gray-600 dark:text-gray-400 mb-12">
+                                {t('chat.welcomeSubtitle')}
+                            </p>
 
-                    {/* Chat Input */}
-                    <div className="w-full max-w-3xl">
-                        <ChatInput
-                            input={input}
-                            setInput={setInput}
-                            handleSend={() => handleWelcomeSend()}
-                            isLoading={isLoading}
-                            onFlashcardClick={handleFlashcardClick}
-                        />
-                    </div>
+                            {/* Chat Input */}
+                            <div className="w-full max-w-3xl">
+                                <ChatInput
+                                    input={input}
+                                    setInput={setInput}
+                                    handleSend={() => handleWelcomeSend()}
+                                    isLoading={isLoading}
+                                    onFlashcardClick={handleFlashcardClick}
+                                />
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
         </>
