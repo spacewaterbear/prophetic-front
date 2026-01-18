@@ -138,7 +138,7 @@ export default function ChatLayout({
             <aside
                 className={`${sidebarOpen ? "w-64" : "w-0"} transition-all duration-300 bg-[rgb(230,220,210)] dark:bg-[#1e1f20] text-gray-900 dark:text-white flex flex-col overflow-hidden fixed md:relative h-full z-50 md:z-auto`}
             >
-                <div className="p-4 border-b border-gray-400 dark:border-gray-800">
+                <div className="h-[52px] sm:h-[60px] px-4 border-b border-gray-400 dark:border-gray-800 flex items-center">
                     <Button
                         className="w-full bg-gray-800 hover:bg-gray-700 text-white border border-gray-600 rounded-lg dark:bg-white/10 dark:hover:bg-white/20 dark:border-white/20"
                         onClick={createNewConversation}
@@ -239,8 +239,8 @@ export default function ChatLayout({
                                 }}
                                 disabled={disabled}
                                 className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${disabled
-                                        ? 'opacity-50 cursor-not-allowed text-gray-400 dark:text-gray-600'
-                                        : 'hover:bg-gray-600/30 dark:hover:bg-white/10 cursor-pointer'
+                                    ? 'opacity-50 cursor-not-allowed text-gray-400 dark:text-gray-600'
+                                    : 'hover:bg-gray-600/30 dark:hover:bg-white/10 cursor-pointer'
                                     }`}
                                 style={{ lineHeight: '15px' }}
                             >
@@ -319,12 +319,13 @@ export default function ChatLayout({
 
             {/* Main content area with menu button */}
             <div className="flex-1 flex flex-col">
-                <div className="absolute top-3 left-3 z-20 md:hidden">
+                <div className="absolute top-2 left-3 z-20 md:hidden">
                     <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => setSidebarOpen(!sidebarOpen)}
-                        className="bg-white/80 dark:bg-black/80 backdrop-blur-sm"
+                        className="backdrop-blur-sm h-10 w-10"
+                        style={{ backgroundColor: '#f7f0e8' }}
                     >
                         <Menu className="h-5 w-5" />
                     </Button>

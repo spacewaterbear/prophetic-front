@@ -126,7 +126,7 @@ function ChatWelcomeContent() {
     return (
         <>
             {/* Header */}
-            <header className="relative z-10 bg-[rgba(247,240,232,0.8)] dark:bg-black backdrop-blur-md border-b border-gray-300 dark:border-gray-800 pl-14 pr-6 md:px-6 py-3 sm:py-4 flex items-center justify-between">
+            <header className="relative z-10 bg-[rgba(247,240,232,0.8)] dark:bg-black backdrop-blur-md border-b border-gray-300 dark:border-gray-800 pl-14 pr-6 md:px-6 h-[52px] sm:h-[60px] flex items-center justify-between">
                 <div className="flex items-center gap-2 sm:gap-4 min-w-0">
                     <div className="flex items-center gap-3 min-w-0">
                         <Image
