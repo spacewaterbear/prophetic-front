@@ -252,7 +252,13 @@ export default function ChatLayout({
 
 
                         {/* Cash-Flow Leasing */}
-                        <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2">
+                        <button
+                            onClick={() => {
+                                console.log('[Sidebar] Clicked Cash-Flow Leasing, category: CASH_FLOW_LEASING');
+                                router.push('/chat?category=CASH_FLOW_LEASING', { scroll: false });
+                            }}
+                            className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2"
+                        >
                             <Image
                                 src={`https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/coin_${theme === 'dark' ? 'b' : 'n'}.svg`}
                                 alt="Cash-Flow Leasing"
