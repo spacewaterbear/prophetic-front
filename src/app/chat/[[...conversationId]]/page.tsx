@@ -353,10 +353,8 @@ export default function ChatPage() {
     };
 
     const handlePortfolioClick = () => {
-        // TODO: Implement portfolio functionality
-        // For now, just log to console
-        console.log("Portfolio button clicked");
-        toast.info("Portfolio feature coming soon!");
+        // Portfolio doesn't use flash_cards enum, only flash_card_type
+        handleSend('Show me my portfolio insights', undefined, 'portfolio');
     };
 
     // Show loading while checking authentication

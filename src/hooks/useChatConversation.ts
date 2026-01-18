@@ -166,7 +166,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         window.dispatchEvent(new Event("refreshConversations"));
     };
 
-    const handleSend = async (messageToSend?: string, flashCards?: string, flashCardType?: 'flash_invest' | 'ranking') => {
+    const handleSend = async (messageToSend?: string, flashCards?: string, flashCardType?: 'flash_invest' | 'ranking' | 'portfolio') => {
         const userInput = messageToSend || input;
         if (!userInput.trim() || isLoading) return;
 
@@ -326,7 +326,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         }
     };
 
-    const handleFlashcardClick = (flashCards: string, question: string, flashCardType: 'flash_invest' | 'ranking') => {
+    const handleFlashcardClick = (flashCards: string, question: string, flashCardType: 'flash_invest' | 'ranking' | 'portfolio') => {
         handleSend(question, flashCards, flashCardType);
     };
 
