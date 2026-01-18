@@ -659,7 +659,7 @@ export default function ChatPage() {
     return (
         <>
             {/* Header */}
-            <header className="bg-[rgba(247,240,232,0.8)] dark:bg-black backdrop-blur-md border-b border-gray-300 dark:border-gray-800 px-6 py-3 sm:py-4 flex items-center justify-between">
+            <header className="bg-[rgba(247,240,232,0.8)] dark:bg-black backdrop-blur-md border-b border-gray-300 dark:border-gray-800 pl-14 pr-6 md:px-6 py-3 sm:py-4 flex items-center justify-between">
                 <div className="flex items-center gap-2 sm:gap-4 min-w-0">
                     <div className="flex items-center gap-3 min-w-0">
                         <Image
@@ -671,7 +671,7 @@ export default function ChatPage() {
                             alt="Prophetic Orchestra"
                             width={180}
                             height={45}
-                            className="h-7 sm:h-10 w-auto"
+                            className="h-6 sm:h-10 w-auto"
                         />
                     </div>
                 </div>
@@ -683,22 +683,6 @@ export default function ChatPage() {
                             disabled={isLoading}
                         />
                     )}
-                    <button
-                        className="h-9 w-9 flex items-center justify-center rounded-md hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
-                        aria-label="Chrono"
-                    >
-                        <Image
-                            src={
-                                mounted && isDark
-                                    ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/chrono_b.svg"
-                                    : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/chrono.svg"
-                            }
-                            alt="Chrono"
-                            width={24}
-                            height={24}
-                            className="h-5 w-5"
-                        />
-                    </button>
                     <ThemeToggle />
                     <ShareButton
                         conversationId={conversationId}
