@@ -319,7 +319,7 @@ export default function ChatLayout({
 
             {/* Main content area with menu button */}
             <div className="flex-1 flex flex-col">
-                <div className="absolute top-3 left-3 z-10 md:hidden">
+                <div className="absolute top-3 left-3 z-20 md:hidden">
                     <Button
                         variant="ghost"
                         size="icon"
