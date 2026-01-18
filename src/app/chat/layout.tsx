@@ -37,10 +37,16 @@ export default function ChatLayout({
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [consultationsExpanded, setConsultationsExpanded] = useState(false);
+    const [mounted, setMounted] = useState(false);
 
     // Extract conversation ID from pathname
     const currentConversationId = pathname?.match(/\/chat\/(\d+)/)?.[1];
     const conversationId = currentConversationId ? parseInt(currentConversationId, 10) : null;
+
+    // Track mounted state to prevent hydration mismatch
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     // Load conversations once on mount
     useEffect(() => {
@@ -156,13 +162,15 @@ export default function ChatLayout({
                                 onClick={() => setConsultationsExpanded(!consultationsExpanded)}
                                 className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2"
                             >
-                                <Image
-                                    src={`https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/consultations_${theme === 'dark' ? 'b' : 'n'}.svg`}
-                                    alt="Conversations"
-                                    width={20}
-                                    height={20}
-                                    className="flex-shrink-0"
-                                />
+                                {mounted && (
+                                    <Image
+                                        src={`https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/consultations_${theme === 'dark' ? 'b' : 'n'}.svg`}
+                                        alt="Conversations"
+                                        width={20}
+                                        height={20}
+                                        className="flex-shrink-0"
+                                    />
+                                )}
                                 <span className="flex-1">Conversations</span>
                                 {consultationsExpanded ? (
                                     <ChevronDown className="h-4 w-4" />
@@ -259,25 +267,29 @@ export default function ChatLayout({
                             }}
                             className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2"
                         >
-                            <Image
-                                src={`https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/coin_${theme === 'dark' ? 'b' : 'n'}.svg`}
-                                alt="Cash-Flow Leasing"
-                                width={22}
-                                height={22}
-                                className="flex-shrink-0"
-                            />
+                            {mounted && (
+                                <Image
+                                    src={`https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/coin_${theme === 'dark' ? 'b' : 'n'}.svg`}
+                                    alt="Cash-Flow Leasing"
+                                    width={22}
+                                    height={22}
+                                    className="flex-shrink-0"
+                                />
+                            )}
                             <span>Cash-Flow Leasing</span>
                         </button>
 
                         {/* Cahiers Prophetic */}
                         <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2">
-                            <Image
-                                src={`https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/book_${theme === 'dark' ? 'b' : 'n'}.svg`}
-                                alt="Cahiers Prophetic"
-                                width={22}
-                                height={22}
-                                className="flex-shrink-0"
-                            />
+                            {mounted && (
+                                <Image
+                                    src={`https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/book_${theme === 'dark' ? 'b' : 'n'}.svg`}
+                                    alt="Cahiers Prophetic"
+                                    width={22}
+                                    height={22}
+                                    className="flex-shrink-0"
+                                />
+                            )}
                             <span>Cahiers Prophetic</span>
                         </button>
                     </div>
@@ -331,7 +343,7 @@ export default function ChatLayout({
                         size="icon"
                         onClick={() => setSidebarOpen(!sidebarOpen)}
                         className="backdrop-blur-sm h-10 w-10"
-                        style={{ backgroundColor: theme === 'dark' ? 'rgb(1,1,0)' : '#f7f0e8' }}
+                        style={mounted ? { backgroundColor: theme === 'dark' ? 'rgb(1,1,0)' : '#f7f0e8' } : undefined}
                     >
                         <Menu className="h-5 w-5" />
                     </Button>
