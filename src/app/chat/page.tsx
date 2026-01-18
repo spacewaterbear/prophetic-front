@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useI18n } from "@/contexts/i18n-context";
@@ -129,17 +130,19 @@ function ChatWelcomeContent() {
             <header className="relative z-10 bg-[rgba(247,240,232,0.8)] dark:bg-black backdrop-blur-md border-b border-gray-300 dark:border-gray-800 pl-14 pr-6 md:px-6 h-[52px] sm:h-[60px] flex items-center justify-between">
                 <div className="flex items-center gap-2 sm:gap-4 min-w-0">
                     <div className="flex items-center gap-3 min-w-0">
-                        <Image
-                            src={
-                                mounted && isDark
-                                    ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/logo_text_blanc.svg"
-                                    : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/logo_text.svg"
-                            }
-                            alt="Prophetic Orchestra"
-                            width={180}
-                            height={45}
-                            className="h-7 sm:h-10 w-auto"
-                        />
+                        <Link href="/" className="cursor-pointer">
+                            <Image
+                                src={
+                                    mounted && isDark
+                                        ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/logo_text_blanc.svg"
+                                        : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/logo_text.svg"
+                                }
+                                alt="Prophetic Orchestra"
+                                width={180}
+                                height={45}
+                                className="h-7 sm:h-10 w-auto"
+                            />
+                        </Link>
                     </div>
                 </div>
                 <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
