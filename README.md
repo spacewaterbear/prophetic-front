@@ -107,6 +107,7 @@ When deploying to production:
 2. Set environment variables in your hosting platform
 3. Update `NEXTAUTH_URL` to your production domain
 
+
 Recommended platforms:
 - [Vercel](https://vercel.com) (easiest for Next.js)
 - [Netlify](https://netlify.com)
