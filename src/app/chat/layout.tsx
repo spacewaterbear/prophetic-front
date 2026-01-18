@@ -331,7 +331,7 @@ export default function ChatLayout({
                         size="icon"
                         onClick={() => setSidebarOpen(!sidebarOpen)}
                         className="backdrop-blur-sm h-10 w-10"
-                        style={{ backgroundColor: '#f7f0e8' }}
+                        style={{ backgroundColor: theme === 'dark' ? 'rgb(1,1,0)' : '#f7f0e8' }}
                     >
                         <Menu className="h-5 w-5" />
                     </Button>
