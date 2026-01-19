@@ -227,6 +227,12 @@ const isAdminUser = (session: { user?: { status?: string } } | null): boolean =>
     return session?.user?.status === "admini";
 };
 
+// Helper function to extract image name from public_url
+const getImageNameFromUrl = (url: string): string => {
+    const parts = url.split("/");
+    return parts[parts.length - 1];
+};
+
 export default function ChatPage() {
     const { data: session, status } = useSession();
     const router = useRouter();
@@ -357,6 +363,27 @@ export default function ChatPage() {
         handleSend('Show me my portfolio insights', undefined, 'portfolio');
     };
 
+    const handleVignetteClick = async (vignette: VignetteData) => {
+        const imageName = getImageNameFromUrl(vignette.public_url);
+        console.log(`[Chat Page] Vignette clicked: ${vignette.brand_name}, image: ${imageName}`);
+
+        try {
+            const response = await fetch(`/api/vignettes/markdown?markdown=${encodeURIComponent(imageName)}`);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch markdown: ${response.status}`);
+            }
+            const data = await response.json();
+            console.log(`[Chat Page] Markdown data received:`, data);
+
+            if (data.text) {
+                handleSend(data.text);
+            }
+        } catch (error) {
+            console.error("[Chat Page] Error fetching vignette markdown:", error);
+            toast.error("Failed to load vignette details");
+        }
+    };
+
     // Show loading while checking authentication
     if (status === "loading") {
         return (
@@ -435,7 +462,7 @@ export default function ChatPage() {
                         {vignettes.length > 0 ? (
                             /* Vignettes Display */
                             <div className="w-full relative">
-                                <VignetteGridCard data={vignettes} />
+                                <VignetteGridCard data={vignettes} onVignetteClick={handleVignetteClick} />
                             </div>
                         ) : vignetteLoading ? (
                             /* Loading State */
