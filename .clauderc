@@ -1,0 +1,6 @@
+CRITICAL: Before ANY changes to API interactions or data display:
+1. Fetch OpenAPI spec: curl http://0.0.0.0:8001/api/v2/prophetic/openapi.json
+2. Review the relevant endpoint schema
+3. Match frontend types to backend schema
+
+API Docs: http://0.0.0.0:8001/api/v2/prophetic/openapi.json
