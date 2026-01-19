@@ -458,7 +458,7 @@ export default function ChatPage() {
             {isWelcomeScreen ? (
                 /* Welcome Screen */
                 <div className="relative flex-1 bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] px-6 overflow-y-auto">
-                    <div className="w-full max-w-4xl flex flex-col items-center py-10 mx-auto">
+                    <div className={`w-full max-w-4xl flex flex-col items-center py-10 mx-auto ${vignettes.length === 0 && !vignetteLoading && !vignetteError ? 'min-h-full justify-center' : ''}`}>
                         {vignettes.length > 0 ? (
                             /* Vignettes Display */
                             <div className="w-full relative">
