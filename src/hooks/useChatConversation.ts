@@ -120,7 +120,12 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
     };
 
     useEffect(() => {
-        if (shouldAutoScroll) {
+        // Check if the last message contains vignette data
+        const lastMessage = messages[messages.length - 1];
+        const hasVignetteData = lastMessage?.vignette_data && lastMessage.vignette_data.length > 0;
+
+        // Don't auto-scroll if vignette data is present
+        if (shouldAutoScroll && !hasVignetteData) {
             scrollToBottom();
         }
     }, [messages, streamingMessage, streamingMarketplaceData, streamingRealEstateData, isLoading, shouldAutoScroll]);

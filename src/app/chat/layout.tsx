@@ -236,7 +236,7 @@ export default function ChatLayout({
                             { label: "Sneakers Heritage", category: "SNEAKERS", disabled: false },
                             { label: "Whisky Rares", category: "WHISKY", disabled: false },
                             { label: "Bijoux Précieux", category: "BIJOUX", disabled: false },
-                            { label: "Cartes Sportives", category: "CARDS_US", disabled: true }
+                            { label: "Cartes Sportives", category: "CARDS_US", disabled: false }
                         ].map(({ label, category, disabled }) => (
                             <button
                                 key={category}
