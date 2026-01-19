@@ -94,11 +94,6 @@ const MessageItem = memo(
         return (
             <div className={`flex gap-2 sm:gap-4 items-start w-full ${message.sender === "user" ? "justify-end" : "justify-start"}`}>
                 {message.sender === "ai" && <AIAvatar />}
-                {message.sender === "user" && (
-                    <div className="hidden sm:flex w-8 h-8 sm:w-10 sm:h-10 mt-1 rounded-full bg-gray-800 dark:bg-white/10 items-center justify-center text-white dark:text-white font-medium flex-shrink-0 leading-none text-base sm:text-lg">
-                        {userName}
-                    </div>
-                )}
                 <div className={`group flex flex-col gap-2 ${message.sender === "ai" ? "w-full" : ""}`}>
                     <div
                         className={`py-4 sm:py-5 rounded-2xl overflow-hidden ${message.sender === "user"
