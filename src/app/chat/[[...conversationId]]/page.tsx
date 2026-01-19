@@ -107,9 +107,13 @@ const MessageItem = memo(
                             }`}
                     >
                         {message.sender === "user" ? (
-                            <p className="text-base leading-relaxed whitespace-pre-wrap">
-                                {message.content}
-                            </p>
+                            <Suspense
+                                fallback={
+                                    <div className="text-base text-gray-400">Loading...</div>
+                                }
+                            >
+                                <Markdown content={message.content} className="text-base" />
+                            </Suspense>
                         ) : message.type === "artist_info" && message.artist ? (
                             <Suspense
                                 fallback={
