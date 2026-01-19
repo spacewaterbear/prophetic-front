@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 
 interface Artist {
@@ -75,10 +75,18 @@ export interface Message {
     vignette_data?: VignetteData[];
 }
 
+interface PendingMessage {
+    content: string;
+    flashCards?: string;
+    flashCardType?: 'flash_invest' | 'ranking' | 'portfolio';
+}
+
 interface UseChatConversationProps {
     conversationId: number | null;
     selectedModel?: string;
 }
+
+const PENDING_MESSAGE_KEY = 'pendingChatMessage';
 
 export function useChatConversation({ conversationId, selectedModel = "anthropic/claude-3.7-sonnet" }: UseChatConversationProps) {
     const router = useRouter();
@@ -97,13 +105,196 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
     const messagesContainerRef = useRef<HTMLDivElement>(null);
     const [shouldAutoScroll, setShouldAutoScroll] = useState(true);
     const disableAutoScrollRef = useRef(false);
+    const pendingMessageProcessedRef = useRef(false);
 
-    // Load conversation when conversationId changes
+    // Function to send message to API and handle streaming
+    const sendMessageToApi = useCallback(async (
+        targetConversationId: number,
+        userInput: string,
+        flashCards?: string,
+        flashCardType?: 'flash_invest' | 'ranking' | 'portfolio'
+    ) => {
+        setIsLoading(true);
+        setStreamingMessage("");
+        setStreamingMarketplaceData(null);
+        setStreamingRealEstateData(null);
+        setStreamingVignetteData(null);
+        setCurrentStatus("");
+        setLastStreamingActivity(Date.now());
+        setShowStreamingIndicator(false);
+
+        // Add user message to UI immediately
+        const tempUserMessage: Message = {
+            id: Date.now(),
+            content: userInput,
+            sender: "user",
+            created_at: new Date().toISOString(),
+        };
+        setMessages((prev) => [...prev, tempUserMessage]);
+
+        try {
+            const response = await fetch(`/api/conversations/${targetConversationId}/messages`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    content: userInput,
+                    flash_cards: flashCards,
+                    flash_card_type: flashCardType
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to send message");
+            }
+
+            const reader = response.body?.getReader();
+            const decoder = new TextDecoder();
+
+            if (!reader) {
+                throw new Error("No response stream");
+            }
+
+            let streamContent = "";
+
+            while (true) {
+                const { done, value } = await reader.read();
+
+                if (done) break;
+
+                const chunk = decoder.decode(value);
+                const lines = chunk.split("\n").filter((line) => line.trim());
+
+                for (const line of lines) {
+                    let cleanedLine = line;
+                    if (line.startsWith("data: ")) {
+                        cleanedLine = line.slice(6);
+                    }
+
+                    try {
+                        const data = JSON.parse(cleanedLine);
+
+                        if (data.type === "chunk") {
+                            streamContent += data.content;
+                            setStreamingMessage(streamContent);
+                            setLastStreamingActivity(Date.now());
+                            setCurrentStatus("");
+                        } else if (data.type === "artist_info") {
+                            if (data.userMessage || data.aiMessage) {
+                                try {
+                                    await loadConversation(targetConversationId);
+                                    setStreamingMessage("");
+                                    setStreamingMarketplaceData(null);
+                                    setStreamingRealEstateData(null);
+                                    setStreamingVignetteData(null);
+                                    setCurrentStatus("");
+                                } catch (err) {
+                                    console.error("Error reloading conversation:", err);
+                                    setStreamingMessage("");
+                                    setStreamingMarketplaceData(null);
+                                    setStreamingRealEstateData(null);
+                                    setStreamingVignetteData(null);
+                                }
+                                continue;
+                            }
+                        } else if (data.type === "marketplace_data") {
+                            const marketplaceData = data.data;
+                            if (marketplaceData) {
+                                setStreamingMarketplaceData(marketplaceData);
+                            }
+                        } else if (data.type === "real_estate_data") {
+                            const realEstateData = data.data;
+                            if (realEstateData) {
+                                setStreamingRealEstateData(realEstateData);
+                            }
+                        } else if (data.type === "vignette_data") {
+                            const vignetteData = data.data;
+                            if (vignetteData) {
+                                setStreamingVignetteData(vignetteData);
+                            }
+                        } else if (data.type === "metadata") {
+                            if (data.skip_streaming && data.intro) {
+                                streamContent += data.intro + "\n\n";
+                                setStreamingMessage(streamContent);
+                            }
+                        } else if (data.type === "done") {
+                            try {
+                                await loadConversation(targetConversationId);
+                                setStreamingMessage("");
+                                setStreamingMarketplaceData(null);
+                                setStreamingRealEstateData(null);
+                                setStreamingVignetteData(null);
+                                setCurrentStatus("");
+                            } catch (err) {
+                                console.error("Error reloading conversation:", err);
+                                setStreamingMessage("");
+                                setStreamingMarketplaceData(null);
+                                setStreamingRealEstateData(null);
+                                setStreamingVignetteData(null);
+                                setCurrentStatus("");
+                            }
+                        } else if (data.type === "status") {
+                            setCurrentStatus(data.message);
+                            setLastStreamingActivity(Date.now());
+                        } else if (data.type === "error") {
+                            console.error("Stream error:", data.error);
+                        }
+                    } catch (error) {
+                        console.error("Error parsing chunk:", error);
+                    }
+                }
+            }
+        } catch (error) {
+            console.error("Error sending message:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
+
+    const loadConversation = async (id: number) => {
+        try {
+            const response = await fetch(`/api/conversations/${id}`);
+            if (response.ok) {
+                const data = await response.json();
+                setMessages(data.messages || []);
+            } else if (response.status === 404) {
+                console.error("Conversation not found, redirecting to home");
+                router.push("/");
+            }
+        } catch (error) {
+            console.error("Error loading conversation:", error);
+            router.push("/");
+        }
+    };
+
+    // Load conversation and check for pending messages when conversationId changes
     useEffect(() => {
         if (conversationId) {
-            loadConversation(conversationId);
+            // Check for pending message first
+            const pendingMessageStr = sessionStorage.getItem(PENDING_MESSAGE_KEY);
+            if (pendingMessageStr && !pendingMessageProcessedRef.current) {
+                pendingMessageProcessedRef.current = true;
+                sessionStorage.removeItem(PENDING_MESSAGE_KEY);
+
+                try {
+                    const pendingMessage: PendingMessage = JSON.parse(pendingMessageStr);
+                    // Send the pending message - this will add user message to UI and handle streaming
+                    sendMessageToApi(
+                        conversationId,
+                        pendingMessage.content,
+                        pendingMessage.flashCards,
+                        pendingMessage.flashCardType
+                    );
+                } catch (error) {
+                    console.error("Error parsing pending message:", error);
+                    // Fall back to loading conversation normally
+                    loadConversation(conversationId);
+                }
+            } else {
+                loadConversation(conversationId);
+            }
         } else {
             setMessages([]);
+            pendingMessageProcessedRef.current = false;
         }
 
         // Check sessionStorage for disable auto-scroll flag
@@ -117,9 +308,9 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                 sessionStorage.removeItem('disableAutoScroll');
                 disableAutoScrollRef.current = false;
                 console.log('[Auto-scroll] Cleared sessionStorage flag - auto-scroll RE-ENABLED');
-            }, 10000); // 10 seconds should be enough for the response to load
+            }, 10000);
         }
-    }, [conversationId]);
+    }, [conversationId, sendMessageToApi]);
 
 
     // Auto-scroll logic
@@ -174,22 +365,6 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         return () => clearInterval(interval);
     }, [isLoading, streamingMessage, lastStreamingActivity]);
 
-    const loadConversation = async (id: number) => {
-        try {
-            const response = await fetch(`/api/conversations/${id}`);
-            if (response.ok) {
-                const data = await response.json();
-                setMessages(data.messages || []);
-            } else if (response.status === 404) {
-                console.error("Conversation not found, redirecting to home");
-                router.push("/");
-            }
-        } catch (error) {
-            console.error("Error loading conversation:", error);
-            router.push("/");
-        }
-    };
-
     const refreshConversations = () => {
         window.dispatchEvent(new Event("refreshConversations"));
     };
@@ -199,15 +374,17 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         if (!userInput.trim() || isLoading) return;
 
         setInput("");
-        setIsLoading(true);
-        setStreamingMessage("");
-        setStreamingMarketplaceData(null);
-        setStreamingRealEstateData(null);
-        setStreamingVignetteData(null);
-        setCurrentStatus("");
-        setLastStreamingActivity(Date.now());
-        setShowStreamingIndicator(false);
 
+        // If we already have a conversation, send directly
+        if (conversationId) {
+            await sendMessageToApi(conversationId, userInput, flashCards, flashCardType);
+            return;
+        }
+
+        // No conversation yet - create one and navigate immediately
+        setIsLoading(true);
+
+        // Show user message immediately on welcome screen
         const tempUserMessage: Message = {
             id: Date.now(),
             content: userInput,
@@ -217,151 +394,43 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         setMessages((prev) => [...prev, tempUserMessage]);
 
         try {
-            let activeConversationId = conversationId;
+            const title = userInput.length > 50 ? userInput.substring(0, 50) + "..." : userInput;
 
-            // If no conversation ID, create new conversation and redirect
-            if (!activeConversationId) {
-                const title = userInput.length > 50 ? userInput.substring(0, 50) + "..." : userInput;
-
-                const response = await fetch("/api/conversations", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        title: title,
-                        model: selectedModel,
-                    }),
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    activeConversationId = data.conversation.id;
-                    // Redirect to the new conversation URL
-                    router.push(`/chat/${activeConversationId}`);
-                    // Refresh conversations list in sidebar
-                    refreshConversations();
-                }
-            }
-
-            if (!activeConversationId) {
-                throw new Error("Failed to create conversation");
-            }
-
-            // Send message with streaming
-            const response = await fetch(`/api/conversations/${activeConversationId}/messages`, {
+            const response = await fetch("/api/conversations", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    content: userInput,
-                    flash_cards: flashCards,
-                    flash_card_type: flashCardType
+                    title: title,
+                    model: selectedModel,
                 }),
             });
 
             if (!response.ok) {
-                throw new Error("Failed to send message");
+                throw new Error("Failed to create conversation");
             }
 
-            const reader = response.body?.getReader();
-            const decoder = new TextDecoder();
+            const data = await response.json();
+            const newConversationId = data.conversation.id;
 
-            if (!reader) {
-                throw new Error("No response stream");
-            }
+            // Store pending message in sessionStorage for the new page to pick up
+            const pendingMessage: PendingMessage = {
+                content: userInput,
+                flashCards,
+                flashCardType
+            };
+            sessionStorage.setItem(PENDING_MESSAGE_KEY, JSON.stringify(pendingMessage));
 
-            let streamContent = "";
+            // Refresh conversations list in sidebar
+            refreshConversations();
 
-            while (true) {
-                const { done, value } = await reader.read();
-
-                if (done) break;
-
-                const chunk = decoder.decode(value);
-                const lines = chunk.split("\n").filter((line) => line.trim());
-
-                for (const line of lines) {
-                    let cleanedLine = line;
-                    if (line.startsWith("data: ")) {
-                        cleanedLine = line.slice(6);
-                    }
-
-                    try {
-                        const data = JSON.parse(cleanedLine);
-
-                        if (data.type === "chunk") {
-                            streamContent += data.content;
-                            setStreamingMessage(streamContent);
-                            setLastStreamingActivity(Date.now());
-                            setCurrentStatus("");
-                        } else if (data.type === "artist_info") {
-                            if (data.userMessage || data.aiMessage) {
-                                try {
-                                    await loadConversation(activeConversationId!);
-                                    setStreamingMessage("");
-                                    setStreamingMarketplaceData(null);
-                                    setStreamingRealEstateData(null);
-                                    setStreamingVignetteData(null);
-                                    setCurrentStatus("");
-                                } catch (err) {
-                                    console.error("Error reloading conversation:", err);
-                                    setStreamingMessage("");
-                                    setStreamingMarketplaceData(null);
-                                    setStreamingRealEstateData(null);
-                                    setStreamingVignetteData(null);
-                                }
-                                continue;
-                            }
-                        } else if (data.type === "marketplace_data") {
-                            const marketplaceData = data.data;
-                            if (marketplaceData) {
-                                setStreamingMarketplaceData(marketplaceData);
-                            }
-                        } else if (data.type === "real_estate_data") {
-                            const realEstateData = data.data;
-                            if (realEstateData) {
-                                setStreamingRealEstateData(realEstateData);
-                            }
-                        } else if (data.type === "vignette_data") {
-                            const vignetteData = data.data;
-                            if (vignetteData) {
-                                setStreamingVignetteData(vignetteData);
-                            }
-                        } else if (data.type === "metadata") {
-                            if (data.skip_streaming && data.intro) {
-                                streamContent += data.intro + "\n\n";
-                                setStreamingMessage(streamContent);
-                            }
-                        } else if (data.type === "done") {
-                            try {
-                                await loadConversation(activeConversationId!);
-                                setStreamingMessage("");
-                                setStreamingMarketplaceData(null);
-                                setStreamingRealEstateData(null);
-                                setStreamingVignetteData(null);
-                                setCurrentStatus("");
-                            } catch (err) {
-                                console.error("Error reloading conversation:", err);
-                                setStreamingMessage("");
-                                setStreamingMarketplaceData(null);
-                                setStreamingRealEstateData(null);
-                                setStreamingVignetteData(null);
-                                setCurrentStatus("");
-                            }
-                        } else if (data.type === "status") {
-                            setCurrentStatus(data.message);
-                            setLastStreamingActivity(Date.now());
-                        } else if (data.type === "error") {
-                            console.error("Stream error:", data.error);
-                        }
-                    } catch (error) {
-                        console.error("Error parsing chunk:", error);
-                    }
-                }
-            }
+            // Navigate immediately - the new page will pick up the pending message
+            router.push(`/chat/${newConversationId}`);
         } catch (error) {
-            console.error("Error sending message:", error);
-        } finally {
+            console.error("Error creating conversation:", error);
             setIsLoading(false);
         }
+        // Note: setIsLoading(false) is NOT called here on success
+        // because navigation will unmount this component
     };
 
     const handleFlashcardClick = (flashCards: string, question: string, flashCardType: 'flash_invest' | 'ranking' | 'portfolio') => {
