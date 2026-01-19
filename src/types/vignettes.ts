@@ -9,7 +9,6 @@ export enum Vignettes {
     SNEAKERS = "SNEAKERS",
     WHISKY = "WHISKY",
     WINE = "WINE",
-    CASH_FLOW_LEASING = "CASH_FLOW_LEASING"
 }
 
 export interface VignetteData {

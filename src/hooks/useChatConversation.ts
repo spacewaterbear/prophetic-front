@@ -95,6 +95,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const messagesContainerRef = useRef<HTMLDivElement>(null);
     const [shouldAutoScroll, setShouldAutoScroll] = useState(true);
+    const disableAutoScrollRef = useRef(false);
 
     // Load conversation when conversationId changes
     useEffect(() => {
@@ -103,10 +104,31 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         } else {
             setMessages([]);
         }
+
+        // Check sessionStorage for disable auto-scroll flag
+        const shouldDisableScroll = sessionStorage.getItem('disableAutoScroll') === 'true';
+        if (shouldDisableScroll) {
+            disableAutoScrollRef.current = true;
+            console.log('[Auto-scroll] Initialized from sessionStorage - auto-scroll DISABLED');
+
+            // Clear the flag after a delay
+            setTimeout(() => {
+                sessionStorage.removeItem('disableAutoScroll');
+                disableAutoScrollRef.current = false;
+                console.log('[Auto-scroll] Cleared sessionStorage flag - auto-scroll RE-ENABLED');
+            }, 10000); // 10 seconds should be enough for the response to load
+        }
     }, [conversationId]);
+
 
     // Auto-scroll logic
     const scrollToBottom = () => {
+        // Don't scroll if explicitly disabled
+        if (disableAutoScrollRef.current) {
+            console.log('[Auto-scroll] Scroll prevented - disableAutoScrollRef is true');
+            return;
+        }
+        console.log('[Auto-scroll] Scrolling to bottom');
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
 
@@ -124,8 +146,8 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         const lastMessage = messages[messages.length - 1];
         const hasVignetteData = lastMessage?.vignette_data && lastMessage.vignette_data.length > 0;
 
-        // Don't auto-scroll if vignette data is present
-        if (shouldAutoScroll && !hasVignetteData) {
+        // Don't auto-scroll if vignette data is present or if explicitly disabled
+        if (shouldAutoScroll && !hasVignetteData && !disableAutoScrollRef.current) {
             scrollToBottom();
         }
     }, [messages, streamingMessage, streamingMarketplaceData, streamingRealEstateData, isLoading, shouldAutoScroll]);
@@ -350,6 +372,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         // Refs
         messagesEndRef,
         messagesContainerRef,
+        disableAutoScrollRef,
 
         // Functions
         handleSend,

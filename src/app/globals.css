@@ -78,7 +78,7 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
 }
 
 /* Prevent iOS Safari auto-zoom on input focus */

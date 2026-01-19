@@ -268,6 +268,7 @@ export default function ChatPage() {
         showStreamingIndicator,
         messagesEndRef,
         messagesContainerRef,
+        disableAutoScrollRef,
         handleSend,
         handleFlashcardClick,
         handleScroll,
@@ -329,6 +330,9 @@ export default function ChatPage() {
                 console.log(`[Chat Page] Received data:`, data);
                 console.log(`[Chat Page] Number of vignettes: ${data.vignettes?.length || 0}`);
                 setVignettes(data.vignettes || []);
+
+                // Prevent scrolling by keeping scroll position at top
+                window.scrollTo(0, 0);
             } catch (error) {
                 console.error("[Chat Page] Error fetching vignettes:", error);
                 setVignetteError("Failed to load vignettes");
@@ -367,6 +371,14 @@ export default function ChatPage() {
         const imageName = getImageNameFromUrl(vignette.public_url);
         console.log(`[Chat Page] Vignette clicked: ${vignette.brand_name}, image: ${imageName}`);
 
+        // Disable auto-scroll for vignette responses using sessionStorage
+        // This persists across navigation to the new conversation page
+        sessionStorage.setItem('disableAutoScroll', 'true');
+        if (disableAutoScrollRef) {
+            disableAutoScrollRef.current = true;
+        }
+        console.log('[Chat Page] Auto-scroll DISABLED for vignette response (set in sessionStorage)');
+
         try {
             const response = await fetch(`/api/vignettes/markdown?markdown=${encodeURIComponent(imageName)}`);
             if (!response.ok) {
@@ -377,10 +389,18 @@ export default function ChatPage() {
 
             if (data.text) {
                 handleSend(data.text);
+                // Note: sessionStorage flag will be cleared by the hook after navigation
             }
         } catch (error) {
             console.error("[Chat Page] Error fetching vignette markdown:", error);
             toast.error("Failed to load vignette details");
+
+            // Re-enable auto-scroll on error
+            sessionStorage.removeItem('disableAutoScroll');
+            if (disableAutoScrollRef) {
+                disableAutoScrollRef.current = false;
+            }
+            console.log('[Chat Page] Auto-scroll RE-ENABLED after error');
         }
     };
 
@@ -457,7 +477,7 @@ export default function ChatPage() {
             {/* Main Content */}
             {isWelcomeScreen ? (
                 /* Welcome Screen */
-                <div className="relative flex-1 bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] px-6 overflow-y-auto">
+                <div className={`relative flex-1 bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] px-6 ${vignettes.length > 0 ? 'overflow-hidden' : 'overflow-y-auto'}`}>
                     <div className={`w-full max-w-4xl flex flex-col items-center py-10 mx-auto ${vignettes.length === 0 && !vignetteLoading && !vignetteError ? 'min-h-full justify-center' : ''}`}>
                         {vignettes.length > 0 ? (
                             /* Vignettes Display */
