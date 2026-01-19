@@ -2,12 +2,18 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 
+// Dev mode user ID for testing
+const DEV_USER_ID = "dev-user-00000000-0000-0000-0000-000000000000";
+
 // GET /api/conversations - List all conversations for the current user
 export async function GET() {
   try {
     const session = await auth();
+    const isDevMode = process.env.NEXT_PUBLIC_SKIP_AUTH === "true";
 
-    if (!session?.user?.id) {
+    const userId = session?.user?.id || (isDevMode ? DEV_USER_ID : null);
+
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -18,7 +24,7 @@ export async function GET() {
     const { data: conversations, error } = await supabase
       .from("conversations")
       .select("*")
-      .eq("user_id", session.user.id)
+      .eq("user_id", userId)
       .order("updated_at", { ascending: false })
       .limit(5);
 
@@ -27,7 +33,7 @@ export async function GET() {
       return NextResponse.json({ error: "Failed to fetch conversations" }, { status: 500 });
     }
 
-    console.log(`[API] Loaded ${conversations?.length || 0} conversations for user ${session.user.id}`);
+    console.log(`[API] Loaded ${conversations?.length || 0} conversations for user ${userId}`);
     return NextResponse.json({ conversations });
   } catch (error) {
     console.error("Error in GET /api/conversations:", error);
@@ -39,8 +45,11 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const session = await auth();
+    const isDevMode = process.env.NEXT_PUBLIC_SKIP_AUTH === "true";
 
-    if (!session?.user?.id) {
+    const userId = session?.user?.id || (isDevMode ? DEV_USER_ID : null);
+
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -53,7 +62,7 @@ export async function POST(request: NextRequest) {
     const { data: conversation, error } = await supabase
       .from("conversations")
       .insert({
-        user_id: session.user.id,
+        user_id: userId,
         title: title || "New Chat",
         model: model || "anthropic/claude-3.7-sonnet",
       })

@@ -190,7 +190,7 @@ const MessageItem = memo(
                                                 </div>
                                             }
                                         >
-                                            <VignetteGridCard data={message.vignette_data} />
+                                            <VignetteGridCard data={message.vignette_data} onVignetteClick={handleVignetteClick} />
                                         </Suspense>
                                     </div>
                                 )}
@@ -272,14 +272,19 @@ export default function ChatPage() {
         handleSend,
         handleFlashcardClick,
         handleScroll,
+        addAiMessage,
+        clearMessages,
     } = useChatConversation({ conversationId, selectedModel });
 
     useEffect(() => {
         setMounted(true);
     }, []);
 
-    // Redirect to login if not authenticated
+    // Redirect to login if not authenticated (skip in dev mode)
     useEffect(() => {
+        if (process.env.NEXT_PUBLIC_SKIP_AUTH === "true") {
+            return;
+        }
         if (status === "unauthenticated") {
             router.push("/login");
         } else if (
@@ -303,6 +308,9 @@ export default function ChatPage() {
 
         const category = searchParams.get("category");
         console.log("[Chat Page] useEffect triggered, category:", category);
+
+        // Clear any previous vignette content when category changes
+        clearMessages();
 
         if (!category) {
             console.log("[Chat Page] No category, clearing vignettes");
@@ -388,7 +396,7 @@ export default function ChatPage() {
             console.log(`[Chat Page] Markdown data received:`, data);
 
             if (data.text) {
-                handleSend(data.text);
+                addAiMessage(data.text);
                 // Note: sessionStorage flag will be cleared by the hook after navigation
             }
         } catch (error) {
@@ -428,7 +436,7 @@ export default function ChatPage() {
         );
     }
 
-    if (!session) {
+    if (!session && process.env.NEXT_PUBLIC_SKIP_AUTH !== "true") {
         return null;
     }
 
@@ -477,9 +485,20 @@ export default function ChatPage() {
             {/* Main Content */}
             {isWelcomeScreen ? (
                 /* Welcome Screen */
-                <div className={`relative flex-1 bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] px-6 ${vignettes.length > 0 ? 'overflow-hidden' : 'overflow-y-auto'}`}>
-                    <div className={`w-full max-w-4xl flex flex-col items-center py-10 mx-auto ${vignettes.length === 0 && !vignetteLoading && !vignetteError ? 'min-h-full justify-center' : ''}`}>
-                        {vignettes.length > 0 ? (
+                <div className={`relative flex-1 bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] px-6 ${vignettes.length > 0 && messages.length === 0 ? 'overflow-hidden' : 'overflow-y-auto'}`}>
+                    <div className={`w-full max-w-4xl flex flex-col items-center py-10 mx-auto ${vignettes.length === 0 && messages.length === 0 && !vignetteLoading && !vignetteError ? 'min-h-full justify-center' : ''}`}>
+                        {/* Show messages if any (e.g., from vignette click in dev mode) */}
+                        {messages.length > 0 ? (
+                            <div className="w-full max-w-5xl space-y-6">
+                                {messages.map((message) => (
+                                    <MessageItem
+                                        key={message.id}
+                                        message={message}
+                                        userName={session?.user?.name || "User"}
+                                    />
+                                ))}
+                            </div>
+                        ) : vignettes.length > 0 ? (
                             /* Vignettes Display */
                             <div className="w-full relative">
                                 <VignetteGridCard data={vignettes} onVignetteClick={handleVignetteClick} />
@@ -622,7 +641,7 @@ export default function ChatPage() {
                                                             </div>
                                                         }
                                                     >
-                                                        <VignetteGridCard data={streamingVignetteData} />
+                                                        <VignetteGridCard data={streamingVignetteData} onVignetteClick={handleVignetteClick} />
                                                     </Suspense>
                                                 </div>
                                             )}

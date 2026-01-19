@@ -21,6 +21,11 @@ export default function Home() {
   const isDark = theme === "dark" || resolvedTheme === "dark";
 
   useEffect(() => {
+    // In dev mode with SKIP_AUTH, redirect directly to chat
+    if (process.env.NEXT_PUBLIC_SKIP_AUTH === "true") {
+      router.replace("/chat");
+      return;
+    }
     if (status === "authenticated") {
       // Redirect authenticated users to the chat welcome page
       router.replace("/chat");

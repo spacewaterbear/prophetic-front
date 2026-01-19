@@ -87,6 +87,7 @@ interface UseChatConversationProps {
 }
 
 const PENDING_MESSAGE_KEY = 'pendingChatMessage';
+const PENDING_VIGNETTE_CONTENT_KEY = 'pendingVignetteContent';
 
 export function useChatConversation({ conversationId, selectedModel = "anthropic/claude-3.7-sonnet" }: UseChatConversationProps) {
     const router = useRouter();
@@ -269,7 +270,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
     // Load conversation and check for pending messages when conversationId changes
     useEffect(() => {
         if (conversationId) {
-            // Check for pending message first
+            // Check for pending user message first
             const pendingMessageStr = sessionStorage.getItem(PENDING_MESSAGE_KEY);
             if (pendingMessageStr && !pendingMessageProcessedRef.current) {
                 pendingMessageProcessedRef.current = true;
@@ -289,9 +290,28 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                     // Fall back to loading conversation normally
                     loadConversation(conversationId);
                 }
-            } else {
-                loadConversation(conversationId);
+                return;
             }
+
+            // Check for pending vignette content (AI message)
+            const pendingVignetteContent = sessionStorage.getItem(PENDING_VIGNETTE_CONTENT_KEY);
+            if (pendingVignetteContent && !pendingMessageProcessedRef.current) {
+                pendingMessageProcessedRef.current = true;
+                sessionStorage.removeItem(PENDING_VIGNETTE_CONTENT_KEY);
+
+                // Add the vignette content as an AI message
+                const aiMessage: Message = {
+                    id: Date.now(),
+                    content: pendingVignetteContent,
+                    sender: "ai",
+                    created_at: new Date().toISOString(),
+                };
+                setMessages([aiMessage]);
+                return;
+            }
+
+            // No pending content - load conversation normally
+            loadConversation(conversationId);
         } else {
             setMessages([]);
             pendingMessageProcessedRef.current = false;
@@ -443,6 +463,53 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         handleSend(question, flashCards, flashCardType);
     };
 
+    const addAiMessage = async (content: string) => {
+        const aiMessage: Message = {
+            id: Date.now(),
+            content,
+            sender: "ai",
+            created_at: new Date().toISOString(),
+        };
+
+        // If we have a conversation or in dev mode, just add the message locally
+        if (conversationId || process.env.NEXT_PUBLIC_SKIP_AUTH === "true") {
+            setMessages((prev) => [...prev, aiMessage]);
+            return;
+        }
+
+        // No conversation - create one and navigate with the vignette content
+        try {
+            const title = content.length > 50 ? content.substring(0, 50) + "..." : content;
+
+            const response = await fetch("/api/conversations", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    title: title,
+                    model: selectedModel,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to create conversation");
+            }
+
+            const data = await response.json();
+            const newConversationId = data.conversation.id;
+
+            // Store the vignette content for the new page to display
+            sessionStorage.setItem(PENDING_VIGNETTE_CONTENT_KEY, content);
+
+            // Refresh conversations list in sidebar
+            refreshConversations();
+
+            // Navigate to the new conversation
+            router.push(`/chat/${newConversationId}`);
+        } catch (error) {
+            console.error("Error creating conversation for vignette:", error);
+        }
+    };
+
     return {
         // State
         messages,
@@ -465,5 +532,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         handleSend,
         handleFlashcardClick,
         handleScroll,
+        addAiMessage,
+        clearMessages: () => setMessages([]),
     };
 }

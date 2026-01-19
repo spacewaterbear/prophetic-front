@@ -3,6 +3,12 @@ import { NextResponse } from "next/server";
 
 export default auth((req) => {
   const { nextUrl } = req;
+
+  // Dev mode: skip all auth checks when NEXT_PUBLIC_SKIP_AUTH is set
+  if (process.env.NEXT_PUBLIC_SKIP_AUTH === "true") {
+    return NextResponse.next();
+  }
+
   const isLoggedIn = !!req.auth;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const userStatus = (req.auth?.user as any)?.status;
