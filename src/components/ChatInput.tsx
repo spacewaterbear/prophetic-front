@@ -1020,22 +1020,19 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
 
                     {/* Trailing Actions (Right side) */}
                     <div className="flex items-center gap-2">
-
-
-                        {input.trim() ? (
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation(); // Prevent focusing textarea when clicking send
-                                    handleSend();
-                                }}
-                                disabled={isLoading}
-                                className="flex items-center justify-center p-2.5 rounded-full text-gray-900 dark:text-white hover:bg-gray-200/50 dark:hover:bg-gray-700/50 transition-colors mr-[20px]"
-                            >
-                                <Send className="h-5 w-5 transform rotate-45 ml-0.5" />
-                            </button>
-                        ) : (
-                            <div className="w-10 h-10"></div>
-                        )}
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation(); // Prevent focusing textarea when clicking send
+                                handleSend();
+                            }}
+                            disabled={isLoading || !input.trim()}
+                            className={`flex items-center justify-center p-2.5 rounded-full transition-colors mr-[20px] ${input.trim()
+                                    ? 'text-gray-900 dark:text-white hover:bg-gray-200/50 dark:hover:bg-gray-700/50'
+                                    : 'text-gray-400 dark:text-gray-600'
+                                }`}
+                        >
+                            <Send className="h-5 w-5 transform rotate-45 ml-0.5" />
+                        </button>
                     </div>
                 </div>
             </div>
