@@ -357,7 +357,7 @@ export function Markdown({ content, className }: MarkdownProps) {
             }
 
             return (
-              <p className="mb-4 leading-relaxed px-0" {...props}>
+              <p className="leading-relaxed px-0" {...props}>
                 {children}
               </p>
             );
