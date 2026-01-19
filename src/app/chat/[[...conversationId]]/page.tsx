@@ -263,6 +263,7 @@ export default function ChatPage() {
         streamingMessage,
         streamingMarketplaceData,
         streamingRealEstateData,
+        streamingVignetteData,
         currentStatus,
         showStreamingIndicator,
         messagesEndRef,
@@ -558,7 +559,7 @@ export default function ChatPage() {
                             ))}
 
                             {/* Typing indicator */}
-                            {isLoading && !streamingMessage && !streamingMarketplaceData && (
+                            {isLoading && !streamingMessage && !streamingMarketplaceData && !streamingVignetteData && (
                                 <div className="flex gap-2 sm:gap-4 items-start justify-start">
                                     <AIAvatar />
                                     <div className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-3 sm:px-4 py-4 sm:py-5 rounded-2xl overflow-hidden bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)]">
@@ -575,7 +576,8 @@ export default function ChatPage() {
                             {/* Streaming Message Bubble */}
                             {(streamingMessage ||
                                 streamingMarketplaceData ||
-                                streamingRealEstateData) && (
+                                streamingRealEstateData ||
+                                streamingVignetteData) && (
                                     <div className="flex gap-2 sm:gap-4 items-start justify-start">
                                         <AIAvatar />
                                         <div className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-3 sm:px-4 py-4 sm:py-5 rounded-2xl overflow-hidden bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] text-gray-900 dark:text-white">
@@ -608,6 +610,19 @@ export default function ChatPage() {
                                                         }
                                                     >
                                                         <RealEstateCard data={streamingRealEstateData} />
+                                                    </Suspense>
+                                                </div>
+                                            )}
+                                            {streamingVignetteData && (
+                                                <div className={streamingMessage || streamingMarketplaceData || streamingRealEstateData ? "mt-4" : ""}>
+                                                    <Suspense
+                                                        fallback={
+                                                            <div className="text-base text-gray-400">
+                                                                Loading vignettes...
+                                                            </div>
+                                                        }
+                                                    >
+                                                        <VignetteGridCard data={streamingVignetteData} />
                                                     </Suspense>
                                                 </div>
                                             )}

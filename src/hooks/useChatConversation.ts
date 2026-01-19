@@ -88,6 +88,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
     const [streamingMessage, setStreamingMessage] = useState("");
     const [streamingMarketplaceData, setStreamingMarketplaceData] = useState<MarketplaceData | null>(null);
     const [streamingRealEstateData, setStreamingRealEstateData] = useState<RealEstateData | null>(null);
+    const [streamingVignetteData, setStreamingVignetteData] = useState<VignetteData[] | null>(null);
     const [currentStatus, setCurrentStatus] = useState("");
     const [lastStreamingActivity, setLastStreamingActivity] = useState<number>(0);
     const [showStreamingIndicator, setShowStreamingIndicator] = useState(false);
@@ -150,7 +151,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         if (shouldAutoScroll && !hasVignetteData && !disableAutoScrollRef.current) {
             scrollToBottom();
         }
-    }, [messages, streamingMessage, streamingMarketplaceData, streamingRealEstateData, isLoading, shouldAutoScroll]);
+    }, [messages, streamingMessage, streamingMarketplaceData, streamingRealEstateData, streamingVignetteData, isLoading, shouldAutoScroll]);
 
     // Streaming indicator logic
     useEffect(() => {
@@ -202,6 +203,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         setStreamingMessage("");
         setStreamingMarketplaceData(null);
         setStreamingRealEstateData(null);
+        setStreamingVignetteData(null);
         setCurrentStatus("");
         setLastStreamingActivity(Date.now());
         setShowStreamingIndicator(false);
@@ -297,12 +299,14 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                                     setStreamingMessage("");
                                     setStreamingMarketplaceData(null);
                                     setStreamingRealEstateData(null);
+                                    setStreamingVignetteData(null);
                                     setCurrentStatus("");
                                 } catch (err) {
                                     console.error("Error reloading conversation:", err);
                                     setStreamingMessage("");
                                     setStreamingMarketplaceData(null);
                                     setStreamingRealEstateData(null);
+                                    setStreamingVignetteData(null);
                                 }
                                 continue;
                             }
@@ -316,6 +320,11 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                             if (realEstateData) {
                                 setStreamingRealEstateData(realEstateData);
                             }
+                        } else if (data.type === "vignette_data") {
+                            const vignetteData = data.data;
+                            if (vignetteData) {
+                                setStreamingVignetteData(vignetteData);
+                            }
                         } else if (data.type === "metadata") {
                             if (data.skip_streaming && data.intro) {
                                 streamContent += data.intro + "\n\n";
@@ -327,12 +336,14 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                                 setStreamingMessage("");
                                 setStreamingMarketplaceData(null);
                                 setStreamingRealEstateData(null);
+                                setStreamingVignetteData(null);
                                 setCurrentStatus("");
                             } catch (err) {
                                 console.error("Error reloading conversation:", err);
                                 setStreamingMessage("");
                                 setStreamingMarketplaceData(null);
                                 setStreamingRealEstateData(null);
+                                setStreamingVignetteData(null);
                                 setCurrentStatus("");
                             }
                         } else if (data.type === "status") {
@@ -354,6 +365,12 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
     };
 
     const handleFlashcardClick = (flashCards: string, question: string, flashCardType: 'flash_invest' | 'ranking' | 'portfolio') => {
+        // Disable auto-scroll for flash_invest and ranking responses (they return markdown content)
+        if (flashCardType === 'flash_invest' || flashCardType === 'ranking') {
+            sessionStorage.setItem('disableAutoScroll', 'true');
+            disableAutoScrollRef.current = true;
+            console.log(`[Auto-scroll] Disabled for ${flashCardType} response`);
+        }
         handleSend(question, flashCards, flashCardType);
     };
 
@@ -366,6 +383,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         streamingMessage,
         streamingMarketplaceData,
         streamingRealEstateData,
+        streamingVignetteData,
         currentStatus,
         showStreamingIndicator,
 

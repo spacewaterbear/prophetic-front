@@ -248,6 +248,8 @@ export async function POST(
           let marketplaceData: any = null; // Capture marketplace_data separately
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           let realEstateData: any = null; // Capture real_estate_data separately
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          let vignetteData: any = null; // Capture vignette_data separately
 
           // Read and stream the response
           while (true) {
@@ -344,6 +346,21 @@ export async function POST(
                     data: parsed.data
                   })}\n\n`;
                   controller.enqueue(encoder.encode(realEstateChunk));
+                  continue;
+                }
+
+                // Handle vignette_data messages
+                if (parsed.type && parsed.type === "vignette_data") {
+                  console.log("[Prophetic API] Received vignette_data");
+                  // Capture vignette data for database storage
+                  vignetteData = parsed;
+
+                  // Forward vignette_data to client immediately (SSE format)
+                  const vignetteChunk = `data: ${JSON.stringify({
+                    type: "vignette_data",
+                    data: parsed.data
+                  })}\n\n`;
+                  controller.enqueue(encoder.encode(vignetteChunk));
                   continue;
                 }
 
@@ -509,13 +526,29 @@ export async function POST(
             console.log(`[Message Storage] Storing real_estate_data`);
           }
 
+          // If we captured vignette data, store it in metadata
+          if (vignetteData && vignetteData.type === "vignette_data") {
+            // If we already have structured data, add vignette_data to it
+            if (messageMetadata) {
+              messageMetadata.vignette_data = vignetteData.data;
+            } else {
+              messageMetadata = {
+                type: "vignette_data",
+                structured_data: vignetteData,
+                vignette_data: vignetteData.data
+              };
+            }
+            console.log(`[Message Storage] Storing vignette_data`);
+          }
+
           console.log("[Message Storage] About to save message:", {
             conversation_id: conversationId,
             contentLength: messageContent.length,
             contentPreview: messageContent.substring(0, 100),
             hasMetadata: !!messageMetadata,
             metadataType: messageMetadata?.type,
-            hasMarketplaceData: !!messageMetadata?.marketplace_data
+            hasMarketplaceData: !!messageMetadata?.marketplace_data,
+            hasVignetteData: !!messageMetadata?.vignette_data
           });
 
           // Save AI message to database
