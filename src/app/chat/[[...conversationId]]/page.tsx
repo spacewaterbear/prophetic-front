@@ -459,6 +459,9 @@ export default function ChatPage() {
         const imageName = getImageNameFromUrl(vignette.public_url);
         console.log(`[Chat Page] Vignette clicked: ${vignette.brand_name}, image: ${imageName}`);
 
+        // Close sidebar on mobile when vignette is clicked
+        window.dispatchEvent(new CustomEvent('closeSidebar'));
+
         // Disable auto-scroll for vignette responses using sessionStorage
         // This persists across navigation to the new conversation page
         sessionStorage.setItem('disableAutoScroll', 'true');

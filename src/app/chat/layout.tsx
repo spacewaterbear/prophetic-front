@@ -147,6 +147,20 @@ export default function ChatLayout({
         };
     }, []);
 
+    // Listen for closeSidebar event to close sidebar on mobile (e.g., when vignette is clicked)
+    useEffect(() => {
+        const handleCloseSidebar = () => {
+            if (isMobile) {
+                setSidebarOpen(false);
+            }
+        };
+
+        window.addEventListener("closeSidebar", handleCloseSidebar);
+        return () => {
+            window.removeEventListener("closeSidebar", handleCloseSidebar);
+        };
+    }, [isMobile]);
+
     return (
         <div className="main-container bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)]">
             {/* Mobile overlay */}
