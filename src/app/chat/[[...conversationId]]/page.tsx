@@ -76,7 +76,7 @@ AIAvatar.displayName = "AIAvatar";
 
 // Memoized message component
 const MessageItem = memo(
-    ({ message, userName }: { message: Message; userName: string }) => {
+    ({ message, userName, onVignetteClick }: { message: Message; userName: string; onVignetteClick?: (vignette: VignetteData) => void }) => {
         const [copied, setCopied] = useState(false);
 
         const handleCopy = async () => {
@@ -190,7 +190,7 @@ const MessageItem = memo(
                                                 </div>
                                             }
                                         >
-                                            <VignetteGridCard data={message.vignette_data} onVignetteClick={handleVignetteClick} />
+                                            <VignetteGridCard data={message.vignette_data} onVignetteClick={onVignetteClick} />
                                         </Suspense>
                                     </div>
                                 )}
@@ -495,6 +495,7 @@ export default function ChatPage() {
                                         key={message.id}
                                         message={message}
                                         userName={session?.user?.name || "User"}
+                                        onVignetteClick={handleVignetteClick}
                                     />
                                 ))}
                             </div>
@@ -574,6 +575,7 @@ export default function ChatPage() {
                                     key={message.id}
                                     message={message}
                                     userName={session?.user?.name?.[0]?.toUpperCase() || "U"}
+                                    onVignetteClick={handleVignetteClick}
                                 />
                             ))}
 
