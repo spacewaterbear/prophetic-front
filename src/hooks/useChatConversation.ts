@@ -511,7 +511,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
     };
 
     // Stream vignette markdown content progressively
-    const streamVignetteMarkdown = async (imageName: string): Promise<boolean> => {
+    const streamVignetteMarkdown = useCallback(async (imageName: string): Promise<boolean> => {
         setIsLoading(true);
         setStreamingMessage("");
 
@@ -531,12 +531,44 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
             let documentContent = "";
             let questionsContent = "";
             let buffer = "";
+            let chunkCount = 0;
 
             while (true) {
                 const { done, value } = await reader.read();
                 if (done) break;
+                chunkCount++;
 
                 buffer += decoder.decode(value, { stream: true });
+
+                // Check if the response is plain JSON (not SSE format)
+                if (chunkCount === 1 && buffer.trim().startsWith('{')) {
+                    // Try to parse as plain JSON
+                    try {
+                        const jsonResponse = JSON.parse(buffer);
+                        if (jsonResponse.text) {
+                            documentContent = jsonResponse.text;
+                            setStreamingMessage(documentContent);
+
+                            // Add as a message
+                            const aiMessage: Message = {
+                                id: Date.now(),
+                                content: documentContent,
+                                sender: "ai",
+                                created_at: new Date().toISOString(),
+                            };
+
+                            if (conversationId || process.env.NEXT_PUBLIC_SKIP_AUTH === "true") {
+                                setMessages((prev) => [...prev, aiMessage]);
+                                setStreamingMessage("");
+                                setCurrentStatus("");
+                            }
+                            setIsLoading(false);
+                            return true;
+                        }
+                    } catch {
+                        // Not valid JSON yet, continue reading
+                    }
+                }
 
                 // Split by double newline to get complete SSE events
                 const events = buffer.split("\n\n");
@@ -555,7 +587,9 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                         }
                     }
 
-                    if (!eventData || eventData === "[DONE]") continue;
+                    if (!eventData || eventData === "[DONE]") {
+                        continue;
+                    }
 
                     try {
                         const parsed = JSON.parse(eventData);
@@ -628,6 +662,33 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                 }
             }
 
+            // Handle remaining buffer content (e.g., plain JSON that wasn't processed)
+            if (buffer.trim()) {
+                try {
+                    const jsonResponse = JSON.parse(buffer);
+                    if (jsonResponse.text && !documentContent) {
+                        documentContent = jsonResponse.text;
+                        setStreamingMessage(documentContent);
+
+                        // Add as a message
+                        const aiMessage: Message = {
+                            id: Date.now(),
+                            content: documentContent,
+                            sender: "ai",
+                            created_at: new Date().toISOString(),
+                        };
+
+                        if (conversationId || process.env.NEXT_PUBLIC_SKIP_AUTH === "true") {
+                            setMessages((prev) => [...prev, aiMessage]);
+                            setStreamingMessage("");
+                            setCurrentStatus("");
+                        }
+                    }
+                } catch {
+                    // Remaining buffer is not valid JSON
+                }
+            }
+
             setIsLoading(false);
             return true;
         } catch (error) {
@@ -637,7 +698,12 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
             setCurrentStatus("");
             return false;
         }
-    };
+    }, [conversationId, selectedModel, router]);
+
+    // Stable clearMessages function
+    const clearMessages = useCallback(() => {
+        setMessages([]);
+    }, []);
 
     return {
         // State
@@ -663,6 +729,6 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         handleScroll,
         addAiMessage,
         streamVignetteMarkdown,
-        clearMessages: () => setMessages([]),
+        clearMessages,
     };
 }

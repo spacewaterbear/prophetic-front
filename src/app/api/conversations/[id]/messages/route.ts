@@ -2,6 +2,9 @@ import { NextRequest } from "next/server";
 import { auth } from "@/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 
+// Dev mode user ID for testing (must be valid UUID format)
+const DEV_USER_ID = "00000000-0000-0000-0000-000000000000";
+
 // Helper function to check if error is an API/maintenance error
 function isMaintenanceError(errorText: unknown): boolean {
   // Convert to string if it's not already
@@ -83,8 +86,10 @@ export async function POST(
 ) {
   try {
     const session = await auth();
+    const isDevMode = process.env.NEXT_PUBLIC_SKIP_AUTH === "true";
+    const userId = session?.user?.id || (isDevMode ? DEV_USER_ID : null);
 
-    if (!session?.user?.id) {
+    if (!userId) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { "Content-Type": "application/json" }
@@ -110,7 +115,7 @@ export async function POST(
       .from("conversations")
       .select("*")
       .eq("id", conversationId)
-      .eq("user_id", session.user.id)
+      .eq("user_id", userId)
       .single();
 
     if (conversationError || !conversation) {

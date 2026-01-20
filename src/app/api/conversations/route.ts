@@ -2,8 +2,27 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-// Dev mode user ID for testing
-const DEV_USER_ID = "dev-user-00000000-0000-0000-0000-000000000000";
+// Dev mode user ID for testing (must be valid UUID format)
+const DEV_USER_ID = "00000000-0000-0000-0000-000000000000";
+
+// Ensure dev profile exists in database
+async function ensureDevProfile(supabase: ReturnType<typeof createAdminClient>) {
+  const { data: existingProfile } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("id", DEV_USER_ID)
+    .maybeSingle();
+
+  if (!existingProfile) {
+    await supabase.from("profiles").insert({
+      id: DEV_USER_ID,
+      mail: "dev@localhost",
+      username: "Dev User",
+      status: "paid",
+    });
+    console.log("[DEV] Created dev profile");
+  }
+}
 
 // GET /api/conversations - List all conversations for the current user
 export async function GET() {
@@ -18,6 +37,11 @@ export async function GET() {
     }
 
     const supabase = createAdminClient();
+
+    // Ensure dev profile exists if in dev mode
+    if (isDevMode && userId === DEV_USER_ID) {
+      await ensureDevProfile(supabase);
+    }
 
     // Using admin client, so we manually filter by user_id for security
     // Limit to 5 most recent conversations
@@ -57,6 +81,11 @@ export async function POST(request: NextRequest) {
     const { title, model } = body;
 
     const supabase = createAdminClient();
+
+    // Ensure dev profile exists if in dev mode
+    if (isDevMode && userId === DEV_USER_ID) {
+      await ensureDevProfile(supabase);
+    }
 
     // Using admin client, so we ensure user_id matches the session
     const { data: conversation, error } = await supabase

@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { createPortal } from "react-dom";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -37,7 +38,13 @@ export default function ChatLayout({
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [consultationsExpanded, setConsultationsExpanded] = useState(false);
+    const [artValueTradingExpanded, setArtValueTradingExpanded] = useState(false);
     const [mounted, setMounted] = useState(false);
+    const [flyoutPosition, setFlyoutPosition] = useState({ top: 0, left: 0 });
+    const [isMobile, setIsMobile] = useState(false);
+    const artValueTradingRef = useRef<HTMLDivElement>(null);
+    const artValueTradingContentRef = useRef<HTMLDivElement>(null);
+    const flyoutCloseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     // Extract conversation ID from pathname
     const currentConversationId = pathname?.match(/\/chat\/(\d+)/)?.[1];
@@ -60,14 +67,25 @@ export default function ChatLayout({
         // Set initial state based on window width
         const isDesktop = window.innerWidth >= 768;
         setSidebarOpen(isDesktop);
+        setIsMobile(!isDesktop);
 
         const handleResize = () => {
             const isDesktop = window.innerWidth >= 768;
             setSidebarOpen(isDesktop);
+            setIsMobile(!isDesktop);
         };
 
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+    // Cleanup flyout timeout on unmount
+    useEffect(() => {
+        return () => {
+            if (flyoutCloseTimeoutRef.current) {
+                clearTimeout(flyoutCloseTimeoutRef.current);
+            }
+        };
     }, []);
 
     const loadConversations = async () => {
@@ -299,19 +317,232 @@ export default function ChatLayout({
                             <span>Marché spot</span>
                         </button>
 
-                        {/* Art Value Trading Prophetic */}
-                        <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2">
-                            {mounted && (
-                                <Image
-                                    src={`https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/book_${theme === 'dark' ? 'b' : 'n'}.svg`}
-                                    alt="Art Value Trading"
-                                    width={22}
-                                    height={22}
-                                    className="flex-shrink-0"
-                                />
+                        {/* Art Value Trading Prophetic - Accordion/Flyout */}
+                        <div
+                            ref={artValueTradingRef}
+                            className="relative"
+                            onMouseEnter={() => {
+                                if (!isMobile && artValueTradingRef.current) {
+                                    // Clear any pending close timeout
+                                    if (flyoutCloseTimeoutRef.current) {
+                                        clearTimeout(flyoutCloseTimeoutRef.current);
+                                        flyoutCloseTimeoutRef.current = null;
+                                    }
+                                    const rect = artValueTradingRef.current.getBoundingClientRect();
+                                    setFlyoutPosition({
+                                        top: rect.top,
+                                        left: rect.right + 8,
+                                    });
+                                    setArtValueTradingExpanded(true);
+                                }
+                            }}
+                            onMouseLeave={() => {
+                                if (!isMobile) {
+                                    // Add delay before closing to give user time to reach the flyout
+                                    flyoutCloseTimeoutRef.current = setTimeout(() => {
+                                        setArtValueTradingExpanded(false);
+                                    }, 300);
+                                }
+                            }}
+                        >
+                            <button
+                                onClick={() => {
+                                    if (isMobile) {
+                                        const newExpanded = !artValueTradingExpanded;
+                                        setArtValueTradingExpanded(newExpanded);
+                                        if (newExpanded) {
+                                            // Scroll to show the accordion content after it renders
+                                            setTimeout(() => {
+                                                artValueTradingContentRef.current?.scrollIntoView({
+                                                    behavior: 'smooth',
+                                                    block: 'start',
+                                                });
+                                            }, 50);
+                                        }
+                                    }
+                                }}
+                                className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2"
+                            >
+                                {mounted && (
+                                    <Image
+                                        src={`https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/book_${theme === 'dark' ? 'b' : 'n'}.svg`}
+                                        alt="Art Value Trading"
+                                        width={22}
+                                        height={22}
+                                        className="flex-shrink-0"
+                                    />
+                                )}
+                                <span className="flex-1">Art Value Trading</span>
+                                {isMobile && (
+                                    artValueTradingExpanded ? (
+                                        <ChevronDown className="h-4 w-4" />
+                                    ) : (
+                                        <ChevronRight className="h-4 w-4" />
+                                    )
+                                )}
+                            </button>
+
+                            {/* Mobile: Inline accordion */}
+                            {isMobile && artValueTradingExpanded && (
+                                <div
+                                    ref={artValueTradingContentRef}
+                                    className="ml-4 mt-1 space-y-1 border-l-2 border-gray-400 dark:border-gray-700 pl-2"
+                                >
+                                    {/* ARTISTES & TALENTS Section */}
+                                    <div className="py-1">
+                                        <div className="flex items-center gap-2 px-2 py-1 text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
+                                            <span className="text-yellow-600 dark:text-yellow-500">🌟</span>
+                                            <span>Artistes & Talents</span>
+                                        </div>
+                                        <div className="mt-1 space-y-0.5">
+                                            {[
+                                                { label: 'Alpha Artists', template: 'alpha_artists_template.md' },
+                                                { label: 'Early Access', template: 'early_access_template.md' },
+                                                { label: 'Next Blue Chips', template: 'next_blue_chips_Template.md' },
+                                                { label: 'Momentum Creators', template: 'momentum_creators_template.md' },
+                                                { label: 'Hot List', template: 'hot_list_template.md' },
+                                            ].map(({ label, template }) => (
+                                                <button
+                                                    key={template}
+                                                    onClick={() => {
+                                                        router.push(`/chat?${encodeURIComponent(label)}`, { scroll: false });
+                                                        setArtValueTradingExpanded(false);
+                                                    }}
+                                                    className="w-full text-left px-2 py-1.5 rounded-lg hover:bg-gray-600/20 dark:hover:bg-white/5 transition-colors text-xs text-gray-900 dark:text-white"
+                                                >
+                                                    {label}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Divider */}
+                                    <div className="border-t border-gray-400 dark:border-gray-700 my-1" />
+
+                                    {/* PAR STRATÉGIE Section */}
+                                    <div className="py-1">
+                                        <div className="flex items-center gap-2 px-2 py-1 text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
+                                            <span className="text-blue-600 dark:text-blue-400">📊</span>
+                                            <span>Par Stratégie</span>
+                                        </div>
+                                        <div className="mt-1 space-y-0.5">
+                                            {[
+                                                { label: 'Capital Fortress', template: 'capital_fortress_template.md' },
+                                                { label: 'Growth Engine', template: 'growth_engine_template.md' },
+                                                { label: 'Balanced Art', template: 'balanced_art_template.md' },
+                                                { label: 'Trophy Assets', template: 'trophy_assets_template.md' },
+                                                { label: 'Long Term Legacy', template: 'long_term_legacy_template.md' },
+                                                { label: 'Collection Symphonie', template: 'collection_symphonie_template.md' },
+                                            ].map(({ label, template }) => (
+                                                <button
+                                                    key={template}
+                                                    onClick={() => {
+                                                        router.push(`/chat?${encodeURIComponent(label)}`, { scroll: false });
+                                                        setArtValueTradingExpanded(false);
+                                                    }}
+                                                    className="w-full text-left px-2 py-1.5 rounded-lg hover:bg-gray-600/20 dark:hover:bg-white/5 transition-colors text-xs text-gray-900 dark:text-white"
+                                                >
+                                                    {label}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
                             )}
-                            <span>Art Value Trading</span>
-                        </button>
+
+                            {/* Desktop: Flyout to the right (rendered via portal) */}
+                            {!isMobile && artValueTradingExpanded && mounted && createPortal(
+                                <div
+                                    className="fixed w-[420px] bg-[rgb(230,220,210)] dark:bg-[#1e1f20] rounded-lg shadow-xl border border-gray-400 dark:border-gray-700 z-[9999] animate-in fade-in slide-in-from-left-2 duration-200"
+                                    style={{
+                                        top: flyoutPosition.top,
+                                        left: flyoutPosition.left,
+                                    }}
+                                    onMouseEnter={() => {
+                                        // Clear any pending close timeout when mouse enters flyout
+                                        if (flyoutCloseTimeoutRef.current) {
+                                            clearTimeout(flyoutCloseTimeoutRef.current);
+                                            flyoutCloseTimeoutRef.current = null;
+                                        }
+                                    }}
+                                    onMouseLeave={() => {
+                                        // Add delay before closing to give user time to move back
+                                        flyoutCloseTimeoutRef.current = setTimeout(() => {
+                                            setArtValueTradingExpanded(false);
+                                        }, 300);
+                                    }}
+                                >
+                                    <div className="p-4 space-y-1">
+                                        {/* ARTISTES & TALENTS Section */}
+                                        <div className="py-2">
+                                            <div className="flex items-center gap-2 px-3 py-1 text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
+                                                <span className="text-yellow-600 dark:text-yellow-500">🌟</span>
+                                                <span>Artistes & Talents</span>
+                                            </div>
+                                            <div className="mt-1 space-y-0.5">
+                                                {[
+                                                    { label: 'Alpha Artists', template: 'alpha_artists_template.md', description: 'Potentiel de surperformance' },
+                                                    { label: 'Early Access', template: 'early_access_template.md', description: 'Talents avant consécration' },
+                                                    { label: 'Next Blue Chips', template: 'next_blue_chips_Template.md', description: 'Futurs Basquiat & Haring' },
+                                                    { label: 'Momentum Creators', template: 'momentum_creators_template.md', description: 'Artistes en accélération' },
+                                                    { label: 'Hot List', template: 'hot_list_template.md', description: 'Le buzz du moment' },
+                                                ].map(({ label, template, description }) => (
+                                                    <button
+                                                        key={template}
+                                                        onClick={() => {
+                                                            console.log(`[Art Value Trading] Clicked ${label}`);
+                                                            router.push(`/chat?${encodeURIComponent(label)}`, { scroll: false });
+                                                        }}
+                                                        className="w-full text-left px-3 py-1.5 rounded-lg hover:bg-gray-600/20 dark:hover:bg-white/5 transition-colors group"
+                                                    >
+                                                        <div className="flex items-start justify-between gap-2">
+                                                            <span className="text-sm text-gray-900 dark:text-white font-medium">{label}</span>
+                                                            <span className="text-xs text-gray-500 dark:text-gray-400 italic text-right flex-shrink-0">{description}</span>
+                                                        </div>
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        {/* Divider */}
+                                        <div className="border-t border-gray-400 dark:border-gray-700 my-2" />
+
+                                        {/* PAR STRATÉGIE Section */}
+                                        <div className="py-2">
+                                            <div className="flex items-center gap-2 px-3 py-1 text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
+                                                <span className="text-blue-600 dark:text-blue-400">📊</span>
+                                                <span>Par Stratégie</span>
+                                            </div>
+                                            <div className="mt-1 space-y-0.5">
+                                                {[
+                                                    { label: 'Capital Fortress', template: 'capital_fortress_template.md', description: 'Préservation du capital' },
+                                                    { label: 'Growth Engine', template: 'growth_engine_template.md', description: 'Croissance agressive' },
+                                                    { label: 'Balanced Art', template: 'balanced_art_template.md', description: 'Risque/rendement équilibré' },
+                                                    { label: 'Trophy Assets', template: 'trophy_assets_template.md', description: "Pièces d'exception" },
+                                                    { label: 'Long Term Legacy', template: 'long_term_legacy_template.md', description: 'Transmission patrimoniale' },
+                                                    { label: 'Collection Symphonie', template: 'collection_symphonie_template.md', description: 'Multi-segments diversifié' },
+                                                ].map(({ label, template, description }) => (
+                                                    <button
+                                                        key={template}
+                                                        onClick={() => {
+                                                            console.log(`[Art Value Trading] Clicked ${label}`);
+                                                            router.push(`/chat?${encodeURIComponent(label)}`, { scroll: false });
+                                                        }}
+                                                        className="w-full text-left px-3 py-1.5 rounded-lg hover:bg-gray-600/20 dark:hover:bg-white/5 transition-colors group"
+                                                    >
+                                                        <div className="flex items-start justify-between gap-2">
+                                                            <span className="text-sm text-gray-900 dark:text-white font-medium">{label}</span>
+                                                            <span className="text-xs text-gray-500 dark:text-gray-400 italic text-right flex-shrink-0">{description}</span>
+                                                        </div>
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>,
+                                document.body
+                            )}
+                        </div>
                     </div>
                 </div>
 

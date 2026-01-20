@@ -355,6 +355,85 @@ export default function ChatPage() {
         fetchVignettes();
     }, [searchParams, conversationId]);
 
+    // Handle Art Value Trading template selection
+    useEffect(() => {
+        // Get all URL parameters
+        const params = new URLSearchParams(searchParams.toString());
+
+        // Skip if there's a category parameter (that's for vignettes)
+        if (params.has('category')) return;
+
+        // Get the first parameter key (which should be the display name)
+        const displayName = Array.from(params.keys())[0];
+
+        if (!displayName) return;
+
+        console.log(`[Chat Page] Art Value Trading display name detected: ${displayName}`);
+
+        // Map display names to template filenames
+        const displayNameToTemplate: Record<string, string> = {
+            'Alpha Artists': 'alpha_artists_template.md',
+            'Early Access': 'early_access_template.md',
+            'Next Blue Chips': 'next_blue_chips_Template.md',
+            'Momentum Creators': 'momentum_creators_template.md',
+            'Hot List': 'hot_list_template.md',
+            'Capital Fortress': 'capital_fortress_template.md',
+            'Growth Engine': 'growth_engine_template.md',
+            'Balanced Art': 'balanced_art_template.md',
+            'Trophy Assets': 'trophy_assets_template.md',
+            'Long Term Legacy': 'long_term_legacy_template.md',
+            'Collection Symphonie': 'collection_symphonie_template.md',
+        };
+
+        const templateFile = displayNameToTemplate[displayName];
+
+        if (!templateFile) {
+            console.log(`[Chat Page] No template mapping found for: ${displayName}`);
+            return;
+        }
+
+        console.log(`[Chat Page] Mapped to template: ${templateFile}`);
+
+        // Update document title
+        document.title = `${displayName} | Prophetic Orchestra`;
+
+        // Clear any previous content
+        clearMessages();
+        setVignettes([]);
+        setVignetteError(null);
+
+        // Disable auto-scroll for markdown content
+        sessionStorage.setItem('disableAutoScroll', 'true');
+        if (disableAutoScrollRef) {
+            disableAutoScrollRef.current = true;
+        }
+        console.log('[Chat Page] Auto-scroll DISABLED for art template response');
+
+        // Stream the markdown template
+        const loadTemplate = async () => {
+            try {
+                const success = await streamVignetteMarkdown(templateFile);
+
+                if (!success) {
+                    throw new Error("Failed to stream art template markdown");
+                }
+                console.log(`[Chat Page] Art template markdown streamed successfully`);
+            } catch (error) {
+                console.error("[Chat Page] Error loading art template:", error);
+                toast.error("Failed to load art template");
+
+                // Re-enable auto-scroll on error
+                sessionStorage.removeItem('disableAutoScroll');
+                if (disableAutoScrollRef) {
+                    disableAutoScrollRef.current = false;
+                }
+                console.log('[Chat Page] Auto-scroll RE-ENABLED after error');
+            }
+        };
+
+        loadTemplate();
+    }, [searchParams, streamVignetteMarkdown, clearMessages, disableAutoScrollRef]);
+
     const handleModelChange = async (newModel: string) => {
         setSelectedModel(newModel);
 
@@ -483,9 +562,9 @@ export default function ChatPage() {
             {isWelcomeScreen ? (
                 /* Welcome Screen */
                 <div className="relative flex-1 bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] px-6 overflow-y-auto">
-                    <div className={`w-full max-w-4xl flex flex-col items-center py-10 mx-auto ${vignettes.length === 0 && messages.length === 0 && !vignetteLoading && !vignetteError ? 'min-h-full justify-center' : ''}`}>
-                        {/* Show messages if any (e.g., from vignette click in dev mode) */}
-                        {messages.length > 0 ? (
+                    <div className={`w-full max-w-4xl flex flex-col items-center py-10 mx-auto ${vignettes.length === 0 && messages.length === 0 && !streamingMessage && !vignetteLoading && !vignetteError ? 'min-h-full justify-center' : ''}`}>
+                        {/* Show messages if any (e.g., from vignette click in dev mode) or streaming content */}
+                        {messages.length > 0 || streamingMessage ? (
                             <div className="w-full max-w-5xl space-y-6">
                                 {messages.map((message) => (
                                     <MessageItem
@@ -495,6 +574,18 @@ export default function ChatPage() {
                                         onVignetteClick={handleVignetteClick}
                                     />
                                 ))}
+                                {/* Streaming Message for Art Value Trading templates */}
+                                {streamingMessage && (
+                                    <div className="flex gap-2 sm:gap-4 items-start justify-start">
+                                        <AIAvatar />
+                                        <div className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-3 sm:px-4 py-4 sm:py-5 rounded-2xl overflow-hidden bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] text-gray-900 dark:text-white">
+                                            <Markdown
+                                                content={streamingMessage}
+                                                className="text-base"
+                                            />
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         ) : vignettes.length > 0 ? (
                             /* Vignettes Display */
