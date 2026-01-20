@@ -510,6 +510,135 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         }
     };
 
+    // Stream vignette markdown content progressively
+    const streamVignetteMarkdown = async (imageName: string): Promise<boolean> => {
+        setIsLoading(true);
+        setStreamingMessage("");
+
+        try {
+            const response = await fetch(`/api/vignettes/markdown?markdown=${encodeURIComponent(imageName)}`);
+
+            if (!response.ok) {
+                throw new Error(`Failed to fetch markdown: ${response.status}`);
+            }
+
+            const reader = response.body?.getReader();
+            if (!reader) {
+                throw new Error("No response stream");
+            }
+
+            const decoder = new TextDecoder();
+            let documentContent = "";
+            let questionsContent = "";
+            let buffer = "";
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                buffer += decoder.decode(value, { stream: true });
+
+                // Split by double newline to get complete SSE events
+                const events = buffer.split("\n\n");
+                buffer = events.pop() || "";
+
+                for (const event of events) {
+                    if (!event.trim()) continue;
+
+                    // Extract data from SSE event
+                    const lines = event.split("\n");
+                    let eventData = "";
+
+                    for (const line of lines) {
+                        if (line.startsWith("data: ")) {
+                            eventData += line.slice(6);
+                        }
+                    }
+
+                    if (!eventData || eventData === "[DONE]") continue;
+
+                    try {
+                        const parsed = JSON.parse(eventData);
+
+                        if (parsed.type === "document") {
+                            console.log(`[Vignette Stream] DOCUMENT received at ${new Date().toISOString()} (${parsed.content?.length || 0} chars)`);
+                            documentContent = parsed.content || "";
+                            // Show document immediately
+                            setStreamingMessage(documentContent);
+                            // Yield to allow React to re-render before processing more events
+                            await new Promise(resolve => setTimeout(resolve, 0));
+                        } else if (parsed.type === "status") {
+                            console.log(`[Vignette Stream] STATUS: ${parsed.message} at ${new Date().toISOString()}`);
+                            setCurrentStatus(parsed.message || "");
+                        } else if (parsed.type === "questions_chunk") {
+                            console.log(`[Vignette Stream] QUESTIONS_CHUNK received at ${new Date().toISOString()} (+${parsed.content?.length || 0} chars)`);
+                            questionsContent += parsed.content || "";
+                            // Update with document + questions as they stream
+                            const fullContent = documentContent + "\n\n" + questionsContent;
+                            setStreamingMessage(fullContent);
+                        } else if (parsed.type === "done") {
+                            console.log(`[Vignette Stream] DONE received at ${new Date().toISOString()}`);
+                            // Finalize
+                            const finalContent = questionsContent
+                                ? `${documentContent}\n\n${questionsContent}`
+                                : documentContent;
+
+                            // Add as a message
+                            const aiMessage: Message = {
+                                id: Date.now(),
+                                content: finalContent,
+                                sender: "ai",
+                                created_at: new Date().toISOString(),
+                            };
+
+                            // If in a conversation, add the message locally
+                            if (conversationId || process.env.NEXT_PUBLIC_SKIP_AUTH === "true") {
+                                setMessages((prev) => [...prev, aiMessage]);
+                                setStreamingMessage("");
+                                setCurrentStatus("");
+                            } else {
+                                // No conversation - create one and navigate
+                                const title = finalContent.length > 50
+                                    ? finalContent.substring(0, 50) + "..."
+                                    : finalContent;
+
+                                const createResponse = await fetch("/api/conversations", {
+                                    method: "POST",
+                                    headers: { "Content-Type": "application/json" },
+                                    body: JSON.stringify({
+                                        title: title,
+                                        model: selectedModel,
+                                    }),
+                                });
+
+                                if (createResponse.ok) {
+                                    const data = await createResponse.json();
+                                    const newConversationId = data.conversation.id;
+                                    sessionStorage.setItem(PENDING_VIGNETTE_CONTENT_KEY, finalContent);
+                                    refreshConversations();
+                                    router.push(`/chat/${newConversationId}`);
+                                }
+                                setStreamingMessage("");
+                                setCurrentStatus("");
+                            }
+                        }
+                    } catch (parseError) {
+                        console.error("[Vignette Stream] Failed to parse SSE event:", eventData);
+                    }
+                }
+            }
+
+            setIsLoading(false);
+            return true;
+        } catch (error) {
+            console.error("[Vignette Stream] Error:", error);
+            setIsLoading(false);
+            setStreamingMessage("");
+            setCurrentStatus("");
+            return false;
+        }
+    };
+
     return {
         // State
         messages,
@@ -533,6 +662,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         handleFlashcardClick,
         handleScroll,
         addAiMessage,
+        streamVignetteMarkdown,
         clearMessages: () => setMessages([]),
     };
 }

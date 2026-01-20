@@ -273,6 +273,7 @@ export default function ChatPage() {
         handleFlashcardClick,
         handleScroll,
         addAiMessage,
+        streamVignetteMarkdown,
         clearMessages,
     } = useChatConversation({ conversationId, selectedModel });
 
@@ -388,17 +389,13 @@ export default function ChatPage() {
         console.log('[Chat Page] Auto-scroll DISABLED for vignette response (set in sessionStorage)');
 
         try {
-            const response = await fetch(`/api/vignettes/markdown?markdown=${encodeURIComponent(imageName)}`);
-            if (!response.ok) {
-                throw new Error(`Failed to fetch markdown: ${response.status}`);
-            }
-            const data = await response.json();
-            console.log(`[Chat Page] Markdown data received:`, data);
+            // Use streaming to show markdown document first, then questions progressively
+            const success = await streamVignetteMarkdown(imageName);
 
-            if (data.text) {
-                addAiMessage(data.text);
-                // Note: sessionStorage flag will be cleared by the hook after navigation
+            if (!success) {
+                throw new Error("Failed to stream vignette markdown");
             }
+            console.log(`[Chat Page] Vignette markdown streamed successfully`);
         } catch (error) {
             console.error("[Chat Page] Error fetching vignette markdown:", error);
             toast.error("Failed to load vignette details");
@@ -485,7 +482,7 @@ export default function ChatPage() {
             {/* Main Content */}
             {isWelcomeScreen ? (
                 /* Welcome Screen */
-                <div className={`relative flex-1 bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] px-6 ${vignettes.length > 0 && messages.length === 0 ? 'overflow-hidden' : 'overflow-y-auto'}`}>
+                <div className="relative flex-1 bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] px-6 overflow-y-auto">
                     <div className={`w-full max-w-4xl flex flex-col items-center py-10 mx-auto ${vignettes.length === 0 && messages.length === 0 && !vignetteLoading && !vignetteError ? 'min-h-full justify-center' : ''}`}>
                         {/* Show messages if any (e.g., from vignette click in dev mode) */}
                         {messages.length > 0 ? (

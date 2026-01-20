@@ -279,18 +279,38 @@ export default function ChatLayout({
                             <span>Cash-Flow Leasing</span>
                         </button>
 
-                        {/* Cahiers Prophetic */}
-                        <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2">
+                        {/* Marché spot */}
+                        <button
+                            onClick={() => {
+                                console.log('[Sidebar] Clicked Marché spot, category: MARCHE_SPOT');
+                                router.push('/chat?category=MARCHE_SPOT', { scroll: false });
+                            }}
+                            className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2"
+                        >
                             {mounted && (
                                 <Image
-                                    src={`https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/book_${theme === 'dark' ? 'b' : 'n'}.svg`}
-                                    alt="Cahiers Prophetic"
+                                    src={`https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/stars_${theme === 'dark' ? 'b' : 'n'}.svg`}
+                                    alt="Marché spot"
                                     width={22}
                                     height={22}
                                     className="flex-shrink-0"
                                 />
                             )}
-                            <span>Cahiers Prophetic</span>
+                            <span>Marché spot</span>
+                        </button>
+
+                        {/* Art Value Trading Prophetic */}
+                        <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2">
+                            {mounted && (
+                                <Image
+                                    src={`https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/book_${theme === 'dark' ? 'b' : 'n'}.svg`}
+                                    alt="Art Value Trading"
+                                    width={22}
+                                    height={22}
+                                    className="flex-shrink-0"
+                                />
+                            )}
+                            <span>Art Value Trading</span>
                         </button>
                     </div>
                 </div>

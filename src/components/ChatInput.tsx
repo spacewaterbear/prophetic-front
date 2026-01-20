@@ -396,7 +396,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
             />
 
             {/* Main Input Container - Horizontal on Desktop, Vertical on Mobile */}
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 w-full">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 w-full pt-4 sm:pt-0">
                 {/* Textarea Area */}
                 <div className="flex-1 w-full flex items-center">
                     <textarea
