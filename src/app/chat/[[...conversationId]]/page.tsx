@@ -331,6 +331,11 @@ export default function ChatPage() {
 
     useEffect(() => {
         setMounted(true);
+        // Load saved agent from localStorage
+        const savedAgent = localStorage.getItem('selectedAgent');
+        if (savedAgent && ['discover', 'intelligence', 'oracle'].includes(savedAgent)) {
+            setSelectedAgent(savedAgent as 'discover' | 'intelligence' | 'oracle');
+        }
     }, []);
 
     // Redirect to login if not authenticated (skip in dev mode)
@@ -354,6 +359,27 @@ export default function ChatPage() {
             setSelectedModel(DEFAULT_NON_ADMIN_MODEL);
         }
     }, [session]);
+
+    // Validate saved agent against user's subscription status
+    useEffect(() => {
+        if (session) {
+            const userStatus = (session.user as { status?: string })?.status;
+            const getAvailableAgents = (status: string | undefined): ('discover' | 'intelligence' | 'oracle')[] => {
+                switch (status) {
+                    case 'discover': return ['discover'];
+                    case 'intelligence': return ['discover', 'intelligence'];
+                    case 'oracle':
+                    case 'admini': return ['discover', 'intelligence', 'oracle'];
+                    default: return ['discover'];
+                }
+            };
+            const availableAgents = getAvailableAgents(userStatus);
+            if (!availableAgents.includes(selectedAgent)) {
+                setSelectedAgent('discover');
+                localStorage.setItem('selectedAgent', 'discover');
+            }
+        }
+    }, [session, selectedAgent]);
 
     // Fetch vignettes when category changes (welcome screen only)
     useEffect(() => {
@@ -425,6 +451,11 @@ export default function ChatPage() {
                 console.error("Error updating conversation model:", error);
             }
         }
+    };
+
+    const handleAgentChange = (agent: 'discover' | 'intelligence' | 'oracle') => {
+        setSelectedAgent(agent);
+        localStorage.setItem('selectedAgent', agent);
     };
 
     const handleVignetteClick = async (vignette: VignetteData) => {
@@ -687,7 +718,7 @@ export default function ChatPage() {
                                     onFlashcardClick={handleFlashcardClick}
                                     userStatus={(session?.user as { status?: string })?.status as 'unauthorized' | 'free' | 'paid' | 'admini' | 'discover' | 'intelligence' | 'oracle' | undefined}
                                     selectedAgent={selectedAgent}
-                                    onAgentChange={setSelectedAgent}
+                                    onAgentChange={handleAgentChange}
                                     className="max-w-3xl"
                                 />
                             </>
@@ -823,7 +854,7 @@ export default function ChatPage() {
                             onFlashcardClick={handleFlashcardClick}
                             userStatus={(session?.user as { status?: string })?.status as 'unauthorized' | 'free' | 'paid' | 'admini' | 'discover' | 'intelligence' | 'oracle' | undefined}
                             selectedAgent={selectedAgent}
-                            onAgentChange={setSelectedAgent}
+                            onAgentChange={handleAgentChange}
                             className="max-w-3xl"
                         />
                     </div>
