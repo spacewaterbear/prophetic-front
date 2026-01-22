@@ -18,6 +18,7 @@ export interface VignetteData {
     nb_insights: number;
     score: number;
     trend: "up" | "down";
+    subtitle: string;
 }
 
 export interface VignetteResponse {

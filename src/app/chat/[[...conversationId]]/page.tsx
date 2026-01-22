@@ -327,55 +327,57 @@ export default function ChatPage() {
 
     // Fetch vignettes when category changes (welcome screen only)
     useEffect(() => {
-        if (conversationId) return; // Skip if viewing a conversation
-
         const category = searchParams.get("category");
-        console.log("[Chat Page] useEffect triggered, category:", category);
+        console.log("[Chat Page] useEffect triggered, category:", category, "conversationId:", conversationId);
 
-        // Clear any previous vignette content when category changes
-        clearMessages();
+        // If there's a category parameter, we should show vignettes regardless of conversationId
+        // This handles the case where user clicks a category from a conversation page
+        if (category) {
+            // Clear any previous vignette content when category changes
+            clearMessages();
 
-        if (!category) {
-            console.log("[Chat Page] No category, clearing vignettes");
+            const fetchVignettes = async () => {
+                console.log(`[Chat Page] Starting fetch for category: ${category}`);
+                setVignetteLoading(true);
+                setVignetteError(null);
+
+                try {
+                    const url = `/api/vignettes?category=${category}`;
+                    console.log(`[Chat Page] Fetching from: ${url}`);
+                    const response = await fetch(url);
+                    console.log(`[Chat Page] Response status: ${response.status}`);
+
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch vignettes: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    console.log(`[Chat Page] Received data:`, data);
+                    console.log(`[Chat Page] Number of vignettes: ${data.vignettes?.length || 0}`);
+                    setVignettes(data.vignettes || []);
+
+                    // Prevent scrolling by keeping scroll position at top
+                    window.scrollTo(0, 0);
+                } catch (error) {
+                    console.error("[Chat Page] Error fetching vignettes:", error);
+                    setVignetteError("Failed to load vignettes");
+                    setVignettes([]);
+                } finally {
+                    setVignetteLoading(false);
+                    console.log("[Chat Page] Fetch complete");
+                }
+            };
+
+            fetchVignettes();
+        } else if (!conversationId) {
+            // No category and no conversation - clear vignettes
+            console.log("[Chat Page] No category and no conversation, clearing vignettes");
+            clearMessages();
             setVignettes([]);
             setVignetteError(null);
-            return;
         }
-
-        const fetchVignettes = async () => {
-            console.log(`[Chat Page] Starting fetch for category: ${category}`);
-            setVignetteLoading(true);
-            setVignetteError(null);
-
-            try {
-                const url = `/api/vignettes?category=${category}`;
-                console.log(`[Chat Page] Fetching from: ${url}`);
-                const response = await fetch(url);
-                console.log(`[Chat Page] Response status: ${response.status}`);
-
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch vignettes: ${response.status}`);
-                }
-
-                const data = await response.json();
-                console.log(`[Chat Page] Received data:`, data);
-                console.log(`[Chat Page] Number of vignettes: ${data.vignettes?.length || 0}`);
-                setVignettes(data.vignettes || []);
-
-                // Prevent scrolling by keeping scroll position at top
-                window.scrollTo(0, 0);
-            } catch (error) {
-                console.error("[Chat Page] Error fetching vignettes:", error);
-                setVignetteError("Failed to load vignettes");
-                setVignettes([]);
-            } finally {
-                setVignetteLoading(false);
-                console.log("[Chat Page] Fetch complete");
-            }
-        };
-
-        fetchVignettes();
-    }, [searchParams, conversationId]);
+        // If conversationId exists but no category, do nothing (viewing a conversation)
+    }, [searchParams, conversationId, clearMessages]);
 
     // Handle Art Value Trading template selection
     useEffect(() => {

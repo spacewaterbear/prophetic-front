@@ -12,7 +12,7 @@ interface VignetteGridCardProps {
  *
  * Formalism requirements:
  * - Title: Inter size 16 bold (centered) - brand_name
- * - Subtitle: Inter size 14 Light Italic (centered) - nb_insight insights
+ * - Subtitle: Inter size 14 Light Italic (centered) - subtitle
  * - Specific visual style: rounded-[24px], bg-[#e6e6e6]
  */
 export const VignetteGridCard = memo(({ data, onVignetteClick }: VignetteGridCardProps) => {
@@ -63,7 +63,7 @@ export const VignetteGridCard = memo(({ data, onVignetteClick }: VignetteGridCar
                                     {item.brand_name}
                                 </h3>
                                 <p className="text-[14px] font-light italic text-gray-500 dark:text-gray-400 mt-0.5">
-                                    {item.nb_insights} {item.nb_insights === 1 ? 'Insight' : 'Insights'}
+                                    {item.subtitle}
                                 </p>
                             </div>
                         </div>

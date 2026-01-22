@@ -159,9 +159,9 @@ export const ClothesSearchCard = memo(({ data }: ClothesSearchCardProps) => {
 
     const { listings, marketplace_breakdown, total_listings, successful_marketplaces } = data;
 
-    // Filter valid listings (with price or image)
+    // Filter valid listings (must have image)
     const validListings = listings.filter(
-        listing => listing.price || listing.image_url
+        listing => listing.image_url
     );
 
     // Get filtered listings based on selected marketplace

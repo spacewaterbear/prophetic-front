@@ -272,7 +272,14 @@ function ChatLayoutInner({
                                 onClick={() => {
                                     if (disabled) return;
                                     console.log(`[Sidebar] Clicked ${label}, category: ${category}`);
-                                    router.push(`/chat?category=${category}`, { scroll: false });
+
+                                    // Smooth navigation
+                                    router.push(`/chat?category=${category}`);
+
+                                    // Close sidebar on mobile
+                                    if (isMobile) {
+                                        setSidebarOpen(false);
+                                    }
                                 }}
                                 disabled={disabled}
                                 className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${disabled

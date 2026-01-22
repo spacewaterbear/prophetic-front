@@ -717,6 +717,13 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
     // Stable clearMessages function
     const clearMessages = useCallback(() => {
         setMessages([]);
+        setStreamingMessage("");
+        setStreamingMarketplaceData(null);
+        setStreamingRealEstateData(null);
+        setStreamingVignetteData(null);
+        setStreamingClothesSearchData(null);
+        setCurrentStatus("");
+        setShowStreamingIndicator(false);
     }, []);
 
     return {
