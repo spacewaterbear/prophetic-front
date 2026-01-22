@@ -533,7 +533,11 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         setStreamingVignetteCategory(category || null);
 
         try {
-            const response = await fetch(`/api/vignettes/markdown?markdown=${encodeURIComponent(imageName)}`);
+            let markdownUrl = `/api/vignettes/markdown?markdown=${encodeURIComponent(imageName)}`;
+            if (category) {
+                markdownUrl += `&category=${encodeURIComponent(category)}`;
+            }
+            const response = await fetch(markdownUrl);
 
             if (!response.ok) {
                 throw new Error(`Failed to fetch markdown: ${response.status}`);

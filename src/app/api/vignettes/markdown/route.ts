@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// GET /api/vignettes/markdown?markdown=image_name
+// GET /api/vignettes/markdown?markdown=image_name&category=CATEGORY
 // The backend returns SSE stream with events: document, questions_chunk, done
 // This route forwards the SSE stream to the client for progressive display
 export async function GET(request: NextRequest) {
     try {
         const searchParams = request.nextUrl.searchParams;
         const markdown = searchParams.get("markdown");
+        const category = searchParams.get("category");
 
         if (!markdown) {
             return NextResponse.json(
@@ -31,7 +32,12 @@ export async function GET(request: NextRequest) {
             );
         }
 
-        const apiUrl = `${process.env.PROPHETIC_API_URL}/prophetic/vignettes/markdown?markdown=${encodeURIComponent(markdown)}`;
+        let apiUrl = `${process.env.PROPHETIC_API_URL}/prophetic/vignettes/markdown?markdown=${encodeURIComponent(markdown)}`;
+
+        // Add prompt_markdown=True for ART_TRADING_VALUE category
+        if (category === "ART_TRADING_VALUE") {
+            apiUrl += "&prompt_markdown=True";
+        }
         console.log(`[Vignettes Markdown API] Fetching from:`, apiUrl);
 
         const response = await fetch(apiUrl, {
