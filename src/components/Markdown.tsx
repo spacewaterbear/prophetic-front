@@ -6,9 +6,11 @@ import { cn } from "@/lib/utils";
 interface MarkdownProps {
   content: string;
   className?: string;
+  categoryName?: string;
+  onCategoryClick?: () => void;
 }
 
-export function Markdown({ content, className }: MarkdownProps) {
+export function Markdown({ content, className, categoryName, onCategoryClick }: MarkdownProps) {
   // Helper function to convert ASCII tables to markdown tables
   const convertAsciiTableToMarkdown = (asciiTable: string): string => {
     const lines = asciiTable.split('\n');
@@ -244,198 +246,166 @@ export function Markdown({ content, className }: MarkdownProps) {
   }, [content]);
 
   return (
-    <div className={cn("prose prose-sm dark:prose-invert max-w-none px-0", className)}>
-      <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
-        components={{
-          // Headings
-          h1: ({ node, ...props }) => (
-            <h1 className="text-2xl font-bold mt-6 mb-4 text-gray-900 dark:text-gray-100" style={{ fontFamily: 'EB Garamond, serif' }} {...props} />
-          ),
-          h2: ({ node, ...props }) => (
-            <h2 className="text-xl font-bold mt-5 mb-3 text-gray-900 dark:text-gray-100" style={{ fontFamily: 'EB Garamond, serif' }} {...props} />
-          ),
-          h3: ({ node, ...props }) => (
-            <h3 className="text-lg font-semibold mt-4 mb-2 text-gray-900 dark:text-gray-100" style={{ fontFamily: 'EB Garamond, serif' }} {...props} />
-          ),
-          h4: ({ node, ...props }) => (
-            <h4 className="text-base font-semibold mt-3 mb-2 text-gray-900 dark:text-gray-100" {...props} />
-          ),
-          h5: ({ node, ...props }) => (
-            <h5 className="text-sm font-semibold mt-3 mb-2 text-gray-900 dark:text-gray-100" {...props} />
-          ),
-          h6: ({ node, ...props }) => (
-            <h6 className="text-sm font-semibold mt-3 mb-2 text-gray-700 dark:text-gray-300" {...props} />
-          ),
-          // Paragraphs
-          p: ({ node, children, ...props }) => {
-            // Helper to check for ASCII table/box patterns
-            // Use React.Children to safely handle children, looking at the first child if it's a string
-            const firstChild = React.Children.toArray(children)[0];
-            const isAsciiTable =
-              typeof firstChild === 'string' &&
-              firstChild.trim().startsWith('┌');
+    <div className="relative">
+      {categoryName && onCategoryClick && (
+        <div className="hidden flex justify-start mb-4">
+          <button
+            onClick={onCategoryClick}
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="m15 18-6-6 6-6" />
+            </svg>
+            {categoryName}
+          </button>
+        </div>
+      )}
+      <div className={cn("prose prose-sm dark:prose-invert max-w-none px-0", className)}>
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]}
+          components={{
+            // Headings
+            h1: ({ node, ...props }) => (
+              <h1 className="text-2xl font-bold mt-6 mb-4 text-gray-900 dark:text-gray-100" style={{ fontFamily: 'EB Garamond, serif' }} {...props} />
+            ),
+            h2: ({ node, ...props }) => (
+              <h2 className="text-xl font-bold mt-5 mb-3 text-gray-900 dark:text-gray-100" style={{ fontFamily: 'EB Garamond, serif' }} {...props} />
+            ),
+            h3: ({ node, ...props }) => (
+              <h3 className="text-lg font-semibold mt-4 mb-2 text-gray-900 dark:text-gray-100" style={{ fontFamily: 'EB Garamond, serif' }} {...props} />
+            ),
+            h4: ({ node, ...props }) => (
+              <h4 className="text-base font-semibold mt-3 mb-2 text-gray-900 dark:text-gray-100" {...props} />
+            ),
+            h5: ({ node, ...props }) => (
+              <h5 className="text-sm font-semibold mt-3 mb-2 text-gray-900 dark:text-gray-100" {...props} />
+            ),
+            h6: ({ node, ...props }) => (
+              <h6 className="text-sm font-semibold mt-3 mb-2 text-gray-700 dark:text-gray-300" {...props} />
+            ),
+            // Paragraphs
+            p: ({ node, children, ...props }) => {
+              // Helper to check for ASCII table/box patterns
+              // Use React.Children to safely handle children, looking at the first child if it's a string
+              const firstChild = React.Children.toArray(children)[0];
+              const isAsciiTable =
+                typeof firstChild === 'string' &&
+                firstChild.trim().startsWith('┌');
 
-            // Check if this is a horizontal separator line (long sequence of dashes or equals)
-            const isHorizontalSeparator =
-              typeof firstChild === 'string' &&
-              /^[-=─━]{10,}$/.test(firstChild.trim());
+              // Check if this is a horizontal separator line (long sequence of dashes or equals)
+              const isHorizontalSeparator =
+                typeof firstChild === 'string' &&
+                /^[-=─━]{10,}$/.test(firstChild.trim());
 
-            // Check if content contains long dash lines (even with text in between or mixed with other elements)
-            let containsLongDashLines = false;
-            React.Children.forEach(children, (child) => {
-              if (typeof child === 'string' && /[\-=\u2500-\u257F]{30,}/.test(child)) {
-                containsLongDashLines = true;
-              }
-            });
-
-            if (isAsciiTable) {
-              return (
-                <div className="table-scroll-wrapper my-4">
-                  <p
-                    className="font-mono whitespace-pre leading-tight mb-0"
-                    {...props}
-                  >
-                    {children}
-                  </p>
-                </div>
-              );
-            }
-
-            if (isHorizontalSeparator) {
-              return (
-                <div className="my-4 w-full max-w-full overflow-hidden">
-                  <div className="border-t-2 border-gray-300 dark:border-gray-600" />
-                </div>
-              );
-            }
-
-            // Handle paragraphs with long separator lines mixed with other content
-            if (containsLongDashLines) {
-              // Process children to split text and separators into separate elements
-              const elements: React.ReactNode[] = [];
-              let textBuffer: React.ReactNode[] = [];
-
-              React.Children.forEach(children, (child, index) => {
-                if (typeof child === 'string') {
-                  // Split by long dash sequences using Unicode escape sequences
-                  const parts = child.split(/([\-=\u2500-\u257F]{30,})/);
-                  parts.forEach((part, partIndex) => {
-                    if (/^[\-=\u2500-\u257F]{30,}$/.test(part)) {
-                      // Flush text buffer if any
-                      if (textBuffer.length > 0) {
-                        elements.push(
-                          <p key={`text-${index}-${partIndex}`} className="mb-2 leading-relaxed overflow-hidden">
-                            {textBuffer}
-                          </p>
-                        );
-                        textBuffer = [];
-                      }
-                      // Add horizontal rule as a separate element
-                      elements.push(
-                        <hr key={`hr-${index}-${partIndex}`} className="my-2 border-gray-300 dark:border-gray-600" />
-                      );
-                    } else if (part) {
-                      textBuffer.push(part);
-                    }
-                  });
-                } else {
-                  textBuffer.push(child);
+              // Check if content contains long dash lines (even with text in between or mixed with other elements)
+              let containsLongDashLines = false;
+              React.Children.forEach(children, (child) => {
+                if (typeof child === 'string' && /[\-=\u2500-\u257F]{30,}/.test(child)) {
+                  containsLongDashLines = true;
                 }
               });
 
-              // Flush remaining text buffer
-              if (textBuffer.length > 0) {
-                elements.push(
-                  <p key="text-final" className="mb-2 leading-relaxed overflow-hidden">
-                    {textBuffer}
-                  </p>
+              if (isAsciiTable) {
+                return (
+                  <div className="table-scroll-wrapper my-4">
+                    <p
+                      className="font-mono whitespace-pre leading-tight mb-0"
+                      {...props}
+                    >
+                      {children}
+                    </p>
+                  </div>
                 );
               }
 
-              return <div className="mb-4">{elements}</div>;
-            }
+              if (isHorizontalSeparator) {
+                return (
+                  <div className="my-4 w-full max-w-full overflow-hidden">
+                    <div className="border-t-2 border-gray-300 dark:border-gray-600" />
+                  </div>
+                );
+              }
 
-            return (
-              <p className="leading-relaxed px-0" {...props}>
-                {children}
-              </p>
-            );
-          },
-          // Lists
-          ul: ({ node, ...props }) => (
-            <ul className="list-disc list-inside mb-4 space-y-2" {...props} />
-          ),
-          ol: ({ node, ...props }) => (
-            <ol className="list-decimal list-inside mb-4 space-y-2" {...props} />
-          ),
-          li: ({ node, ...props }) => (
-            <li className="leading-relaxed" {...props} />
-          ),
-          // Code
-          code: ({ node, className, children, ...props }) => {
-            // In react-markdown v10, the `inline` prop indicates if it's inline code
-            const { inline } = props as { inline?: boolean };
+              // Handle paragraphs with long separator lines mixed with other content
+              if (containsLongDashLines) {
+                // Process children to split text and separators into separate elements
+                const elements: React.ReactNode[] = [];
+                let textBuffer: React.ReactNode[] = [];
 
-            // Helper to check for ASCII table/box patterns in block code
-            const content = String(children).trim();
-            const isAsciiTable = !inline && (
-              content.startsWith('┌') ||
-              content.startsWith('╔') ||
-              content.startsWith('┏') ||
-              content.startsWith('+') ||
-              content.startsWith('━') ||
-              content.startsWith('─') ||
-              (content.includes('│') && content.includes('─')) ||
-              (content.includes('│') && content.includes('━')) ||
-              (content.includes('├') || content.includes('┤') || content.includes('┼'))
-            );
+                React.Children.forEach(children, (child, index) => {
+                  if (typeof child === 'string') {
+                    // Split by long dash sequences using Unicode escape sequences
+                    const parts = child.split(/([\-=\u2500-\u257F]{30,})/);
+                    parts.forEach((part, partIndex) => {
+                      if (/^[\-=\u2500-\u257F]{30,}$/.test(part)) {
+                        // Flush text buffer if any
+                        if (textBuffer.length > 0) {
+                          elements.push(
+                            <p key={`text-${index}-${partIndex}`} className="mb-2 leading-relaxed overflow-hidden">
+                              {textBuffer}
+                            </p>
+                          );
+                          textBuffer = [];
+                        }
+                        // Add horizontal rule as a separate element
+                        elements.push(
+                          <hr key={`hr-${index}-${partIndex}`} className="my-2 border-gray-300 dark:border-gray-600" />
+                        );
+                      } else if (part) {
+                        textBuffer.push(part);
+                      }
+                    });
+                  } else {
+                    textBuffer.push(child);
+                  }
+                });
 
-            if (inline) {
+                // Flush remaining text buffer
+                if (textBuffer.length > 0) {
+                  elements.push(
+                    <p key="text-final" className="mb-2 leading-relaxed overflow-hidden">
+                      {textBuffer}
+                    </p>
+                  );
+                }
+
+                return <div className="mb-4">{elements}</div>;
+              }
+
               return (
-                <code
-                  className="bg-gray-100 dark:bg-gray-800 text-pink-600 dark:text-pink-400 px-1.5 py-0.5 rounded text-sm font-mono"
-                  {...props}
-                >
+                <p className="leading-relaxed px-0" {...props}>
                   {children}
-                </code>
+                </p>
               );
-            }
+            },
+            // Lists
+            ul: ({ node, ...props }) => (
+              <ul className="list-disc list-inside mb-4 space-y-2" {...props} />
+            ),
+            ol: ({ node, ...props }) => (
+              <ol className="list-decimal list-inside mb-4 space-y-2" {...props} />
+            ),
+            li: ({ node, ...props }) => (
+              <li className="leading-relaxed" {...props} />
+            ),
+            // Code
+            code: ({ node, className, children, ...props }) => {
+              // In react-markdown v10, the `inline` prop indicates if it's inline code
+              const { inline } = props as { inline?: boolean };
 
-            // Custom styling for ASCII tables to make them look cleaner
-            if (isAsciiTable) {
-              return (
-                <div className="table-scroll-wrapper my-4">
-                  <code
-                    className="block bg-gray-50 dark:bg-gray-800/30 text-gray-900 dark:text-gray-100 text-sm whitespace-pre leading-tight p-3 rounded"
-                    style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace' }}
-                    {...props}
-                  >
-                    {children}
-                  </code>
-                </div>
-              );
-            }
-
-            // Standard block code styling
-            return (
-              <code
-                className="block bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono my-4"
-                {...props}
-              >
-                {children}
-              </code>
-            );
-          },
-          pre: ({ node, children, ...props }) => {
-            // Check if the content is an ASCII table to remove the background styling
-            // We need to peek into the children (usually a code element)
-            const firstChild = React.Children.toArray(children)[0];
-            let isAsciiTable = false;
-
-            if (React.isValidElement(firstChild) && firstChild.props.children) {
-              const content = String(firstChild.props.children).trim();
-              isAsciiTable =
+              // Helper to check for ASCII table/box patterns in block code
+              const content = String(children).trim();
+              const isAsciiTable = !inline && (
                 content.startsWith('┌') ||
                 content.startsWith('╔') ||
                 content.startsWith('┏') ||
@@ -444,143 +414,200 @@ export function Markdown({ content, className }: MarkdownProps) {
                 content.startsWith('─') ||
                 (content.includes('│') && content.includes('─')) ||
                 (content.includes('│') && content.includes('━')) ||
-                (content.includes('├') || content.includes('┤') || content.includes('┼'));
-            }
+                (content.includes('├') || content.includes('┤') || content.includes('┼'))
+              );
 
-            return (
-              <pre
-                className={cn(
-                  "overflow-hidden my-4 block",
-                  // Different styling for ASCII tables vs regular code blocks
-                  isAsciiTable
-                    ? "bg-gray-50 dark:bg-gray-800/30 rounded"
-                    : "bg-gray-100 dark:bg-gray-900 rounded-lg"
-                )}
-                {...props}
-              >
-                {children}
-              </pre>
-            );
-          },
-          // Blockquote
-          blockquote: ({ node, ...props }) => (
-            <blockquote
-              className="border-l-4 border-blue-500 dark:border-blue-400 pl-4 py-2 my-4 italic text-gray-700 dark:text-gray-300 bg-blue-50/50 dark:bg-blue-900/20"
-              {...props}
-            />
-          ),
-          // Links
-          a: ({ node, ...props }) => (
-            <a
-              className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline"
-              target="_blank"
-              rel="noopener noreferrer"
-              {...props}
-            />
-          ),
-          // Horizontal rule
-          hr: ({ node, ...props }) => (
-            <hr className="my-6 border-gray-300 dark:border-gray-600" {...props} />
-          ),
-          // Tables
-          table: ({ node, children, ...props }) => {
-            // Simpler approach: check if table has only 1 column by counting th/td in first row
-            let isSingleColumn = false;
-
-            try {
-              // Convert children to array and look for thead/tbody
-              const childArray = React.Children.toArray(children);
-
-              for (const section of childArray) {
-                if (React.isValidElement(section)) {
-                  const sectionChildren = React.Children.toArray(section.props?.children || []);
-
-                  for (const row of sectionChildren) {
-                    if (React.isValidElement(row)) {
-                      const cells = React.Children.toArray(row.props?.children || []);
-                      // Count valid cell elements
-                      const cellCount = cells.filter(cell => React.isValidElement(cell)).length;
-
-                      if (cellCount > 0) {
-                        isSingleColumn = cellCount === 1;
-                        break;
-                      }
-                    }
-                  }
-
-                  if (isSingleColumn !== false) break;
-                }
+              if (inline) {
+                return (
+                  <code
+                    className="bg-gray-100 dark:bg-gray-800 text-pink-600 dark:text-pink-400 px-1.5 py-0.5 rounded text-sm font-mono"
+                    {...props}
+                  >
+                    {children}
+                  </code>
+                );
               }
-            } catch (e) {
-              isSingleColumn = false;
-            }
 
-            return (
-              <div className="table-scroll-wrapper my-4">
-                <table
-                  className={`w-full divide-y divide-gray-300 dark:divide-gray-600 border border-gray-300 dark:border-gray-600 ${isSingleColumn ? '' : 'min-w-[500px]'}`}
+              // Custom styling for ASCII tables to make them look cleaner
+              if (isAsciiTable) {
+                return (
+                  <div className="table-scroll-wrapper my-4">
+                    <code
+                      className="block bg-gray-50 dark:bg-gray-800/30 text-gray-900 dark:text-gray-100 text-sm whitespace-pre leading-tight p-3 rounded"
+                      style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace' }}
+                      {...props}
+                    >
+                      {children}
+                    </code>
+                  </div>
+                );
+              }
+
+              // Standard block code styling
+              return (
+                <code
+                  className="block bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono my-4"
                   {...props}
                 >
                   {children}
-                </table>
-              </div>
-            );
-          },
-          thead: ({ node, ...props }) => (
-            <thead className="bg-[rgb(235,225,215)] dark:bg-gray-800" {...props} />
-          ),
-          tbody: ({ node, ...props }) => (
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-[rgb(242,235,225)] dark:bg-gray-900" {...props} />
-          ),
-          tr: ({ node, children, ...props }) => {
-            // Check if this row is just a horizontal divider
-            const isDividerRow = React.Children.toArray(children).some((child) => {
-              if (React.isValidElement(child) && child.props.children) {
-                const content = React.Children.toArray(child.props.children)[0];
-                return (
-                  typeof content === "string" && /^[\u2500-\u257F-=]+$/.test(content.trim())
-                );
+                </code>
+              );
+            },
+            pre: ({ node, children, ...props }) => {
+              // Check if the content is an ASCII table to remove the background styling
+              // We need to peek into the children (usually a code element)
+              const firstChild = React.Children.toArray(children)[0];
+              let isAsciiTable = false;
+
+              if (React.isValidElement(firstChild) && firstChild.props.children) {
+                const content = String(firstChild.props.children).trim();
+                isAsciiTable =
+                  content.startsWith('┌') ||
+                  content.startsWith('╔') ||
+                  content.startsWith('┏') ||
+                  content.startsWith('+') ||
+                  content.startsWith('━') ||
+                  content.startsWith('─') ||
+                  (content.includes('│') && content.includes('─')) ||
+                  (content.includes('│') && content.includes('━')) ||
+                  (content.includes('├') || content.includes('┤') || content.includes('┼'));
               }
-              return false;
-            });
 
-            if (isDividerRow) return null;
-
-            return <tr {...props}>{children}</tr>;
-          },
-          th: ({ node, ...props }) => (
-            <th className="px-2 py-1 sm:px-4 sm:py-2 text-center text-xs sm:text-sm font-semibold text-gray-900 dark:text-gray-100" {...props} />
-          ),
-          td: ({ node, children, ...props }) => {
-            const hasLongUnbreakableWord = React.Children.toArray(children).some(
-              (child) =>
-                typeof child === "string" &&
-                child.split(" ").some((word) => word.length > 30)
-            );
-
-            return (
-              <td
-                className={cn(
-                  "px-2 py-1 sm:px-4 sm:py-2 text-center text-xs sm:text-sm text-gray-700 dark:text-gray-300",
-                  hasLongUnbreakableWord ? "break-all" : "break-words"
-                )}
+              return (
+                <pre
+                  className={cn(
+                    "overflow-hidden my-4 block",
+                    // Different styling for ASCII tables vs regular code blocks
+                    isAsciiTable
+                      ? "bg-gray-50 dark:bg-gray-800/30 rounded"
+                      : "bg-gray-100 dark:bg-gray-900 rounded-lg"
+                  )}
+                  {...props}
+                >
+                  {children}
+                </pre>
+              );
+            },
+            // Blockquote
+            blockquote: ({ node, ...props }) => (
+              <blockquote
+                className="border-l-4 border-blue-500 dark:border-blue-400 pl-4 py-2 my-4 italic text-gray-700 dark:text-gray-300 bg-blue-50/50 dark:bg-blue-900/20"
                 {...props}
-              >
-                {children}
-              </td>
-            );
-          },
-          // Strong and emphasis
-          strong: ({ node, ...props }) => (
-            <strong className="font-semibold text-gray-900 dark:text-gray-100" {...props} />
-          ),
-          em: ({ node, ...props }) => (
-            <em className="italic" {...props} />
-          ),
-        }}
-      >
-        {processedContent}
-      </ReactMarkdown>
+              />
+            ),
+            // Links
+            a: ({ node, ...props }) => (
+              <a
+                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline"
+                target="_blank"
+                rel="noopener noreferrer"
+                {...props}
+              />
+            ),
+            // Horizontal rule
+            hr: ({ node, ...props }) => (
+              <hr className="my-6 border-gray-300 dark:border-gray-600" {...props} />
+            ),
+            // Tables
+            table: ({ node, children, ...props }) => {
+              // Simpler approach: check if table has only 1 column by counting th/td in first row
+              let isSingleColumn = false;
+
+              try {
+                // Convert children to array and look for thead/tbody
+                const childArray = React.Children.toArray(children);
+
+                for (const section of childArray) {
+                  if (React.isValidElement(section)) {
+                    const sectionChildren = React.Children.toArray(section.props?.children || []);
+
+                    for (const row of sectionChildren) {
+                      if (React.isValidElement(row)) {
+                        const cells = React.Children.toArray(row.props?.children || []);
+                        // Count valid cell elements
+                        const cellCount = cells.filter(cell => React.isValidElement(cell)).length;
+
+                        if (cellCount > 0) {
+                          isSingleColumn = cellCount === 1;
+                          break;
+                        }
+                      }
+                    }
+
+                    if (isSingleColumn !== false) break;
+                  }
+                }
+              } catch (e) {
+                isSingleColumn = false;
+              }
+
+              return (
+                <div className="table-scroll-wrapper my-4">
+                  <table
+                    className={`w-full divide-y divide-gray-300 dark:divide-gray-600 border border-gray-300 dark:border-gray-600 ${isSingleColumn ? '' : 'min-w-[500px]'}`}
+                    {...props}
+                  >
+                    {children}
+                  </table>
+                </div>
+              );
+            },
+            thead: ({ node, ...props }) => (
+              <thead className="bg-[rgb(235,225,215)] dark:bg-gray-800" {...props} />
+            ),
+            tbody: ({ node, ...props }) => (
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-[rgb(242,235,225)] dark:bg-gray-900" {...props} />
+            ),
+            tr: ({ node, children, ...props }) => {
+              // Check if this row is just a horizontal divider
+              const isDividerRow = React.Children.toArray(children).some((child) => {
+                if (React.isValidElement(child) && child.props.children) {
+                  const content = React.Children.toArray(child.props.children)[0];
+                  return (
+                    typeof content === "string" && /^[\u2500-\u257F-=]+$/.test(content.trim())
+                  );
+                }
+                return false;
+              });
+
+              if (isDividerRow) return null;
+
+              return <tr {...props}>{children}</tr>;
+            },
+            th: ({ node, ...props }) => (
+              <th className="px-2 py-1 sm:px-4 sm:py-2 text-center text-xs sm:text-sm font-semibold text-gray-900 dark:text-gray-100" {...props} />
+            ),
+            td: ({ node, children, ...props }) => {
+              const hasLongUnbreakableWord = React.Children.toArray(children).some(
+                (child) =>
+                  typeof child === "string" &&
+                  child.split(" ").some((word) => word.length > 30)
+              );
+
+              return (
+                <td
+                  className={cn(
+                    "px-2 py-1 sm:px-4 sm:py-2 text-center text-xs sm:text-sm text-gray-700 dark:text-gray-300",
+                    hasLongUnbreakableWord ? "break-all" : "break-words"
+                  )}
+                  {...props}
+                >
+                  {children}
+                </td>
+              );
+            },
+            // Strong and emphasis
+            strong: ({ node, ...props }) => (
+              <strong className="font-semibold text-gray-900 dark:text-gray-100" {...props} />
+            ),
+            em: ({ node, ...props }) => (
+              <em className="italic" {...props} />
+            ),
+          }}
+        >
+          {processedContent}
+        </ReactMarkdown>
+      </div>
     </div>
   );
 }

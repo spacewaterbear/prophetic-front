@@ -82,7 +82,12 @@ AIAvatar.displayName = "AIAvatar";
 
 // Memoized message component
 const MessageItem = memo(
-    ({ message, userName, onVignetteClick }: { message: Message; userName: string; onVignetteClick?: (vignette: VignetteData) => void }) => {
+    ({ message, userName, onVignetteClick, handleBackToCategory }: {
+        message: Message;
+        userName: string;
+        onVignetteClick?: (vignette: VignetteData) => void;
+        handleBackToCategory?: (category: string) => void;
+    }) => {
         const [copied, setCopied] = useState(false);
 
         const handleCopy = async () => {
@@ -138,7 +143,12 @@ const MessageItem = memo(
                                             <div className="text-base text-gray-400">Loading...</div>
                                         }
                                     >
-                                        <Markdown content={message.content} className="text-base" />
+                                        <Markdown
+                                            content={message.content}
+                                            className="text-base"
+                                            categoryName={message.vignetteCategory ? CATEGORY_DISPLAY_NAMES[message.vignetteCategory] : undefined}
+                                            onCategoryClick={message.vignetteCategory && handleBackToCategory ? () => handleBackToCategory(message.vignetteCategory!) : undefined}
+                                        />
                                     </Suspense>
                                 )}
 
@@ -252,6 +262,20 @@ const getImageNameFromUrl = (url: string): string => {
     return parts[parts.length - 1];
 };
 
+// Category name mapping for display
+const CATEGORY_DISPLAY_NAMES: Record<string, string> = {
+    ART: "Art",
+    BIJOUX: "Bijoux",
+    CARDS_US: "US Sports Cards",
+    CARS: "Voitures de Collections",
+    IMMO_LUXE: "Immobilier de Luxe",
+    MONTRES_LUXE: "Montres de Luxe",
+    SACS: "Sacs de Luxe",
+    SNEAKERS: "Sneakers",
+    WHISKY: "Whisky",
+    WINE: "Wine",
+};
+
 export default function ChatPage() {
     const { data: session, status } = useSession();
     const router = useRouter();
@@ -286,6 +310,7 @@ export default function ChatPage() {
         streamingRealEstateData,
         streamingVignetteData,
         streamingClothesSearchData,
+        streamingVignetteCategory,
         currentStatus,
         showStreamingIndicator,
         messagesEndRef,
@@ -481,7 +506,13 @@ export default function ChatPage() {
 
     const handleVignetteClick = async (vignette: VignetteData) => {
         const imageName = getImageNameFromUrl(vignette.public_url);
-        console.log(`[Chat Page] Vignette clicked: ${vignette.brand_name}, image: ${imageName}`);
+        console.log(`[Chat Page] Vignette clicked: ${vignette.brand_name}, image: ${imageName}, category: ${vignette.category}`);
+
+        // Update URL to include the vignette title (encoded)
+        const encodedTitle = encodeURIComponent(vignette.brand_name);
+        const newUrl = `/chat?category=${vignette.category}&title=${encodedTitle}`;
+        router.push(newUrl, { scroll: false });
+        console.log(`[Chat Page] URL updated to: ${newUrl}`);
 
         // Close sidebar on mobile when vignette is clicked
         // Check window width directly to ensure accurate mobile detection
@@ -506,7 +537,8 @@ export default function ChatPage() {
 
         try {
             // Use streaming to show markdown document first, then questions progressively
-            const success = await streamVignetteMarkdown(imageName);
+            // Pass the category to track it in the message
+            const success = await streamVignetteMarkdown(imageName, vignette.category);
 
             if (!success) {
                 throw new Error("Failed to stream vignette markdown");
@@ -523,6 +555,11 @@ export default function ChatPage() {
             }
             console.log('[Chat Page] Auto-scroll RE-ENABLED after error');
         }
+    };
+
+    const handleBackToCategory = (category: string) => {
+        console.log(`[Chat Page] Navigating back to category: ${category}`);
+        router.push(`/chat?category=${category}`);
     };
 
     // Show loading while checking authentication
@@ -609,6 +646,7 @@ export default function ChatPage() {
                                         message={message}
                                         userName={session?.user?.name || "User"}
                                         onVignetteClick={handleVignetteClick}
+                                        handleBackToCategory={handleBackToCategory}
                                     />
                                 ))}
                                 {/* Streaming Message for Art Value Trading templates */}
@@ -619,6 +657,8 @@ export default function ChatPage() {
                                             <Markdown
                                                 content={streamingMessage}
                                                 className="text-base"
+                                                categoryName={streamingVignetteCategory ? CATEGORY_DISPLAY_NAMES[streamingVignetteCategory] : undefined}
+                                                onCategoryClick={streamingVignetteCategory ? () => handleBackToCategory(streamingVignetteCategory) : undefined}
                                             />
                                         </div>
                                     </div>
@@ -701,6 +741,7 @@ export default function ChatPage() {
                                     message={message}
                                     userName={session?.user?.name?.[0]?.toUpperCase() || "U"}
                                     onVignetteClick={handleVignetteClick}
+                                    handleBackToCategory={handleBackToCategory}
                                 />
                             ))}
 
@@ -732,6 +773,8 @@ export default function ChatPage() {
                                                 <Markdown
                                                     content={streamingMessage}
                                                     className="text-base"
+                                                    categoryName={streamingVignetteCategory ? CATEGORY_DISPLAY_NAMES[streamingVignetteCategory] : undefined}
+                                                    onCategoryClick={streamingVignetteCategory ? () => handleBackToCategory(streamingVignetteCategory) : undefined}
                                                 />
                                             )}
                                             {streamingMarketplaceData && (

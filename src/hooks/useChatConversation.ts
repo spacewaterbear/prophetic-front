@@ -75,6 +75,7 @@ export interface Message {
     real_estate_data?: RealEstateData;
     vignette_data?: VignetteData[];
     clothes_search_data?: ClothesSearchData;
+    vignetteCategory?: string; // Category enum value when displaying vignette markdown
 }
 
 interface PendingMessage {
@@ -101,6 +102,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
     const [streamingRealEstateData, setStreamingRealEstateData] = useState<RealEstateData | null>(null);
     const [streamingVignetteData, setStreamingVignetteData] = useState<VignetteData[] | null>(null);
     const [streamingClothesSearchData, setStreamingClothesSearchData] = useState<ClothesSearchData | null>(null);
+    const [streamingVignetteCategory, setStreamingVignetteCategory] = useState<string | null>(null);
     const [currentStatus, setCurrentStatus] = useState("");
     const [lastStreamingActivity, setLastStreamingActivity] = useState<number>(0);
     const [showStreamingIndicator, setShowStreamingIndicator] = useState(false);
@@ -525,9 +527,10 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
     };
 
     // Stream vignette markdown content progressively
-    const streamVignetteMarkdown = useCallback(async (imageName: string): Promise<boolean> => {
+    const streamVignetteMarkdown = useCallback(async (imageName: string, category?: string): Promise<boolean> => {
         setIsLoading(true);
         setStreamingMessage("");
+        setStreamingVignetteCategory(category || null);
 
         try {
             const response = await fetch(`/api/vignettes/markdown?markdown=${encodeURIComponent(imageName)}`);
@@ -569,6 +572,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                                 content: documentContent,
                                 sender: "ai",
                                 created_at: new Date().toISOString(),
+                                vignetteCategory: category,
                             };
 
                             if (conversationId || process.env.NEXT_PUBLIC_SKIP_AUTH === "true") {
@@ -637,6 +641,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                                 content: finalContent,
                                 sender: "ai",
                                 created_at: new Date().toISOString(),
+                                vignetteCategory: category,
                             };
 
                             // If in a conversation, add the message locally
@@ -690,6 +695,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                             content: documentContent,
                             sender: "ai",
                             created_at: new Date().toISOString(),
+                            vignetteCategory: category,
                         };
 
                         if (conversationId || process.env.NEXT_PUBLIC_SKIP_AUTH === "true") {
@@ -722,6 +728,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         setStreamingRealEstateData(null);
         setStreamingVignetteData(null);
         setStreamingClothesSearchData(null);
+        setStreamingVignetteCategory(null);
         setCurrentStatus("");
         setShowStreamingIndicator(false);
     }, []);
@@ -737,6 +744,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         streamingRealEstateData,
         streamingVignetteData,
         streamingClothesSearchData,
+        streamingVignetteCategory,
         currentStatus,
         showStreamingIndicator,
 
