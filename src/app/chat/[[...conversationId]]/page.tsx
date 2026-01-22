@@ -265,6 +265,7 @@ const getImageNameFromUrl = (url: string): string => {
 // Category name mapping for display
 const CATEGORY_DISPLAY_NAMES: Record<string, string> = {
     ART: "Art",
+    ART_VALUE_TRADING: "Art Value Trading",
     BIJOUX: "Bijoux",
     CARDS_US: "US Sports Cards",
     CARS: "Voitures de Collections",
@@ -404,84 +405,6 @@ export default function ChatPage() {
         // If conversationId exists but no category, do nothing (viewing a conversation)
     }, [searchParams, conversationId, clearMessages]);
 
-    // Handle Art Value Trading template selection
-    useEffect(() => {
-        // Get all URL parameters
-        const params = new URLSearchParams(searchParams.toString());
-
-        // Skip if there's a category parameter (that's for vignettes)
-        if (params.has('category')) return;
-
-        // Get the first parameter key (which should be the display name)
-        const displayName = Array.from(params.keys())[0];
-
-        if (!displayName) return;
-
-        console.log(`[Chat Page] Art Value Trading display name detected: ${displayName}`);
-
-        // Map display names to template filenames
-        const displayNameToTemplate: Record<string, string> = {
-            'Alpha Artists': 'alpha_artists_template.md',
-            'Early Access': 'early_access_template.md',
-            'Next Blue Chips': 'next_blue_chips_Template.md',
-            'Momentum Creators': 'momentum_creators_template.md',
-            'Hot List': 'hot_list_template.md',
-            'Capital Fortress': 'capital_fortress_template.md',
-            'Growth Engine': 'growth_engine_template.md',
-            'Balanced Art': 'balanced_art_template.md',
-            'Trophy Assets': 'trophy_assets_template.md',
-            'Long Term Legacy': 'long_term_legacy_template.md',
-            'Collection Symphonie': 'collection_symphonie_template.md',
-        };
-
-        const templateFile = displayNameToTemplate[displayName];
-
-        if (!templateFile) {
-            console.log(`[Chat Page] No template mapping found for: ${displayName}`);
-            return;
-        }
-
-        console.log(`[Chat Page] Mapped to template: ${templateFile}`);
-
-        // Update document title
-        document.title = `${displayName} | Prophetic Orchestra`;
-
-        // Clear any previous content
-        clearMessages();
-        setVignettes([]);
-        setVignetteError(null);
-
-        // Disable auto-scroll for markdown content
-        sessionStorage.setItem('disableAutoScroll', 'true');
-        if (disableAutoScrollRef) {
-            disableAutoScrollRef.current = true;
-        }
-        console.log('[Chat Page] Auto-scroll DISABLED for art template response');
-
-        // Stream the markdown template
-        const loadTemplate = async () => {
-            try {
-                const success = await streamVignetteMarkdown(templateFile);
-
-                if (!success) {
-                    throw new Error("Failed to stream art template markdown");
-                }
-                console.log(`[Chat Page] Art template markdown streamed successfully`);
-            } catch (error) {
-                console.error("[Chat Page] Error loading art template:", error);
-                toast.error("Failed to load art template");
-
-                // Re-enable auto-scroll on error
-                sessionStorage.removeItem('disableAutoScroll');
-                if (disableAutoScrollRef) {
-                    disableAutoScrollRef.current = false;
-                }
-                console.log('[Chat Page] Auto-scroll RE-ENABLED after error');
-            }
-        };
-
-        loadTemplate();
-    }, [searchParams, streamVignetteMarkdown, clearMessages, disableAutoScrollRef]);
 
     const handleModelChange = async (newModel: string) => {
         setSelectedModel(newModel);
@@ -649,7 +572,7 @@ export default function ChatPage() {
                                         handleBackToCategory={handleBackToCategory}
                                     />
                                 ))}
-                                {/* Streaming Message for Art Value Trading templates */}
+                                {/* Streaming Message */}
                                 {streamingMessage && (
                                     <div className="flex gap-2 sm:gap-4 items-start justify-start">
                                         <AIAvatar />

@@ -1,5 +1,6 @@
 export enum Vignettes {
     ART = "ART",
+    ART_VALUE_TRADING = "ART_VALUE_TRADING",
     BIJOUX = "BIJOUX",
     CARDS_US = "CARDS_US",
     CARS = "CARS",
