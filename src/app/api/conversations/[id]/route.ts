@@ -127,6 +127,23 @@ export async function GET(
             return msg;
           }
         }
+
+        // If a message has clothes_search_data in metadata, include it in the message object
+        if (metadata.clothes_search_data) {
+          try {
+            console.log("[GET Conversation] Processing clothes_search_data for message:", msg.id);
+
+            // Include clothes_search_data directly in the message
+            return {
+              ...msg,
+              clothes_search_data: metadata.clothes_search_data
+            };
+          } catch (error) {
+            console.error("[GET Conversation] Error processing clothes_search_data for message:", msg.id, error);
+            // Return message without clothes_search_data if there's an error
+            return msg;
+          }
+        }
       }
       return msg;
     });
@@ -142,9 +159,11 @@ export async function GET(
         contentLength: (msg.content as string | undefined)?.length,
         hasMarketplaceData: !!msg.marketplace_data,
         hasRealEstateData: !!msg.real_estate_data,
+        hasClothesSearchData: !!msg.clothes_search_data,
         hasMetadata: !!msg.metadata,
         metadataHasMarketplaceData: !!(metadata?.marketplace_data),
         metadataHasRealEstateData: !!(metadata?.real_estate_data),
+        metadataHasClothesSearchData: !!(metadata?.clothes_search_data),
         marketplace_position: msg.marketplace_position
       });
     });

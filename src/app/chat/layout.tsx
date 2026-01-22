@@ -7,6 +7,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { LogOut, Menu, MessageSquare, Plus, X, ChevronDown, ChevronRight } from "lucide-react";
 import { useI18n } from "@/contexts/i18n-context";
+import { useSidebar, SidebarProvider } from "@/contexts/sidebar-context";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import {
@@ -24,7 +25,7 @@ interface Conversation {
     updated_at: string | null;
 }
 
-export default function ChatLayout({
+function ChatLayoutInner({
     children,
 }: {
     children: React.ReactNode;
@@ -36,12 +37,11 @@ export default function ChatLayout({
     const { theme } = useTheme();
 
     const [conversations, setConversations] = useState<Conversation[]>([]);
-    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const { sidebarOpen, setSidebarOpen, isMobile } = useSidebar();
     const [consultationsExpanded, setConsultationsExpanded] = useState(false);
     const [artValueTradingExpanded, setArtValueTradingExpanded] = useState(false);
     const [mounted, setMounted] = useState(false);
     const [flyoutPosition, setFlyoutPosition] = useState({ top: 0, left: 0 });
-    const [isMobile, setIsMobile] = useState(false);
     const artValueTradingRef = useRef<HTMLDivElement>(null);
     const artValueTradingContentRef = useRef<HTMLDivElement>(null);
     const flyoutCloseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -62,22 +62,7 @@ export default function ChatLayout({
         }
     }, [session]);
 
-    // Handle responsive sidebar behavior
-    useEffect(() => {
-        // Set initial state based on window width
-        const isDesktop = window.innerWidth >= 768;
-        setSidebarOpen(isDesktop);
-        setIsMobile(!isDesktop);
-
-        const handleResize = () => {
-            const isDesktop = window.innerWidth >= 768;
-            setSidebarOpen(isDesktop);
-            setIsMobile(!isDesktop);
-        };
-
-        window.addEventListener("resize", handleResize);
-        return () => window.removeEventListener("resize", handleResize);
-    }, []);
+    // Responsive sidebar behavior is now handled by SidebarContext
 
     // Cleanup flyout timeout on unmount
     useEffect(() => {
@@ -149,17 +134,29 @@ export default function ChatLayout({
 
     // Listen for closeSidebar event to close sidebar on mobile (e.g., when vignette is clicked)
     useEffect(() => {
+        console.log('[Layout] Setting up closeSidebar event listener');
+
         const handleCloseSidebar = () => {
-            if (isMobile) {
+            // Check window width directly to ensure we're on mobile
+            const isMobileView = window.innerWidth < 768;
+            console.log('[Layout] closeSidebar event received, isMobileView:', isMobileView, 'window.innerWidth:', window.innerWidth);
+
+            if (isMobileView) {
+                console.log('[Layout] Closing sidebar on mobile vignette click');
                 setSidebarOpen(false);
+            } else {
+                console.log('[Layout] Not closing sidebar - not in mobile view');
             }
         };
 
         window.addEventListener("closeSidebar", handleCloseSidebar);
+        console.log('[Layout] closeSidebar event listener registered');
+
         return () => {
+            console.log('[Layout] Removing closeSidebar event listener');
             window.removeEventListener("closeSidebar", handleCloseSidebar);
         };
-    }, [isMobile]);
+    }, []);
 
     return (
         <div className="main-container bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)]">
@@ -616,5 +613,17 @@ export default function ChatLayout({
                 {children}
             </div>
         </div>
+    );
+}
+
+export default function ChatLayout({
+    children,
+}: {
+    children: React.ReactNode;
+}) {
+    return (
+        <SidebarProvider>
+            <ChatLayoutInner>{children}</ChatLayoutInner>
+        </SidebarProvider>
     );
 }

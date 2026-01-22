@@ -255,6 +255,8 @@ export async function POST(
           let realEstateData: any = null; // Capture real_estate_data separately
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           let vignetteData: any = null; // Capture vignette_data separately
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          let clothesSearchData: any = null; // Capture clothes_data separately
 
           // Read and stream the response
           while (true) {
@@ -366,6 +368,21 @@ export async function POST(
                     data: parsed.data
                   })}\n\n`;
                   controller.enqueue(encoder.encode(vignetteChunk));
+                  continue;
+                }
+
+                // Handle clothes_data messages
+                if (parsed.type && parsed.type === "clothes_data") {
+                  console.log("[Prophetic API] Received clothes_data");
+                  // Capture clothes search data for database storage
+                  clothesSearchData = parsed;
+
+                  // Forward clothes_data to client immediately (SSE format)
+                  const clothesChunk = `data: ${JSON.stringify({
+                    type: "clothes_data",
+                    data: parsed.data
+                  })}\n\n`;
+                  controller.enqueue(encoder.encode(clothesChunk));
                   continue;
                 }
 
@@ -546,6 +563,21 @@ export async function POST(
             console.log(`[Message Storage] Storing vignette_data`);
           }
 
+          // If we captured clothes search data, store it in metadata
+          if (clothesSearchData && clothesSearchData.type === "clothes_data") {
+            // If we already have structured data, add clothes_search_data to it
+            if (messageMetadata) {
+              messageMetadata.clothes_search_data = clothesSearchData.data;
+            } else {
+              messageMetadata = {
+                type: "clothes_data",
+                structured_data: clothesSearchData,
+                clothes_search_data: clothesSearchData.data
+              };
+            }
+            console.log(`[Message Storage] Storing clothes_search_data`);
+          }
+
           console.log("[Message Storage] About to save message:", {
             conversation_id: conversationId,
             contentLength: messageContent.length,
@@ -553,7 +585,8 @@ export async function POST(
             hasMetadata: !!messageMetadata,
             metadataType: messageMetadata?.type,
             hasMarketplaceData: !!messageMetadata?.marketplace_data,
-            hasVignetteData: !!messageMetadata?.vignette_data
+            hasVignetteData: !!messageMetadata?.vignette_data,
+            hasClothesSearchData: !!messageMetadata?.clothes_search_data
           });
 
           // Save AI message to database

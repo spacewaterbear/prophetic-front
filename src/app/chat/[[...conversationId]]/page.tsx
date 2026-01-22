@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import { useI18n } from "@/contexts/i18n-context";
+import { useSidebar } from "@/contexts/sidebar-context";
 import { ChatInput } from "@/components/ChatInput";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ShareButton } from "@/components/ShareButton";
@@ -41,6 +42,11 @@ const RealEstateCard = lazy(() =>
 const VignetteGridCard = lazy(() =>
     import("@/components/VignetteGridCard").then((mod) => ({
         default: mod.VignetteGridCard,
+    })),
+);
+const ClothesSearchCard = lazy(() =>
+    import("@/components/ClothesSearchCard").then((mod) => ({
+        default: mod.ClothesSearchCard,
     })),
 );
 
@@ -194,6 +200,20 @@ const MessageItem = memo(
                                         </Suspense>
                                     </div>
                                 )}
+
+                                {message.clothes_search_data && (
+                                    <div className={message.content ? "mt-4" : ""}>
+                                        <Suspense
+                                            fallback={
+                                                <div className="text-base text-gray-400">
+                                                    Loading fashion items...
+                                                </div>
+                                            }
+                                        >
+                                            <ClothesSearchCard data={message.clothes_search_data} />
+                                        </Suspense>
+                                    </div>
+                                )}
                             </>
                         )}
                     </div>
@@ -248,6 +268,7 @@ export default function ChatPage() {
     const [mounted, setMounted] = useState(false);
     const [selectedModel, setSelectedModel] = useState<string>(DEFAULT_NON_ADMIN_MODEL);
     const [selectedAgent, setSelectedAgent] = useState<'discover' | 'intelligence' | 'oracle'>('discover');
+    const { setSidebarOpen, isMobile } = useSidebar();
 
     // Vignette state (for welcome screen)
     const [vignettes, setVignettes] = useState<VignetteData[]>([]);
@@ -264,6 +285,7 @@ export default function ChatPage() {
         streamingMarketplaceData,
         streamingRealEstateData,
         streamingVignetteData,
+        streamingClothesSearchData,
         currentStatus,
         showStreamingIndicator,
         messagesEndRef,
@@ -460,7 +482,17 @@ export default function ChatPage() {
         console.log(`[Chat Page] Vignette clicked: ${vignette.brand_name}, image: ${imageName}`);
 
         // Close sidebar on mobile when vignette is clicked
-        window.dispatchEvent(new CustomEvent('closeSidebar'));
+        // Check window width directly to ensure accurate mobile detection
+        const isMobileView = window.innerWidth < 768;
+        console.log('[Chat Page] Window width:', window.innerWidth, 'isMobileView:', isMobileView, 'context isMobile:', isMobile);
+
+        if (isMobileView) {
+            console.log('[Chat Page] Closing sidebar on mobile');
+            setSidebarOpen(false);
+            console.log('[Chat Page] setSidebarOpen(false) called');
+        } else {
+            console.log('[Chat Page] NOT closing sidebar - desktop view');
+        }
 
         // Disable auto-scroll for vignette responses using sessionStorage
         // This persists across navigation to the new conversation page
@@ -671,7 +703,7 @@ export default function ChatPage() {
                             ))}
 
                             {/* Typing indicator */}
-                            {isLoading && !streamingMessage && !streamingMarketplaceData && !streamingVignetteData && (
+                            {isLoading && !streamingMessage && !streamingMarketplaceData && !streamingVignetteData && !streamingClothesSearchData && (
                                 <div className="flex gap-2 sm:gap-4 items-start justify-start">
                                     <AIAvatar />
                                     <div className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-3 sm:px-4 py-4 sm:py-5 rounded-2xl overflow-hidden bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)]">
@@ -689,7 +721,8 @@ export default function ChatPage() {
                             {(streamingMessage ||
                                 streamingMarketplaceData ||
                                 streamingRealEstateData ||
-                                streamingVignetteData) && (
+                                streamingVignetteData ||
+                                streamingClothesSearchData) && (
                                     <div className="flex gap-2 sm:gap-4 items-start justify-start">
                                         <AIAvatar />
                                         <div className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-3 sm:px-4 py-4 sm:py-5 rounded-2xl overflow-hidden bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] text-gray-900 dark:text-white">
@@ -735,6 +768,19 @@ export default function ChatPage() {
                                                         }
                                                     >
                                                         <VignetteGridCard data={streamingVignetteData} onVignetteClick={handleVignetteClick} />
+                                                    </Suspense>
+                                                </div>
+                                            )}
+                                            {streamingClothesSearchData && (
+                                                <div className={streamingMessage || streamingMarketplaceData || streamingRealEstateData || streamingVignetteData ? "mt-4" : ""}>
+                                                    <Suspense
+                                                        fallback={
+                                                            <div className="text-base text-gray-400">
+                                                                Loading fashion items...
+                                                            </div>
+                                                        }
+                                                    >
+                                                        <ClothesSearchCard data={streamingClothesSearchData} />
                                                     </Suspense>
                                                 </div>
                                             )}

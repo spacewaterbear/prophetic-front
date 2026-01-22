@@ -28,7 +28,10 @@ export const VignetteGridCard = memo(({ data, onVignetteClick }: VignetteGridCar
                     <div
                         key={index}
                         className={`group ${onVignetteClick ? "cursor-pointer" : ""}`}
-                        onClick={() => onVignetteClick?.(item)}
+                        onClick={() => {
+                            console.log('[VignetteGridCard] Vignette clicked:', item.brand_name);
+                            onVignetteClick?.(item);
+                        }}
                     >
                         <div className="border border-gray-200/20 bg-[#e6e6e6] dark:bg-gray-800 rounded-[24px] p-3">
                             {/* Image Container */}

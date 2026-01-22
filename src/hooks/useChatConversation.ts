@@ -56,6 +56,7 @@ interface RealEstateData {
 }
 
 import { VignetteData } from "@/types/vignettes";
+import { ClothesSearchData } from "@/components/ClothesSearchCard";
 
 export interface Message {
     id: number;
@@ -73,6 +74,7 @@ export interface Message {
     marketplace_position?: "before" | "after";
     real_estate_data?: RealEstateData;
     vignette_data?: VignetteData[];
+    clothes_search_data?: ClothesSearchData;
 }
 
 interface PendingMessage {
@@ -98,6 +100,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
     const [streamingMarketplaceData, setStreamingMarketplaceData] = useState<MarketplaceData | null>(null);
     const [streamingRealEstateData, setStreamingRealEstateData] = useState<RealEstateData | null>(null);
     const [streamingVignetteData, setStreamingVignetteData] = useState<VignetteData[] | null>(null);
+    const [streamingClothesSearchData, setStreamingClothesSearchData] = useState<ClothesSearchData | null>(null);
     const [currentStatus, setCurrentStatus] = useState("");
     const [lastStreamingActivity, setLastStreamingActivity] = useState<number>(0);
     const [showStreamingIndicator, setShowStreamingIndicator] = useState(false);
@@ -120,6 +123,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         setStreamingMarketplaceData(null);
         setStreamingRealEstateData(null);
         setStreamingVignetteData(null);
+        setStreamingClothesSearchData(null);
         setCurrentStatus("");
         setLastStreamingActivity(Date.now());
         setShowStreamingIndicator(false);
@@ -187,6 +191,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                                     setStreamingMarketplaceData(null);
                                     setStreamingRealEstateData(null);
                                     setStreamingVignetteData(null);
+                                    setStreamingClothesSearchData(null);
                                     setCurrentStatus("");
                                 } catch (err) {
                                     console.error("Error reloading conversation:", err);
@@ -194,6 +199,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                                     setStreamingMarketplaceData(null);
                                     setStreamingRealEstateData(null);
                                     setStreamingVignetteData(null);
+                                    setStreamingClothesSearchData(null);
                                 }
                                 continue;
                             }
@@ -212,6 +218,12 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                             if (vignetteData) {
                                 setStreamingVignetteData(vignetteData);
                             }
+                        } else if (data.type === "clothes_data") {
+                            // Handle clothes search response
+                            const clothesData = data.data;
+                            if (clothesData && clothesData.listings) {
+                                setStreamingClothesSearchData(clothesData);
+                            }
                         } else if (data.type === "metadata") {
                             if (data.skip_streaming && data.intro) {
                                 streamContent += data.intro + "\n\n";
@@ -224,6 +236,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                                 setStreamingMarketplaceData(null);
                                 setStreamingRealEstateData(null);
                                 setStreamingVignetteData(null);
+                                setStreamingClothesSearchData(null);
                                 setCurrentStatus("");
                             } catch (err) {
                                 console.error("Error reloading conversation:", err);
@@ -231,6 +244,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                                 setStreamingMarketplaceData(null);
                                 setStreamingRealEstateData(null);
                                 setStreamingVignetteData(null);
+                                setStreamingClothesSearchData(null);
                                 setCurrentStatus("");
                             }
                         } else if (data.type === "status") {
@@ -362,7 +376,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         if (shouldAutoScroll && !hasVignetteData && !disableAutoScrollRef.current) {
             scrollToBottom();
         }
-    }, [messages, streamingMessage, streamingMarketplaceData, streamingRealEstateData, streamingVignetteData, isLoading, shouldAutoScroll]);
+    }, [messages, streamingMessage, streamingMarketplaceData, streamingRealEstateData, streamingVignetteData, streamingClothesSearchData, isLoading, shouldAutoScroll]);
 
     // Streaming indicator logic
     useEffect(() => {
@@ -715,6 +729,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         streamingMarketplaceData,
         streamingRealEstateData,
         streamingVignetteData,
+        streamingClothesSearchData,
         currentStatus,
         showStreamingIndicator,
 
