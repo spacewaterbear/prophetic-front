@@ -423,11 +423,6 @@ export default function ChatPage() {
         }
     };
 
-    const handlePortfolioClick = () => {
-        // Portfolio doesn't use flash_cards enum, only flash_card_type
-        handleSend('Show me my portfolio insights', undefined, 'portfolio');
-    };
-
     const handleVignetteClick = async (vignette: VignetteData) => {
         const imageName = getImageNameFromUrl(vignette.public_url);
         console.log(`[Chat Page] Vignette clicked: ${vignette.brand_name}, image: ${imageName}, category: ${vignette.category}`);
@@ -686,7 +681,6 @@ export default function ChatPage() {
                                     handleSend={() => handleSend()}
                                     isLoading={isLoading}
                                     onFlashcardClick={handleFlashcardClick}
-                                    onPortfolioClick={handlePortfolioClick}
                                     userStatus={(session?.user as { status?: string })?.status as 'unauthorized' | 'free' | 'paid' | 'admini' | 'discover' | 'intelligence' | 'oracle' | undefined}
                                     selectedAgent={selectedAgent}
                                     onAgentChange={setSelectedAgent}
@@ -823,7 +817,6 @@ export default function ChatPage() {
                             handleSend={() => handleSend()}
                             isLoading={isLoading}
                             onFlashcardClick={handleFlashcardClick}
-                            onPortfolioClick={handlePortfolioClick}
                             userStatus={(session?.user as { status?: string })?.status as 'unauthorized' | 'free' | 'paid' | 'admini' | 'discover' | 'intelligence' | 'oracle' | undefined}
                             selectedAgent={selectedAgent}
                             onAgentChange={setSelectedAgent}
