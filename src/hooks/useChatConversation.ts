@@ -82,6 +82,7 @@ interface PendingMessage {
     content: string;
     flashCards?: string;
     flashCardType?: 'flash_invest' | 'ranking' | 'portfolio';
+    scrollToTop?: boolean;
 }
 
 interface UseChatConversationProps {
@@ -92,6 +93,7 @@ interface UseChatConversationProps {
 const PENDING_MESSAGE_KEY = 'pendingChatMessage';
 const PENDING_VIGNETTE_CONTENT_KEY = 'pendingVignetteContent';
 const PENDING_VIGNETTE_STREAM_KEY = 'pendingVignetteStream';
+const PENDING_SCROLL_TO_TOP_KEY = 'pendingScrollToTop';
 
 interface PendingVignetteStream {
     imageName: string;
@@ -112,6 +114,8 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
     const [currentStatus, setCurrentStatus] = useState("");
     const [lastStreamingActivity, setLastStreamingActivity] = useState<number>(0);
     const [showStreamingIndicator, setShowStreamingIndicator] = useState(false);
+    const [lastUserMessageId, setLastUserMessageId] = useState<number | null>(null);
+    const [shouldScrollToTop, setShouldScrollToTop] = useState(false);
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -124,7 +128,8 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         targetConversationId: number,
         userInput: string,
         flashCards?: string,
-        flashCardType?: 'flash_invest' | 'ranking' | 'portfolio'
+        flashCardType?: 'flash_invest' | 'ranking' | 'portfolio',
+        scrollToTop: boolean = false
     ) => {
         setIsLoading(true);
         setStreamingMessage("");
@@ -144,6 +149,13 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
             created_at: new Date().toISOString(),
         };
         setMessages((prev) => [...prev, tempUserMessage]);
+
+        if (scrollToTop) {
+            setLastUserMessageId(tempUserMessage.id);
+            setShouldScrollToTop(true);
+            disableAutoScrollRef.current = true;
+            sessionStorage.setItem('disableAutoScroll', 'true');
+        }
 
         try {
             const response = await fetch(`/api/conversations/${targetConversationId}/messages`, {
@@ -308,7 +320,8 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                         conversationId,
                         pendingMessage.content,
                         pendingMessage.flashCards,
-                        pendingMessage.flashCardType
+                        pendingMessage.flashCardType,
+                        pendingMessage.scrollToTop
                     );
                 } catch (error) {
                     console.error("Error parsing pending message:", error);
@@ -388,12 +401,19 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
             disableAutoScrollRef.current = true;
             console.log('[Auto-scroll] Initialized from sessionStorage - auto-scroll DISABLED');
 
-            // Clear the flag after a delay
+            // Clear the flag after a delay - increased to 30s to allow for long responses
             setTimeout(() => {
                 sessionStorage.removeItem('disableAutoScroll');
                 disableAutoScrollRef.current = false;
                 console.log('[Auto-scroll] Cleared sessionStorage flag - auto-scroll RE-ENABLED');
-            }, 10000);
+            }, 30000);
+        }
+
+        // Check for pending scroll to top
+        const pendingScrollToTop = sessionStorage.getItem(PENDING_SCROLL_TO_TOP_KEY) === 'true';
+        if (pendingScrollToTop) {
+            setShouldScrollToTop(true);
+            sessionStorage.removeItem(PENDING_SCROLL_TO_TOP_KEY);
         }
     }, [conversationId, sendMessageToApi]);
 
@@ -423,11 +443,47 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         const lastMessage = messages[messages.length - 1];
         const hasVignetteData = lastMessage?.vignette_data && lastMessage.vignette_data.length > 0;
 
-        // Don't auto-scroll if vignette data is present or if explicitly disabled
+        // Handle specific scroll to top request
+        if (shouldScrollToTop && lastUserMessageId && messagesContainerRef.current) {
+            const container = messagesContainerRef.current;
+            const element = container.querySelector(`[data-message-id="${lastUserMessageId}"]`) as HTMLElement;
+
+            if (element) {
+                console.log(`[Auto-scroll] Precise scroll to top for message ${lastUserMessageId}`);
+
+                // Calculate position: element's offset relative to container's top
+                // This ensures it goes to the VERY top of the viewport
+                const targetTop = element.offsetTop;
+
+                container.scrollTo({
+                    top: targetTop,
+                    behavior: 'smooth'
+                });
+
+                // Keep trying for 2 seconds to handle any dynamic layout shifts
+                const interval = setInterval(() => {
+                    if (container && element) {
+                        container.scrollTo({ top: element.offsetTop, behavior: 'smooth' });
+                    }
+                }, 400);
+
+                const timer = setTimeout(() => {
+                    clearInterval(interval);
+                    setShouldScrollToTop(false);
+                }, 2000);
+
+                return () => {
+                    clearInterval(interval);
+                    clearTimeout(timer);
+                };
+            }
+        }
+
+        // Standard auto-scroll to bottom
         if (shouldAutoScroll && !hasVignetteData && !disableAutoScrollRef.current) {
             scrollToBottom();
         }
-    }, [messages, streamingMessage, streamingMarketplaceData, streamingRealEstateData, streamingVignetteData, streamingClothesSearchData, isLoading, shouldAutoScroll]);
+    }, [messages, streamingMessage, streamingMarketplaceData, streamingRealEstateData, streamingVignetteData, streamingClothesSearchData, isLoading, shouldAutoScroll, shouldScrollToTop, lastUserMessageId]);
 
     // Streaming indicator logic
     useEffect(() => {
@@ -454,7 +510,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         window.dispatchEvent(new Event("refreshConversations"));
     };
 
-    const handleSend = async (messageToSend?: string, flashCards?: string, flashCardType?: 'flash_invest' | 'ranking' | 'portfolio') => {
+    const handleSend = async (messageToSend?: string, flashCards?: string, flashCardType?: 'flash_invest' | 'ranking' | 'portfolio', scrollToTop: boolean = false) => {
         const userInput = messageToSend || input;
         if (!userInput.trim() || isLoading) return;
 
@@ -462,21 +518,28 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
 
         // If we already have a conversation, send directly
         if (conversationId) {
-            await sendMessageToApi(conversationId, userInput, flashCards, flashCardType);
+            await sendMessageToApi(conversationId, userInput, flashCards, flashCardType, scrollToTop);
             return;
         }
 
         // No conversation yet - create one and navigate immediately
         setIsLoading(true);
 
+        const messageId = Date.now();
         // Show user message immediately on welcome screen
         const tempUserMessage: Message = {
-            id: Date.now(),
+            id: messageId,
             content: userInput,
             sender: "user",
             created_at: new Date().toISOString(),
         };
         setMessages((prev) => [...prev, tempUserMessage]);
+
+        if (scrollToTop) {
+            setLastUserMessageId(messageId);
+            setShouldScrollToTop(true);
+            sessionStorage.setItem(PENDING_SCROLL_TO_TOP_KEY, 'true');
+        }
 
         try {
             const title = userInput.length > 50 ? userInput.substring(0, 50) + "..." : userInput;
@@ -501,7 +564,8 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
             const pendingMessage: PendingMessage = {
                 content: userInput,
                 flashCards,
-                flashCardType
+                flashCardType,
+                scrollToTop
             };
             sessionStorage.setItem(PENDING_MESSAGE_KEY, JSON.stringify(pendingMessage));
 
@@ -518,14 +582,15 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         // because navigation will unmount this component
     };
 
-    const handleFlashcardClick = (flashCards: string, question: string, flashCardType: 'flash_invest' | 'ranking' | 'portfolio') => {
+    const handleFlashcardClick = (flashCards: string, question: string, flashCardType: 'flash_invest' | 'ranking' | 'portfolio', displayName: string) => {
         // Disable auto-scroll for flash_invest and ranking responses (they return markdown content)
         if (flashCardType === 'flash_invest' || flashCardType === 'ranking') {
             sessionStorage.setItem('disableAutoScroll', 'true');
             disableAutoScrollRef.current = true;
             console.log(`[Auto-scroll] Disabled for ${flashCardType} response`);
         }
-        handleSend(question, flashCards, flashCardType);
+        // Use displayName for the visible user message instead of the internal question/category identifier
+        handleSend(displayName, flashCards, flashCardType, true);
     };
 
     const addAiMessage = async (content: string) => {
@@ -1001,6 +1066,9 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         disableAutoScrollRef,
 
         // Functions
+        lastUserMessageId,
+        shouldScrollToTop,
+        setShouldScrollToTop,
         handleSend,
         handleFlashcardClick,
         handleScroll,

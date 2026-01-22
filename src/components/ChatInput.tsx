@@ -27,7 +27,7 @@ interface ChatInputProps {
     conversationId?: number | null;
     attachedFiles?: AttachedFile[];
     onFilesChange?: (files: AttachedFile[]) => void;
-    onFlashcardClick?: (flashCards: string, question: string, flashCardType: 'flash_invest' | 'ranking') => void;
+    onFlashcardClick?: (flashCards: string, question: string, flashCardType: 'flash_invest' | 'ranking', displayName: string) => void;
     onPortfolioClick?: () => void;
 }
 
@@ -205,7 +205,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
     const handleFlashcardClick = (category: string, flashCardType: 'flash_invest' | 'ranking' = 'flash_invest') => {
         const mapping = FLASHCARD_MAPPING[category];
         if (mapping && onFlashcardClick) {
-            onFlashcardClick(mapping.flash_cards, mapping.question, flashCardType);
+            onFlashcardClick(mapping.flash_cards, mapping.question, flashCardType, category);
             setIsChronoOpen(false);
             setIsRankingOpen(false);
         }

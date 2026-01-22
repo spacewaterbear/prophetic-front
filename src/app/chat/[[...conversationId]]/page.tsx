@@ -103,7 +103,7 @@ const MessageItem = memo(
         };
 
         return (
-            <div className={`flex gap-2 sm:gap-4 items-start w-full ${message.sender === "user" ? "justify-end" : "justify-start"}`}>
+            <div className={`flex gap-2 sm:gap-4 items-start w-full ${message.sender === "user" ? "justify-end" : "justify-start"}`} data-message-id={message.id}>
                 {message.sender === "ai" && <AIAvatar />}
                 <div className={`group flex flex-col gap-2 ${message.sender === "ai" ? "w-full" : ""}`}>
                     <div
@@ -317,6 +317,9 @@ export default function ChatPage() {
         messagesEndRef,
         messagesContainerRef,
         disableAutoScrollRef,
+        lastUserMessageId,
+        shouldScrollToTop,
+        setShouldScrollToTop,
         handleSend,
         handleFlashcardClick,
         handleScroll,
@@ -405,6 +408,7 @@ export default function ChatPage() {
         }
         // If conversationId exists but no category, do nothing (viewing a conversation)
     }, [searchParams, conversationId, clearMessages]);
+
 
 
     const handleModelChange = async (newModel: string) => {
