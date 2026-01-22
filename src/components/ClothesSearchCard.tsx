@@ -1,7 +1,9 @@
 import Image from "next/image";
-import { ExternalLink, Tag, ShoppingBag } from "lucide-react";
+import { ExternalLink, Tag, ShoppingBag, ChevronLeft, ChevronRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { memo, useState } from "react";
+import { memo, useState, useEffect } from "react";
+
+const ITEMS_PER_PAGE = 8;
 
 interface ClothesListing {
     marketplace: string;
@@ -153,6 +155,7 @@ ProductCard.displayName = "ProductCard";
  */
 export const ClothesSearchCard = memo(({ data }: ClothesSearchCardProps) => {
     const [selectedMarketplace, setSelectedMarketplace] = useState<string | null>(null);
+    const [currentPage, setCurrentPage] = useState(1);
 
     const { listings, marketplace_breakdown, total_listings, successful_marketplaces } = data;
 
@@ -165,6 +168,17 @@ export const ClothesSearchCard = memo(({ data }: ClothesSearchCardProps) => {
     const displayedListings = selectedMarketplace
         ? validListings.filter(l => l.marketplace === selectedMarketplace)
         : validListings;
+
+    // Pagination calculations
+    const totalPages = Math.ceil(displayedListings.length / ITEMS_PER_PAGE);
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    const paginatedListings = displayedListings.slice(startIndex, endIndex);
+
+    // Reset to page 1 when marketplace filter changes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [selectedMarketplace]);
 
     // Get marketplace options for filter
     const marketplaces = Object.keys(marketplace_breakdown).filter(
@@ -230,16 +244,34 @@ export const ClothesSearchCard = memo(({ data }: ClothesSearchCardProps) => {
 
             {/* Products Grid - 2 columns like James Edition */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {displayedListings.slice(0, 8).map((listing, index) => (
-                    <ProductCard key={`${listing.marketplace}-${index}`} listing={listing} />
+                {paginatedListings.map((listing, index) => (
+                    <ProductCard key={`${listing.marketplace}-${startIndex + index}`} listing={listing} />
                 ))}
             </div>
 
-            {/* Show more indicator */}
-            {displayedListings.length > 8 && (
-                <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6 pt-6 border-t-2 border-gray-100 dark:border-gray-800">
-                    Showing 8 of {displayedListings.length} items
-                </p>
+            {/* Pagination */}
+            {totalPages > 1 && (
+                <div className="flex items-center justify-center gap-4 mt-6 pt-6 border-t-2 border-gray-100 dark:border-gray-800">
+                    <button
+                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                        disabled={currentPage === 1}
+                        className="p-2 border-2 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-gray-900 dark:hover:border-white disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-gray-300 dark:disabled:hover:border-gray-700 transition-all duration-200"
+                    >
+                        <ChevronLeft className="w-5 h-5" />
+                    </button>
+
+                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                        Showing {startIndex + 1}-{Math.min(endIndex, displayedListings.length)} of {displayedListings.length} items
+                    </span>
+
+                    <button
+                        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                        disabled={currentPage === totalPages}
+                        className="p-2 border-2 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-gray-900 dark:hover:border-white disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-gray-300 dark:disabled:hover:border-gray-700 transition-all duration-200"
+                    >
+                        <ChevronRight className="w-5 h-5" />
+                    </button>
+                </div>
             )}
 
             <style jsx>{`
