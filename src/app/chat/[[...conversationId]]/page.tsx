@@ -471,6 +471,10 @@ export default function ChatPage() {
         const imageName = getImageNameFromUrl(vignette.public_url);
         console.log(`[Chat Page] Vignette clicked: ${vignette.brand_name}, image: ${imageName}, category: ${vignette.category}`);
 
+        // Update URL with category and title (without triggering navigation/re-render)
+        const newUrl = `/chat?category=${vignette.category}&title=${encodeURIComponent(vignette.brand_name)}`;
+        window.history.replaceState(null, '', newUrl);
+
         // Close sidebar on mobile when vignette is clicked
         const isMobileView = window.innerWidth < 768;
         console.log('[Chat Page] Window width:', window.innerWidth, 'isMobileView:', isMobileView, 'context isMobile:', isMobile);
