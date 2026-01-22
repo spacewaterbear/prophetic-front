@@ -415,6 +415,16 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
             setShouldScrollToTop(true);
             sessionStorage.removeItem(PENDING_SCROLL_TO_TOP_KEY);
         }
+
+        // Check for pending scroll to top specifically for vignettes
+        const pendingVignetteScroll = sessionStorage.getItem('pendingScrollToTopVignette') === 'true';
+        if (pendingVignetteScroll) {
+            console.log('[Auto-scroll] Pending vignette scroll detected');
+            if (messagesContainerRef.current) {
+                messagesContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+            sessionStorage.removeItem('pendingScrollToTopVignette');
+        }
     }, [conversationId, sendMessageToApi]);
 
 

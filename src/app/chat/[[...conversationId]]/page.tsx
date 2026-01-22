@@ -1,6 +1,6 @@
 "use client";
 
-import { lazy, memo, Suspense, useEffect, useState } from "react";
+import { lazy, memo, Suspense, useEffect, useState, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
@@ -299,6 +299,7 @@ export default function ChatPage() {
     const [vignettes, setVignettes] = useState<VignetteData[]>([]);
     const [vignetteLoading, setVignetteLoading] = useState(false);
     const [vignetteError, setVignetteError] = useState<string | null>(null);
+    const welcomeContainerRef = useRef<HTMLDivElement>(null);
 
     // Use the custom hook for conversation logic
     const {
@@ -425,6 +426,14 @@ export default function ChatPage() {
             };
 
             fetchVignettes();
+
+            // Also scroll containers to top immediately when category changes
+            if (welcomeContainerRef.current) {
+                welcomeContainerRef.current.scrollTo({ top: 0 });
+            }
+            if (messagesContainerRef.current) {
+                messagesContainerRef.current.scrollTo({ top: 0 });
+            }
         } else if (!conversationId) {
             // No category and no conversation - clear vignettes
             console.log("[Chat Page] No category and no conversation, clearing vignettes");
@@ -474,12 +483,21 @@ export default function ChatPage() {
             console.log('[Chat Page] NOT closing sidebar - desktop view');
         }
 
-        // Disable auto-scroll for vignette responses using sessionStorage
         sessionStorage.setItem('disableAutoScroll', 'true');
+        sessionStorage.setItem('pendingScrollToTopVignette', 'true');
         if (disableAutoScrollRef) {
             disableAutoScrollRef.current = true;
         }
-        console.log('[Chat Page] Auto-scroll DISABLED for vignette response (set in sessionStorage)');
+
+        // Immediate scroll for current view
+        if (messagesContainerRef.current) {
+            messagesContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        if (welcomeContainerRef.current) {
+            welcomeContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        console.log('[Chat Page] Auto-scroll DISABLED and scroll-to-top flag set for vignette response');
 
         // For ART_TRADING_VALUE, create a new conversation and stream chunks there
         if (vignette.category === "ART_TRADING_VALUE") {
@@ -636,7 +654,10 @@ export default function ChatPage() {
             {/* Main Content */}
             {isWelcomeScreen ? (
                 /* Welcome Screen */
-                <div className="relative flex-1 bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] px-6 overflow-y-auto">
+                <div
+                    ref={welcomeContainerRef}
+                    className="relative flex-1 bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] px-6 overflow-y-auto"
+                >
                     <div className={`w-full max-w-4xl flex flex-col items-center py-10 mx-auto ${vignettes.length === 0 && messages.length === 0 && !streamingMessage && !vignetteLoading && !vignetteError ? 'min-h-full justify-center' : ''}`}>
                         {/* Show messages if any (e.g., from vignette click in dev mode) or streaming content */}
                         {messages.length > 0 || streamingMessage ? (
