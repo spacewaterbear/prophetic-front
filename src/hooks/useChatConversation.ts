@@ -91,6 +91,12 @@ interface UseChatConversationProps {
 
 const PENDING_MESSAGE_KEY = 'pendingChatMessage';
 const PENDING_VIGNETTE_CONTENT_KEY = 'pendingVignetteContent';
+const PENDING_VIGNETTE_STREAM_KEY = 'pendingVignetteStream';
+
+interface PendingVignetteStream {
+    imageName: string;
+    category: string;
+}
 
 export function useChatConversation({ conversationId, selectedModel = "anthropic/claude-3.7-sonnet" }: UseChatConversationProps) {
     const router = useRouter();
@@ -285,9 +291,12 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
 
     // Load conversation and check for pending messages when conversationId changes
     useEffect(() => {
+        console.log('[useEffect] Running with conversationId:', conversationId, 'pendingMessageProcessedRef:', pendingMessageProcessedRef.current);
+
         if (conversationId) {
             // Check for pending user message first
             const pendingMessageStr = sessionStorage.getItem(PENDING_MESSAGE_KEY);
+            console.log('[useEffect] PENDING_MESSAGE_KEY:', pendingMessageStr ? 'found' : 'not found');
             if (pendingMessageStr && !pendingMessageProcessedRef.current) {
                 pendingMessageProcessedRef.current = true;
                 sessionStorage.removeItem(PENDING_MESSAGE_KEY);
@@ -311,11 +320,42 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
 
             // Check for pending vignette content (AI message)
             const pendingVignetteContent = sessionStorage.getItem(PENDING_VIGNETTE_CONTENT_KEY);
+            console.log('[useEffect] PENDING_VIGNETTE_CONTENT_KEY:', pendingVignetteContent ? `found (${pendingVignetteContent.length} chars)` : 'not found');
+            console.log('[useEffect] pendingMessageProcessedRef.current:', pendingMessageProcessedRef.current);
             if (pendingVignetteContent && !pendingMessageProcessedRef.current) {
+                console.log('[useEffect] Processing pending vignette content');
                 pendingMessageProcessedRef.current = true;
                 sessionStorage.removeItem(PENDING_VIGNETTE_CONTENT_KEY);
 
-                // Add the vignette content as an AI message
+                // Check if the content is JSON with text and questions fields
+                try {
+                    const parsed = JSON.parse(pendingVignetteContent);
+                    if (parsed.text) {
+                        const messages: Message[] = [
+                            {
+                                id: Date.now(),
+                                content: parsed.text,
+                                sender: "ai",
+                                created_at: new Date().toISOString(),
+                            }
+                        ];
+                        // If there are questions, add them as a second message
+                        if (parsed.questions) {
+                            messages.push({
+                                id: Date.now() + 1,
+                                content: parsed.questions,
+                                sender: "ai",
+                                created_at: new Date().toISOString(),
+                            });
+                        }
+                        setMessages(messages);
+                        return;
+                    }
+                } catch {
+                    // Not JSON, treat as plain text content
+                }
+
+                // Add the vignette content as an AI message (plain text)
                 const aiMessage: Message = {
                     id: Date.now(),
                     content: pendingVignetteContent,
@@ -326,9 +366,18 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                 return;
             }
 
+            // Check for pending vignette stream (will be handled by separate useEffect)
+            const pendingVignetteStreamStr = sessionStorage.getItem(PENDING_VIGNETTE_STREAM_KEY);
+            if (pendingVignetteStreamStr) {
+                // Skip loading - the stream useEffect will handle this
+                return;
+            }
+
             // No pending content - load conversation normally
+            console.log('[useEffect] No pending content found, loading conversation from DB');
             loadConversation(conversationId);
         } else {
+            console.log('[useEffect] No conversationId, resetting state');
             setMessages([]);
             pendingMessageProcessedRef.current = false;
         }
@@ -570,7 +619,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                             documentContent = jsonResponse.text;
                             setStreamingMessage(documentContent);
 
-                            // Add as a message
+                            // Add the main text as the first AI message
                             const aiMessage: Message = {
                                 id: Date.now(),
                                 content: documentContent,
@@ -580,7 +629,50 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                             };
 
                             if (conversationId || process.env.NEXT_PUBLIC_SKIP_AUTH === "true") {
-                                setMessages((prev) => [...prev, aiMessage]);
+                                // If there are questions, add them as a second message
+                                if (jsonResponse.questions) {
+                                    setMessages((prev) => [
+                                        ...prev,
+                                        aiMessage,
+                                        {
+                                            id: Date.now() + 1,
+                                            content: jsonResponse.questions,
+                                            sender: "ai",
+                                            created_at: new Date().toISOString(),
+                                            vignetteCategory: category,
+                                        }
+                                    ]);
+                                } else {
+                                    setMessages((prev) => [...prev, aiMessage]);
+                                }
+                                setStreamingMessage("");
+                                setCurrentStatus("");
+                            } else {
+                                // No conversation - create one and navigate with vignette content
+                                const title = documentContent.length > 50
+                                    ? documentContent.substring(0, 50) + "..."
+                                    : documentContent;
+
+                                const createResponse = await fetch("/api/conversations", {
+                                    method: "POST",
+                                    headers: { "Content-Type": "application/json" },
+                                    body: JSON.stringify({
+                                        title: title,
+                                        model: selectedModel,
+                                    }),
+                                });
+
+                                if (createResponse.ok) {
+                                    const data = await createResponse.json();
+                                    const newConversationId = data.conversation.id;
+                                    // Store the content with questions for the new page
+                                    const contentToStore = jsonResponse.questions
+                                        ? JSON.stringify({ text: documentContent, questions: jsonResponse.questions })
+                                        : documentContent;
+                                    sessionStorage.setItem(PENDING_VIGNETTE_CONTENT_KEY, contentToStore);
+                                    refreshConversations();
+                                    router.push(`/chat/${newConversationId}`);
+                                }
                                 setStreamingMessage("");
                                 setCurrentStatus("");
                             }
@@ -671,7 +763,9 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                                 if (createResponse.ok) {
                                     const data = await createResponse.json();
                                     const newConversationId = data.conversation.id;
+                                    console.log('[streamVignetteMarkdown] Storing pending content:', finalContent.length, 'chars');
                                     sessionStorage.setItem(PENDING_VIGNETTE_CONTENT_KEY, finalContent);
+                                    console.log('[streamVignetteMarkdown] Navigating to conversation:', newConversationId);
                                     refreshConversations();
                                     router.push(`/chat/${newConversationId}`);
                                 }
@@ -693,7 +787,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                         documentContent = jsonResponse.text;
                         setStreamingMessage(documentContent);
 
-                        // Add as a message
+                        // Add the main text as the first AI message
                         const aiMessage: Message = {
                             id: Date.now(),
                             content: documentContent,
@@ -703,7 +797,22 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                         };
 
                         if (conversationId || process.env.NEXT_PUBLIC_SKIP_AUTH === "true") {
-                            setMessages((prev) => [...prev, aiMessage]);
+                            // If there are questions, add them as a second message
+                            if (jsonResponse.questions) {
+                                setMessages((prev) => [
+                                    ...prev,
+                                    aiMessage,
+                                    {
+                                        id: Date.now() + 1,
+                                        content: jsonResponse.questions,
+                                        sender: "ai",
+                                        created_at: new Date().toISOString(),
+                                        vignetteCategory: category,
+                                    }
+                                ]);
+                            } else {
+                                setMessages((prev) => [...prev, aiMessage]);
+                            }
                             setStreamingMessage("");
                             setCurrentStatus("");
                         }
@@ -723,6 +832,140 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
             return false;
         }
     }, [conversationId, selectedModel, router]);
+
+    // Stream vignette with chunk-based format (for ART_TRADING_VALUE with prompt_markdown=True)
+    const streamVignetteChunks = useCallback(async (imageName: string, category: string): Promise<boolean> => {
+        setIsLoading(true);
+        setStreamingMessage("");
+        setStreamingVignetteCategory(category);
+        setLastStreamingActivity(Date.now());
+
+        try {
+            const markdownUrl = `/api/vignettes/markdown?markdown=${encodeURIComponent(imageName)}&category=${encodeURIComponent(category)}`;
+            const response = await fetch(markdownUrl);
+
+            if (!response.ok) {
+                throw new Error(`Failed to fetch markdown: ${response.status}`);
+            }
+
+            const reader = response.body?.getReader();
+            if (!reader) {
+                throw new Error("No response stream");
+            }
+
+            const decoder = new TextDecoder();
+            let streamContent = "";
+            let buffer = "";
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                buffer += decoder.decode(value, { stream: true });
+
+                // Split by newlines to get individual JSON objects
+                const lines = buffer.split("\n");
+                buffer = lines.pop() || ""; // Keep incomplete line in buffer
+
+                for (const line of lines) {
+                    const trimmedLine = line.trim();
+                    if (!trimmedLine) continue;
+
+                    // Handle SSE format (data: prefix)
+                    let jsonStr = trimmedLine;
+                    if (trimmedLine.startsWith("data: ")) {
+                        jsonStr = trimmedLine.slice(6);
+                    }
+
+                    if (jsonStr === "[DONE]") continue;
+
+                    try {
+                        const data = JSON.parse(jsonStr);
+
+                        if (data.type === "chunk") {
+                            streamContent += data.content || "";
+                            setStreamingMessage(streamContent);
+                            setLastStreamingActivity(Date.now());
+                        } else if (data.type === "done") {
+                            // Finalize the message
+                            const aiMessage: Message = {
+                                id: Date.now(),
+                                content: streamContent,
+                                sender: "ai",
+                                created_at: new Date().toISOString(),
+                                vignetteCategory: category,
+                            };
+                            setMessages((prev) => [...prev, aiMessage]);
+                            setStreamingMessage("");
+                            setCurrentStatus("");
+                        }
+                    } catch (parseError) {
+                        console.error("[Vignette Chunks] Failed to parse:", jsonStr);
+                    }
+                }
+            }
+
+            // Handle any remaining buffer and finalize if we haven't received a done event
+            if (buffer.trim()) {
+                try {
+                    let jsonStr = buffer.trim();
+                    if (jsonStr.startsWith("data: ")) {
+                        jsonStr = jsonStr.slice(6);
+                    }
+                    if (jsonStr && jsonStr !== "[DONE]") {
+                        const data = JSON.parse(jsonStr);
+                        if (data.type === "chunk") {
+                            streamContent += data.content || "";
+                        }
+                    }
+                } catch {
+                    // Ignore parse errors on remaining buffer
+                }
+            }
+
+            // If we have content but no done event was received, finalize anyway
+            if (streamContent && !messages.some(m => m.content === streamContent)) {
+                const aiMessage: Message = {
+                    id: Date.now(),
+                    content: streamContent,
+                    sender: "ai",
+                    created_at: new Date().toISOString(),
+                    vignetteCategory: category,
+                };
+                setMessages((prev) => [...prev, aiMessage]);
+                setStreamingMessage("");
+            }
+
+            setIsLoading(false);
+            return true;
+        } catch (error) {
+            console.error("[Vignette Chunks] Error:", error);
+            setIsLoading(false);
+            setStreamingMessage("");
+            setCurrentStatus("");
+            return false;
+        }
+    }, [messages]);
+
+    // Handle pending vignette stream (ART_TRADING_VALUE chunk-based streaming)
+    // This useEffect must be after streamVignetteChunks is defined
+    useEffect(() => {
+        if (!conversationId) return;
+
+        const pendingVignetteStreamStr = sessionStorage.getItem(PENDING_VIGNETTE_STREAM_KEY);
+        if (pendingVignetteStreamStr && !pendingMessageProcessedRef.current) {
+            pendingMessageProcessedRef.current = true;
+            sessionStorage.removeItem(PENDING_VIGNETTE_STREAM_KEY);
+
+            try {
+                const pendingStream: PendingVignetteStream = JSON.parse(pendingVignetteStreamStr);
+                // Start streaming the vignette chunks
+                streamVignetteChunks(pendingStream.imageName, pendingStream.category);
+            } catch (error) {
+                console.error("Error parsing pending vignette stream:", error);
+            }
+        }
+    }, [conversationId, streamVignetteChunks]);
 
     // Stable clearMessages function
     const clearMessages = useCallback(() => {
@@ -763,6 +1006,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         handleScroll,
         addAiMessage,
         streamVignetteMarkdown,
+        streamVignetteChunks,
         clearMessages,
     };
 }

@@ -322,6 +322,7 @@ export default function ChatPage() {
         handleScroll,
         addAiMessage,
         streamVignetteMarkdown,
+        streamVignetteChunks,
         clearMessages,
     } = useChatConversation({ conversationId, selectedModel });
 
@@ -431,14 +432,7 @@ export default function ChatPage() {
         const imageName = getImageNameFromUrl(vignette.public_url);
         console.log(`[Chat Page] Vignette clicked: ${vignette.brand_name}, image: ${imageName}, category: ${vignette.category}`);
 
-        // Update URL to include the vignette title (encoded)
-        const encodedTitle = encodeURIComponent(vignette.brand_name);
-        const newUrl = `/chat?category=${vignette.category}&title=${encodedTitle}`;
-        router.push(newUrl, { scroll: false });
-        console.log(`[Chat Page] URL updated to: ${newUrl}`);
-
         // Close sidebar on mobile when vignette is clicked
-        // Check window width directly to ensure accurate mobile detection
         const isMobileView = window.innerWidth < 768;
         console.log('[Chat Page] Window width:', window.innerWidth, 'isMobileView:', isMobileView, 'context isMobile:', isMobile);
 
@@ -451,12 +445,66 @@ export default function ChatPage() {
         }
 
         // Disable auto-scroll for vignette responses using sessionStorage
-        // This persists across navigation to the new conversation page
         sessionStorage.setItem('disableAutoScroll', 'true');
         if (disableAutoScrollRef) {
             disableAutoScrollRef.current = true;
         }
         console.log('[Chat Page] Auto-scroll DISABLED for vignette response (set in sessionStorage)');
+
+        // For ART_TRADING_VALUE, create a new conversation and stream chunks there
+        if (vignette.category === "ART_TRADING_VALUE") {
+            console.log('[Chat Page] ART_TRADING_VALUE detected - creating new conversation for chunk streaming');
+
+            try {
+                const title = vignette.brand_name.length > 50
+                    ? vignette.brand_name.substring(0, 50) + "..."
+                    : vignette.brand_name;
+
+                const response = await fetch("/api/conversations", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        title: title,
+                        model: selectedModel,
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to create conversation");
+                }
+
+                const data = await response.json();
+                const newConversationId = data.conversation.id;
+
+                // Store pending vignette stream info for the new page to pick up
+                const pendingStream = {
+                    imageName: imageName,
+                    category: vignette.category,
+                };
+                sessionStorage.setItem('pendingVignetteStream', JSON.stringify(pendingStream));
+
+                // Refresh conversations list in sidebar
+                window.dispatchEvent(new Event("refreshConversations"));
+
+                // Navigate to the new conversation
+                router.push(`/chat/${newConversationId}`);
+                console.log(`[Chat Page] Navigated to new conversation: ${newConversationId}`);
+            } catch (error) {
+                console.error("[Chat Page] Error creating conversation for ART_TRADING_VALUE:", error);
+                toast.error("Failed to create conversation");
+
+                // Re-enable auto-scroll on error
+                sessionStorage.removeItem('disableAutoScroll');
+                if (disableAutoScrollRef) {
+                    disableAutoScrollRef.current = false;
+                }
+            }
+            return;
+        }
+
+        // For other categories, use existing streaming behavior
+        // Note: We don't update URL here because it triggers clearMessages() via useEffect
+        // The streaming will create a conversation and navigate there anyway
 
         try {
             // Use streaming to show markdown document first, then questions progressively
