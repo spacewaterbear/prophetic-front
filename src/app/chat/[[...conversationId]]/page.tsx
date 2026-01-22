@@ -265,7 +265,7 @@ const getImageNameFromUrl = (url: string): string => {
 // Category name mapping for display
 const CATEGORY_DISPLAY_NAMES: Record<string, string> = {
     ART: "Art",
-    ART_VALUE_TRADING: "Art Value Trading",
+    ART_TRADING_VALUE: "Art Trading Value",
     BIJOUX: "Bijoux",
     CARDS_US: "US Sports Cards",
     CARS: "Voitures de Collections",

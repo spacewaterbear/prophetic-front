@@ -282,8 +282,8 @@ function ChatLayoutInner({
                 {/* Art Value Trading - Simple category button like Cards US */}
                         <button
                             onClick={() => {
-                                console.log('[Sidebar] Clicked Art Value Trading, category: ART_VALUE_TRADING');
-                                router.push('/chat?category=ART_VALUE_TRADING');
+                                console.log('[Sidebar] Clicked Art Trading Value, category: ART_TRADING_VALUE');
+                                router.push('/chat?category=ART_TRADING_VALUE');
                                 if (isMobile) {
                                     setSidebarOpen(false);
                                 }
@@ -293,13 +293,13 @@ function ChatLayoutInner({
                             {mounted && (
                                 <Image
                                     src={`https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/book_${theme === 'dark' ? 'b' : 'n'}.svg`}
-                                    alt="Art Value Trading"
+                                    alt="Art Trading Value"
                                     width={22}
                                     height={22}
                                     className="flex-shrink-0"
                                 />
                             )}
-                            <span>Art Value Trading</span>
+                            <span>Art Trading Value</span>
                         </button>
 
                         {/* Cash-Flow Leasing */}

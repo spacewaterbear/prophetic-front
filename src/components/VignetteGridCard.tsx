@@ -45,16 +45,18 @@ export const VignetteGridCard = memo(({ data, onVignetteClick }: VignetteGridCar
                                 />
 
                                 {/* Score Badge with Trend */}
-                                <div className="absolute bottom-3 right-3 flex items-center gap-1">
-                                    <div className="bg-white rounded-full px-3 py-1.5 shadow-md flex items-center gap-1">
-                                        <span className="text-sm font-semibold text-gray-900">
-                                            {item.score}
-                                        </span>
-                                        <span className={`text-base ${item.trend === 'up' ? 'text-green-500' : 'text-red-500'}`}>
-                                            {item.trend === 'up' ? '▲' : '▼'}
-                                        </span>
+                                {item.score != null && item.trend != null && (
+                                    <div className="absolute bottom-3 right-3 flex items-center gap-1">
+                                        <div className="bg-white rounded-full px-3 py-1.5 shadow-md flex items-center gap-1">
+                                            <span className="text-sm font-semibold text-gray-900">
+                                                {item.score}
+                                            </span>
+                                            <span className={`text-base ${item.trend === 'up' ? 'text-green-500' : 'text-red-500'}`}>
+                                                {item.trend === 'up' ? '▲' : '▼'}
+                                            </span>
+                                        </div>
                                     </div>
-                                </div>
+                                )}
                             </div>
 
                             {/* Text Content */}

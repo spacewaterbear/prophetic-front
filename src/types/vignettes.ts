@@ -1,6 +1,6 @@
 export enum Vignettes {
     ART = "ART",
-    ART_VALUE_TRADING = "ART_VALUE_TRADING",
+    ART_TRADING_VALUE = "ART_TRADING_VALUE",
     BIJOUX = "BIJOUX",
     CARDS_US = "CARDS_US",
     CARS = "CARS",
@@ -17,9 +17,9 @@ export interface VignetteData {
     brand_name: string;
     public_url: string;
     nb_insights: number;
-    score: number;
-    trend: "up" | "down";
-    subtitle: string;
+    score?: number;
+    trend?: "up" | "down";
+    subtitle?: string;
 }
 
 export interface VignetteResponse {
