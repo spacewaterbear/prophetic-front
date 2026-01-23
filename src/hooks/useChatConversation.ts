@@ -729,40 +729,99 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                                 vignetteCategory: category,
                             };
 
-                            if (conversationId || process.env.NEXT_PUBLIC_SKIP_AUTH === "true") {
-                                // If there are questions, add them as a second message
+                            // Helper to save messages to database
+                            const saveVignetteToDb = async (convId: number, msgs: { content: string; vignetteCategory?: string }[]) => {
+                                try {
+                                    const response = await fetch(`/api/conversations/${convId}/vignette-content`, {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ messages: msgs }),
+                                    });
+                                    if (!response.ok) {
+                                        console.error('[Vignette] Failed to save to database');
+                                    } else {
+                                        console.log('[Vignette] Messages saved to database');
+                                    }
+                                } catch (error) {
+                                    console.error('[Vignette] Error saving to database:', error);
+                                }
+                            };
+
+                            // Build messages array
+                            const questionsMessage = jsonResponse.questions ? {
+                                id: Date.now() + 1,
+                                content: jsonResponse.questions,
+                                sender: "ai" as const,
+                                created_at: new Date().toISOString(),
+                                vignetteCategory: category,
+                            } : null;
+
+                            if (conversationId) {
+                                // Existing conversation - add messages and save to DB
+                                if (questionsMessage) {
+                                    setMessages((prev) => [...prev, aiMessage, questionsMessage]);
+                                } else {
+                                    setMessages((prev) => [...prev, aiMessage]);
+                                }
+                                // Save to database
+                                const messagesToSave = [{ content: documentContent, vignetteCategory: category }];
                                 if (jsonResponse.questions) {
-                                    setMessages((prev) => [
-                                        ...prev,
-                                        aiMessage,
-                                        {
-                                            id: Date.now() + 1,
-                                            content: jsonResponse.questions,
-                                            sender: "ai",
-                                            created_at: new Date().toISOString(),
-                                            vignetteCategory: category,
-                                        }
-                                    ]);
+                                    messagesToSave.push({ content: jsonResponse.questions, vignetteCategory: category });
+                                }
+                                saveVignetteToDb(conversationId, messagesToSave);
+                            } else if (process.env.NEXT_PUBLIC_SKIP_AUTH === "true") {
+                                // Dev mode without conversation - just display locally
+                                if (questionsMessage) {
+                                    setMessages((prev) => [...prev, aiMessage, questionsMessage]);
                                 } else {
                                     setMessages((prev) => [...prev, aiMessage]);
                                 }
                             } else {
-                                // No conversation - just display locally on welcome screen
-                                // Don't navigate away
-                                if (jsonResponse.questions) {
-                                    setMessages((prev) => [
-                                        ...prev,
-                                        aiMessage,
-                                        {
-                                            id: Date.now() + 1,
-                                            content: jsonResponse.questions,
-                                            sender: "ai",
-                                            created_at: new Date().toISOString(),
-                                            vignetteCategory: category,
+                                // No conversation - create one and save messages
+                                const title = documentContent.length > 50
+                                    ? documentContent.substring(0, 50) + "..."
+                                    : documentContent;
+
+                                try {
+                                    const createResponse = await fetch("/api/conversations", {
+                                        method: "POST",
+                                        headers: { "Content-Type": "application/json" },
+                                        body: JSON.stringify({
+                                            title: title,
+                                            model: selectedModel,
+                                        }),
+                                    });
+
+                                    if (createResponse.ok) {
+                                        const data = await createResponse.json();
+                                        const newConversationId = data.conversation.id;
+
+                                        // Save messages to database
+                                        const messagesToSave = [{ content: documentContent, vignetteCategory: category }];
+                                        if (jsonResponse.questions) {
+                                            messagesToSave.push({ content: jsonResponse.questions, vignetteCategory: category });
                                         }
-                                    ]);
-                                } else {
-                                    setMessages((prev) => [...prev, aiMessage]);
+                                        await saveVignetteToDb(newConversationId, messagesToSave);
+
+                                        // Refresh sidebar and navigate
+                                        refreshConversations();
+                                        router.push(`/chat/${newConversationId}`);
+                                    } else {
+                                        // Failed to create conversation - just display locally
+                                        if (questionsMessage) {
+                                            setMessages((prev) => [...prev, aiMessage, questionsMessage]);
+                                        } else {
+                                            setMessages((prev) => [...prev, aiMessage]);
+                                        }
+                                    }
+                                } catch (error) {
+                                    console.error('[Vignette] Error creating conversation:', error);
+                                    // Display locally on error
+                                    if (questionsMessage) {
+                                        setMessages((prev) => [...prev, aiMessage, questionsMessage]);
+                                    } else {
+                                        setMessages((prev) => [...prev, aiMessage]);
+                                    }
                                 }
                             }
                             setStreamingMessage("");
@@ -831,14 +890,64 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                                 vignetteCategory: category,
                             };
 
-                            // Always add the message locally to display it
-                            setMessages((prev) => [...prev, aiMessage]);
+                            // Helper to save to database
+                            const saveToDb = async (convId: number) => {
+                                try {
+                                    const response = await fetch(`/api/conversations/${convId}/vignette-content`, {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ messages: [{ content: finalContent, vignetteCategory: category }] }),
+                                    });
+                                    if (!response.ok) {
+                                        console.error('[Vignette SSE] Failed to save to database');
+                                    } else {
+                                        console.log('[Vignette SSE] Message saved to database');
+                                    }
+                                } catch (error) {
+                                    console.error('[Vignette SSE] Error saving to database:', error);
+                                }
+                            };
+
+                            if (conversationId) {
+                                // Existing conversation - add and save
+                                setMessages((prev) => [...prev, aiMessage]);
+                                saveToDb(conversationId);
+                            } else if (process.env.NEXT_PUBLIC_SKIP_AUTH === "true") {
+                                // Dev mode - just display locally
+                                setMessages((prev) => [...prev, aiMessage]);
+                            } else {
+                                // No conversation - create one and save
+                                const title = finalContent.length > 50
+                                    ? finalContent.substring(0, 50) + "..."
+                                    : finalContent;
+
+                                try {
+                                    const createResponse = await fetch("/api/conversations", {
+                                        method: "POST",
+                                        headers: { "Content-Type": "application/json" },
+                                        body: JSON.stringify({
+                                            title: title,
+                                            model: selectedModel,
+                                        }),
+                                    });
+
+                                    if (createResponse.ok) {
+                                        const data = await createResponse.json();
+                                        const newConversationId = data.conversation.id;
+                                        await saveToDb(newConversationId);
+                                        refreshConversations();
+                                        router.push(`/chat/${newConversationId}`);
+                                    } else {
+                                        // Failed - just display locally
+                                        setMessages((prev) => [...prev, aiMessage]);
+                                    }
+                                } catch (error) {
+                                    console.error('[Vignette SSE] Error creating conversation:', error);
+                                    setMessages((prev) => [...prev, aiMessage]);
+                                }
+                            }
                             setStreamingMessage("");
                             setCurrentStatus("");
-
-                            // If no conversation exists, we're on the welcome screen
-                            // Don't navigate away - just display the content
-                            // The user can continue interacting or click another vignette
                         }
                     } catch (parseError) {
                         console.error("[Vignette Stream] Failed to parse SSE event:", eventData);
@@ -863,26 +972,90 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                             vignetteCategory: category,
                         };
 
-                        if (conversationId || process.env.NEXT_PUBLIC_SKIP_AUTH === "true") {
-                            // If there are questions, add them as a second message
-                            if (jsonResponse.questions) {
-                                setMessages((prev) => [
-                                    ...prev,
-                                    aiMessage,
-                                    {
-                                        id: Date.now() + 1,
-                                        content: jsonResponse.questions,
-                                        sender: "ai",
-                                        created_at: new Date().toISOString(),
-                                        vignetteCategory: category,
-                                    }
-                                ]);
+                        const questionsMessage = jsonResponse.questions ? {
+                            id: Date.now() + 1,
+                            content: jsonResponse.questions,
+                            sender: "ai" as const,
+                            created_at: new Date().toISOString(),
+                            vignetteCategory: category,
+                        } : null;
+
+                        // Helper to save to database
+                        const saveBufferToDb = async (convId: number) => {
+                            try {
+                                const msgs = [{ content: documentContent, vignetteCategory: category }];
+                                if (jsonResponse.questions) {
+                                    msgs.push({ content: jsonResponse.questions, vignetteCategory: category });
+                                }
+                                const response = await fetch(`/api/conversations/${convId}/vignette-content`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ messages: msgs }),
+                                });
+                                if (!response.ok) {
+                                    console.error('[Vignette Buffer] Failed to save to database');
+                                }
+                            } catch (error) {
+                                console.error('[Vignette Buffer] Error saving to database:', error);
+                            }
+                        };
+
+                        if (conversationId) {
+                            // Existing conversation - add and save
+                            if (questionsMessage) {
+                                setMessages((prev) => [...prev, aiMessage, questionsMessage]);
                             } else {
                                 setMessages((prev) => [...prev, aiMessage]);
                             }
-                            setStreamingMessage("");
-                            setCurrentStatus("");
+                            saveBufferToDb(conversationId);
+                        } else if (process.env.NEXT_PUBLIC_SKIP_AUTH === "true") {
+                            // Dev mode - just display locally
+                            if (questionsMessage) {
+                                setMessages((prev) => [...prev, aiMessage, questionsMessage]);
+                            } else {
+                                setMessages((prev) => [...prev, aiMessage]);
+                            }
+                        } else {
+                            // No conversation - create one and save
+                            const title = documentContent.length > 50
+                                ? documentContent.substring(0, 50) + "..."
+                                : documentContent;
+
+                            try {
+                                const createResponse = await fetch("/api/conversations", {
+                                    method: "POST",
+                                    headers: { "Content-Type": "application/json" },
+                                    body: JSON.stringify({
+                                        title: title,
+                                        model: selectedModel,
+                                    }),
+                                });
+
+                                if (createResponse.ok) {
+                                    const data = await createResponse.json();
+                                    const newConversationId = data.conversation.id;
+                                    await saveBufferToDb(newConversationId);
+                                    refreshConversations();
+                                    router.push(`/chat/${newConversationId}`);
+                                } else {
+                                    // Failed - just display locally
+                                    if (questionsMessage) {
+                                        setMessages((prev) => [...prev, aiMessage, questionsMessage]);
+                                    } else {
+                                        setMessages((prev) => [...prev, aiMessage]);
+                                    }
+                                }
+                            } catch (error) {
+                                console.error('[Vignette Buffer] Error creating conversation:', error);
+                                if (questionsMessage) {
+                                    setMessages((prev) => [...prev, aiMessage, questionsMessage]);
+                                } else {
+                                    setMessages((prev) => [...prev, aiMessage]);
+                                }
+                            }
                         }
+                        setStreamingMessage("");
+                        setCurrentStatus("");
                     }
                 } catch {
                     // Remaining buffer is not valid JSON
@@ -962,7 +1135,60 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                                 created_at: new Date().toISOString(),
                                 vignetteCategory: category,
                             };
-                            setMessages((prev) => [...prev, aiMessage]);
+
+                            // Helper to save to database
+                            const saveChunkToDb = async (convId: number) => {
+                                try {
+                                    const response = await fetch(`/api/conversations/${convId}/vignette-content`, {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ messages: [{ content: streamContent, vignetteCategory: category }] }),
+                                    });
+                                    if (!response.ok) {
+                                        console.error('[Vignette Chunks] Failed to save to database');
+                                    }
+                                } catch (error) {
+                                    console.error('[Vignette Chunks] Error saving to database:', error);
+                                }
+                            };
+
+                            if (conversationId) {
+                                // Existing conversation - add and save
+                                setMessages((prev) => [...prev, aiMessage]);
+                                saveChunkToDb(conversationId);
+                            } else if (process.env.NEXT_PUBLIC_SKIP_AUTH === "true") {
+                                // Dev mode - just display locally
+                                setMessages((prev) => [...prev, aiMessage]);
+                            } else {
+                                // No conversation - create one and save
+                                const title = streamContent.length > 50
+                                    ? streamContent.substring(0, 50) + "..."
+                                    : streamContent;
+
+                                try {
+                                    const createResponse = await fetch("/api/conversations", {
+                                        method: "POST",
+                                        headers: { "Content-Type": "application/json" },
+                                        body: JSON.stringify({
+                                            title: title,
+                                            model: selectedModel,
+                                        }),
+                                    });
+
+                                    if (createResponse.ok) {
+                                        const data2 = await createResponse.json();
+                                        const newConversationId = data2.conversation.id;
+                                        await saveChunkToDb(newConversationId);
+                                        refreshConversations();
+                                        router.push(`/chat/${newConversationId}`);
+                                    } else {
+                                        setMessages((prev) => [...prev, aiMessage]);
+                                    }
+                                } catch (error) {
+                                    console.error('[Vignette Chunks] Error creating conversation:', error);
+                                    setMessages((prev) => [...prev, aiMessage]);
+                                }
+                            }
                             setStreamingMessage("");
                             setCurrentStatus("");
                         }
@@ -999,7 +1225,58 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                     created_at: new Date().toISOString(),
                     vignetteCategory: category,
                 };
-                setMessages((prev) => [...prev, aiMessage]);
+
+                // Helper to save to database
+                const saveFallbackToDb = async (convId: number) => {
+                    try {
+                        const response = await fetch(`/api/conversations/${convId}/vignette-content`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ messages: [{ content: streamContent, vignetteCategory: category }] }),
+                        });
+                        if (!response.ok) {
+                            console.error('[Vignette Chunks Fallback] Failed to save to database');
+                        }
+                    } catch (error) {
+                        console.error('[Vignette Chunks Fallback] Error saving to database:', error);
+                    }
+                };
+
+                if (conversationId) {
+                    setMessages((prev) => [...prev, aiMessage]);
+                    saveFallbackToDb(conversationId);
+                } else if (process.env.NEXT_PUBLIC_SKIP_AUTH === "true") {
+                    setMessages((prev) => [...prev, aiMessage]);
+                } else {
+                    // No conversation - create one and save
+                    const title = streamContent.length > 50
+                        ? streamContent.substring(0, 50) + "..."
+                        : streamContent;
+
+                    try {
+                        const createResponse = await fetch("/api/conversations", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                title: title,
+                                model: selectedModel,
+                            }),
+                        });
+
+                        if (createResponse.ok) {
+                            const data = await createResponse.json();
+                            const newConversationId = data.conversation.id;
+                            await saveFallbackToDb(newConversationId);
+                            refreshConversations();
+                            router.push(`/chat/${newConversationId}`);
+                        } else {
+                            setMessages((prev) => [...prev, aiMessage]);
+                        }
+                    } catch (error) {
+                        console.error('[Vignette Chunks Fallback] Error creating conversation:', error);
+                        setMessages((prev) => [...prev, aiMessage]);
+                    }
+                }
                 setStreamingMessage("");
             }
 
@@ -1012,7 +1289,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
             setCurrentStatus("");
             return false;
         }
-    }, [messages]);
+    }, [messages, conversationId, selectedModel, router, refreshConversations]);
 
     // Handle pending vignette stream (ART_TRADING_VALUE chunk-based streaming)
     // This useEffect must be after streamVignetteChunks is defined

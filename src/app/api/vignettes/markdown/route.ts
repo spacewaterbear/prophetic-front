@@ -34,8 +34,8 @@ export async function GET(request: NextRequest) {
 
         let apiUrl = `${process.env.PROPHETIC_API_URL}/prophetic/vignettes/markdown?markdown=${encodeURIComponent(markdown)}`;
 
-        // Add prompt_markdown=True for ART_TRADING_VALUE category
-        if (category === "ART_TRADING_VALUE") {
+        // Add prompt_markdown=True for ART_TRADING_VALUE and CASH_FLOW_LEASING categories
+        if (category === "ART_TRADING_VALUE" || category === "CASH_FLOW_LEASING") {
             apiUrl += "&prompt_markdown=True";
         }
         console.log(`[Vignettes Markdown API] Fetching from:`, apiUrl);
