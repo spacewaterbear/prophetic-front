@@ -3,9 +3,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      no_cache: true
       args:
         NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
         NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+        CACHEBUST: ${CACHEBUST:-1}
     container_name: prophetic-front-staging
     environment:
       - NODE_ENV=production
