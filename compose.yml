@@ -11,23 +11,23 @@ services:
       - 3000:3000
     env_file:
       - .env
-    environment:
-      - NODE_ENV=production
-      - NEXT_TELEMETRY_DISABLED=1
-      # Auth environment variables
-      - AUTH_SECRET=${AUTH_SECRET}
-      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
-      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
-      # Supabase environment variables
-      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
-      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
-      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
-      # Prophetic API (Perplexity + Claude)
-      - PROPHETIC_API_URL=${PROPHETIC_API_URL}
-      - PROPHETIC_API_TOKEN=${PROPHETIC_API_TOKEN}
-      # Legacy OpenRouter API (no longer used)
-      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
-      - NEXTAUTH_URL=${NEXTAUTH_URL}
+#    environment:
+#      - NODE_ENV=production
+#      - NEXT_TELEMETRY_DISABLED=1
+#      # Auth environment variables
+#      - AUTH_SECRET=${AUTH_SECRET}
+#      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+#      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+#      # Supabase environment variables
+#      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+#      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+#      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+#      # Prophetic API (Perplexity + Claude)
+#      - PROPHETIC_API_URL=${PROPHETIC_API_URL}
+#      - PROPHETIC_API_TOKEN=${PROPHETIC_API_TOKEN}
+#      # Legacy OpenRouter API (no longer used)
+#      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+#      - NEXTAUTH_URL=${NEXTAUTH_URL}
 
     restart: unless-stopped
     networks:

@@ -518,10 +518,8 @@ export default function ChatPage() {
             const newConversationId = data.conversation.id;
 
             // Determine stream type
-            // ART_TRADING_VALUE and CASH_FLOW_LEASING use chunk-based streaming
-            const streamType = (vignette.category === "ART_TRADING_VALUE" || vignette.category === "CASH_FLOW_LEASING")
-                ? 'chunks'
-                : 'sse';
+            // All categories now use SSE streaming (the markdown endpoint handles special cases)
+            const streamType = 'sse';
 
             // Store pending vignette stream info for the new page to pick up
             const pendingStream = {
