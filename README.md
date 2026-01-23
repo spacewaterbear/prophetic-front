@@ -99,6 +99,7 @@ NEXTAUTH_URL=http://localhost:3000
 - **Components**: Custom shadcn/ui components with luxury styling
 - **Animations**: Smooth transitions and hover effects
 
+
 ## Deployment
 
 When deploying to production:
