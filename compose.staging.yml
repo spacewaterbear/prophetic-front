@@ -16,6 +16,7 @@ services:
       - AUTH_SECRET=${AUTH_SECRET}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - NEXTAUTH_URL=${NEXTAUTH_URL}
       # Supabase environment variables
       - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
       - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
@@ -25,7 +26,7 @@ services:
       - PROPHETIC_API_TOKEN=${PROPHETIC_API_TOKEN}
       # Legacy OpenRouter API (no longer used)
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
-      - NEXTAUTH_URL=${NEXTAUTH_URL}
+
       - ENVIRONNEMENT=${ENVIRONNEMENT}
 
     restart: unless-stopped
