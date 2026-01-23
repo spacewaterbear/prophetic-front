@@ -259,8 +259,7 @@ function ChatLayoutInner({
                                     if (disabled) return;
                                     console.log(`[Sidebar] Clicked ${label}, category: ${category}`);
 
-                                    // Smooth navigation
-                                    router.push(`/chat?category=${category}`);
+                                    router.push(`/chat?category=${category}`, { scroll: false });
 
                                     // Close sidebar on mobile
                                     if (isMobile) {
@@ -283,7 +282,7 @@ function ChatLayoutInner({
                         <button
                             onClick={() => {
                                 console.log('[Sidebar] Clicked Art Trading Value, category: ART_TRADING_VALUE');
-                                router.push('/chat?category=ART_TRADING_VALUE');
+                                router.push('/chat?category=ART_TRADING_VALUE', { scroll: false });
                                 if (isMobile) {
                                     setSidebarOpen(false);
                                 }

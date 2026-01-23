@@ -403,6 +403,15 @@ export default function ChatPage() {
                 clearMessages();
             }
 
+            // Scroll to top immediately when category changes
+            window.scrollTo(0, 0);
+            if (welcomeContainerRef.current) {
+                welcomeContainerRef.current.scrollTop = 0;
+            }
+            if (messagesContainerRef.current) {
+                messagesContainerRef.current.scrollTop = 0;
+            }
+
             const fetchVignettes = async () => {
                 console.log(`[Chat Page] Starting fetch for category: ${category}`);
                 setVignetteLoading(true);
@@ -436,14 +445,6 @@ export default function ChatPage() {
             };
 
             fetchVignettes();
-
-            // Also scroll containers to top immediately when category changes
-            if (welcomeContainerRef.current) {
-                welcomeContainerRef.current.scrollTo({ top: 0 });
-            }
-            if (messagesContainerRef.current) {
-                messagesContainerRef.current.scrollTo({ top: 0 });
-            }
         } else if (!conversationId && !isLoading) {
             // No category and no conversation (and not loading) - clear vignettes
             console.log("[Chat Page] No category and no conversation, clearing vignettes");
@@ -491,14 +492,6 @@ export default function ChatPage() {
         sessionStorage.setItem('pendingScrollToTopVignette', 'true');
         if (disableAutoScrollRef) {
             disableAutoScrollRef.current = true;
-        }
-
-        // Immediate scroll for current view
-        if (messagesContainerRef.current) {
-            messagesContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-        if (welcomeContainerRef.current) {
-            welcomeContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         console.log('[Chat Page] Creating new conversation for vignette streaming');
