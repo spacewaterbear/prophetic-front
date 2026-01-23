@@ -123,6 +123,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
     const [shouldAutoScroll, setShouldAutoScroll] = useState(true);
     const disableAutoScrollRef = useRef(false);
     const pendingMessageProcessedRef = useRef(false);
+    const lastProcessedConversationIdRef = useRef<number | null>(null);
 
     // Refresh conversations list in sidebar
     const refreshConversations = useCallback(() => {
@@ -622,8 +623,15 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
     // Main useEffect for pending logic and initialization
     useEffect(() => {
         if (conversationId) {
+            // Reset the processed flag if conversationId changed to a NEW value
+            if (conversationId !== lastProcessedConversationIdRef.current) {
+                pendingMessageProcessedRef.current = false;
+                lastProcessedConversationIdRef.current = conversationId;
+            }
+
+            // If we've already processed pending items for this conversation, skip
+            // (the streaming functions handle setting messages, no need to loadConversation)
             if (pendingMessageProcessedRef.current) {
-                loadConversation(conversationId);
                 return;
             }
 
@@ -690,6 +698,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         } else {
             setMessages([]);
             pendingMessageProcessedRef.current = false;
+            lastProcessedConversationIdRef.current = null;
         }
 
         const shouldDisableScroll = sessionStorage.getItem('disableAutoScroll') === 'true';
