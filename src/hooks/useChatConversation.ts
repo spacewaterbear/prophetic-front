@@ -148,6 +148,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
 
     // Stream vignette markdown content progressively
     const streamVignetteMarkdown = useCallback(async (imageName: string, category?: string): Promise<boolean> => {
+        console.log('[streamVignetteMarkdown] Starting stream for:', imageName, 'category:', category);
         setIsLoading(true);
         setStreamingMessage("");
         setStreamingVignetteCategory(category || null);
@@ -157,7 +158,9 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
             if (category) {
                 markdownUrl += `&category=${encodeURIComponent(category)}`;
             }
+            console.log('[streamVignetteMarkdown] Fetching:', markdownUrl);
             const response = await fetch(markdownUrl);
+            console.log('[streamVignetteMarkdown] Response status:', response.status, 'ok:', response.ok);
 
             if (!response.ok) {
                 throw new Error(`Failed to fetch markdown: ${response.status}`);
@@ -167,6 +170,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
             if (!reader) {
                 throw new Error("No response stream");
             }
+            console.log('[streamVignetteMarkdown] Got reader, starting to read stream');
 
             const decoder = new TextDecoder();
             let documentContent = "";
@@ -176,8 +180,14 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
 
             while (true) {
                 const { done, value } = await reader.read();
-                if (done) break;
+                if (done) {
+                    console.log('[streamVignetteMarkdown] Stream done, total chunks:', chunkCount);
+                    break;
+                }
                 chunkCount++;
+                if (chunkCount <= 3) {
+                    console.log('[streamVignetteMarkdown] Chunk', chunkCount, 'size:', value?.length, 'preview:', decoder.decode(value.slice(0, 100), { stream: true }));
+                }
 
                 buffer += decoder.decode(value, { stream: true });
 
@@ -402,10 +412,11 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                     }
                 }
             }
+            console.log('[streamVignetteMarkdown] Stream completed successfully, documentContent length:', documentContent.length);
             setIsLoading(false);
             return true;
         } catch (error) {
-            console.error("[Vignette Stream] Error:", error);
+            console.error("[streamVignetteMarkdown] Error:", error);
             setIsLoading(false);
             setStreamingMessage("");
             setCurrentStatus("");
