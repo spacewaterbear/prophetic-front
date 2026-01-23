@@ -826,13 +826,9 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                     {/* Portfolio Button - Hidden on mobile */}
                     <div className="hidden sm:block static sm:relative flex-shrink-0">
                         <button
-                            className="flex items-center justify-center text-gray-900 dark:text-gray-100 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-full px-1 py-2.5 transition-colors"
+                            className="flex items-center justify-center text-gray-900 dark:text-gray-100 rounded-full px-1 py-2.5 transition-colors opacity-50 cursor-not-allowed"
                             aria-label="Portfolio"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                handlePortfolioClick();
-                            }}
+                            disabled
                         >
                             <Image
                                 src={
@@ -1159,12 +1155,8 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                             </div>
                                         </button>
                                         <button
-                                            className={CARD_BUTTON_STYLES}
-                                            onClick={() => {
-                                                handlePortfolioClick();
-                                                setIsFileUploadOpen(false);
-                                                setMobileMenuLevel('main');
-                                            }}
+                                            className="p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] text-gray-900 dark:text-white text-sm font-semibold rounded-2xl border border-gray-400/60 dark:border-gray-600/60 opacity-50 cursor-not-allowed"
+                                            disabled
                                         >
                                             <div className="flex items-center gap-3">
                                                 <Image
