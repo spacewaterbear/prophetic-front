@@ -37,6 +37,9 @@ COPY biome.json* ./
 # Copy source code (changes most frequently, so copied last for better caching)
 COPY src ./src
 
+# Cache bust argument - pass --build-arg CACHEBUST=$(date +%s) to force rebuild
+ARG CACHEBUST=1
+
 # Build the Next.js application
 RUN npm run build
 
