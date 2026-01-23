@@ -618,9 +618,9 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         // because navigation will unmount this component
     };
 
-    const handleFlashcardClick = (flashCards: string, question: string, flashCardType: 'flash_invest' | 'ranking' | 'portfolio', displayName: string) => {
+    const handleFlashcardClick = (flashCards: string, question: string, flashCardType: 'flash_invest' | 'ranking' | 'portfolio' | 'PORTFOLIO', displayName: string) => {
         // Disable auto-scroll for flash_invest, ranking and PORTFOLIO responses (they return markdown content)
-        if (flashCardType === 'flash_invest' || flashCardType === 'ranking' || flashCardType === 'portfolio') {
+        if (flashCardType === 'flash_invest' || flashCardType === 'ranking' || flashCardType === 'portfolio' || flashCardType === 'PORTFOLIO') {
             sessionStorage.setItem('disableAutoScroll', 'true');
             disableAutoScrollRef.current = true;
             console.log(`[Auto-scroll] Disabled for ${flashCardType} response`);
