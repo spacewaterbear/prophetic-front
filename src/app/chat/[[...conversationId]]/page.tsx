@@ -327,7 +327,6 @@ export default function ChatPage() {
         handleScroll,
         addAiMessage,
         streamVignetteMarkdown,
-        streamVignetteChunks,
         clearMessages,
     } = useChatConversation({ conversationId, selectedModel });
 

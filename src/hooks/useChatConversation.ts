@@ -98,7 +98,7 @@ const PENDING_SCROLL_TO_TOP_KEY = 'pendingScrollToTop';
 interface PendingVignetteStream {
     imageName: string;
     category: string;
-    streamType: 'sse' | 'chunks';
+    streamType: 'sse';
 }
 
 export function useChatConversation({ conversationId, selectedModel = "anthropic/claude-3.7-sonnet" }: UseChatConversationProps) {
@@ -384,114 +384,6 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         }
     }, [conversationId, selectedModel, router, refreshConversations]);
 
-    const streamVignetteChunks = useCallback(async (imageName: string, category: string): Promise<boolean> => {
-        setIsLoading(true);
-        setStreamingMessage("");
-        setStreamingVignetteCategory(category);
-        setCurrentStatus("");
-        setLastStreamingActivity(Date.now());
-
-        try {
-            const response = await fetch(`/api/vignettes/chunks?image_name=${encodeURIComponent(imageName)}&category=${encodeURIComponent(category)}`);
-            if (!response.ok) throw new Error("Failed to start vignette chunk stream");
-
-            const reader = response.body?.getReader();
-            const decoder = new TextDecoder();
-            if (!reader) throw new Error("No response stream");
-
-            let streamContent = "";
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
-
-                const chunk = decoder.decode(value);
-                const lines = chunk.split("\n").filter((line) => line.trim());
-
-                for (const line of lines) {
-                    let cleanedLine = line;
-                    if (line.startsWith("data: ")) cleanedLine = line.slice(6);
-
-                    if (cleanedLine === "[DONE]") {
-                        const aiMessage: Message = {
-                            id: Date.now(),
-                            content: streamContent,
-                            sender: "ai",
-                            created_at: new Date().toISOString(),
-                            vignetteCategory: category,
-                        };
-
-                        const saveChunkToDb = async (convId: number) => {
-                            try {
-                                await fetch(`/api/conversations/${convId}/vignette-content`, {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ messages: [{ content: streamContent, vignetteCategory: category }] }),
-                                });
-                            } catch (error) {
-                                console.error('[Vignette Chunks] Error saving to database:', error);
-                            }
-                        };
-
-                        if (conversationId) {
-                            setMessages((prev) => [...prev, aiMessage]);
-                            saveChunkToDb(conversationId);
-                        } else if (process.env.NEXT_PUBLIC_SKIP_AUTH === "true") {
-                            setMessages((prev) => [...prev, aiMessage]);
-                        } else {
-                            const title = streamContent.length > 50 ? streamContent.substring(0, 50) + "..." : streamContent;
-                            try {
-                                const createResponse = await fetch("/api/conversations", {
-                                    method: "POST",
-                                    headers: { "Content-Type": "application/json" },
-                                    body: JSON.stringify({ title, model: selectedModel }),
-                                });
-
-                                if (createResponse.ok) {
-                                    const data = await createResponse.json();
-                                    const newConversationId = data.conversation.id;
-                                    await saveChunkToDb(newConversationId);
-                                    refreshConversations();
-                                    router.push(`/chat/${newConversationId}`);
-                                    setIsLoading(false);
-                                    return true;
-                                } else {
-                                    setMessages((prev) => [...prev, aiMessage]);
-                                }
-                            } catch (error) {
-                                console.error('[Vignette Chunks] Error:', error);
-                                setMessages((prev) => [...prev, aiMessage]);
-                            }
-                        }
-                        setStreamingMessage("");
-                        continue;
-                    }
-
-                    try {
-                        const data = JSON.parse(cleanedLine);
-                        if (data.type === "chunk") {
-                            streamContent += data.content;
-                            setStreamingMessage(streamContent);
-                            setLastStreamingActivity(Date.now());
-                        } else if (data.type === "status") {
-                            setCurrentStatus(data.message);
-                            setLastStreamingActivity(Date.now());
-                        }
-                    } catch (error) {
-                        console.warn("Error parsing vignette chunk:", cleanedLine);
-                    }
-                }
-            }
-            setIsLoading(false);
-            return true;
-        } catch (error) {
-            console.error("[Vignette Chunks] Error:", error);
-            setIsLoading(false);
-            setStreamingMessage("");
-            setCurrentStatus("");
-            return false;
-        }
-    }, [conversationId, selectedModel, router, refreshConversations]);
-
     const sendMessageToApi = useCallback(async (
         targetConversationId: number,
         userInput: string,
@@ -619,11 +511,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                 sessionStorage.removeItem(PENDING_VIGNETTE_STREAM_KEY);
                 try {
                     const pendingStream: PendingVignetteStream = JSON.parse(pendingVignetteStreamStr);
-                    if (pendingStream.streamType === 'chunks') {
-                        streamVignetteChunks(pendingStream.imageName, pendingStream.category);
-                    } else {
-                        streamVignetteMarkdown(pendingStream.imageName, pendingStream.category);
-                    }
+                    streamVignetteMarkdown(pendingStream.imageName, pendingStream.category);
                 } catch (e) { console.error(e); loadConversation(conversationId); }
                 return;
             }
@@ -697,7 +585,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
             messagesContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
             sessionStorage.removeItem('pendingScrollToTopVignette');
         }
-    }, [conversationId, loadConversation, sendMessageToApi, streamVignetteMarkdown, streamVignetteChunks]);
+    }, [conversationId, loadConversation, sendMessageToApi, streamVignetteMarkdown]);
 
     // Handle standard auto-scroll and precise scroll to top
     useEffect(() => {
@@ -803,7 +691,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         handleSend, handleFlashcardClick, handleScroll: () => {
             const container = messagesContainerRef.current;
             if (container) setShouldAutoScroll(container.scrollHeight - container.scrollTop - container.clientHeight < 20);
-        }, addAiMessage, streamVignetteMarkdown, streamVignetteChunks,
+        }, addAiMessage, streamVignetteMarkdown,
         clearMessages: useCallback(() => {
             setMessages([]); setStreamingMessage(""); setStreamingMarketplaceData(null); setStreamingRealEstateData(null); setStreamingVignetteData(null); setStreamingClothesSearchData(null); setStreamingVignetteCategory(null); setCurrentStatus(""); setShowStreamingIndicator(false);
         }, []),
