@@ -177,6 +177,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
             let questionsContent = "";
             let buffer = "";
             let chunkCount = 0;
+            let isJsonFormat = false;
 
             while (true) {
                 const { done, value } = await reader.read();
@@ -191,129 +192,15 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
 
                 buffer += decoder.decode(value, { stream: true });
 
-                // Check if the response is plain JSON (not SSE format)
+                // Detect JSON format on first chunk
                 if (chunkCount === 1 && buffer.trim().startsWith('{')) {
-                    // Try to parse as plain JSON
-                    try {
-                        const jsonResponse = JSON.parse(buffer);
-                        if (jsonResponse.text) {
-                            documentContent = jsonResponse.text;
-                            setStreamingMessage(documentContent);
+                    isJsonFormat = true;
+                    console.log('[streamVignetteMarkdown] Detected JSON format, accumulating chunks...');
+                }
 
-                            // Add the main text as the first AI message
-                            const aiMessage: Message = {
-                                id: Date.now(),
-                                content: documentContent,
-                                sender: "ai",
-                                created_at: new Date().toISOString(),
-                                vignetteCategory: category,
-                            };
-
-                            // Helper to save messages to database
-                            const saveVignetteToDb = async (convId: number, msgs: { content: string; vignetteCategory?: string }[]) => {
-                                try {
-                                    const response = await fetch(`/api/conversations/${convId}/vignette-content`, {
-                                        method: 'POST',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({ messages: msgs }),
-                                    });
-                                    if (!response.ok) {
-                                        console.error('[Vignette] Failed to save to database');
-                                    } else {
-                                        console.log('[Vignette] Messages saved to database');
-                                    }
-                                } catch (error) {
-                                    console.error('[Vignette] Error saving to database:', error);
-                                }
-                            };
-
-                            // Build messages array
-                            const questionsMessage = jsonResponse.questions ? {
-                                id: Date.now() + 1,
-                                content: jsonResponse.questions,
-                                sender: "ai" as const,
-                                created_at: new Date().toISOString(),
-                                vignetteCategory: category,
-                            } : null;
-
-                            if (conversationId) {
-                                // Existing conversation - add messages and save to DB
-                                if (questionsMessage) {
-                                    setMessages((prev) => [...prev, aiMessage, questionsMessage]);
-                                } else {
-                                    setMessages((prev) => [...prev, aiMessage]);
-                                }
-                                // Save to database
-                                const messagesToSave = [{ content: documentContent, vignetteCategory: category }];
-                                if (jsonResponse.questions) {
-                                    messagesToSave.push({ content: jsonResponse.questions, vignetteCategory: category });
-                                }
-                                saveVignetteToDb(conversationId, messagesToSave);
-                            } else if (process.env.NEXT_PUBLIC_SKIP_AUTH === "true") {
-                                // Dev mode without conversation - just display locally
-                                if (questionsMessage) {
-                                    setMessages((prev) => [...prev, aiMessage, questionsMessage]);
-                                } else {
-                                    setMessages((prev) => [...prev, aiMessage]);
-                                }
-                            } else {
-                                // No conversation - create one and save messages
-                                const title = documentContent.length > 50
-                                    ? documentContent.substring(0, 50) + "..."
-                                    : documentContent;
-
-                                try {
-                                    const createResponse = await fetch("/api/conversations", {
-                                        method: "POST",
-                                        headers: { "Content-Type": "application/json" },
-                                        body: JSON.stringify({
-                                            title: title,
-                                            model: selectedModel,
-                                        }),
-                                    });
-
-                                    if (createResponse.ok) {
-                                        const data = await createResponse.json();
-                                        const newConversationId = data.conversation.id;
-
-                                        // Save messages to database
-                                        const messagesToSave = [{ content: documentContent, vignetteCategory: category }];
-                                        if (jsonResponse.questions) {
-                                            messagesToSave.push({ content: jsonResponse.questions, vignetteCategory: category });
-                                        }
-                                        await saveVignetteToDb(newConversationId, messagesToSave);
-
-                                        // Refresh sidebar and navigate
-                                        refreshConversations();
-                                        setIsLoading(false);
-                                        router.push(`/chat/${newConversationId}`);
-                                        return true;
-                                    } else {
-                                        // Failed to create conversation - just display locally
-                                        if (questionsMessage) {
-                                            setMessages((prev) => [...prev, aiMessage, questionsMessage]);
-                                        } else {
-                                            setMessages((prev) => [...prev, aiMessage]);
-                                        }
-                                    }
-                                } catch (error) {
-                                    console.error('[Vignette] Error creating conversation:', error);
-                                    // Display locally on error
-                                    if (questionsMessage) {
-                                        setMessages((prev) => [...prev, aiMessage, questionsMessage]);
-                                    } else {
-                                        setMessages((prev) => [...prev, aiMessage]);
-                                    }
-                                }
-                            }
-                            setStreamingMessage("");
-                            setCurrentStatus("");
-                            setIsLoading(false);
-                            return true;
-                        }
-                    } catch {
-                        // Not valid JSON yet, continue reading
-                    }
+                // For JSON format, just accumulate - we'll parse after stream ends
+                if (isJsonFormat) {
+                    continue;
                 }
 
                 // Split by double newline to get complete SSE events
@@ -412,7 +299,80 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                     }
                 }
             }
-            console.log('[streamVignetteMarkdown] Stream completed successfully, documentContent length:', documentContent.length);
+
+            // Handle JSON format after stream ends (JSON may be split across chunks)
+            if (isJsonFormat && buffer.trim()) {
+                console.log('[streamVignetteMarkdown] Parsing accumulated JSON, buffer length:', buffer.length);
+                try {
+                    const jsonResponse = JSON.parse(buffer);
+                    if (jsonResponse.text) {
+                        documentContent = jsonResponse.text;
+                        console.log('[streamVignetteMarkdown] JSON parsed successfully, text length:', documentContent.length);
+                        setStreamingMessage(documentContent);
+
+                        const aiMessage: Message = {
+                            id: Date.now(),
+                            content: documentContent,
+                            sender: "ai",
+                            created_at: new Date().toISOString(),
+                            vignetteCategory: category,
+                        };
+
+                        const saveVignetteToDb = async (convId: number, msgs: { content: string; vignetteCategory?: string }[]) => {
+                            try {
+                                const response = await fetch(`/api/conversations/${convId}/vignette-content`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ messages: msgs }),
+                                });
+                                if (!response.ok) {
+                                    console.error('[Vignette JSON] Failed to save to database');
+                                } else {
+                                    console.log('[Vignette JSON] Messages saved to database');
+                                }
+                            } catch (error) {
+                                console.error('[Vignette JSON] Error saving to database:', error);
+                            }
+                        };
+
+                        const questionsMessage = jsonResponse.questions ? {
+                            id: Date.now() + 1,
+                            content: jsonResponse.questions,
+                            sender: "ai" as const,
+                            created_at: new Date().toISOString(),
+                            vignetteCategory: category,
+                        } : null;
+
+                        if (conversationId) {
+                            if (questionsMessage) {
+                                setMessages((prev) => [...prev, aiMessage, questionsMessage]);
+                            } else {
+                                setMessages((prev) => [...prev, aiMessage]);
+                            }
+                            const messagesToSave = [{ content: documentContent, vignetteCategory: category }];
+                            if (jsonResponse.questions) {
+                                messagesToSave.push({ content: jsonResponse.questions, vignetteCategory: category });
+                            }
+                            saveVignetteToDb(conversationId, messagesToSave);
+                        } else {
+                            if (questionsMessage) {
+                                setMessages((prev) => [...prev, aiMessage, questionsMessage]);
+                            } else {
+                                setMessages((prev) => [...prev, aiMessage]);
+                            }
+                        }
+                        setStreamingMessage("");
+                        setCurrentStatus("");
+                        setIsLoading(false);
+                        console.log('[streamVignetteMarkdown] JSON processing complete');
+                        return true;
+                    }
+                } catch (parseError) {
+                    console.error('[streamVignetteMarkdown] Failed to parse JSON:', parseError);
+                }
+            }
+
+            console.log('[streamVignetteMarkdown] Stream completed, documentContent length:', documentContent.length);
             setIsLoading(false);
             return true;
         } catch (error) {
