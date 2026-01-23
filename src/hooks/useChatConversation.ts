@@ -735,7 +735,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         if (!isLoading) { setShowStreamingIndicator(false); return; }
         const interval = setInterval(() => {
             const timeSinceLastActivity = Date.now() - lastStreamingActivity;
-            setShowStreamingIndicator(isLoading && streamingMessage && timeSinceLastActivity > 500);
+            setShowStreamingIndicator(Boolean(isLoading && streamingMessage && timeSinceLastActivity > 500));
         }, 300);
         return () => clearInterval(interval);
     }, [isLoading, streamingMessage, lastStreamingActivity]);
