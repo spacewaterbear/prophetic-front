@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
+// In-memory cache for vignettes data
+const vignetteCache = new Map<string, { data: unknown; timestamp: number }>();
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes cache
+
 // GET /api/vignettes?category=WINE
 export async function GET(request: NextRequest) {
     try {
@@ -11,6 +15,14 @@ export async function GET(request: NextRequest) {
                 { error: "Category parameter is required" },
                 { status: 400 }
             );
+        }
+
+        // Check cache first
+        const cacheKey = category.toUpperCase();
+        const cached = vignetteCache.get(cacheKey);
+        if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
+            console.log(`[Vignettes API] Cache HIT for category: ${cacheKey}`);
+            return NextResponse.json(cached.data);
         }
 
         if (!process.env.PROPHETIC_API_URL) {
@@ -51,7 +63,11 @@ export async function GET(request: NextRequest) {
         }
 
         const data = await response.json();
-        console.log(`[Vignettes API] Successfully fetched ${data.vignettes?.length || 0} vignettes`);
+        console.log(`[Vignettes API] Successfully fetched ${data.vignettes?.length || 0} vignettes for ${cacheKey}`);
+
+        // Store in cache
+        vignetteCache.set(cacheKey, { data, timestamp: Date.now() });
+        console.log(`[Vignettes API] Cached data for category: ${cacheKey}`);
 
         return NextResponse.json(data);
     } catch (error) {
