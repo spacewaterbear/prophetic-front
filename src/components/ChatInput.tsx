@@ -27,8 +27,7 @@ interface ChatInputProps {
     conversationId?: number | null;
     attachedFiles?: AttachedFile[];
     onFilesChange?: (files: AttachedFile[]) => void;
-    onFlashcardClick?: (flashCards: string, question: string, flashCardType: 'flash_invest' | 'ranking', displayName: string) => void;
-    onPortfolioClick?: () => void;
+    onFlashcardClick?: (flashCards: string, question: string, flashCardType: 'flash_invest' | 'ranking' | 'portfolio' | 'PORTFOLIO', displayName: string) => void;
 }
 
 // Flashcard category mapping to API enum values
@@ -149,7 +148,7 @@ const ModeCard: React.FC<ModeCardProps> = ({
     );
 };
 
-export function ChatInput({ input, setInput, handleSend, isLoading, className = "", textareaRef, userStatus = 'discover', selectedAgent = 'discover', onAgentChange, userId, conversationId, attachedFiles = [], onFilesChange, onFlashcardClick, onPortfolioClick }: ChatInputProps) {
+export function ChatInput({ input, setInput, handleSend, isLoading, className = "", textareaRef, userStatus = 'discover', selectedAgent = 'discover', onAgentChange, userId, conversationId, attachedFiles = [], onFilesChange, onFlashcardClick }: ChatInputProps) {
     const { theme, resolvedTheme } = useTheme();
     const isDark = theme === "dark" || resolvedTheme === "dark";
     const { t } = useI18n();
@@ -202,12 +201,18 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
         }
     };
 
-    const handleFlashcardClick = (category: string, flashCardType: 'flash_invest' | 'ranking' = 'flash_invest') => {
+    const handleFlashcardClick = (category: string, flashCardType: 'flash_invest' | 'ranking' | 'portfolio' | 'PORTFOLIO' = 'flash_invest') => {
         const mapping = FLASHCARD_MAPPING[category];
         if (mapping && onFlashcardClick) {
             onFlashcardClick(mapping.flash_cards, mapping.question, flashCardType, category);
             setIsChronoOpen(false);
             setIsRankingOpen(false);
+        }
+    };
+
+    const handlePortfolioClick = () => {
+        if (onFlashcardClick) {
+            onFlashcardClick('', 'run portfolio tool', 'PORTFOLIO', 'Portfolio');
         }
     };
 
@@ -826,9 +831,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                             onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
-                                if (onPortfolioClick) {
-                                    onPortfolioClick();
-                                }
+                                handlePortfolioClick();
                             }}
                         >
                             <Image
@@ -1158,9 +1161,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                         <button
                                             className={CARD_BUTTON_STYLES}
                                             onClick={() => {
-                                                if (onPortfolioClick) {
-                                                    onPortfolioClick();
-                                                }
+                                                handlePortfolioClick();
                                                 setIsFileUploadOpen(false);
                                                 setMobileMenuLevel('main');
                                             }}

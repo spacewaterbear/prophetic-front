@@ -81,7 +81,7 @@ export interface Message {
 interface PendingMessage {
     content: string;
     flashCards?: string;
-    flashCardType?: 'flash_invest' | 'ranking' | 'portfolio';
+    flashCardType?: 'flash_invest' | 'ranking' | 'portfolio' | 'PORTFOLIO';
     scrollToTop?: boolean;
 }
 
@@ -128,7 +128,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         targetConversationId: number,
         userInput: string,
         flashCards?: string,
-        flashCardType?: 'flash_invest' | 'ranking' | 'portfolio',
+        flashCardType?: 'flash_invest' | 'ranking' | 'portfolio' | 'PORTFOLIO',
         scrollToTop: boolean = false
     ) => {
         setIsLoading(true);
@@ -163,7 +163,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     content: userInput,
-                    flash_cards: flashCards,
+                    ...(flashCards ? { flash_cards: flashCards } : {}),
                     flash_card_type: flashCardType
                 }),
             });
@@ -546,7 +546,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         window.dispatchEvent(new Event("refreshConversations"));
     };
 
-    const handleSend = async (messageToSend?: string, flashCards?: string, flashCardType?: 'flash_invest' | 'ranking' | 'portfolio', scrollToTop: boolean = false) => {
+    const handleSend = async (messageToSend?: string, flashCards?: string, flashCardType?: 'flash_invest' | 'ranking' | 'portfolio' | 'PORTFOLIO', scrollToTop: boolean = false) => {
         const userInput = messageToSend || input;
         if (!userInput.trim() || isLoading) return;
 
@@ -619,8 +619,8 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
     };
 
     const handleFlashcardClick = (flashCards: string, question: string, flashCardType: 'flash_invest' | 'ranking' | 'portfolio', displayName: string) => {
-        // Disable auto-scroll for flash_invest and ranking responses (they return markdown content)
-        if (flashCardType === 'flash_invest' || flashCardType === 'ranking') {
+        // Disable auto-scroll for flash_invest, ranking and PORTFOLIO responses (they return markdown content)
+        if (flashCardType === 'flash_invest' || flashCardType === 'ranking' || flashCardType === 'portfolio') {
             sessionStorage.setItem('disableAutoScroll', 'true');
             disableAutoScrollRef.current = true;
             console.log(`[Auto-scroll] Disabled for ${flashCardType} response`);
@@ -804,8 +804,11 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                                         await saveVignetteToDb(newConversationId, messagesToSave);
 
                                         // Refresh sidebar and navigate
+                                        // Don't clear streaming message - let it stay visible during navigation
                                         refreshConversations();
+                                        setIsLoading(false);
                                         router.push(`/chat/${newConversationId}`);
+                                        return true;
                                     } else {
                                         // Failed to create conversation - just display locally
                                         if (questionsMessage) {
@@ -935,8 +938,10 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                                         const data = await createResponse.json();
                                         const newConversationId = data.conversation.id;
                                         await saveToDb(newConversationId);
+                                        // Don't clear streaming message - let it stay visible during navigation
                                         refreshConversations();
                                         router.push(`/chat/${newConversationId}`);
+                                        return true; // Exit without clearing - navigation will unmount
                                     } else {
                                         // Failed - just display locally
                                         setMessages((prev) => [...prev, aiMessage]);
@@ -1037,6 +1042,8 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                                     await saveBufferToDb(newConversationId);
                                     refreshConversations();
                                     router.push(`/chat/${newConversationId}`);
+                                    setIsLoading(false);
+                                    return true; // Don't clear streaming - navigation will unmount
                                 } else {
                                     // Failed - just display locally
                                     if (questionsMessage) {
@@ -1181,6 +1188,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                                         await saveChunkToDb(newConversationId);
                                         refreshConversations();
                                         router.push(`/chat/${newConversationId}`);
+                                        return true; // Don't clear streaming - navigation will unmount
                                     } else {
                                         setMessages((prev) => [...prev, aiMessage]);
                                     }
@@ -1269,6 +1277,8 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                             await saveFallbackToDb(newConversationId);
                             refreshConversations();
                             router.push(`/chat/${newConversationId}`);
+                            setIsLoading(false);
+                            return true; // Don't clear streaming - navigation will unmount
                         } else {
                             setMessages((prev) => [...prev, aiMessage]);
                         }

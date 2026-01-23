@@ -385,13 +385,16 @@ export default function ChatPage() {
     // Fetch vignettes when category changes (welcome screen only)
     useEffect(() => {
         const category = searchParams.get("category");
-        console.log("[Chat Page] useEffect triggered, category:", category, "conversationId:", conversationId);
+        console.log("[Chat Page] useEffect triggered, category:", category, "conversationId:", conversationId, "isLoading:", isLoading);
 
         // If there's a category parameter, we should show vignettes regardless of conversationId
         // This handles the case where user clicks a category from a conversation page
         if (category) {
-            // Clear any previous vignette content when category changes
-            clearMessages();
+            // Don't clear messages if we're currently loading/streaming a vignette
+            // This prevents flickering when URL is updated during vignette click
+            if (!isLoading) {
+                clearMessages();
+            }
 
             const fetchVignettes = async () => {
                 console.log(`[Chat Page] Starting fetch for category: ${category}`);
@@ -434,15 +437,15 @@ export default function ChatPage() {
             if (messagesContainerRef.current) {
                 messagesContainerRef.current.scrollTo({ top: 0 });
             }
-        } else if (!conversationId) {
-            // No category and no conversation - clear vignettes
+        } else if (!conversationId && !isLoading) {
+            // No category and no conversation (and not loading) - clear vignettes
             console.log("[Chat Page] No category and no conversation, clearing vignettes");
             clearMessages();
             setVignettes([]);
             setVignetteError(null);
         }
         // If conversationId exists but no category, do nothing (viewing a conversation)
-    }, [searchParams, conversationId, clearMessages]);
+    }, [searchParams, conversationId, clearMessages, isLoading]);
 
 
 
@@ -470,10 +473,6 @@ export default function ChatPage() {
     const handleVignetteClick = async (vignette: VignetteData) => {
         const imageName = getImageNameFromUrl(vignette.public_url);
         console.log(`[Chat Page] Vignette clicked: ${vignette.brand_name}, image: ${imageName}, category: ${vignette.category}`);
-
-        // Update URL with category and title (without triggering navigation/re-render)
-        const newUrl = `/chat?category=${vignette.category}&title=${encodeURIComponent(vignette.brand_name)}`;
-        window.history.replaceState(null, '', newUrl);
 
         // Close sidebar on mobile when vignette is clicked
         const isMobileView = window.innerWidth < 768;
@@ -619,7 +618,7 @@ export default function ChatPage() {
     return (
         <>
             {/* Header */}
-            <header className={`relative z-10 bg-[rgba(247,240,232,0.8)] dark:bg-black backdrop-blur-md border-b border-gray-300 dark:border-gray-800 pl-14 pr-6 md:px-6 ${isWelcomeScreen ? 'h-[52px] sm:h-[60px]' : 'py-3 sm:py-4'} flex items-center justify-between`}>
+            <header className={`relative z-10 bg-[rgba(247,240,232,0.8)] dark:bg-black backdrop-blur-md border-b border-gray-400 dark:border-gray-800 pl-14 pr-6 md:px-6 h-[52px] sm:h-[60px] flex items-center justify-between`}>
                 <div className="flex items-center gap-2 sm:gap-4 min-w-0">
                     <div className="flex items-center gap-3 min-w-0">
                         <Link href="/" className="cursor-pointer">
