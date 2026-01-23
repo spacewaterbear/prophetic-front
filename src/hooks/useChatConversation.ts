@@ -622,9 +622,12 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
 
     // Main useEffect for pending logic and initialization
     useEffect(() => {
+        console.log('[useChatConversation] Effect running, conversationId:', conversationId, 'lastProcessed:', lastProcessedConversationIdRef.current, 'pendingProcessed:', pendingMessageProcessedRef.current);
+
         if (conversationId) {
             // Reset the processed flag if conversationId changed to a NEW value
             if (conversationId !== lastProcessedConversationIdRef.current) {
+                console.log('[useChatConversation] New conversation, resetting refs');
                 pendingMessageProcessedRef.current = false;
                 lastProcessedConversationIdRef.current = conversationId;
             }
@@ -632,12 +635,15 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
             // If we've already processed pending items for this conversation, skip
             // (the streaming functions handle setting messages, no need to loadConversation)
             if (pendingMessageProcessedRef.current) {
+                console.log('[useChatConversation] Already processed, skipping');
                 return;
             }
 
             // Priority 1: Pending Vignette Stream (Redirection)
             const pendingVignetteStreamStr = sessionStorage.getItem(PENDING_VIGNETTE_STREAM_KEY);
+            console.log('[useChatConversation] Checking pendingVignetteStream:', pendingVignetteStreamStr ? 'FOUND' : 'NOT FOUND');
             if (pendingVignetteStreamStr) {
+                console.log('[useChatConversation] Processing pending vignette stream');
                 pendingMessageProcessedRef.current = true;
                 sessionStorage.removeItem(PENDING_VIGNETTE_STREAM_KEY);
                 try {
@@ -694,6 +700,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                 return;
             }
 
+            console.log('[useChatConversation] No pending items found, loading conversation from DB');
             loadConversation(conversationId);
         } else {
             setMessages([]);
