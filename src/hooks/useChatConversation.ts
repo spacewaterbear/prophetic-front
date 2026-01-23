@@ -746,37 +746,27 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                                 } else {
                                     setMessages((prev) => [...prev, aiMessage]);
                                 }
-                                setStreamingMessage("");
-                                setCurrentStatus("");
                             } else {
-                                // No conversation - create one and navigate with vignette content
-                                const title = documentContent.length > 50
-                                    ? documentContent.substring(0, 50) + "..."
-                                    : documentContent;
-
-                                const createResponse = await fetch("/api/conversations", {
-                                    method: "POST",
-                                    headers: { "Content-Type": "application/json" },
-                                    body: JSON.stringify({
-                                        title: title,
-                                        model: selectedModel,
-                                    }),
-                                });
-
-                                if (createResponse.ok) {
-                                    const data = await createResponse.json();
-                                    const newConversationId = data.conversation.id;
-                                    // Store the content with questions and category for the new page
-                                    const contentToStore = jsonResponse.questions
-                                        ? JSON.stringify({ text: documentContent, questions: jsonResponse.questions, vignetteCategory: category })
-                                        : JSON.stringify({ text: documentContent, vignetteCategory: category });
-                                    sessionStorage.setItem(PENDING_VIGNETTE_CONTENT_KEY, contentToStore);
-                                    refreshConversations();
-                                    router.push(`/chat/${newConversationId}`);
+                                // No conversation - just display locally on welcome screen
+                                // Don't navigate away
+                                if (jsonResponse.questions) {
+                                    setMessages((prev) => [
+                                        ...prev,
+                                        aiMessage,
+                                        {
+                                            id: Date.now() + 1,
+                                            content: jsonResponse.questions,
+                                            sender: "ai",
+                                            created_at: new Date().toISOString(),
+                                            vignetteCategory: category,
+                                        }
+                                    ]);
+                                } else {
+                                    setMessages((prev) => [...prev, aiMessage]);
                                 }
-                                setStreamingMessage("");
-                                setCurrentStatus("");
                             }
+                            setStreamingMessage("");
+                            setCurrentStatus("");
                             setIsLoading(false);
                             return true;
                         }
@@ -841,39 +831,14 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                                 vignetteCategory: category,
                             };
 
-                            // If in a conversation, add the message locally
-                            if (conversationId || process.env.NEXT_PUBLIC_SKIP_AUTH === "true") {
-                                setMessages((prev) => [...prev, aiMessage]);
-                                setStreamingMessage("");
-                                setCurrentStatus("");
-                            } else {
-                                // No conversation - create one and navigate
-                                const title = finalContent.length > 50
-                                    ? finalContent.substring(0, 50) + "..."
-                                    : finalContent;
+                            // Always add the message locally to display it
+                            setMessages((prev) => [...prev, aiMessage]);
+                            setStreamingMessage("");
+                            setCurrentStatus("");
 
-                                const createResponse = await fetch("/api/conversations", {
-                                    method: "POST",
-                                    headers: { "Content-Type": "application/json" },
-                                    body: JSON.stringify({
-                                        title: title,
-                                        model: selectedModel,
-                                    }),
-                                });
-
-                                if (createResponse.ok) {
-                                    const data = await createResponse.json();
-                                    const newConversationId = data.conversation.id;
-                                    console.log('[streamVignetteMarkdown] Storing pending content:', finalContent.length, 'chars');
-                                    // Store as JSON with category for database persistence
-                                    sessionStorage.setItem(PENDING_VIGNETTE_CONTENT_KEY, JSON.stringify({ text: finalContent, vignetteCategory: category }));
-                                    console.log('[streamVignetteMarkdown] Navigating to conversation:', newConversationId);
-                                    refreshConversations();
-                                    router.push(`/chat/${newConversationId}`);
-                                }
-                                setStreamingMessage("");
-                                setCurrentStatus("");
-                            }
+                            // If no conversation exists, we're on the welcome screen
+                            // Don't navigate away - just display the content
+                            // The user can continue interacting or click another vignette
                         }
                     } catch (parseError) {
                         console.error("[Vignette Stream] Failed to parse SSE event:", eventData);
