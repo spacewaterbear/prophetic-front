@@ -4,6 +4,7 @@ export enum Vignettes {
     BIJOUX = "BIJOUX",
     CARDS_US = "CARDS_US",
     CARS = "CARS",
+    CASH_FLOW_LEASING = "CASH_FLOW_LEASING",
     IMMO_LUXE = "IMMO_LUXE",
     MONTRES_LUXE = "MONTRES_LUXE",
     SACS = "SACS",

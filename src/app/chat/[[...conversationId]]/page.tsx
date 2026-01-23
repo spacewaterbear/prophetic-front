@@ -269,6 +269,7 @@ const CATEGORY_DISPLAY_NAMES: Record<string, string> = {
     BIJOUX: "Bijoux",
     CARDS_US: "US Sports Cards",
     CARS: "Voitures de Collections",
+    CASH_FLOW_LEASING: "Cash-Flow Leasing",
     IMMO_LUXE: "Immobilier de Luxe",
     MONTRES_LUXE: "Montres de Luxe",
     SACS: "Sacs de Luxe",
@@ -387,11 +388,17 @@ export default function ChatPage() {
         const category = searchParams.get("category");
         console.log("[Chat Page] useEffect triggered, category:", category, "conversationId:", conversationId, "isLoading:", isLoading);
 
-        // If there's a category parameter, we should show vignettes regardless of conversationId
-        // This handles the case where user clicks a category from a conversation page
-        if (category) {
+        // If we have a pending stream, we are in the middle of a redirection
+        // Skip fetching vignettes to avoid the "glitch"
+        if (sessionStorage.getItem('pendingVignetteStream')) {
+            console.log("[Chat Page] Pending stream detected, skipping vignette fetch");
+            return;
+        }
+
+        // Only fetch vignettes if we are on the welcome screen (no conversationId)
+        // or if explicitly on a category URL without an active conversation
+        if (category && !conversationId) {
             // Don't clear messages if we're currently loading/streaming a vignette
-            // This prevents flickering when URL is updated during vignette click
             if (!isLoading) {
                 clearMessages();
             }
@@ -476,14 +483,8 @@ export default function ChatPage() {
 
         // Close sidebar on mobile when vignette is clicked
         const isMobileView = window.innerWidth < 768;
-        console.log('[Chat Page] Window width:', window.innerWidth, 'isMobileView:', isMobileView, 'context isMobile:', isMobile);
-
         if (isMobileView) {
-            console.log('[Chat Page] Closing sidebar on mobile');
             setSidebarOpen(false);
-            console.log('[Chat Page] setSidebarOpen(false) called');
-        } else {
-            console.log('[Chat Page] NOT closing sidebar - desktop view');
         }
 
         sessionStorage.setItem('disableAutoScroll', 'true');
@@ -500,82 +501,58 @@ export default function ChatPage() {
             welcomeContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        console.log('[Chat Page] Auto-scroll DISABLED and scroll-to-top flag set for vignette response');
-
-        // For ART_TRADING_VALUE, create a new conversation and stream chunks there
-        if (vignette.category === "ART_TRADING_VALUE") {
-            console.log('[Chat Page] ART_TRADING_VALUE detected - creating new conversation for chunk streaming');
-
-            try {
-                const title = vignette.brand_name.length > 50
-                    ? vignette.brand_name.substring(0, 50) + "..."
-                    : vignette.brand_name;
-
-                const response = await fetch("/api/conversations", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        title: title,
-                        model: selectedModel,
-                    }),
-                });
-
-                if (!response.ok) {
-                    throw new Error("Failed to create conversation");
-                }
-
-                const data = await response.json();
-                const newConversationId = data.conversation.id;
-
-                // Store pending vignette stream info for the new page to pick up
-                const pendingStream = {
-                    imageName: imageName,
-                    category: vignette.category,
-                };
-                sessionStorage.setItem('pendingVignetteStream', JSON.stringify(pendingStream));
-
-                // Refresh conversations list in sidebar
-                window.dispatchEvent(new Event("refreshConversations"));
-
-                // Navigate to the new conversation
-                router.push(`/chat/${newConversationId}`);
-                console.log(`[Chat Page] Navigated to new conversation: ${newConversationId}`);
-            } catch (error) {
-                console.error("[Chat Page] Error creating conversation for ART_TRADING_VALUE:", error);
-                toast.error("Failed to create conversation");
-
-                // Re-enable auto-scroll on error
-                sessionStorage.removeItem('disableAutoScroll');
-                if (disableAutoScrollRef) {
-                    disableAutoScrollRef.current = false;
-                }
-            }
-            return;
-        }
-
-        // For other categories, use existing streaming behavior
-        // Note: We don't update URL here because it triggers clearMessages() via useEffect
-        // The streaming will create a conversation and navigate there anyway
+        console.log('[Chat Page] Creating new conversation for vignette streaming');
 
         try {
-            // Use streaming to show markdown document first, then questions progressively
-            // Pass the category to track it in the message
-            const success = await streamVignetteMarkdown(imageName, vignette.category);
+            const title = vignette.brand_name.length > 50
+                ? vignette.brand_name.substring(0, 50) + "..."
+                : vignette.brand_name;
 
-            if (!success) {
-                throw new Error("Failed to stream vignette markdown");
+            const response = await fetch("/api/conversations", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    title: title,
+                    model: selectedModel,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to create conversation");
             }
-            console.log(`[Chat Page] Vignette markdown streamed successfully`);
+
+            const data = await response.json();
+            const newConversationId = data.conversation.id;
+
+            // Determine stream type
+            // ART_TRADING_VALUE and CASH_FLOW_LEASING use chunk-based streaming
+            const streamType = (vignette.category === "ART_TRADING_VALUE" || vignette.category === "CASH_FLOW_LEASING")
+                ? 'chunks'
+                : 'sse';
+
+            // Store pending vignette stream info for the new page to pick up
+            const pendingStream = {
+                imageName: imageName,
+                category: vignette.category,
+                streamType: streamType
+            };
+            sessionStorage.setItem('pendingVignetteStream', JSON.stringify(pendingStream));
+
+            // Refresh conversations list in sidebar
+            window.dispatchEvent(new Event("refreshConversations"));
+
+            // Navigate to the new conversation
+            router.push(`/chat/${newConversationId}`);
+            console.log(`[Chat Page] Navigated to new conversation: ${newConversationId} with streamType: ${streamType}`);
         } catch (error) {
-            console.error("[Chat Page] Error fetching vignette markdown:", error);
-            toast.error("Failed to load vignette details");
+            console.error("[Chat Page] Error creating conversation for vignette:", error);
+            toast.error("Failed to create conversation");
 
             // Re-enable auto-scroll on error
             sessionStorage.removeItem('disableAutoScroll');
             if (disableAutoScrollRef) {
                 disableAutoScrollRef.current = false;
             }
-            console.log('[Chat Page] Auto-scroll RE-ENABLED after error');
         }
     };
 
