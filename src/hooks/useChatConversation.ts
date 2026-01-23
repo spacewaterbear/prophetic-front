@@ -340,6 +340,24 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                 pendingMessageProcessedRef.current = true;
                 sessionStorage.removeItem(PENDING_VIGNETTE_CONTENT_KEY);
 
+                // Helper function to save vignette messages to database
+                const saveVignetteMessages = async (messagesToSave: { content: string; vignetteCategory?: string }[]) => {
+                    try {
+                        const response = await fetch(`/api/conversations/${conversationId}/vignette-content`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ messages: messagesToSave }),
+                        });
+                        if (!response.ok) {
+                            console.error('[useEffect] Failed to save vignette messages to database');
+                        } else {
+                            console.log('[useEffect] Vignette messages saved to database');
+                        }
+                    } catch (error) {
+                        console.error('[useEffect] Error saving vignette messages:', error);
+                    }
+                };
+
                 // Check if the content is JSON with text and questions fields
                 try {
                     const parsed = JSON.parse(pendingVignetteContent);
@@ -352,6 +370,9 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                                 created_at: new Date().toISOString(),
                             }
                         ];
+                        const messagesToSave: { content: string; vignetteCategory?: string }[] = [
+                            { content: parsed.text, vignetteCategory: parsed.vignetteCategory }
+                        ];
                         // If there are questions, add them as a second message
                         if (parsed.questions) {
                             messages.push({
@@ -360,8 +381,11 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                                 sender: "ai",
                                 created_at: new Date().toISOString(),
                             });
+                            messagesToSave.push({ content: parsed.questions, vignetteCategory: parsed.vignetteCategory });
                         }
                         setMessages(messages);
+                        // Save to database in background
+                        saveVignetteMessages(messagesToSave);
                         return;
                     }
                 } catch {
@@ -376,6 +400,8 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                     created_at: new Date().toISOString(),
                 };
                 setMessages([aiMessage]);
+                // Save to database in background
+                saveVignetteMessages([{ content: pendingVignetteContent }]);
                 return;
             }
 
@@ -637,8 +663,8 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
             const data = await response.json();
             const newConversationId = data.conversation.id;
 
-            // Store the vignette content for the new page to display
-            sessionStorage.setItem(PENDING_VIGNETTE_CONTENT_KEY, content);
+            // Store the vignette content as JSON for the new page to display and persist
+            sessionStorage.setItem(PENDING_VIGNETTE_CONTENT_KEY, JSON.stringify({ text: content }));
 
             // Refresh conversations list in sidebar
             refreshConversations();
@@ -740,10 +766,10 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                                 if (createResponse.ok) {
                                     const data = await createResponse.json();
                                     const newConversationId = data.conversation.id;
-                                    // Store the content with questions for the new page
+                                    // Store the content with questions and category for the new page
                                     const contentToStore = jsonResponse.questions
-                                        ? JSON.stringify({ text: documentContent, questions: jsonResponse.questions })
-                                        : documentContent;
+                                        ? JSON.stringify({ text: documentContent, questions: jsonResponse.questions, vignetteCategory: category })
+                                        : JSON.stringify({ text: documentContent, vignetteCategory: category });
                                     sessionStorage.setItem(PENDING_VIGNETTE_CONTENT_KEY, contentToStore);
                                     refreshConversations();
                                     router.push(`/chat/${newConversationId}`);
@@ -839,7 +865,8 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                                     const data = await createResponse.json();
                                     const newConversationId = data.conversation.id;
                                     console.log('[streamVignetteMarkdown] Storing pending content:', finalContent.length, 'chars');
-                                    sessionStorage.setItem(PENDING_VIGNETTE_CONTENT_KEY, finalContent);
+                                    // Store as JSON with category for database persistence
+                                    sessionStorage.setItem(PENDING_VIGNETTE_CONTENT_KEY, JSON.stringify({ text: finalContent, vignetteCategory: category }));
                                     console.log('[streamVignetteMarkdown] Navigating to conversation:', newConversationId);
                                     refreshConversations();
                                     router.push(`/chat/${newConversationId}`);

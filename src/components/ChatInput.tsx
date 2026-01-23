@@ -688,7 +688,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                             <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-3xl p-5 w-[420px] shadow-2xl border dark:border-transparent">
                                 {/* Header */}
                                 <div className="mb-4">
-                                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">Investment Flashcards</h3>
+                                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">Learn Flashcards</h3>
                                     <p className="text-sm text-gray-600 dark:text-gray-400 italic">Diversify your portfolio</p>
                                 </div>
 
@@ -797,7 +797,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                             <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-3xl p-5 w-[420px] shadow-2xl border dark:border-transparent">
                                 {/* Header */}
                                 <div className="mb-4">
-                                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">Investment Rankings</h3>
+                                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">Compare Rankings</h3>
                                     <p className="text-sm text-gray-600 dark:text-gray-400 italic">Discover market leaders</p>
                                 </div>
 
@@ -1113,8 +1113,8 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 <>
                                     {/* Main Menu - Flashcards, Ranking, and Portfolio buttons */}
                                     <div className="mb-4">
-                                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">Investment Tools</h3>
-                                        <p className="text-sm text-gray-600 dark:text-gray-400 italic">Choose your tool</p>
+                                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">Discovery Hub</h3>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400 italic">Learn, compare, track</p>
                                     </div>
                                     <div className="grid grid-cols-1 gap-3">
                                         <button
@@ -1133,7 +1133,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                                     height={24}
                                                     className="w-6 h-6"
                                                 />
-                                                <span>Investment Flashcards</span>
+                                                <span>Learn Flashcards</span>
                                             </div>
                                         </button>
                                         <button
@@ -1152,7 +1152,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                                     height={24}
                                                     className="w-6 h-6"
                                                 />
-                                                <span>Investment Rankings</span>
+                                                <span>Compare Rankings</span>
                                             </div>
                                         </button>
                                         <button
@@ -1177,7 +1177,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                                     height={24}
                                                     className="w-6 h-6"
                                                 />
-                                                <span>Portfolio</span>
+                                                <span>Track Portfolio</span>
                                             </div>
                                         </button>
 
@@ -1194,7 +1194,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                         >
                                             ← Back
                                         </button>
-                                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">Investment Flashcards</h3>
+                                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">Learn Flashcards</h3>
                                         <p className="text-sm text-gray-600 dark:text-gray-400 italic">Diversify your portfolio</p>
                                     </div>
                                     <div className="grid grid-cols-2 gap-2">
@@ -1221,7 +1221,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                         >
                                             ← Back
                                         </button>
-                                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">Investment Rankings</h3>
+                                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">Compare Rankings</h3>
                                         <p className="text-sm text-gray-600 dark:text-gray-400 italic">Discover market leaders</p>
                                     </div>
                                     <div className="grid grid-cols-2 gap-2">
@@ -1259,7 +1259,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                         <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl p-6 w-full shadow-2xl border-t border-gray-200 dark:border-transparent max-h-[70vh] overflow-y-auto">
                             {/* Header */}
                             <div className="mb-4">
-                                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">Investment Flashcards</h3>
+                                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">Learn Flashcards</h3>
                                 <p className="text-sm text-gray-600 dark:text-gray-400 italic">Diversify your portfolio</p>
                             </div>
 
@@ -1400,7 +1400,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                         <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl p-6 w-full shadow-2xl border-t border-gray-200 dark:border-transparent max-h-[70vh] overflow-y-auto">
                             {/* Header */}
                             <div className="mb-4">
-                                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">Investment Rankings</h3>
+                                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">Compare Rankings</h3>
                                 <p className="text-sm text-gray-600 dark:text-gray-400 italic">Discover market leaders</p>
                             </div>
 
