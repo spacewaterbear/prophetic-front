@@ -24,6 +24,7 @@ services:
       # Legacy OpenRouter API (no longer used)
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
       - NEXTAUTH_URL=${NEXTAUTH_URL}
+      - ENVIRONNEMENT=${ENVIRONNEMENT}
 
     restart: unless-stopped
     networks:
