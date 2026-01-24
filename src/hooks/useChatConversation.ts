@@ -121,7 +121,10 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const messagesContainerRef = useRef<HTMLDivElement>(null);
     const [shouldAutoScroll, setShouldAutoScroll] = useState(true);
-    const disableAutoScrollRef = useRef(false);
+    // Initialize with sessionStorage value to prevent scroll on vignette click navigation
+    const disableAutoScrollRef = useRef(
+        typeof window !== 'undefined' && sessionStorage.getItem('disableAutoScroll') === 'true'
+    );
     const pendingMessageProcessedRef = useRef(false);
     const lastProcessedConversationIdRef = useRef<number | null>(null);
 
@@ -591,6 +594,8 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
     useEffect(() => {
         const lastMessage = messages[messages.length - 1];
         const hasVignetteData = lastMessage?.vignette_data && lastMessage.vignette_data.length > 0;
+        // Also check sessionStorage directly as a fallback
+        const isScrollDisabled = disableAutoScrollRef.current || sessionStorage.getItem('disableAutoScroll') === 'true';
 
         if (shouldScrollToTop && lastUserMessageId && messagesContainerRef.current) {
             const container = messagesContainerRef.current;
@@ -600,7 +605,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                 const interval = setInterval(() => { if (container && element) container.scrollTo({ top: element.offsetTop, behavior: 'smooth' }); }, 400);
                 setTimeout(() => { clearInterval(interval); setShouldScrollToTop(false); }, 2000);
             }
-        } else if (shouldAutoScroll && !hasVignetteData && !disableAutoScrollRef.current) {
+        } else if (shouldAutoScroll && !hasVignetteData && !isScrollDisabled) {
             messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
         }
     }, [messages, streamingMessage, streamingMarketplaceData, streamingRealEstateData, streamingVignetteData, streamingClothesSearchData, isLoading, shouldAutoScroll, shouldScrollToTop, lastUserMessageId]);
