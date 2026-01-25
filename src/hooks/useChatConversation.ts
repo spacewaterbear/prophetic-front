@@ -361,7 +361,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         userInput: string,
         flashCards?: string,
         flashCardType?: 'flash_invest' | 'ranking' | 'portfolio' | 'PORTFOLIO',
-        scrollToTop: boolean = false
+        scrollToTop: boolean = true
     ) => {
         setIsLoading(true);
         setStreamingMessage("");
@@ -602,7 +602,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         return () => clearInterval(interval);
     }, [isLoading, streamingMessage, lastStreamingActivity]);
 
-    const handleSend = async (messageToSend?: string, flashCards?: string, flashCardType?: 'flash_invest' | 'ranking' | 'portfolio' | 'PORTFOLIO', scrollToTop: boolean = false) => {
+    const handleSend = async (messageToSend?: string, flashCards?: string, flashCardType?: 'flash_invest' | 'ranking' | 'portfolio' | 'PORTFOLIO', scrollToTop: boolean = true) => {
         const userInput = messageToSend || input;
         if (!userInput.trim() || isLoading) return;
         setInput("");
