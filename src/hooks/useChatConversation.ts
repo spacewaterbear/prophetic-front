@@ -92,13 +92,20 @@ interface UseChatConversationProps {
 
 const PENDING_MESSAGE_KEY = 'pendingChatMessage';
 const PENDING_VIGNETTE_CONTENT_KEY = 'pendingVignetteContent';
-const PENDING_VIGNETTE_STREAM_KEY = 'pendingVignetteStream';
+const PENDING_MARKDOWN_STREAM_KEY = 'pendingMarkdownStream';
 const PENDING_SCROLL_TO_TOP_KEY = 'pendingScrollToTop';
+const PENDING_VIGNETTE_STREAM_KEY = 'pendingVignetteStream';
 
 interface PendingVignetteStream {
     imageName: string;
     category: string;
     streamType: 'sse';
+}
+
+interface PendingMarkdownStream {
+    type: 'independant' | 'dependant-without-sub' | 'dependant-with-sub';
+    params: Record<string, string>;
+    options?: { userPrompt?: string; scrollToTop?: boolean };
 }
 
 export function useChatConversation({ conversationId, selectedModel = "anthropic/claude-3.7-sonnet" }: UseChatConversationProps) {
@@ -156,6 +163,34 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         options?: { userPrompt?: string; scrollToTop?: boolean }
     ): Promise<boolean> => {
         console.log('[streamMarkdown] Starting stream:', type, params);
+        if (!conversationId) {
+            console.log('[streamMarkdown] No conversationId, creating new conversation and redirecting');
+            try {
+                const title = options?.userPrompt || "New Chat";
+                const response = await fetch("/api/conversations", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ title, model: selectedModel }),
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const newId = data.conversation.id;
+
+                    // Store pending markdown stream info
+                    const pendingStream: PendingMarkdownStream = { type, params, options };
+                    sessionStorage.setItem(PENDING_MARKDOWN_STREAM_KEY, JSON.stringify(pendingStream));
+
+                    refreshConversations();
+                    router.push(`/chat/${newId}`);
+                    return true;
+                }
+            } catch (error) {
+                console.error('[streamMarkdown] Error creating conversation:', error);
+            }
+            return false;
+        }
+
         setIsLoading(true);
         setStreamingMessage("");
         setStreamingVignetteCategory(params.category || params.sub_category || null);
@@ -253,31 +288,9 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                                 if (conversationId) {
                                     setMessages((prev) => [...prev, aiMessage]);
                                     saveToDb(conversationId);
-                                } else if (process.env.NEXT_PUBLIC_SKIP_AUTH === "true") {
-                                    setMessages((prev) => [...prev, aiMessage]);
                                 } else {
-                                    const title = finalContent.length > 50 ? finalContent.substring(0, 50) + "..." : finalContent;
-                                    try {
-                                        const createResponse = await fetch("/api/conversations", {
-                                            method: "POST",
-                                            headers: { "Content-Type": "application/json" },
-                                            body: JSON.stringify({ title, model: selectedModel }),
-                                        });
-
-                                        if (createResponse.ok) {
-                                            const data = await createResponse.json();
-                                            const newId = data.conversation.id;
-                                            await saveToDb(newId);
-                                            refreshConversations();
-                                            router.push(`/chat/${newId}`);
-                                            return true;
-                                        } else {
-                                            setMessages((prev) => [...prev, aiMessage]);
-                                        }
-                                    } catch (e) {
-                                        console.error('[Markdown SSE] Response Error:', e);
-                                        setMessages((prev) => [...prev, aiMessage]);
-                                    }
+                                    // Fallback for unexpected cases where conversationId is missing but we're here
+                                    setMessages((prev) => [...prev, aiMessage]);
                                 }
                                 setStreamingMessage("");
                                 setCurrentStatus("");
@@ -466,7 +479,20 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                 return;
             }
 
-            // Priority 2: Pending User Message
+            // Priority 2: Pending Markdown Stream (Redirection)
+            const pendingMarkdownStreamStr = sessionStorage.getItem(PENDING_MARKDOWN_STREAM_KEY);
+            if (pendingMarkdownStreamStr) {
+                console.log('[useChatConversation] Processing pending markdown stream');
+                pendingMessageProcessedRef.current = true;
+                sessionStorage.removeItem(PENDING_MARKDOWN_STREAM_KEY);
+                try {
+                    const pendingStream: PendingMarkdownStream = JSON.parse(pendingMarkdownStreamStr);
+                    streamMarkdown(pendingStream.type, pendingStream.params, pendingStream.options);
+                } catch (e) { console.error(e); loadConversation(conversationId); }
+                return;
+            }
+
+            // Priority 3: Pending User Message
             const pendingMessageStr = sessionStorage.getItem(PENDING_MESSAGE_KEY);
             if (pendingMessageStr) {
                 pendingMessageProcessedRef.current = true;
