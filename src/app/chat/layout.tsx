@@ -338,7 +338,7 @@ function ChatLayoutInner({
                                     className="flex-shrink-0 grayscale"
                                 />
                             )}
-                            <span>Marché spot <sup className="text-[10px] font-bold">soon</sup></span>
+                            <span>Marché spot <sup className="text-[10px] font-bold">{t('chat.comingSoon')}</sup></span>
                         </button>
 
 
