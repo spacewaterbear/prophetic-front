@@ -100,6 +100,7 @@ NEXTAUTH_URL=http://localhost:3000
 - **Animations**: Smooth transitions and hover effects
 
 
+
 ## Deployment
 
 When deploying to production:
