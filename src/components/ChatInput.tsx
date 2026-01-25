@@ -482,6 +482,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                     setIsDropdownOpen(false);
                                     setIsChronoOpen(false);
                                     setIsRankingOpen(false);
+                                    setIsPortfolioOpen(false);
                                 }
                             }}
                             onMouseLeave={() => {
@@ -519,6 +520,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                     setIsDropdownOpen(false);
                                     setIsChronoOpen(false);
                                     setIsRankingOpen(false);
+                                    setIsPortfolioOpen(false);
                                 }
                             }}
                             onMouseLeave={() => {
@@ -562,6 +564,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                     setIsFileUploadOpen(false);
                                     setIsChronoOpen(false);
                                     setIsRankingOpen(false);
+                                    setIsPortfolioOpen(false);
                                 }
                             }}
                             onMouseLeave={() => {
@@ -609,6 +612,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                     setIsFileUploadOpen(false);
                                     setIsChronoOpen(false);
                                     setIsRankingOpen(false);
+                                    setIsPortfolioOpen(false);
                                 }
                             }}
                             onMouseLeave={() => {
@@ -673,6 +677,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                     setIsDropdownOpen(false);
                                     setIsFileUploadOpen(false);
                                     setIsRankingOpen(false);
+                                    setIsPortfolioOpen(false);
                                 }
                             }}
                             onMouseLeave={() => {
@@ -720,6 +725,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                     setIsDropdownOpen(false);
                                     setIsFileUploadOpen(false);
                                     setIsRankingOpen(false);
+                                    setIsPortfolioOpen(false);
                                 }
                             }}
                             onMouseLeave={() => {
@@ -781,6 +787,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                     setIsFileUploadOpen(false);
                                     setIsChronoOpen(false);
                                     setIsSettingsOpen(false);
+                                    setIsPortfolioOpen(false);
                                 }
                             }}
                             onMouseLeave={() => {
@@ -891,6 +898,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                     setIsFileUploadOpen(false);
                                     setIsChronoOpen(false);
                                     setIsRankingOpen(false);
+                                    setIsSettingsOpen(false);
                                 }
                             }}
                             onMouseLeave={() => {
@@ -917,6 +925,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                         {/* Portfolio Tiers Dropdown */}
                         <div
                             className={`
+                                hidden sm:block
                                 absolute left-0 bottom-full mb-2
                                 transition-all duration-300 ease-out
                                 z-10
@@ -993,6 +1002,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                     setIsFileUploadOpen(false);
                                     setIsChronoOpen(false);
                                     setIsRankingOpen(false);
+                                    setIsPortfolioOpen(false);
                                 }
                             }}
                             onMouseLeave={() => {
