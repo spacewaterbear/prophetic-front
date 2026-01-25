@@ -649,11 +649,19 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                 tiers_level: tierUpper
             }, { userPrompt: displayName, scrollToTop: true });
         } else if (flashCardType === 'portfolio' || flashCardType === 'PORTFOLIO') {
-            streamMarkdown('dependant-without-sub', {
-                category: 'PORTFOLIO',
-                markdown_name: 'strategy',
-                tiers_level: tierUpper
-            }, { userPrompt: displayName, scrollToTop: true });
+            if (flashCards) {
+                // Portfolio uses dependant-without-sub with markdown_name instead of sub_category
+                streamMarkdown('dependant-without-sub', {
+                    category: 'PORTFOLIO',
+                    markdown_name: flashCards,
+                    tiers_level: tierUpper
+                }, { userPrompt: displayName, scrollToTop: true });
+            } else {
+                streamMarkdown('dependant-without-sub', {
+                    category: 'PORTFOLIO',
+                    tiers_level: tierUpper
+                }, { userPrompt: displayName, scrollToTop: true });
+            }
         }
     };
 

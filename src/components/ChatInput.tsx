@@ -45,6 +45,45 @@ const FLASHCARD_MAPPING: Record<string, { flash_cards: string; question: string 
     "US sports cards": { flash_cards: "cards_us", question: "cards_us" }
 };
 
+const DISCOVER_PORTFOLIO_TIERS = [
+    { label: "1k-3k NEOPHYTE", value: "1k-3k_NEOPHYTE" },
+    { label: "3k-5k DEBUTANT", value: "3k-5k_DEBUTANT" },
+    { label: "6k-8k ECLAIRE", value: "6k-8k_ECLAIRE" },
+    { label: "8k-10k AVERTI", value: "8k-10k_AVERTI" },
+    { label: "10k-13k CONFIRME", value: "10k-13k_CONFIRME" },
+    { label: "13k-16k AGUERRI", value: "13k-16k_AGUERRI" },
+    { label: "16k-19k CHEVRONNE", value: "16k-19k_CHEVRONNE" },
+    { label: "19k-21k ACCOMPLI", value: "19k-21k_ACCOMPLI" },
+    { label: "21k-25k EMINENT", value: "21k-25k_EMINENT" },
+    { label: "25k-30k VIRTUOSE", value: "25k-30k_VIRTUOSE" },
+];
+
+const INTELLIGENCE_PORTFOLIO_TIERS = [
+    { label: "30k-35k STRATEGE", value: "30k-35k_STRATEGE" },
+    { label: "35k-40k VISIONNAIRE", value: "35k-40k_VISIONNAIRE" },
+    { label: "40k-50k ARCHITECTE", value: "40k-50k_ARCHITECTE" },
+    { label: "50k-60k BATISSEUR", value: "50k-60k_BATISSEUR" },
+    { label: "60k-70k INFLUENT", value: "60k-70k_INFLUENT" },
+    { label: "70k-80k DECIDEUR", value: "70k-80k_DECIDEUR" },
+    { label: "80k-90k DIRIGEANT", value: "80k-90k_DIRIGEANT" },
+    { label: "90k-100k GOUVERNEUR", value: "90k-100k_GOUVERNEUR" },
+    { label: "100k-120k REGENT", value: "100k-120k_REGENT" },
+    { label: "120k-150k SOUVERAIN", value: "120k-150k_SOUVERAIN" },
+];
+
+const ORACLE_PORTFOLIO_TIERS = [
+    { label: "150k-300k PATRIMOINE", value: "150k-300k_PATRIMOINE" },
+    { label: "300k-600k DYNASTIE", value: "300k-600k_DYNASTIE" },
+    { label: "600k-1M EMPIRE", value: "600k-1M_EMPIRE" },
+    { label: "1M-5M MAGNAT", value: "1M-5M_MAGNAT" },
+    { label: "5M-10M TITAN", value: "5M-10M_TITAN" },
+    { label: "10M-50M LEGENDE", value: "10M-50M_LEGENDE" },
+    { label: "50M-75M OLYMPIEN", value: "50M-75M_OLYMPIEN" },
+    { label: "75M-100M IMMORTEL", value: "75M-100M_IMMORTEL" },
+    { label: "100M-200M PANTHEON", value: "100M-200M_PANTHEON" },
+    { label: "200M-500M ABSOLU", value: "200M-500M_ABSOLU" },
+];
+
 // Shared button styles - single source of truth for all modal buttons
 const CARD_BUTTON_STYLES = "p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] text-gray-900 dark:text-white text-sm font-semibold rounded-2xl hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer border border-gray-400/60 dark:border-gray-600/60";
 
@@ -161,6 +200,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
     const [isChronoOpen, setIsChronoOpen] = useState(false);
     const [isRankingOpen, setIsRankingOpen] = useState(false);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+    const [isPortfolioOpen, setIsPortfolioOpen] = useState(false);
     const [marketScoutEnabled, setMarketScoutEnabled] = useState(false);
     const [communityRadarEnabled, setCommunityRadarEnabled] = useState(false);
     const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -210,9 +250,10 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
         }
     };
 
-    const handlePortfolioClick = () => {
+    const handlePortfolioClick = (tierName: string, subCategory: string) => {
         if (onFlashcardClick) {
-            onFlashcardClick('', 'run portfolio tool', 'PORTFOLIO', 'Portfolio', selectedAgent);
+            onFlashcardClick(subCategory, `Show portfolio strategy for ${tierName}`, 'PORTFOLIO', tierName, selectedAgent);
+            setIsPortfolioOpen(false);
         }
     };
 
@@ -788,6 +829,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                     setIsFileUploadOpen(false);
                                     setIsChronoOpen(false);
                                     setIsSettingsOpen(false);
+                                    setIsPortfolioOpen(false);
                                 }
                             }}
                             onMouseLeave={() => {
@@ -823,12 +865,41 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                         </div>
                     </div>
 
-                    {/* Portfolio Button - Hidden on mobile */}
+                    {/* Portfolio Button - Enabled with dropdown */}
                     <div className="hidden sm:block static sm:relative flex-shrink-0">
                         <button
-                            className="flex items-center justify-center text-gray-900 dark:text-gray-100 rounded-full px-1 py-2.5 transition-colors opacity-50 cursor-not-allowed"
+                            className="flex items-center justify-center text-gray-900 dark:text-gray-100 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-full px-1 py-2.5 transition-colors"
                             aria-label="Portfolio"
-                            disabled
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setIsPortfolioOpen(!isPortfolioOpen);
+                                setIsDropdownOpen(false);
+                                setIsFileUploadOpen(false);
+                                setIsChronoOpen(false);
+                                setIsRankingOpen(false);
+                                setIsSettingsOpen(false);
+                            }}
+                            onMouseEnter={() => {
+                                if (closeTimeoutRef.current) {
+                                    clearTimeout(closeTimeoutRef.current);
+                                    closeTimeoutRef.current = null;
+                                }
+                                if (window.matchMedia('(hover: hover)').matches) {
+                                    setIsPortfolioOpen(true);
+                                    setIsDropdownOpen(false);
+                                    setIsFileUploadOpen(false);
+                                    setIsChronoOpen(false);
+                                    setIsRankingOpen(false);
+                                }
+                            }}
+                            onMouseLeave={() => {
+                                if (window.matchMedia('(hover: hover)').matches) {
+                                    closeTimeoutRef.current = setTimeout(() => {
+                                        setIsPortfolioOpen(false);
+                                    }, 100);
+                                }
+                            }}
                         >
                             <Image
                                 src={
@@ -842,6 +913,58 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                 className="w-9 h-9"
                             />
                         </button>
+
+                        {/* Portfolio Tiers Dropdown */}
+                        <div
+                            className={`
+                                absolute left-0 bottom-full mb-2
+                                transition-all duration-300 ease-out
+                                z-10
+                                ${isPortfolioOpen
+                                    ? 'opacity-100 pointer-events-auto'
+                                    : 'opacity-0 pointer-events-none'
+                                }
+                            `}
+                            onMouseEnter={() => {
+                                if (closeTimeoutRef.current) {
+                                    clearTimeout(closeTimeoutRef.current);
+                                    closeTimeoutRef.current = null;
+                                }
+                                if (window.matchMedia('(hover: hover)').matches) {
+                                    setIsPortfolioOpen(true);
+                                }
+                            }}
+                            onMouseLeave={() => {
+                                if (window.matchMedia('(hover: hover)').matches) {
+                                    closeTimeoutRef.current = setTimeout(() => {
+                                        setIsPortfolioOpen(false);
+                                    }, 100);
+                                }
+                            }}
+                        >
+                            <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-3xl p-5 w-[420px] shadow-2xl border dark:border-transparent">
+                                <div className="mb-4">
+                                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">Portfolio Strategies</h3>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400 italic">Select your investment tier</p>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-2">
+                                    {(selectedAgent === 'oracle'
+                                        ? ORACLE_PORTFOLIO_TIERS
+                                        : selectedAgent === 'intelligence'
+                                            ? INTELLIGENCE_PORTFOLIO_TIERS
+                                            : DISCOVER_PORTFOLIO_TIERS
+                                    ).map((tier) => (
+                                        <CategoryButton
+                                            key={tier.value}
+                                            onClick={() => handlePortfolioClick(tier.label, tier.value)}
+                                        >
+                                            {tier.label}
+                                        </CategoryButton>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Settings Button */}
