@@ -278,7 +278,7 @@ function ChatLayoutInner({
                         ))}
 
 
-                {/* Art Value Trading - Simple category button like Cards US */}
+                        {/* Art Value Trading - Simple category button like Cards US */}
                         <button
                             onClick={() => {
                                 console.log('[Sidebar] Clicked Art Trading Value, category: ART_TRADING_VALUE');
@@ -324,10 +324,10 @@ function ChatLayoutInner({
                         {/* Marché spot */}
                         <button
                             onClick={() => {
-                                console.log('[Sidebar] Clicked Marché spot, category: MARCHE_SPOT');
-                                router.push('/chat?category=MARCHE_SPOT', { scroll: false });
+                                console.log('[Sidebar] Clicked Marché spot (disabled)');
                             }}
-                            className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2"
+                            disabled={true}
+                            className="w-full text-left px-3 py-2 rounded-lg opacity-50 cursor-not-allowed text-gray-500 dark:text-gray-600 text-sm transition-all flex items-center gap-2"
                         >
                             {mounted && (
                                 <Image
@@ -335,10 +335,10 @@ function ChatLayoutInner({
                                     alt="Marché spot"
                                     width={22}
                                     height={22}
-                                    className="flex-shrink-0"
+                                    className="flex-shrink-0 grayscale"
                                 />
                             )}
-                            <span>Marché spot</span>
+                            <span>Marché spot <sup className="text-[10px] font-bold">soon</sup></span>
                         </button>
 
 

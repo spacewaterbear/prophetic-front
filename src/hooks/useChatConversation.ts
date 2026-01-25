@@ -149,243 +149,190 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         }
     }, [router]);
 
-    // Stream vignette markdown content progressively
-    const streamVignetteMarkdown = useCallback(async (imageName: string, category?: string): Promise<boolean> => {
-        console.log('[streamVignetteMarkdown] Starting stream for:', imageName, 'category:', category);
+    // Unified function to stream markdown content from various endpoints
+    const streamMarkdown = useCallback(async (
+        type: 'independant' | 'dependant-without-sub' | 'dependant-with-sub',
+        params: Record<string, string>,
+        options?: { userPrompt?: string; scrollToTop?: boolean }
+    ): Promise<boolean> => {
+        console.log('[streamMarkdown] Starting stream:', type, params);
         setIsLoading(true);
         setStreamingMessage("");
-        setStreamingVignetteCategory(category || null);
+        setStreamingVignetteCategory(params.category || params.sub_category || null);
+
+        // If user prompt is provided, add it to the UI
+        if (options?.userPrompt) {
+            const userMsg: Message = {
+                id: Date.now(),
+                content: options.userPrompt,
+                sender: "user",
+                created_at: new Date().toISOString(),
+            };
+            setMessages((prev) => [...prev, userMsg]);
+
+            if (options.scrollToTop) {
+                setLastUserMessageId(userMsg.id);
+                setShouldScrollToTop(true);
+                disableAutoScrollRef.current = true;
+                sessionStorage.setItem('disableAutoScroll', 'true');
+            }
+        }
 
         try {
-            let markdownUrl = `/api/vignettes/markdown?markdown=${encodeURIComponent(imageName)}`;
-            if (category) {
-                markdownUrl += `&category=${encodeURIComponent(category)}`;
-            }
-            console.log('[streamVignetteMarkdown] Fetching:', markdownUrl);
-            const response = await fetch(markdownUrl);
-            console.log('[streamVignetteMarkdown] Response status:', response.status, 'ok:', response.ok);
+            const query = new URLSearchParams({ type, ...params });
+            const response = await fetch(`/api/markdown?${query.toString()}`);
 
             if (!response.ok) {
                 throw new Error(`Failed to fetch markdown: ${response.status}`);
             }
 
-            const reader = response.body?.getReader();
-            if (!reader) {
-                throw new Error("No response stream");
-            }
-            console.log('[streamVignetteMarkdown] Got reader, starting to read stream');
+            const contentType = response.headers.get("content-type");
 
-            const decoder = new TextDecoder();
-            let documentContent = "";
-            let questionsContent = "";
-            let buffer = "";
-            let chunkCount = 0;
-            let isJsonFormat = false;
+            if (contentType?.includes("text/event-stream")) {
+                const reader = response.body?.getReader();
+                if (!reader) throw new Error("No response stream");
 
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) {
-                    console.log('[streamVignetteMarkdown] Stream done, total chunks:', chunkCount);
-                    break;
-                }
-                chunkCount++;
-                if (chunkCount <= 3) {
-                    console.log('[streamVignetteMarkdown] Chunk', chunkCount, 'size:', value?.length, 'preview:', decoder.decode(value.slice(0, 100), { stream: true }));
-                }
+                const decoder = new TextDecoder();
+                let documentContent = "";
+                let questionsContent = "";
+                let buffer = "";
 
-                buffer += decoder.decode(value, { stream: true });
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
 
-                // Detect JSON format on first chunk
-                if (chunkCount === 1 && buffer.trim().startsWith('{')) {
-                    isJsonFormat = true;
-                    console.log('[streamVignetteMarkdown] Detected JSON format, accumulating chunks...');
-                }
+                    buffer += decoder.decode(value, { stream: true });
+                    const events = buffer.split("\n\n");
+                    buffer = events.pop() || "";
 
-                // For JSON format, just accumulate - we'll parse after stream ends
-                if (isJsonFormat) {
-                    continue;
-                }
-
-                // Split by double newline to get complete SSE events
-                const events = buffer.split("\n\n");
-                buffer = events.pop() || "";
-
-                for (const event of events) {
-                    if (!event.trim()) continue;
-
-                    // Extract data from SSE event
-                    const lines = event.split("\n");
-                    let eventData = "";
-
-                    for (const line of lines) {
-                        if (line.startsWith("data: ")) {
-                            eventData += line.slice(6);
+                    for (const event of events) {
+                        if (!event.trim()) continue;
+                        const lines = event.split("\n");
+                        let eventData = "";
+                        for (const line of lines) {
+                            if (line.startsWith("data: ")) eventData += line.slice(6);
                         }
-                    }
 
-                    if (!eventData || eventData === "[DONE]") {
-                        continue;
-                    }
+                        if (!eventData || eventData === "[DONE]") continue;
 
-                    try {
-                        const parsed = JSON.parse(eventData);
+                        try {
+                            const parsed = JSON.parse(eventData);
+                            if (parsed.type === "document") {
+                                documentContent = parsed.content || "";
+                                setStreamingMessage(documentContent);
+                            } else if (parsed.type === "status") {
+                                setCurrentStatus(parsed.message || "");
+                            } else if (parsed.type === "questions_chunk") {
+                                questionsContent += parsed.content || "";
+                                setStreamingMessage(documentContent + "\n\n" + questionsContent);
+                            } else if (parsed.type === "done") {
+                                const finalContent = questionsContent
+                                    ? `${documentContent}\n\n${questionsContent}`
+                                    : documentContent;
 
-                        if (parsed.type === "document") {
-                            documentContent = parsed.content || "";
-                            setStreamingMessage(documentContent);
-                            await new Promise(resolve => setTimeout(resolve, 0));
-                        } else if (parsed.type === "status") {
-                            setCurrentStatus(parsed.message || "");
-                        } else if (parsed.type === "questions_chunk") {
-                            questionsContent += parsed.content || "";
-                            const fullContent = documentContent + "\n\n" + questionsContent;
-                            setStreamingMessage(fullContent);
-                        } else if (parsed.type === "done") {
-                            const finalContent = questionsContent
-                                ? `${documentContent}\n\n${questionsContent}`
-                                : documentContent;
+                                const aiMessage: Message = {
+                                    id: Date.now(),
+                                    content: finalContent,
+                                    sender: "ai",
+                                    created_at: new Date().toISOString(),
+                                    vignetteCategory: params.category || params.sub_category,
+                                };
 
-                            const aiMessage: Message = {
-                                id: Date.now(),
-                                content: finalContent,
-                                sender: "ai",
-                                created_at: new Date().toISOString(),
-                                vignetteCategory: category,
-                            };
+                                const saveToDb = async (convId: number) => {
+                                    try {
+                                        await fetch(`/api/conversations/${convId}/vignette-content`, {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({ messages: [{ content: finalContent, vignetteCategory: params.category || params.sub_category }] }),
+                                        });
+                                    } catch (e) {
+                                        console.error('[Markdown SSE] Error saving to database:', e);
+                                    }
+                                };
 
-                            const saveToDb = async (convId: number) => {
-                                try {
-                                    await fetch(`/api/conversations/${convId}/vignette-content`, {
-                                        method: 'POST',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({ messages: [{ content: finalContent, vignetteCategory: category }] }),
-                                    });
-                                } catch (error) {
-                                    console.error('[Vignette SSE] Error saving to database:', error);
-                                }
-                            };
+                                if (conversationId) {
+                                    setMessages((prev) => [...prev, aiMessage]);
+                                    saveToDb(conversationId);
+                                } else if (process.env.NEXT_PUBLIC_SKIP_AUTH === "true") {
+                                    setMessages((prev) => [...prev, aiMessage]);
+                                } else {
+                                    const title = finalContent.length > 50 ? finalContent.substring(0, 50) + "..." : finalContent;
+                                    try {
+                                        const createResponse = await fetch("/api/conversations", {
+                                            method: "POST",
+                                            headers: { "Content-Type": "application/json" },
+                                            body: JSON.stringify({ title, model: selectedModel }),
+                                        });
 
-                            if (conversationId) {
-                                setMessages((prev) => [...prev, aiMessage]);
-                                saveToDb(conversationId);
-                            } else if (process.env.NEXT_PUBLIC_SKIP_AUTH === "true") {
-                                setMessages((prev) => [...prev, aiMessage]);
-                            } else {
-                                const title = finalContent.length > 50 ? finalContent.substring(0, 50) + "..." : finalContent;
-                                try {
-                                    const createResponse = await fetch("/api/conversations", {
-                                        method: "POST",
-                                        headers: { "Content-Type": "application/json" },
-                                        body: JSON.stringify({ title, model: selectedModel }),
-                                    });
-
-                                    if (createResponse.ok) {
-                                        const data = await createResponse.json();
-                                        const newConversationId = data.conversation.id;
-                                        await saveToDb(newConversationId);
-                                        refreshConversations();
-                                        router.push(`/chat/${newConversationId}`);
-                                        return true;
-                                    } else {
+                                        if (createResponse.ok) {
+                                            const data = await createResponse.json();
+                                            const newId = data.conversation.id;
+                                            await saveToDb(newId);
+                                            refreshConversations();
+                                            router.push(`/chat/${newId}`);
+                                            return true;
+                                        } else {
+                                            setMessages((prev) => [...prev, aiMessage]);
+                                        }
+                                    } catch (e) {
+                                        console.error('[Markdown SSE] Response Error:', e);
                                         setMessages((prev) => [...prev, aiMessage]);
                                     }
-                                } catch (error) {
-                                    console.error('[Vignette SSE] Error:', error);
-                                    setMessages((prev) => [...prev, aiMessage]);
                                 }
+                                setStreamingMessage("");
+                                setCurrentStatus("");
                             }
-                            setStreamingMessage("");
-                            setCurrentStatus("");
+                        } catch (e) {
+                            console.error("[Markdown Stream] Parse error:", e);
                         }
-                    } catch (parseError) {
-                        console.error("[Vignette Stream] Failed to parse SSE event:", eventData);
+                    }
+                }
+            } else {
+                // Non-streaming response
+                const jsonResponse = await response.json();
+                const content = jsonResponse.text || jsonResponse.content || "";
+
+                if (content) {
+                    const aiMessage: Message = {
+                        id: Date.now(),
+                        content: content,
+                        sender: "ai",
+                        created_at: new Date().toISOString(),
+                        vignetteCategory: params.category || params.sub_category,
+                    };
+
+                    if (conversationId) {
+                        setMessages((prev) => [...prev, aiMessage]);
+                        // Save to DB
+                        await fetch(`/api/conversations/${conversationId}/vignette-content`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ messages: [{ content: content, vignetteCategory: params.category || params.sub_category }] }),
+                        });
+                    } else {
+                        setMessages((prev) => [...prev, aiMessage]);
                     }
                 }
             }
 
-            // Handle JSON format after stream ends (JSON may be split across chunks)
-            if (isJsonFormat && buffer.trim()) {
-                console.log('[streamVignetteMarkdown] Parsing accumulated JSON, buffer length:', buffer.length);
-                try {
-                    const jsonResponse = JSON.parse(buffer);
-                    if (jsonResponse.text) {
-                        documentContent = jsonResponse.text;
-                        console.log('[streamVignetteMarkdown] JSON parsed successfully, text length:', documentContent.length);
-                        setStreamingMessage(documentContent);
-
-                        const aiMessage: Message = {
-                            id: Date.now(),
-                            content: documentContent,
-                            sender: "ai",
-                            created_at: new Date().toISOString(),
-                            vignetteCategory: category,
-                        };
-
-                        const saveVignetteToDb = async (convId: number, msgs: { content: string; vignetteCategory?: string }[]) => {
-                            try {
-                                const response = await fetch(`/api/conversations/${convId}/vignette-content`, {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ messages: msgs }),
-                                });
-                                if (!response.ok) {
-                                    console.error('[Vignette JSON] Failed to save to database');
-                                } else {
-                                    console.log('[Vignette JSON] Messages saved to database');
-                                }
-                            } catch (error) {
-                                console.error('[Vignette JSON] Error saving to database:', error);
-                            }
-                        };
-
-                        const questionsMessage = jsonResponse.questions ? {
-                            id: Date.now() + 1,
-                            content: jsonResponse.questions,
-                            sender: "ai" as const,
-                            created_at: new Date().toISOString(),
-                            vignetteCategory: category,
-                        } : null;
-
-                        if (conversationId) {
-                            if (questionsMessage) {
-                                setMessages((prev) => [...prev, aiMessage, questionsMessage]);
-                            } else {
-                                setMessages((prev) => [...prev, aiMessage]);
-                            }
-                            const messagesToSave = [{ content: documentContent, vignetteCategory: category }];
-                            if (jsonResponse.questions) {
-                                messagesToSave.push({ content: jsonResponse.questions, vignetteCategory: category });
-                            }
-                            saveVignetteToDb(conversationId, messagesToSave);
-                        } else {
-                            if (questionsMessage) {
-                                setMessages((prev) => [...prev, aiMessage, questionsMessage]);
-                            } else {
-                                setMessages((prev) => [...prev, aiMessage]);
-                            }
-                        }
-                        setStreamingMessage("");
-                        setCurrentStatus("");
-                        setIsLoading(false);
-                        console.log('[streamVignetteMarkdown] JSON processing complete');
-                        return true;
-                    }
-                } catch (parseError) {
-                    console.error('[streamVignetteMarkdown] Failed to parse JSON:', parseError);
-                }
-            }
-
-            console.log('[streamVignetteMarkdown] Stream completed, documentContent length:', documentContent.length);
             setIsLoading(false);
             return true;
         } catch (error) {
-            console.error("[streamVignetteMarkdown] Error:", error);
+            console.error("[streamMarkdown] Error:", error);
             setIsLoading(false);
             setStreamingMessage("");
-            setCurrentStatus("");
             return false;
         }
     }, [conversationId, selectedModel, router, refreshConversations]);
+
+    // Stream vignette markdown content progressively
+    const streamVignetteMarkdown = useCallback(async (imageName: string, category?: string): Promise<boolean> => {
+        return streamMarkdown('independant', {
+            root_folder: 'VIGNETTES',
+            markdown_name: imageName,
+            category: category || ''
+        });
+    }, [streamMarkdown]);
 
     const sendMessageToApi = useCallback(async (
         targetConversationId: number,
@@ -660,12 +607,34 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         }
     };
 
-    const handleFlashcardClick = (flashCards: string, question: string, flashCardType: 'flash_invest' | 'ranking' | 'portfolio' | 'PORTFOLIO', displayName: string) => {
-        if (['flash_invest', 'ranking', 'portfolio', 'PORTFOLIO'].includes(flashCardType)) {
-            sessionStorage.setItem('disableAutoScroll', 'true');
-            disableAutoScrollRef.current = true;
+    const handleFlashcardClick = (
+        flashCards: string,
+        question: string,
+        flashCardType: 'flash_invest' | 'ranking' | 'portfolio' | 'PORTFOLIO',
+        displayName: string,
+        tier: string = 'DISCOVER'
+    ) => {
+        const tierUpper = tier.toUpperCase();
+
+        if (flashCardType === 'flash_invest') {
+            streamMarkdown('dependant-with-sub', {
+                category: 'FLASH_INVEST',
+                sub_category: flashCards,
+                tiers_level: tierUpper
+            }, { userPrompt: displayName, scrollToTop: true });
+        } else if (flashCardType === 'ranking') {
+            streamMarkdown('dependant-with-sub', {
+                category: 'RANKING',
+                sub_category: flashCards,
+                tiers_level: tierUpper
+            }, { userPrompt: displayName, scrollToTop: true });
+        } else if (flashCardType === 'portfolio' || flashCardType === 'PORTFOLIO') {
+            streamMarkdown('dependant-without-sub', {
+                category: 'PORTFOLIO',
+                markdown_name: 'strategy',
+                tiers_level: tierUpper
+            }, { userPrompt: displayName, scrollToTop: true });
         }
-        handleSend(displayName, flashCards, flashCardType, true);
     };
 
     const addAiMessage = async (content: string) => {
@@ -696,7 +665,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
         handleSend, handleFlashcardClick, handleScroll: () => {
             const container = messagesContainerRef.current;
             if (container) setShouldAutoScroll(container.scrollHeight - container.scrollTop - container.clientHeight < 20);
-        }, addAiMessage, streamVignetteMarkdown,
+        }, addAiMessage, streamVignetteMarkdown, streamMarkdown,
         clearMessages: useCallback(() => {
             setMessages([]); setStreamingMessage(""); setStreamingMarketplaceData(null); setStreamingRealEstateData(null); setStreamingVignetteData(null); setStreamingClothesSearchData(null); setStreamingVignetteCategory(null); setCurrentStatus(""); setShowStreamingIndicator(false);
         }, []),

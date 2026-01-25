@@ -27,7 +27,7 @@ interface ChatInputProps {
     conversationId?: number | null;
     attachedFiles?: AttachedFile[];
     onFilesChange?: (files: AttachedFile[]) => void;
-    onFlashcardClick?: (flashCards: string, question: string, flashCardType: 'flash_invest' | 'ranking' | 'portfolio' | 'PORTFOLIO', displayName: string) => void;
+    onFlashcardClick?: (flashCards: string, question: string, flashCardType: 'flash_invest' | 'ranking' | 'portfolio' | 'PORTFOLIO', displayName: string, tier?: string) => void;
 }
 
 // Flashcard category mapping to API enum values
@@ -204,7 +204,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
     const handleFlashcardClick = (category: string, flashCardType: 'flash_invest' | 'ranking' | 'portfolio' | 'PORTFOLIO' = 'flash_invest') => {
         const mapping = FLASHCARD_MAPPING[category];
         if (mapping && onFlashcardClick) {
-            onFlashcardClick(mapping.flash_cards, mapping.question, flashCardType, category);
+            onFlashcardClick(mapping.flash_cards, mapping.question, flashCardType, category, selectedAgent);
             setIsChronoOpen(false);
             setIsRankingOpen(false);
         }
@@ -212,7 +212,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
 
     const handlePortfolioClick = () => {
         if (onFlashcardClick) {
-            onFlashcardClick('', 'run portfolio tool', 'PORTFOLIO', 'Portfolio');
+            onFlashcardClick('', 'run portfolio tool', 'PORTFOLIO', 'Portfolio', selectedAgent);
         }
     };
 

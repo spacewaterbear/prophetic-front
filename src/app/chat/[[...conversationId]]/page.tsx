@@ -276,6 +276,7 @@ const CATEGORY_DISPLAY_NAMES: Record<string, string> = {
     SNEAKERS: "Sneakers",
     WHISKY: "Whisky",
     WINE: "Wine",
+    MARCHE_SPOT: "Marché Spot",
 };
 
 export default function ChatPage() {
@@ -327,6 +328,7 @@ export default function ChatPage() {
         handleScroll,
         addAiMessage,
         streamVignetteMarkdown,
+        streamMarkdown,
         clearMessages,
     } = useChatConversation({ conversationId, selectedModel });
 
