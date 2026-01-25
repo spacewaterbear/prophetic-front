@@ -100,6 +100,7 @@ interface PendingVignetteStream {
     imageName: string;
     category: string;
     streamType: 'sse';
+    tier?: string;
 }
 
 interface PendingMarkdownStream {
@@ -339,7 +340,15 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
     }, [conversationId, selectedModel, router, refreshConversations]);
 
     // Stream vignette markdown content progressively
-    const streamVignetteMarkdown = useCallback(async (imageName: string, category?: string): Promise<boolean> => {
+    const streamVignetteMarkdown = useCallback(async (imageName: string, category?: string, tier?: string): Promise<boolean> => {
+        if (category === 'CASH_FLOW_LEASING') {
+            return streamMarkdown('dependant-without-sub', {
+                category: 'CASH_FLOW_LEASING',
+                markdown_name: imageName,
+                tiers_level: tier || 'DISCOVER'
+            });
+        }
+
         return streamMarkdown('independant', {
             root_folder: 'VIGNETTES',
             markdown_name: imageName,
@@ -474,7 +483,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                 sessionStorage.removeItem(PENDING_VIGNETTE_STREAM_KEY);
                 try {
                     const pendingStream: PendingVignetteStream = JSON.parse(pendingVignetteStreamStr);
-                    streamVignetteMarkdown(pendingStream.imageName, pendingStream.category);
+                    streamVignetteMarkdown(pendingStream.imageName, pendingStream.category, pendingStream.tier);
                 } catch (e) { console.error(e); loadConversation(conversationId); }
                 return;
             }

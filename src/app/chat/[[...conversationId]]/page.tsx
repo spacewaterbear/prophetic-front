@@ -526,7 +526,8 @@ export default function ChatPage() {
             const pendingStream = {
                 imageName: imageName,
                 category: vignette.category,
-                streamType: streamType
+                streamType: streamType,
+                tier: selectedAgent.toUpperCase()
             };
             sessionStorage.setItem('pendingVignetteStream', JSON.stringify(pendingStream));
 

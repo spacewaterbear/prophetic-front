@@ -207,7 +207,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     // Mobile menu state: 'main' | 'flashcards' | 'ranking'
-    const [mobileMenuLevel, setMobileMenuLevel] = useState<'main' | 'flashcards' | 'ranking'>('main');
+    const [mobileMenuLevel, setMobileMenuLevel] = useState<'main' | 'flashcards' | 'ranking' | 'portfolio'>('main');
 
     // Google Drive picker hook - Commented out for now, will be implemented later
     // const { openGoogleDrivePicker } = useGoogleDrivePicker(
@@ -872,8 +872,8 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                         </div>
                     </div>
 
-                    {/* Portfolio Button - Enabled with dropdown */}
-                    <div className="hidden sm:block static sm:relative flex-shrink-0">
+                    {/* Portfolio Button */}
+                    <div className="static sm:relative flex-shrink-0">
                         <button
                             className="flex items-center justify-center text-gray-900 dark:text-gray-100 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-full px-1 py-2.5 transition-colors"
                             aria-label="Portfolio"
@@ -925,7 +925,6 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                         {/* Portfolio Tiers Dropdown */}
                         <div
                             className={`
-                                hidden sm:block
                                 absolute left-0 bottom-full mb-2
                                 transition-all duration-300 ease-out
                                 z-10
@@ -1288,8 +1287,8 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                             </div>
                                         </button>
                                         <button
-                                            className="p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] text-gray-900 dark:text-white text-sm font-semibold rounded-2xl border border-gray-400/60 dark:border-gray-600/60 opacity-50 cursor-not-allowed"
-                                            disabled
+                                            className={CARD_BUTTON_STYLES}
+                                            onClick={() => setMobileMenuLevel('portfolio')}
                                         >
                                             <div className="flex items-center gap-3">
                                                 <Image
@@ -1361,6 +1360,40 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                         <CategoryButton isActive={selectedCategory === 'Rare Whiskey'} onClick={() => { setSelectedCategory('Rare Whiskey'); handleFlashcardClick('Rare Whiskey', 'ranking'); setIsFileUploadOpen(false); setMobileMenuLevel('main'); }}>Rare Whiskey</CategoryButton>
                                         <CategoryButton isActive={selectedCategory === 'Real Estate'} onClick={() => { setSelectedCategory('Real Estate'); handleFlashcardClick('Real Estate', 'ranking'); setIsFileUploadOpen(false); setMobileMenuLevel('main'); }}>Real Estate</CategoryButton>
                                         <CategoryButton isActive={selectedCategory === 'US sports cards'} onClick={() => { setSelectedCategory('US sports cards'); handleFlashcardClick('US sports cards', 'ranking'); setIsFileUploadOpen(false); setMobileMenuLevel('main'); }}>US sports cards</CategoryButton>
+                                    </div>
+                                </>
+                            )}
+                            {mobileMenuLevel === 'portfolio' && (
+                                <>
+                                    {/* Portfolio submenu */}
+                                    <div className="mb-4">
+                                        <button
+                                            onClick={() => setMobileMenuLevel('main')}
+                                            className="text-sm text-gray-600 dark:text-gray-400 mb-2 hover:text-gray-900 dark:hover:text-white"
+                                        >
+                                            ← Back
+                                        </button>
+                                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">Portfolio Strategies</h3>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400 italic">Select your investment tier</p>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        {(selectedAgent === 'oracle'
+                                            ? ORACLE_PORTFOLIO_TIERS
+                                            : selectedAgent === 'intelligence'
+                                                ? INTELLIGENCE_PORTFOLIO_TIERS
+                                                : DISCOVER_PORTFOLIO_TIERS
+                                        ).map((tier) => (
+                                            <CategoryButton
+                                                key={tier.value}
+                                                onClick={() => {
+                                                    handlePortfolioClick(tier.label, tier.value);
+                                                    setIsFileUploadOpen(false);
+                                                    setMobileMenuLevel('main');
+                                                }}
+                                            >
+                                                {tier.label}
+                                            </CategoryButton>
+                                        ))}
                                     </div>
                                 </>
                             )}
