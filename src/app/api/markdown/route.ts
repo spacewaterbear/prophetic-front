@@ -40,6 +40,14 @@ export async function GET(request: NextRequest) {
             query.set("tiers_level", "DISCOVER");
         }
 
+        // Ensure category and sub_category are in uppercase as required by backend
+        if (query.has("category")) {
+            query.set("category", query.get("category")!.toUpperCase());
+        }
+        if (query.has("sub_category")) {
+            query.set("sub_category", query.get("sub_category")!.toUpperCase());
+        }
+
         switch (type) {
             case "independant":
                 backendPath = "/prophetic/markdown/tiers-independant";

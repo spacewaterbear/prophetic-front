@@ -616,16 +616,10 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
     ) => {
         const tierUpper = tier.toUpperCase();
 
-        if (flashCardType === 'flash_invest') {
-            streamMarkdown('dependant-with-sub', {
-                category: 'FLASH_INVEST',
-                sub_category: flashCards,
-                tiers_level: tierUpper
-            }, { userPrompt: displayName, scrollToTop: true });
-        } else if (flashCardType === 'ranking') {
+        if (flashCardType === 'flash_invest' || flashCardType === 'ranking') {
             streamMarkdown('dependant-with-sub', {
                 category: 'RANKING',
-                sub_category: flashCards,
+                sub_category: flashCards.toUpperCase(),
                 tiers_level: tierUpper
             }, { userPrompt: displayName, scrollToTop: true });
         } else if (flashCardType === 'portfolio' || flashCardType === 'PORTFOLIO') {
