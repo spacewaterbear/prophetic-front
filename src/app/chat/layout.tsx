@@ -11,10 +11,11 @@ import { useTheme } from "next-themes";
 import Image from "next/image";
 import {
     DropdownMenu,
+    DropdownMenuTrigger,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { SelectionContextMenu } from "@/components/SelectionContextMenu";
 
 interface Conversation {
     id: number;
@@ -400,6 +401,7 @@ function ChatLayoutInner({
                 </div>
                 {children}
             </div>
+            <SelectionContextMenu />
         </div>
     );
 }

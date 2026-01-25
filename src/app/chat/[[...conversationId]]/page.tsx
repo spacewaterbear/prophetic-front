@@ -333,6 +333,19 @@ export default function ChatPage() {
     } = useChatConversation({ conversationId, selectedModel });
 
     useEffect(() => {
+        const handleDeepSearch = (e: any) => {
+            const text = e.detail?.text;
+            if (text) {
+                console.log(`[Chat Page] Triggering deep search for: ${text}`);
+                handleSend(`Deep search about: "${text}"`);
+            }
+        };
+
+        window.addEventListener("triggerDeepSearch", handleDeepSearch);
+        return () => window.removeEventListener("triggerDeepSearch", handleDeepSearch);
+    }, [handleSend]);
+
+    useEffect(() => {
         setMounted(true);
         // Load saved agent from localStorage
         const savedAgent = localStorage.getItem('selectedAgent');
