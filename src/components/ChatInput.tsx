@@ -873,7 +873,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                     </div>
 
                     {/* Portfolio Button */}
-                    <div className="static sm:relative flex-shrink-0">
+                    <div className="hidden sm:block static sm:relative flex-shrink-0">
                         <button
                             className="flex items-center justify-center text-gray-900 dark:text-gray-100 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-full px-1 py-2.5 transition-colors"
                             aria-label="Portfolio"
