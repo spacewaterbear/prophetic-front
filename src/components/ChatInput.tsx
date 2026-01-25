@@ -533,7 +533,24 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                             }}
                         >
                             <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-3xl p-5 w-[320px] shadow-2xl border dark:border-transparent">
-                                {/* Add Files Option - Hidden as requested */}
+                                {/* Add Files Option */}
+                                <button
+                                    className="w-full flex items-center justify-between p-4 bg-[#e8dfd5] dark:bg-[#1e1f20] rounded-2xl opacity-50 cursor-not-allowed group transition-all duration-200"
+                                    disabled
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-2 bg-gray-200 dark:bg-gray-700 rounded-xl">
+                                            <Paperclip className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                                        </div>
+                                        <div className="text-left">
+                                            <div className="font-semibold text-gray-900 dark:text-white">Upload file</div>
+                                            <div className="text-xs text-gray-500 dark:text-gray-400">Share documents or images</div>
+                                        </div>
+                                    </div>
+                                    <span className="text-[10px] font-bold uppercase tracking-wider bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-2 py-1 rounded-md">
+                                        {t('chat.comingSoon')}
+                                    </span>
+                                </button>
 
                                 {/* Google Drive option removed - will be implemented later */}
                             </div>
@@ -1306,6 +1323,18 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                             </div>
                                         </button>
 
+                                        <button
+                                            className="w-full flex items-center justify-between p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] text-gray-900 dark:text-white text-sm font-semibold rounded-2xl border border-gray-400/60 dark:border-gray-600/60 opacity-50 cursor-not-allowed"
+                                            disabled
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <Paperclip className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                                                <span>Upload file</span>
+                                            </div>
+                                            <span className="text-[10px] font-bold uppercase tracking-wider bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-2 py-1 rounded-md">
+                                                {t('chat.comingSoon')}
+                                            </span>
+                                        </button>
                                     </div>
                                 </>
                             )}
