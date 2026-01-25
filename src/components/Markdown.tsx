@@ -544,7 +544,7 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
               return (
                 <div className="table-scroll-wrapper my-4">
                   <table
-                    className={`w-full divide-y divide-gray-300 dark:divide-gray-600 border border-gray-300 dark:border-gray-600 ${isSingleColumn ? '' : 'min-w-[500px]'}`}
+                    className={`w-full divide-y divide-gray-300 dark:divide-gray-600 border border-gray-300 dark:border-gray-600 ${isSingleColumn ? '' : 'md:min-w-[500px]'}`}
                     {...props}
                   >
                     {children}
