@@ -333,7 +333,7 @@ export default function ChatPage() {
     } = useChatConversation({ conversationId, selectedModel });
 
     useEffect(() => {
-        const handleDeepSearch = (e: any) => {
+        const handleDeepSearch = (e: CustomEvent<{ text?: string }>) => {
             const text = e.detail?.text;
             if (text) {
                 console.log(`[Chat Page] Triggering deep search for: ${text}`);
@@ -341,8 +341,8 @@ export default function ChatPage() {
             }
         };
 
-        window.addEventListener("triggerDeepSearch", handleDeepSearch);
-        return () => window.removeEventListener("triggerDeepSearch", handleDeepSearch);
+        window.addEventListener("triggerDeepSearch", handleDeepSearch as EventListener);
+        return () => window.removeEventListener("triggerDeepSearch", handleDeepSearch as EventListener);
     }, [handleSend]);
 
     useEffect(() => {
