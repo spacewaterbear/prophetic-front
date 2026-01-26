@@ -245,6 +245,57 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
     return unwrapped;
   }, [content]);
 
+  // Helper to process -+- markers in text - removes -+- and returns cleaned content
+  const removeAnalysisMarker = (content: React.ReactNode): React.ReactNode => {
+    const childArray = React.Children.toArray(content);
+
+    return childArray.map((child) => {
+      if (typeof child === 'string') {
+        // Remove -+- from the string
+        return child.replace(/-\+-/g, '').trim();
+      }
+      return child;
+    });
+  };
+
+  // Helper to check if content contains -+- markers
+  const hasAnalysisMarker = (content: React.ReactNode): boolean => {
+    return React.Children.toArray(content).some(
+      (child) => typeof child === 'string' && child.includes('-+-')
+    );
+  };
+
+  // Reusable component for analysis highlight with tooltip
+  const AnalysisHighlight = ({ children }: { children: React.ReactNode }) => {
+    const handleClick = () => {
+      // Get the text content without the -+- marker
+      const textContent = React.Children.toArray(children)
+        .map(child => (typeof child === 'string' ? child.replace(/-\+-/g, '').trim() : ''))
+        .join(' ')
+        .trim();
+
+      if (textContent) {
+        // Dispatch custom event for the chat page to catch (same as SelectionContextMenu)
+        const event = new CustomEvent("triggerDeepSearch", {
+          detail: { text: textContent }
+        });
+        window.dispatchEvent(event);
+      }
+    };
+
+    return (
+      <span
+        className="relative group/analysis inline bg-gradient-to-r from-amber-100 to-yellow-100 dark:from-amber-900/40 dark:to-yellow-900/40 px-1 rounded border-l-4 border-amber-500 dark:border-amber-400 cursor-pointer transition-all hover:shadow-md box-decoration-clone"
+        onClick={handleClick}
+      >
+        {removeAnalysisMarker(children)}
+        <span className="absolute left-1/2 -translate-x-1/2 -top-8 px-2 py-1 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-800 text-xs rounded hidden group-hover/analysis:block whitespace-nowrap pointer-events-none z-10">
+          make an analysis
+        </span>
+      </span>
+    );
+  };
+
   return (
     <div className="relative">
       {categoryName && onCategoryClick && (
@@ -275,24 +326,66 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
           remarkPlugins={[remarkGfm]}
           components={{
             // Headings
-            h1: ({ node, ...props }) => (
-              <h1 className="text-2xl font-bold mt-6 mb-4 text-gray-900 dark:text-gray-100" style={{ fontFamily: 'EB Garamond, serif' }} {...props} />
-            ),
-            h2: ({ node, ...props }) => (
-              <h2 className="text-xl font-bold mt-5 mb-3 text-gray-900 dark:text-gray-100" style={{ fontFamily: 'EB Garamond, serif' }} {...props} />
-            ),
-            h3: ({ node, ...props }) => (
-              <h3 className="text-lg font-semibold mt-4 mb-2 text-gray-900 dark:text-gray-100" style={{ fontFamily: 'EB Garamond, serif' }} {...props} />
-            ),
-            h4: ({ node, ...props }) => (
-              <h4 className="text-base font-semibold mt-3 mb-2 text-gray-900 dark:text-gray-100" {...props} />
-            ),
-            h5: ({ node, ...props }) => (
-              <h5 className="text-sm font-semibold mt-3 mb-2 text-gray-900 dark:text-gray-100" {...props} />
-            ),
-            h6: ({ node, ...props }) => (
-              <h6 className="text-sm font-semibold mt-3 mb-2 text-gray-700 dark:text-gray-300" {...props} />
-            ),
+            h1: ({ node, children, ...props }) => {
+              if (hasAnalysisMarker(children)) {
+                return (
+                  <h1 className="text-2xl font-bold mt-6 mb-4 text-gray-900 dark:text-gray-100" style={{ fontFamily: 'EB Garamond, serif' }} {...props}>
+                    <AnalysisHighlight>{children}</AnalysisHighlight>
+                  </h1>
+                );
+              }
+              return <h1 className="text-2xl font-bold mt-6 mb-4 text-gray-900 dark:text-gray-100" style={{ fontFamily: 'EB Garamond, serif' }} {...props}>{children}</h1>;
+            },
+            h2: ({ node, children, ...props }) => {
+              if (hasAnalysisMarker(children)) {
+                return (
+                  <h2 className="text-xl font-bold mt-5 mb-3 text-gray-900 dark:text-gray-100" style={{ fontFamily: 'EB Garamond, serif' }} {...props}>
+                    <AnalysisHighlight>{children}</AnalysisHighlight>
+                  </h2>
+                );
+              }
+              return <h2 className="text-xl font-bold mt-5 mb-3 text-gray-900 dark:text-gray-100" style={{ fontFamily: 'EB Garamond, serif' }} {...props}>{children}</h2>;
+            },
+            h3: ({ node, children, ...props }) => {
+              if (hasAnalysisMarker(children)) {
+                return (
+                  <h3 className="text-lg font-semibold mt-4 mb-2 text-gray-900 dark:text-gray-100" style={{ fontFamily: 'EB Garamond, serif' }} {...props}>
+                    <AnalysisHighlight>{children}</AnalysisHighlight>
+                  </h3>
+                );
+              }
+              return <h3 className="text-lg font-semibold mt-4 mb-2 text-gray-900 dark:text-gray-100" style={{ fontFamily: 'EB Garamond, serif' }} {...props}>{children}</h3>;
+            },
+            h4: ({ node, children, ...props }) => {
+              if (hasAnalysisMarker(children)) {
+                return (
+                  <h4 className="text-base font-semibold mt-3 mb-2 text-gray-900 dark:text-gray-100" {...props}>
+                    <AnalysisHighlight>{children}</AnalysisHighlight>
+                  </h4>
+                );
+              }
+              return <h4 className="text-base font-semibold mt-3 mb-2 text-gray-900 dark:text-gray-100" {...props}>{children}</h4>;
+            },
+            h5: ({ node, children, ...props }) => {
+              if (hasAnalysisMarker(children)) {
+                return (
+                  <h5 className="text-sm font-semibold mt-3 mb-2 text-gray-900 dark:text-gray-100" {...props}>
+                    <AnalysisHighlight>{children}</AnalysisHighlight>
+                  </h5>
+                );
+              }
+              return <h5 className="text-sm font-semibold mt-3 mb-2 text-gray-900 dark:text-gray-100" {...props}>{children}</h5>;
+            },
+            h6: ({ node, children, ...props }) => {
+              if (hasAnalysisMarker(children)) {
+                return (
+                  <h6 className="text-sm font-semibold mt-3 mb-2 text-gray-700 dark:text-gray-300" {...props}>
+                    <AnalysisHighlight>{children}</AnalysisHighlight>
+                  </h6>
+                );
+              }
+              return <h6 className="text-sm font-semibold mt-3 mb-2 text-gray-700 dark:text-gray-300" {...props}>{children}</h6>;
+            },
             // Paragraphs
             p: ({ node, children, ...props }) => {
               // Helper to check for ASCII table/box patterns
@@ -382,6 +475,15 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
                 return <div className="mb-4">{elements}</div>;
               }
 
+              // Check if content contains -+- markers for analysis highlighting
+              if (hasAnalysisMarker(children)) {
+                return (
+                  <p className="leading-relaxed px-0" {...props}>
+                    <AnalysisHighlight>{children}</AnalysisHighlight>
+                  </p>
+                );
+              }
+
               return (
                 <p className="leading-relaxed px-0" {...props}>
                   {children}
@@ -395,9 +497,16 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
             ol: ({ node, ...props }) => (
               <ol className="list-decimal list-inside mb-4 space-y-2" {...props} />
             ),
-            li: ({ node, ...props }) => (
-              <li className="leading-relaxed" {...props} />
-            ),
+            li: ({ node, children, ...props }) => {
+              if (hasAnalysisMarker(children)) {
+                return (
+                  <li className="leading-relaxed" {...props}>
+                    <AnalysisHighlight>{children}</AnalysisHighlight>
+                  </li>
+                );
+              }
+              return <li className="leading-relaxed" {...props}>{children}</li>;
+            },
             // Code
             code: ({ node, className, children, ...props }) => {
               // In react-markdown v10, the `inline` prop indicates if it's inline code
@@ -583,6 +692,20 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
                   typeof child === "string" &&
                   child.split(" ").some((word) => word.length > 30)
               );
+
+              if (hasAnalysisMarker(children)) {
+                return (
+                  <td
+                    className={cn(
+                      "px-2 py-1 sm:px-4 sm:py-2 text-center text-xs sm:text-sm text-gray-700 dark:text-gray-300",
+                      hasLongUnbreakableWord ? "break-all" : "break-words"
+                    )}
+                    {...props}
+                  >
+                    <AnalysisHighlight>{children}</AnalysisHighlight>
+                  </td>
+                );
+              }
 
               return (
                 <td
