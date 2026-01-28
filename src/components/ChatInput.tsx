@@ -1103,7 +1103,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                             />
                                             <div>
                                                 <div className="font-semibold text-gray-900 dark:text-white">
-                                                    Market Scout
+                                                    Market Scout <sup className="text-[10px] font-bold">{t('chat.comingSoon')}</sup>
                                                 </div>
                                                 <div className="text-sm text-gray-600 dark:text-gray-400">
                                                     Les opportunités avant le marché
@@ -1111,13 +1111,11 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                             </div>
                                         </div>
                                         <button
-                                            onClick={() => setMarketScoutEnabled(!marketScoutEnabled)}
-                                            className={`flex-shrink-0 relative inline-flex h-8 w-14 items-center rounded-full transition-colors ${marketScoutEnabled ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
-                                                }`}
+                                            disabled
+                                            className="flex-shrink-0 relative inline-flex h-8 w-14 items-center rounded-full transition-colors bg-gray-300 dark:bg-gray-600 opacity-50 cursor-not-allowed pointer-events-none"
                                         >
                                             <span
-                                                className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${marketScoutEnabled ? 'translate-x-7' : 'translate-x-1'
-                                                    }`}
+                                                className="inline-block h-6 w-6 transform rounded-full bg-white translate-x-1"
                                             />
                                         </button>
                                     </div>
@@ -1138,7 +1136,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                             />
                                             <div>
                                                 <div className="font-semibold text-gray-900 dark:text-white">
-                                                    Community Radar
+                                                    Community Radar <sup className="text-[10px] font-bold">{t('chat.comingSoon')}</sup>
                                                 </div>
                                                 <div className="text-sm text-gray-600 dark:text-gray-400">
                                                     Le buzz social en signal d'investissement
@@ -1146,13 +1144,11 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                             </div>
                                         </div>
                                         <button
-                                            onClick={() => setCommunityRadarEnabled(!communityRadarEnabled)}
-                                            className={`flex-shrink-0 relative inline-flex h-8 w-14 items-center rounded-full transition-colors ${communityRadarEnabled ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
-                                                }`}
+                                            disabled
+                                            className="flex-shrink-0 relative inline-flex h-8 w-14 items-center rounded-full transition-colors bg-gray-300 dark:bg-gray-600 opacity-50 cursor-not-allowed pointer-events-none"
                                         >
                                             <span
-                                                className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${communityRadarEnabled ? 'translate-x-7' : 'translate-x-1'
-                                                    }`}
+                                                className="inline-block h-6 w-6 transform rounded-full bg-white translate-x-1"
                                             />
                                         </button>
                                     </div>
@@ -1513,7 +1509,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                         />
                                         <div>
                                             <div className="font-semibold text-gray-900 dark:text-white">
-                                                Market Scout
+                                                Market Scout <sup className="text-[10px] font-bold">{t('chat.comingSoon')}</sup>
                                             </div>
                                             <div className="text-sm text-gray-600 dark:text-gray-400">
                                                 Les opportunités avant le marché
@@ -1521,13 +1517,11 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                         </div>
                                     </div>
                                     <button
-                                        onClick={() => setMarketScoutEnabled(!marketScoutEnabled)}
-                                        className={`flex-shrink-0 relative inline-flex h-8 w-14 items-center rounded-full transition-colors ${marketScoutEnabled ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
-                                            }`}
+                                        disabled
+                                        className="flex-shrink-0 relative inline-flex h-8 w-14 items-center rounded-full transition-colors bg-gray-300 dark:bg-gray-600 opacity-50 cursor-not-allowed pointer-events-none"
                                     >
                                         <span
-                                            className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${marketScoutEnabled ? 'translate-x-7' : 'translate-x-1'
-                                                }`}
+                                            className="inline-block h-6 w-6 transform rounded-full bg-white translate-x-1"
                                         />
                                     </button>
                                 </div>
@@ -1548,7 +1542,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                         />
                                         <div>
                                             <div className="font-semibold text-gray-900 dark:text-white">
-                                                Community Radar
+                                                Community Radar <sup className="text-[10px] font-bold">{t('chat.comingSoon')}</sup>
                                             </div>
                                             <div className="text-sm text-gray-600 dark:text-gray-400">
                                                 Le buzz social en signal d'investissement
@@ -1556,13 +1550,11 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                         </div>
                                     </div>
                                     <button
-                                        onClick={() => setCommunityRadarEnabled(!communityRadarEnabled)}
-                                        className={`flex-shrink-0 relative inline-flex h-8 w-14 items-center rounded-full transition-colors ${communityRadarEnabled ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
-                                            }`}
+                                        disabled
+                                        className="flex-shrink-0 relative inline-flex h-8 w-14 items-center rounded-full transition-colors bg-gray-300 dark:bg-gray-600 opacity-50 cursor-not-allowed pointer-events-none"
                                     >
                                         <span
-                                            className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${communityRadarEnabled ? 'translate-x-7' : 'translate-x-1'
-                                                }`}
+                                            className="inline-block h-6 w-6 transform rounded-full bg-white translate-x-1"
                                         />
                                     </button>
                                 </div>

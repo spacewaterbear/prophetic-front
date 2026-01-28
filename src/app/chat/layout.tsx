@@ -325,10 +325,13 @@ function ChatLayoutInner({
                         {/* Marché spot */}
                         <button
                             onClick={() => {
-                                console.log('[Sidebar] Clicked Marché spot (disabled)');
+                                console.log('[Sidebar] Clicked Marché spot, category: MARCHE_SPOT');
+                                router.push('/chat?category=MARCHE_SPOT', { scroll: false });
+                                if (isMobile) {
+                                    setSidebarOpen(false);
+                                }
                             }}
-                            disabled={true}
-                            className="w-full text-left px-3 py-2 rounded-lg opacity-50 cursor-not-allowed text-gray-500 dark:text-gray-600 text-sm transition-all flex items-center gap-2"
+                            className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2"
                         >
                             {mounted && (
                                 <Image
@@ -336,10 +339,10 @@ function ChatLayoutInner({
                                     alt="Marché spot"
                                     width={22}
                                     height={22}
-                                    className="flex-shrink-0 grayscale"
+                                    className="flex-shrink-0"
                                 />
                             )}
-                            <span>Marché spot <sup className="text-[10px] font-bold">{t('chat.comingSoon')}</sup></span>
+                            <span>Marché spot</span>
                         </button>
 
 

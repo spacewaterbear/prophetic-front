@@ -35,12 +35,12 @@ export const VignetteGridCard = memo(({ data, onVignetteClick }: VignetteGridCar
                     >
                         <div className="border border-gray-200/20 bg-[#e6e6e6] dark:bg-gray-800 rounded-[24px] p-3">
                             {/* Image Container */}
-                            <div className="relative w-full aspect-square rounded-[24px] bg-white mb-2 overflow-hidden">
+                            <div className="relative w-full aspect-square rounded-[24px] mb-2 overflow-hidden">
                                 <Image
                                     src={item.public_url}
                                     alt={item.brand_name}
                                     fill
-                                    className="object-contain"
+                                    className="object-cover"
                                     sizes="(max-width: 640px) 50vw, 25vw"
                                 />
 
