@@ -26,6 +26,6 @@ export interface Profile {
   mail: string | null;
   username: string | null;
   avatar_url: string | null;
-  status: 'unauthorized' | 'free' | 'paid';
+  status: 'unauthorized' | 'free' | 'paid' | 'discover' | 'intelligence'| 'oracle';
   updated_at: string;
 }
