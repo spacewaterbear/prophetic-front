@@ -18,7 +18,21 @@ export async function POST(req: NextRequest) {
 
     // Use the request origin to build the redirect URL dynamically
     // This ensures the magic link redirects to the correct domain (staging, preprod, production)
-    const origin = req.headers.get("origin") || req.headers.get("referer")?.replace(/\/$/, "") || process.env.NEXTAUTH_URL;
+    let origin = req.headers.get("origin");
+    if (!origin) {
+      const referer = req.headers.get("referer");
+      if (referer) {
+        try {
+          const url = new URL(referer);
+          origin = url.origin; // extracts "https://staging.prophetic7.ai" from full URL
+        } catch {
+          // ignore invalid referer
+        }
+      }
+    }
+    if (!origin) {
+      origin = process.env.NEXTAUTH_URL || "http://localhost:3000";
+    }
 
     const { error } = await supabase.auth.signInWithOtp({
       email,

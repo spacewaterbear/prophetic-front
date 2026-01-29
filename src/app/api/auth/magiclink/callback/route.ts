@@ -67,6 +67,14 @@ async function createOrUpdateMagicLinkProfile(
   try {
     const adminClient = createAdminClient();
 
+    // Build the update fields with name data if provided
+    const nameFields: Record<string, string | null> = {};
+    if (firstName && lastName) {
+      nameFields.first_name = firstName;
+      nameFields.last_name = lastName;
+      nameFields.username = `${firstName} ${lastName}`;
+    }
+
     // Check if profile exists by email first (handles Google → Magic Link case)
     const { data: existingProfileByEmail } = await adminClient
       .from("profiles")
@@ -75,10 +83,10 @@ async function createOrUpdateMagicLinkProfile(
       .maybeSingle();
 
     if (existingProfileByEmail) {
-      // Profile exists with this email - update it
       await adminClient
         .from("profiles")
         .update({
+          ...nameFields,
           updated_at: new Date().toISOString(),
         })
         .eq("id", existingProfileByEmail.id);
@@ -87,6 +95,7 @@ async function createOrUpdateMagicLinkProfile(
     }
 
     // Check if profile exists by Supabase Auth user ID
+    // (the trigger on_auth_user_created creates a profile with just id + mail)
     const { data: existingProfileById } = await adminClient
       .from("profiles")
       .select("id")
@@ -94,11 +103,11 @@ async function createOrUpdateMagicLinkProfile(
       .maybeSingle();
 
     if (existingProfileById) {
-      // Profile exists with this ID - update it
       await adminClient
         .from("profiles")
         .update({
           mail: email,
+          ...nameFields,
           updated_at: new Date().toISOString(),
         })
         .eq("id", userId);

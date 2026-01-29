@@ -42,13 +42,19 @@ export default function LoginPage() {
   useEffect(() => {
     const handleMagicLinkCallback = async () => {
       // Check if we have hash params from magic link
-      if (typeof window !== "undefined" && window.location.hash) {
-        const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      const hash = typeof window !== "undefined" ? window.location.hash : "";
+      console.log("[MagicLink] Hash detected:", hash ? "yes" : "no");
+
+      if (hash) {
+        const hashParams = new URLSearchParams(hash.substring(1));
         const accessToken = hashParams.get("access_token");
         const refreshToken = hashParams.get("refresh_token");
         const type = hashParams.get("type");
 
-        if (accessToken && refreshToken && type === "magiclink") {
+        console.log("[MagicLink] Type:", type, "Has tokens:", !!accessToken && !!refreshToken);
+
+        // Handle both magiclink (existing user) and signup (new user confirmation)
+        if (accessToken && refreshToken && (type === "magiclink" || type === "signup" || type === "email")) {
           setIsProcessingMagicLink(true);
 
           try {
@@ -56,6 +62,7 @@ export default function LoginPage() {
             const tokenPayload = JSON.parse(atob(accessToken.split(".")[1]));
             const userId = tokenPayload.sub;
             const userEmail = tokenPayload.email;
+            console.log("[MagicLink] User:", userEmail, "ID:", userId);
 
             // Clear the hash from URL
             window.history.replaceState(null, "", window.location.pathname);
@@ -68,9 +75,10 @@ export default function LoginPage() {
             });
 
             const checkData = await checkResponse.json();
+            console.log("[MagicLink] Check result:", checkData);
 
-            if (checkData.exists) {
-              // User exists - sign them in with NextAuth
+            if (checkData.exists && checkData.registrationComplete) {
+              // User exists and has completed registration - sign them in
               const result = await signIn("magic-link", {
                 accessToken,
                 refreshToken,
@@ -91,7 +99,7 @@ export default function LoginPage() {
                 router.push("/chat");
               }
             } else {
-              // New user - show registration form to collect name
+              // New user or incomplete registration - show form to collect name
               setIsProcessingMagicLink(false);
               setRegistrationStep("collecting_info");
               setPendingUserInfo({
