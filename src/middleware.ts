@@ -27,8 +27,9 @@ export default auth((req) => {
     return NextResponse.redirect(new URL("/registration-pending", nextUrl));
   }
 
-  // If logged in and authorized (free or paid) but on registration pending page, redirect to home
-  if (isLoggedIn && (userStatus === 'free' || userStatus === 'paid') && isRegistrationPending) {
+  // If logged in and authorized (any valid tier) but on registration pending page, redirect to home
+  const authorizedStatuses = ['free', 'paid', 'admini', 'discover', 'intelligence', 'oracle'];
+  if (isLoggedIn && authorizedStatuses.includes(userStatus) && isRegistrationPending) {
     return NextResponse.redirect(new URL("/", nextUrl));
   }
 

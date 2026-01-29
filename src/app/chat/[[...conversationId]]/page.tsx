@@ -19,6 +19,7 @@ import { Check, Copy } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
+import { supabase } from "@/lib/supabase/client";
 
 // Lazy load components
 const Markdown = lazy(() =>
@@ -295,6 +296,7 @@ export default function ChatPage() {
     const [mounted, setMounted] = useState(false);
     const [selectedModel, setSelectedModel] = useState<string>(DEFAULT_NON_ADMIN_MODEL);
     const [selectedAgent, setSelectedAgent] = useState<'discover' | 'intelligence' | 'oracle'>('discover');
+    const [profileUsername, setProfileUsername] = useState<string | null>(null);
     const { setSidebarOpen, isMobile } = useSidebar();
 
     // Vignette state (for welcome screen)
@@ -353,6 +355,25 @@ export default function ChatPage() {
             setSelectedAgent(savedAgent as 'discover' | 'intelligence' | 'oracle');
         }
     }, []);
+
+    // Fetch username from profiles table
+    useEffect(() => {
+        const fetchProfileUsername = async () => {
+            if (session?.user?.id) {
+                const { data, error } = await supabase
+                    .from('profiles')
+                    .select('username')
+                    .eq('id', session.user.id)
+                    .single();
+
+                if (!error && data?.username) {
+                    setProfileUsername(data.username);
+                }
+            }
+        };
+
+        fetchProfileUsername();
+    }, [session?.user?.id]);
 
     // Redirect to login if not authenticated (skip in dev mode)
     useEffect(() => {
@@ -708,7 +729,7 @@ export default function ChatPage() {
 
                                 {/* Greeting */}
                                 <h1 className="text-3xl sm:text-4xl font-medium text-gray-900 dark:text-white mb-3">
-                                    {t('chat.greeting').replace('{name}', session?.user?.name?.split(' ')[0] || '')}
+                                    {t('chat.greeting').replace('{name}', profileUsername || session?.user?.name?.split(' ')[0] || '')}
                                 </h1>
 
                                 {/* Subtitle */}
