@@ -107,7 +107,6 @@ async function createOrUpdateMagicLinkProfile(
     }
 
     // No existing profile - create new one
-    // Use first + last name if provided, otherwise fallback to email prefix
     const username = firstName && lastName
       ? `${firstName} ${lastName}`
       : email.split("@")[0] || "User";
@@ -116,6 +115,8 @@ async function createOrUpdateMagicLinkProfile(
       id: userId,
       mail: email,
       username,
+      first_name: firstName || null,
+      last_name: lastName || null,
       status: "unauthorized",
       updated_at: new Date().toISOString(),
     });
