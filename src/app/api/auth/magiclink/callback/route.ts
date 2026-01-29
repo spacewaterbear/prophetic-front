@@ -1,51 +1,41 @@
-import { createServerClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
-  const { searchParams, origin } = new URL(req.url);
-  const token_hash = searchParams.get("token_hash");
-  const type = searchParams.get("type");
-
-  // Only handle magic link verifications (Supabase sends type=email for magic links)
-  if (!token_hash || (type !== "email" && type !== "magiclink")) {
-    return NextResponse.redirect(
-      new URL("/login?error=invalid_request", origin)
-    );
-  }
-
+export async function POST(req: NextRequest) {
   try {
-    const supabase = createServerClient();
+    const { userId, email, firstName, lastName, isNewUser } = await req.json();
 
-    // Verify the magic link token with Supabase
-    const { data, error } = await supabase.auth.verifyOtp({
-      token_hash,
-      type: "email",
-    });
-
-    if (error || !data.user) {
-      console.error("[MagicLink Callback] Verification error:", error);
-      return NextResponse.redirect(
-        new URL("/login?error=invalid_or_expired_link", origin)
+    if (!userId || !email) {
+      return NextResponse.json(
+        { error: "Missing userId or email" },
+        { status: 400 }
       );
     }
 
-    const user = data.user;
+    // For new users, require first and last name
+    if (isNewUser && (!firstName || !lastName)) {
+      return NextResponse.json(
+        { error: "First name and last name are required for new users" },
+        { status: 400 }
+      );
+    }
 
-    // Create or update user profile in our profiles table
     const profileId = await createOrUpdateMagicLinkProfile(
-      user.id,
-      user.email!
+      userId,
+      email,
+      firstName,
+      lastName,
+      isNewUser
     );
 
     if (!profileId) {
-      console.error("[MagicLink Callback] Failed to create/update profile");
-      return NextResponse.redirect(
-        new URL("/login?error=profile_error", origin)
+      return NextResponse.json(
+        { error: "Failed to create/update profile" },
+        { status: 500 }
       );
     }
 
-    // Check user status to determine redirect
+    // Get user status
     const adminClient = createAdminClient();
     const { data: profile } = await adminClient
       .from("profiles")
@@ -53,34 +43,26 @@ export async function GET(req: NextRequest) {
       .eq("id", profileId)
       .maybeSingle();
 
-    // Redirect to appropriate page based on user status
-    // The Supabase session is now set via cookies, and NextAuth will pick it up
-    if (profile?.status === "unauthorized") {
-      return NextResponse.redirect(
-        new URL(
-          `/login?magic_link_success=true&user_id=${profileId}&email=${encodeURIComponent(user.email!)}&redirect=pending`,
-          origin
-        )
-      );
-    }
-
-    return NextResponse.redirect(
-      new URL(
-        `/login?magic_link_success=true&user_id=${profileId}&email=${encodeURIComponent(user.email!)}`,
-        origin
-      )
-    );
+    return NextResponse.json({
+      success: true,
+      profileId,
+      status: profile?.status || "unauthorized",
+    });
   } catch (error) {
-    console.error("[MagicLink Callback] Unexpected error:", error);
-    return NextResponse.redirect(
-      new URL("/login?error=server_error", origin)
+    console.error("[MagicLink Callback] Error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
     );
   }
 }
 
 async function createOrUpdateMagicLinkProfile(
   userId: string,
-  email: string
+  email: string,
+  firstName?: string,
+  lastName?: string,
+  isNewUser?: boolean
 ): Promise<string | null> {
   try {
     const adminClient = createAdminClient();
@@ -125,10 +107,15 @@ async function createOrUpdateMagicLinkProfile(
     }
 
     // No existing profile - create new one
+    // Use first + last name if provided, otherwise fallback to email prefix
+    const username = firstName && lastName
+      ? `${firstName} ${lastName}`
+      : email.split("@")[0] || "User";
+
     const { error } = await adminClient.from("profiles").insert({
       id: userId,
       mail: email,
-      username: email.split("@")[0] || "User",
+      username,
       status: "unauthorized",
       updated_at: new Date().toISOString(),
     });

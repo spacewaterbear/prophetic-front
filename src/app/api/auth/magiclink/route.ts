@@ -17,10 +17,11 @@ export async function POST(req: NextRequest) {
     const supabase = createServerClient();
 
     // Send magic link via Supabase Auth
+    // Redirect to /login where the client-side code handles the hash fragment
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${process.env.NEXTAUTH_URL}/auth/callback`,
+        emailRedirectTo: `${process.env.NEXTAUTH_URL}/login`,
         shouldCreateUser: true, // Auto-create auth.users entry if doesn't exist
       },
     });

@@ -1,6 +1,8 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
+import Credentials from "next-auth/providers/credentials";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@supabase/supabase-js";
 
 // Generate a deterministic UUID v5 from Google account ID using Web Crypto API
 // This ensures the same Google account always gets the same UUID
@@ -33,6 +35,50 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           access_type: "offline",
           response_type: "code",
         },
+      },
+    }),
+    Credentials({
+      id: "magic-link",
+      name: "Magic Link",
+      credentials: {
+        accessToken: { label: "Access Token", type: "text" },
+        refreshToken: { label: "Refresh Token", type: "text" },
+      },
+      async authorize(credentials) {
+        if (!credentials?.accessToken || !credentials?.refreshToken) {
+          return null;
+        }
+
+        try {
+          // Create a Supabase client and verify the token
+          const supabase = createClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+          );
+
+          // Set the session with the provided tokens
+          const { data, error } = await supabase.auth.setSession({
+            access_token: credentials.accessToken as string,
+            refresh_token: credentials.refreshToken as string,
+          });
+
+          if (error || !data.user) {
+            console.error("[MagicLink Auth] Token verification failed:", error);
+            return null;
+          }
+
+          const user = data.user;
+
+          // Return user object that NextAuth will use
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.email?.split("@")[0] || "User",
+          };
+        } catch (error) {
+          console.error("[MagicLink Auth] Error:", error);
+          return null;
+        }
       },
     }),
   ],
@@ -76,13 +122,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   callbacks: {
     async jwt({ token, account, profile, user }) {
-      // On first sign in, determine the correct user ID
+      // Handle magic link authentication (credentials provider)
+      if (account?.provider === "magic-link" && user) {
+        // For magic link, the user.id is already the Supabase user ID
+        token.userId = user.id;
+        token.email = user.email;
+        token.provider = "magic-link";
+        return token;
+      }
+
+      // On first sign in with Google, determine the correct user ID
       if (account && profile && user.email) {
         try {
           const supabase = createAdminClient();
 
           // Store Google provider account ID for future token refreshes
           token.googleId = account.providerAccountId;
+          token.provider = "google";
 
           // Check if a profile with this email already exists
           const { data: existingProfile } = await supabase
@@ -115,7 +171,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return token;
     },
     async signIn({ user, account, profile }) {
-      // Auto-create/update user profile in Supabase
+      // Handle magic link sign in - profile already created in callback API
+      if (account?.provider === "magic-link") {
+        // Profile is already created/updated via the /api/auth/magiclink/callback endpoint
+        return true;
+      }
+
+      // Auto-create/update user profile in Supabase for Google sign in
       const googleId = account?.providerAccountId;
 
       if (googleId && user.email) {

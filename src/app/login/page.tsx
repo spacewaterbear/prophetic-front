@@ -2,16 +2,166 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { signIn } from "next-auth/react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import { useI18n } from "@/contexts/i18n-context";
 import { useState, useEffect } from "react";
+import { Mail, ArrowRight, CheckCircle, AlertCircle, Loader2, User } from "lucide-react";
+import { useRouter } from "next/navigation";
+
+type MagicLinkStatus = "idle" | "sending" | "sent" | "error";
+type RegistrationStep = "none" | "collecting_info";
+
+interface MagicLinkUserInfo {
+  userId: string;
+  email: string;
+  accessToken: string;
+  refreshToken: string;
+}
 
 export default function LoginPage() {
   const { theme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const { t } = useI18n();
+  const [email, setEmail] = useState("");
+  const [magicLinkStatus, setMagicLinkStatus] = useState<MagicLinkStatus>("idle");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isProcessingMagicLink, setIsProcessingMagicLink] = useState(false);
+  const router = useRouter();
+
+  // New user registration state
+  const [registrationStep, setRegistrationStep] = useState<RegistrationStep>("none");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [pendingUserInfo, setPendingUserInfo] = useState<MagicLinkUserInfo | null>(null);
+  const [isSubmittingRegistration, setIsSubmittingRegistration] = useState(false);
+
+  // Handle magic link callback from URL hash (implicit flow)
+  useEffect(() => {
+    const handleMagicLinkCallback = async () => {
+      // Check if we have hash params from magic link
+      if (typeof window !== "undefined" && window.location.hash) {
+        const hashParams = new URLSearchParams(window.location.hash.substring(1));
+        const accessToken = hashParams.get("access_token");
+        const refreshToken = hashParams.get("refresh_token");
+        const type = hashParams.get("type");
+
+        if (accessToken && refreshToken && type === "magiclink") {
+          setIsProcessingMagicLink(true);
+
+          try {
+            // Decode the JWT to get user info
+            const tokenPayload = JSON.parse(atob(accessToken.split(".")[1]));
+            const userId = tokenPayload.sub;
+            const userEmail = tokenPayload.email;
+
+            // Clear the hash from URL
+            window.history.replaceState(null, "", window.location.pathname);
+
+            // Check if user profile exists and get their status
+            const checkResponse = await fetch("/api/auth/magiclink/check", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ userId, email: userEmail }),
+            });
+
+            const checkData = await checkResponse.json();
+
+            if (checkData.exists) {
+              // User exists - sign them in with NextAuth
+              const result = await signIn("magic-link", {
+                accessToken,
+                refreshToken,
+                redirect: false,
+              });
+
+              if (result?.error) {
+                console.error("[MagicLink] NextAuth signIn error:", result.error);
+                setErrorMessage(t("login.sendError"));
+                setIsProcessingMagicLink(false);
+                return;
+              }
+
+              // Redirect based on status
+              if (checkData.status === "unauthorized") {
+                router.push("/registration-pending");
+              } else {
+                router.push("/chat");
+              }
+            } else {
+              // New user - show registration form to collect name
+              setIsProcessingMagicLink(false);
+              setRegistrationStep("collecting_info");
+              setPendingUserInfo({
+                userId,
+                email: userEmail,
+                accessToken,
+                refreshToken,
+              });
+            }
+          } catch (error) {
+            console.error("[MagicLink] Callback error:", error);
+            setIsProcessingMagicLink(false);
+          }
+        }
+      }
+    };
+
+    handleMagicLinkCallback();
+  }, [router, t]);
+
+  // Handle new user registration submission
+  const handleRegistrationSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!firstName.trim() || !lastName.trim() || !pendingUserInfo) {
+      return;
+    }
+
+    setIsSubmittingRegistration(true);
+
+    try {
+      // Create the user profile with the provided name
+      const response = await fetch("/api/auth/magiclink/callback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: pendingUserInfo.userId,
+          email: pendingUserInfo.email,
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
+          isNewUser: true,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to create profile");
+      }
+
+      // Sign in with NextAuth
+      const result = await signIn("magic-link", {
+        accessToken: pendingUserInfo.accessToken,
+        refreshToken: pendingUserInfo.refreshToken,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        console.error("[MagicLink] NextAuth signIn error:", result.error);
+        setErrorMessage(t("login.sendError"));
+        setIsSubmittingRegistration(false);
+        return;
+      }
+
+      // Redirect to registration pending (new users are unauthorized)
+      router.push("/registration-pending");
+    } catch (error) {
+      console.error("[Registration] Error:", error);
+      setErrorMessage(t("login.sendError"));
+      setIsSubmittingRegistration(false);
+    }
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -29,6 +179,175 @@ export default function LoginPage() {
       console.error("Sign in error:", error);
     }
   };
+
+  const handleMagicLinkSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Validate email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
+      setMagicLinkStatus("error");
+      setErrorMessage(t("login.invalidEmail"));
+      return;
+    }
+
+    setMagicLinkStatus("sending");
+    setErrorMessage("");
+
+    try {
+      const response = await fetch("/api/auth/magiclink", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to send magic link");
+      }
+
+      setMagicLinkStatus("sent");
+    } catch (error) {
+      console.error("Magic link error:", error);
+      setMagicLinkStatus("error");
+      setErrorMessage(t("login.sendError"));
+    }
+  };
+
+  const resetMagicLinkForm = () => {
+    setMagicLinkStatus("idle");
+    setEmail("");
+    setErrorMessage("");
+  };
+
+  // Show loading screen while processing magic link
+  if (isProcessingMagicLink) {
+    return (
+      <div className="min-h-screen bg-[rgb(247,240,232)] dark:bg-gradient-to-br dark:from-gray-900 dark:to-gray-950 flex items-center justify-center p-4">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 animate-spin text-gray-600 dark:text-gray-300 mx-auto mb-4" />
+          <p className="text-gray-600 dark:text-gray-300 text-lg">
+            {t('common.loading')}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show registration form for new users
+  if (registrationStep === "collecting_info") {
+    return (
+      <div className="min-h-screen bg-[rgb(247,240,232)] dark:bg-gradient-to-br dark:from-gray-900 dark:to-gray-950 flex items-center justify-center p-4">
+        {/* Background Decorations */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[rgb(230,220,210)]/40 dark:bg-gray-800/30 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[rgb(230,220,210)]/40 dark:bg-gray-800/30 rounded-full blur-3xl"></div>
+        </div>
+
+        <div className="w-full max-w-md relative z-10">
+          <Card className="p-8 sm:p-10 bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl border-gray-300 dark:border-gray-700 shadow-2xl">
+            {/* Logo */}
+            <div className="text-center mb-8">
+              <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden flex items-center justify-center">
+                <Image
+                  src={
+                    isDark
+                      ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/logo_form_blanc.svg"
+                      : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_new.svg"
+                  }
+                  alt="Prophetic Orchestra"
+                  width={96}
+                  height={96}
+                  className="w-full h-full object-cover"
+                  suppressHydrationWarning
+                  priority
+                />
+              </div>
+            </div>
+
+            {/* Welcome Message */}
+            <div className="mb-8 text-center">
+              <h2 className="text-2xl font-light mb-2 text-gray-900 dark:text-white">
+                {t('login.completeRegistration')}
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
+                {t('login.completeRegistrationSubtitle')}
+              </p>
+              {pendingUserInfo?.email && (
+                <p className="text-gray-500 dark:text-gray-500 text-xs mt-2">
+                  {pendingUserInfo.email}
+                </p>
+              )}
+            </div>
+
+            {/* Registration Form */}
+            <form onSubmit={handleRegistrationSubmit} className="space-y-4">
+              <div className="space-y-4">
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <Input
+                    type="text"
+                    placeholder={t('login.firstNamePlaceholder')}
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    className="w-full h-12 pl-10 pr-4 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder:text-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    disabled={isSubmittingRegistration}
+                    required
+                  />
+                </div>
+
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <Input
+                    type="text"
+                    placeholder={t('login.lastNamePlaceholder')}
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    className="w-full h-12 pl-10 pr-4 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder:text-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    disabled={isSubmittingRegistration}
+                    required
+                  />
+                </div>
+              </div>
+
+              {errorMessage && (
+                <div className="flex items-center gap-2 text-sm text-red-600 dark:text-red-400">
+                  <AlertCircle className="w-4 h-4" />
+                  <span>{errorMessage}</span>
+                </div>
+              )}
+
+              <Button
+                type="submit"
+                disabled={isSubmittingRegistration || !firstName.trim() || !lastName.trim()}
+                className="w-full h-12 bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-100 text-white dark:text-gray-900 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSubmittingRegistration ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    {t('login.creating')}
+                  </>
+                ) : (
+                  <>
+                    {t('login.createAccount')}
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </Button>
+            </form>
+
+            {/* Footer Info */}
+            <div className="text-center mt-6">
+              <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+                {t('login.termsText')}
+              </p>
+            </div>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[rgb(247,240,232)] dark:bg-gradient-to-br dark:from-gray-900 dark:to-gray-950 flex items-center justify-center p-4">
@@ -115,7 +434,84 @@ export default function LoginPage() {
           </Button>
 
           {/* Divider */}
-          <div className="relative my-8">
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-4 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
+                {t('login.orContinueWith')}
+              </span>
+            </div>
+          </div>
+
+          {/* Magic Link Form */}
+          {magicLinkStatus === "sent" ? (
+            <div className="text-center py-4 px-4 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-800">
+              <CheckCircle className="w-10 h-10 text-green-500 mx-auto mb-3" />
+              <h3 className="text-lg font-medium text-green-800 dark:text-green-200 mb-1">
+                {t('login.magicLinkSent')}
+              </h3>
+              <p className="text-sm text-green-600 dark:text-green-300 mb-4">
+                {t('login.checkEmail')}
+              </p>
+              <Button
+                variant="ghost"
+                onClick={resetMagicLinkForm}
+                className="text-green-700 dark:text-green-300 hover:text-green-800 dark:hover:text-green-200"
+              >
+                {t('login.tryAgain')}
+              </Button>
+            </div>
+          ) : (
+            <form onSubmit={handleMagicLinkSubmit} className="space-y-4">
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Input
+                  type="email"
+                  placeholder={t('login.emailPlaceholder')}
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (magicLinkStatus === "error") {
+                      setMagicLinkStatus("idle");
+                      setErrorMessage("");
+                    }
+                  }}
+                  className="w-full h-12 pl-10 pr-4 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder:text-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  disabled={magicLinkStatus === "sending"}
+                />
+              </div>
+
+              {magicLinkStatus === "error" && errorMessage && (
+                <div className="flex items-center gap-2 text-sm text-red-600 dark:text-red-400">
+                  <AlertCircle className="w-4 h-4" />
+                  <span>{errorMessage}</span>
+                </div>
+              )}
+
+              <Button
+                type="submit"
+                disabled={magicLinkStatus === "sending" || !email}
+                className="w-full h-12 bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-100 text-white dark:text-gray-900 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {magicLinkStatus === "sending" ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    {t('login.sending')}
+                  </>
+                ) : (
+                  <>
+                    {t('login.sendMagicLink')}
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </Button>
+            </form>
+          )}
+
+          {/* Secure Auth Badge */}
+          <div className="relative mt-6">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
             </div>
@@ -127,7 +523,7 @@ export default function LoginPage() {
           </div>
 
           {/* Footer Info */}
-          <div className="text-center">
+          <div className="text-center mt-6">
             <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
               {t('login.termsText')}
             </p>
