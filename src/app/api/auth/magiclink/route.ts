@@ -16,13 +16,15 @@ export async function POST(req: NextRequest) {
 
     const supabase = createServerClient();
 
-    // Send magic link via Supabase Auth
-    // Redirect to /login where the client-side code handles the hash fragment
+    // Use the request origin to build the redirect URL dynamically
+    // This ensures the magic link redirects to the correct domain (staging, preprod, production)
+    const origin = req.headers.get("origin") || req.headers.get("referer")?.replace(/\/$/, "") || process.env.NEXTAUTH_URL;
+
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${process.env.NEXTAUTH_URL}/login`,
-        shouldCreateUser: true, // Auto-create auth.users entry if doesn't exist
+        emailRedirectTo: `${origin}/login`,
+        shouldCreateUser: true,
       },
     });
 
