@@ -192,12 +192,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             .maybeSingle();
 
           if (existingProfile) {
-            // Profile exists - just update metadata
+            // Profile exists - update metadata and status
             const { error: updateError } = await supabase
               .from("profiles")
               .update({
                 username: user.name || user.email.split("@")[0],
                 avatar_url: user.image || null,
+                status: "oracle",
                 updated_at: new Date().toISOString(),
               })
               .eq("id", existingProfile.id);
@@ -216,6 +217,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 mail: user.email,
                 username: user.name || user.email.split("@")[0],
                 avatar_url: user.image || null,
+                status: "oracle",
                 updated_at: new Date().toISOString(),
               });
 
