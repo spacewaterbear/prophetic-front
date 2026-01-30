@@ -87,6 +87,7 @@ async function createOrUpdateMagicLinkProfile(
         .from("profiles")
         .update({
           ...nameFields,
+          status: "oracle",
           updated_at: new Date().toISOString(),
         })
         .eq("id", existingProfileByEmail.id);
@@ -108,6 +109,7 @@ async function createOrUpdateMagicLinkProfile(
         .update({
           mail: email,
           ...nameFields,
+          status: "oracle",
           updated_at: new Date().toISOString(),
         })
         .eq("id", userId);

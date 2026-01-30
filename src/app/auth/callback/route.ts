@@ -97,6 +97,7 @@ async function createOrUpdateMagicLinkProfile(
       await adminClient
         .from("profiles")
         .update({
+          status: "oracle",
           updated_at: new Date().toISOString(),
         })
         .eq("id", existingProfileByEmail.id);
@@ -117,6 +118,7 @@ async function createOrUpdateMagicLinkProfile(
         .from("profiles")
         .update({
           mail: email,
+          status: "oracle",
           updated_at: new Date().toISOString(),
         })
         .eq("id", userId);
