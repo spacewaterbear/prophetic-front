@@ -129,7 +129,7 @@ async function createOrUpdateMagicLinkProfile(
       id: userId,
       mail: email,
       username: email.split("@")[0] || "User",
-      status: "unauthorized",
+      status: "oracle",
       updated_at: new Date().toISOString(),
     });
 

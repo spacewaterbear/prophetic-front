@@ -126,7 +126,7 @@ async function createOrUpdateMagicLinkProfile(
       username,
       first_name: firstName || null,
       last_name: lastName || null,
-      status: "unauthorized",
+      status: "oracle",
       updated_at: new Date().toISOString(),
     });
 
