@@ -24,6 +24,9 @@ services:
       # Legacy OpenRouter API (no longer used)
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
       - NEXTAUTH_URL=${NEXTAUTH_URL}
+      # Environment-based access control (admin-only for staging/preprod)
+      - NEXT_PUBLIC_APP_ENV=preprod
+      - NEXT_PUBLIC_PRODUCTION_URL=${NEXT_PUBLIC_PRODUCTION_URL}
 
     restart: unless-stopped
     networks:

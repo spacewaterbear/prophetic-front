@@ -26,6 +26,9 @@ services:
       - PROPHETIC_API_TOKEN=${PROPHETIC_API_TOKEN}
       # Legacy OpenRouter API (no longer used)
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      # Environment-based access control (admin-only for staging/preprod)
+      - NEXT_PUBLIC_APP_ENV=staging
+      - NEXT_PUBLIC_PRODUCTION_URL=${NEXT_PUBLIC_PRODUCTION_URL}
 
       - ENVIRONNEMENT=${ENVIRONNEMENT}
 

@@ -237,18 +237,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         // Use the stable Google user ID stored in the token
         session.user.id = token.userId as string;
 
-        // Fetch user's status from database
+        // Fetch user's status and admin flag from database
         try {
           const supabase = createAdminClient();
 
           const { data: profile } = await supabase
             .from('profiles')
-            .select('status')
+            .select('status, is_admin')
             .eq('id', session.user.id)
             .maybeSingle();
 
           if (profile) {
             session.user.status = profile.status;
+            session.user.isAdmin = profile.is_admin ?? false;
           }
         } catch (error) {
           console.error('[Auth] Error fetching user status:', error);

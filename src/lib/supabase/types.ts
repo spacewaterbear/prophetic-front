@@ -172,6 +172,7 @@ export type Database = {
           avatar_url: string | null
           first_name: string | null
           id: string
+          is_admin: boolean
           last_name: string | null
           mail: string | null
           status: Database["public"]["Enums"]["user_status"]
@@ -182,6 +183,7 @@ export type Database = {
           avatar_url?: string | null
           first_name?: string | null
           id: string
+          is_admin?: boolean
           last_name?: string | null
           mail?: string | null
           status?: Database["public"]["Enums"]["user_status"]
@@ -192,6 +194,7 @@ export type Database = {
           avatar_url?: string | null
           first_name?: string | null
           id?: string
+          is_admin?: boolean
           last_name?: string | null
           mail?: string | null
           status?: Database["public"]["Enums"]["user_status"]
