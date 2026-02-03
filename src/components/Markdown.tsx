@@ -15,13 +15,13 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
   const convertAsciiTableToMarkdown = (asciiTable: string): string => {
     const lines = asciiTable.split('\n');
 
-    // Extract rows that contain data (have │ character)
+    // Extract rows that contain data (have │ or boxes character)
     const dataRows = lines
-      .filter(line => line.includes('│') && !line.trim().match(/^[┌┐└┘├┤┬┴┼─━╔╗╚╝╠╣╦╩╬═]+$/))
+      .filter(line => (line.includes('│') || line.includes('║')) && !line.trim().match(/^[┌┐└┘├┤┬┴┼─━╔╗╚╝╠╣╦╩╬═╭╮╰╯]+$/))
       .map(line => {
-        // Split by │ and clean up each cell
+        // Split by │ or ║ and clean up each cell
         return line
-          .split('│')
+          .split(/[│║]/)
           .map(cell => cell.trim())
           .filter(cell => cell.length > 0);
       })
@@ -140,7 +140,12 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
   const processedContent = React.useMemo(() => {
     // First, decode HTML entities
     const decoded = decodeHtmlEntities(content);
-    let trimmed = decoded.trim();
+
+    // Convert literal \n strings to actual newlines (handles escaped newlines from API)
+    let trimmed = decoded
+      .replace(/\\n/g, '\n')
+      .replace(/\\t/g, '\t')
+      .trim();
 
     // Check if content is wrapped in HTML pre/code tags and unwrap it
     // Pattern: <pre ...><code ...>content</code></pre>
@@ -165,18 +170,6 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
 
     let unwrapped = codeBlockMatch ? codeBlockMatch[1].trim() : trimmed;
 
-    // Additional check: if content starts with markdown headers or separators,
-    // it's likely markdown that should be unwrapped
-    const looksLikeMarkdown = /^(#{1,6}\s|─{3,}|━{3,}|┌|╔)/.test(unwrapped);
-
-    // If it looks like markdown but is still wrapped in a code block pattern, force unwrap
-    if (looksLikeMarkdown && unwrapped.includes('```')) {
-      const forceUnwrap = unwrapped.match(/```[\s\S]*?\n([\s\S]*?)\n```/);
-      if (forceUnwrap) {
-        unwrapped = forceUnwrap[1].trim();
-      }
-    }
-
     // First, convert pipe-delimited ASCII tables to markdown tables
     unwrapped = convertPipeTableToMarkdown(unwrapped);
 
@@ -189,9 +182,10 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
         trimmedCode.startsWith('┌') ||
         trimmedCode.startsWith('╔') ||
         trimmedCode.startsWith('┏') ||
+        trimmedCode.startsWith('╭') ||
         trimmedCode.startsWith('━') ||
         trimmedCode.startsWith('─') ||
-        (trimmedCode.includes('│') && (trimmedCode.includes('─') || trimmedCode.includes('━')));
+        ((trimmedCode.includes('│') || trimmedCode.includes('║')) && (trimmedCode.includes('─') || trimmedCode.includes('━') || trimmedCode.includes('═')));
 
       if (isAsciiTable) {
         return '\n' + convertAsciiTableToMarkdown(trimmedCode) + '\n';
@@ -409,7 +403,7 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
               // Check if this is a horizontal separator line (long sequence of dashes or equals)
               const isHorizontalSeparator =
                 typeof firstChild === 'string' &&
-                /^[-=─━]{10,}$/.test(firstChild.trim());
+                /^[-=─━▬]{10,}$/.test(firstChild.trim());
 
               // Check if content contains long dash lines (even with text in between or mixed with other elements)
               let containsLongDashLines = false;
@@ -449,9 +443,9 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
                 React.Children.forEach(children, (child, index) => {
                   if (typeof child === 'string') {
                     // Split by long dash sequences using Unicode escape sequences
-                    const parts = child.split(/([\-=\u2500-\u257F]{30,})/);
+                    const parts = child.split(/([\-=\u2500-\u257F▬]{30,})/);
                     parts.forEach((part, partIndex) => {
-                      if (/^[\-=\u2500-\u257F]{30,}$/.test(part)) {
+                      if (/^[\-=\u2500-\u257F▬]{30,}$/.test(part)) {
                         // Flush text buffer if any
                         if (textBuffer.length > 0) {
                           elements.push(
@@ -525,29 +519,15 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
 
               // Helper to check for ASCII table/box patterns in block code
               const content = String(children).trim();
-              const isAsciiArt = !inline && (
-                content.startsWith('┌') ||
-                content.startsWith('╔') ||
-                content.startsWith('╭') ||
-                content.startsWith('┏') ||
-                content.startsWith('+') ||
-                content.startsWith('━') ||
-                content.startsWith('─') ||
-                content.includes('│') ||
-                content.includes('┊') ||
-                content.includes('├') ||
-                content.includes('┤') ||
-                content.includes('┼') ||
-                content.includes('╰') ||
-                content.includes('╯') ||
-                content.includes('▬') ||
-                content.includes('░') ||
-                content.includes('●') ||
-                content.includes('○') ||
-                content.includes('◆') ||
-                content.includes('▲') ||
-                content.includes('▼')
-              );
+
+              // Check for various ASCII art patterns
+              const hasBoxChars = /[┌┐└┘├┤┬┴┼╔╗╚╝╠╣╦╩╬╭╮╯╰┏┓┗┛┣┫┳┻╋│─━┊┆║═]/.test(content);
+              const hasChartChars = /[▬░▓█●○◆◇▲▼►◄■□▪▫]/.test(content);
+              const hasProgressBars = /[▬░]{3,}/.test(content) || /●{2,}|○{2,}/.test(content);
+              const looksLikeChart = content.includes('%') && (hasChartChars || hasProgressBars);
+              const looksLikeMetrics = /^\s*\w+\s+[\d.]+%?\s*$/m.test(content) && hasChartChars;
+
+              const isAsciiArt = !inline && (hasBoxChars || hasChartChars || hasProgressBars || looksLikeChart || looksLikeMetrics);
 
               if (inline) {
                 return (
@@ -564,7 +544,7 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
               if (isAsciiArt) {
                 return (
                   <code
-                    className="block bg-zinc-50 dark:bg-zinc-900/50 text-zinc-700 dark:text-zinc-300 text-sm whitespace-pre leading-relaxed md-mono"
+                    className="block bg-zinc-50 dark:bg-zinc-900/50 text-zinc-700 dark:text-zinc-300 text-[13px] whitespace-pre leading-[1.6] md-mono overflow-x-auto"
                     {...props}
                   >
                     {children}
@@ -589,28 +569,11 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
 
               if (React.isValidElement(firstChild) && firstChild.props.children) {
                 const content = String(firstChild.props.children).trim();
-                isAsciiArt =
-                  content.startsWith('┌') ||
-                  content.startsWith('╔') ||
-                  content.startsWith('╭') ||
-                  content.startsWith('┏') ||
-                  content.startsWith('+') ||
-                  content.startsWith('━') ||
-                  content.startsWith('─') ||
-                  content.includes('│') ||
-                  content.includes('┊') ||
-                  content.includes('├') ||
-                  content.includes('┤') ||
-                  content.includes('┼') ||
-                  content.includes('╰') ||
-                  content.includes('╯') ||
-                  content.includes('▬') ||
-                  content.includes('░') ||
-                  content.includes('●') ||
-                  content.includes('○') ||
-                  content.includes('◆') ||
-                  content.includes('▲') ||
-                  content.includes('▼');
+                // Check for various ASCII art patterns
+                const hasBoxChars = /[┌┐└┘├┤┬┴┼╔╗╚╝╠╣╦╩╬╭╮╯╰┏┓┗┛┣┫┳┻╋│─━┊┆║═]/.test(content);
+                const hasChartChars = /[▬░▓█●○◆◇▲▼►◄■□▪▫]/.test(content);
+                const hasProgressBars = /[▬░]{3,}/.test(content) || /●{2,}|○{2,}/.test(content);
+                isAsciiArt = hasBoxChars || hasChartChars || hasProgressBars;
               }
 
               return (
