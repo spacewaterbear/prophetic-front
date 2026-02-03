@@ -53,6 +53,16 @@ export default {
         custom: {
           brand: 'rgb(50, 45, 230)',
           'brand-hover': 'rgb(40, 35, 200)'
+        },
+        // Premium dark theme palette
+        zinc: {
+          950: '#0a0a0a',
+          900: '#18181b',
+          800: '#27272a',
+          700: '#3f3f46',
+          600: '#52525b',
+          500: '#71717a',
+          400: '#a1a1aa',
         }
       },
       borderRadius: {

@@ -285,11 +285,11 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
 
     return (
       <span
-        className="relative group/analysis inline bg-gradient-to-r from-amber-100 to-yellow-100 dark:from-amber-900/40 dark:to-yellow-900/40 px-1 rounded border-l-4 border-amber-500 dark:border-amber-400 cursor-pointer transition-all hover:shadow-md box-decoration-clone"
+        className="relative group/analysis inline bg-gradient-to-r from-amber-100/20 to-yellow-100/20 dark:from-amber-900/40 dark:to-yellow-900/40 px-1 rounded border-l-2 border-amber-500 dark:border-amber-400 cursor-pointer transition-all hover:shadow-md box-decoration-clone"
         onClick={handleClick}
       >
         {removeAnalysisMarker(children)}
-        <span className="absolute left-1/2 -translate-x-1/2 -top-8 px-2 py-1 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-800 text-xs rounded hidden group-hover/analysis:block whitespace-nowrap pointer-events-none z-10">
+        <span className="absolute left-1/2 -translate-x-1/2 -top-8 px-2 py-1 bg-zinc-800 dark:bg-zinc-200 text-white dark:text-zinc-800 text-xs rounded hidden group-hover/analysis:block whitespace-nowrap pointer-events-none z-10">
           make an analysis
         </span>
       </span>
@@ -302,7 +302,7 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
         <div className="hidden flex justify-start mb-4">
           <button
             onClick={onCategoryClick}
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-zinc-400 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded-lg transition-colors"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -321,72 +321,83 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
           </button>
         </div>
       )}
-      <div className={cn("prose prose-sm dark:prose-invert max-w-none px-0", className)}>
+      <div className={cn("max-w-none px-0", className)} style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif" }}>
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
           components={{
-            // Headings
+            // Headings - Premium minimal styling
             h1: ({ node, children, ...props }) => {
               if (hasAnalysisMarker(children)) {
                 return (
-                  <h1 className="text-2xl font-bold mt-6 mb-4 text-gray-900 dark:text-gray-100" style={{ fontFamily: 'EB Garamond, serif' }} {...props}>
+                  <h1 className="text-2xl font-light mt-6 mb-4 text-gray-900 dark:text-white tracking-tight" {...props}>
                     <AnalysisHighlight>{children}</AnalysisHighlight>
                   </h1>
                 );
               }
-              return <h1 className="text-2xl font-bold mt-6 mb-4 text-gray-900 dark:text-gray-100" style={{ fontFamily: 'EB Garamond, serif' }} {...props}>{children}</h1>;
+              return <h1 className="text-2xl font-light mt-6 mb-4 text-gray-900 dark:text-white tracking-tight" {...props}>{children}</h1>;
             },
             h2: ({ node, children, ...props }) => {
               if (hasAnalysisMarker(children)) {
                 return (
-                  <h2 className="text-xl font-bold mt-5 mb-3 text-gray-900 dark:text-gray-100" style={{ fontFamily: 'EB Garamond, serif' }} {...props}>
+                  <h2 className="text-xl font-light mt-5 mb-3 text-gray-900 dark:text-white tracking-tight" {...props}>
                     <AnalysisHighlight>{children}</AnalysisHighlight>
                   </h2>
                 );
               }
-              return <h2 className="text-xl font-bold mt-5 mb-3 text-gray-900 dark:text-gray-100" style={{ fontFamily: 'EB Garamond, serif' }} {...props}>{children}</h2>;
+              return <h2 className="text-xl font-light mt-5 mb-3 text-gray-900 dark:text-white tracking-tight" {...props}>{children}</h2>;
             },
             h3: ({ node, children, ...props }) => {
               if (hasAnalysisMarker(children)) {
                 return (
-                  <h3 className="text-lg font-semibold mt-4 mb-2 text-gray-900 dark:text-gray-100" style={{ fontFamily: 'EB Garamond, serif' }} {...props}>
+                  <h3 className="text-lg font-normal mt-4 mb-2 text-gray-900 dark:text-white" {...props}>
                     <AnalysisHighlight>{children}</AnalysisHighlight>
                   </h3>
                 );
               }
-              return <h3 className="text-lg font-semibold mt-4 mb-2 text-gray-900 dark:text-gray-100" style={{ fontFamily: 'EB Garamond, serif' }} {...props}>{children}</h3>;
+              return <h3 className="text-lg font-normal mt-4 mb-2 text-gray-900 dark:text-white" {...props}>{children}</h3>;
             },
             h4: ({ node, children, ...props }) => {
+              // Check if this looks like a label (short, uppercase-ish text)
+              const textContent = React.Children.toArray(children).map(c => String(c)).join('');
+              const looksLikeLabel = textContent.length < 30 && textContent === textContent.toUpperCase();
+
+              if (looksLikeLabel) {
+                return (
+                  <h4 className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-500 mt-5 mb-2" {...props}>
+                    {hasAnalysisMarker(children) ? <AnalysisHighlight>{children}</AnalysisHighlight> : children}
+                  </h4>
+                );
+              }
               if (hasAnalysisMarker(children)) {
                 return (
-                  <h4 className="text-base font-semibold mt-3 mb-2 text-gray-900 dark:text-gray-100" {...props}>
+                  <h4 className="text-base font-normal mt-3 mb-2 text-gray-900 dark:text-white" {...props}>
                     <AnalysisHighlight>{children}</AnalysisHighlight>
                   </h4>
                 );
               }
-              return <h4 className="text-base font-semibold mt-3 mb-2 text-gray-900 dark:text-gray-100" {...props}>{children}</h4>;
+              return <h4 className="text-base font-normal mt-3 mb-2 text-gray-900 dark:text-white" {...props}>{children}</h4>;
             },
             h5: ({ node, children, ...props }) => {
               if (hasAnalysisMarker(children)) {
                 return (
-                  <h5 className="text-sm font-semibold mt-3 mb-2 text-gray-900 dark:text-gray-100" {...props}>
+                  <h5 className="text-sm font-medium mt-3 mb-2 text-gray-800 dark:text-zinc-300" {...props}>
                     <AnalysisHighlight>{children}</AnalysisHighlight>
                   </h5>
                 );
               }
-              return <h5 className="text-sm font-semibold mt-3 mb-2 text-gray-900 dark:text-gray-100" {...props}>{children}</h5>;
+              return <h5 className="text-sm font-medium mt-3 mb-2 text-gray-800 dark:text-zinc-300" {...props}>{children}</h5>;
             },
             h6: ({ node, children, ...props }) => {
               if (hasAnalysisMarker(children)) {
                 return (
-                  <h6 className="text-sm font-semibold mt-3 mb-2 text-gray-700 dark:text-gray-300" {...props}>
+                  <h6 className="text-sm font-normal mt-3 mb-2 text-gray-700 dark:text-zinc-400" {...props}>
                     <AnalysisHighlight>{children}</AnalysisHighlight>
                   </h6>
                 );
               }
-              return <h6 className="text-sm font-semibold mt-3 mb-2 text-gray-700 dark:text-gray-300" {...props}>{children}</h6>;
+              return <h6 className="text-sm font-normal mt-3 mb-2 text-gray-700 dark:text-zinc-400" {...props}>{children}</h6>;
             },
-            // Paragraphs
+            // Paragraphs - Clean zinc styling
             p: ({ node, children, ...props }) => {
               // Helper to check for ASCII table/box patterns
               // Use React.Children to safely handle children, looking at the first child if it's a string
@@ -412,7 +423,7 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
                 return (
                   <div className="table-scroll-wrapper my-4">
                     <p
-                      className="font-mono whitespace-pre leading-tight mb-0"
+                      className="md-mono whitespace-pre leading-tight mb-0 text-zinc-600 dark:text-zinc-400"
                       {...props}
                     >
                       {children}
@@ -423,8 +434,8 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
 
               if (isHorizontalSeparator) {
                 return (
-                  <div className="my-4 w-full max-w-full overflow-hidden">
-                    <div className="border-t-2 border-gray-300 dark:border-gray-600" />
+                  <div className="my-6 w-full max-w-full overflow-hidden">
+                    <div className="border-t border-zinc-300 dark:border-zinc-800" />
                   </div>
                 );
               }
@@ -444,7 +455,7 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
                         // Flush text buffer if any
                         if (textBuffer.length > 0) {
                           elements.push(
-                            <p key={`text-${index}-${partIndex}`} className="mb-2 leading-relaxed overflow-hidden">
+                            <p key={`text-${index}-${partIndex}`} className="mb-2 leading-relaxed overflow-hidden text-gray-700 dark:text-zinc-400">
                               {textBuffer}
                             </p>
                           );
@@ -452,7 +463,7 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
                         }
                         // Add horizontal rule as a separate element
                         elements.push(
-                          <hr key={`hr-${index}-${partIndex}`} className="my-2 border-gray-300 dark:border-gray-600" />
+                          <hr key={`hr-${index}-${partIndex}`} className="my-4 border-zinc-300 dark:border-zinc-800" />
                         );
                       } else if (part) {
                         textBuffer.push(part);
@@ -466,7 +477,7 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
                 // Flush remaining text buffer
                 if (textBuffer.length > 0) {
                   elements.push(
-                    <p key="text-final" className="mb-2 leading-relaxed overflow-hidden">
+                    <p key="text-final" className="mb-2 leading-relaxed overflow-hidden text-gray-700 dark:text-zinc-400">
                       {textBuffer}
                     </p>
                   );
@@ -478,24 +489,24 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
               // Check if content contains -+- markers for analysis highlighting
               if (hasAnalysisMarker(children)) {
                 return (
-                  <p className="leading-relaxed px-0" {...props}>
+                  <p className="leading-relaxed px-0 text-gray-700 dark:text-zinc-400" {...props}>
                     <AnalysisHighlight>{children}</AnalysisHighlight>
                   </p>
                 );
               }
 
               return (
-                <p className="leading-relaxed px-0" {...props}>
+                <p className="leading-relaxed px-0 text-gray-700 dark:text-zinc-400 mb-3" {...props}>
                   {children}
                 </p>
               );
             },
-            // Lists
+            // Lists - Clean spacing
             ul: ({ node, ...props }) => (
-              <ul className="list-disc list-inside mb-4 space-y-2" {...props} />
+              <ul className="list-disc list-inside mb-4 space-y-2 text-gray-700 dark:text-zinc-400" {...props} />
             ),
             ol: ({ node, ...props }) => (
-              <ol className="list-decimal list-inside mb-4 space-y-2" {...props} />
+              <ol className="list-decimal list-inside mb-4 space-y-2 text-gray-700 dark:text-zinc-400" {...props} />
             ),
             li: ({ node, children, ...props }) => {
               if (hasAnalysisMarker(children)) {
@@ -507,29 +518,41 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
               }
               return <li className="leading-relaxed" {...props}>{children}</li>;
             },
-            // Code
+            // Code - JetBrains Mono styling
             code: ({ node, className, children, ...props }) => {
               // In react-markdown v10, the `inline` prop indicates if it's inline code
               const { inline } = props as { inline?: boolean };
 
               // Helper to check for ASCII table/box patterns in block code
               const content = String(children).trim();
-              const isAsciiTable = !inline && (
+              const isAsciiArt = !inline && (
                 content.startsWith('┌') ||
                 content.startsWith('╔') ||
+                content.startsWith('╭') ||
                 content.startsWith('┏') ||
                 content.startsWith('+') ||
                 content.startsWith('━') ||
                 content.startsWith('─') ||
-                (content.includes('│') && content.includes('─')) ||
-                (content.includes('│') && content.includes('━')) ||
-                (content.includes('├') || content.includes('┤') || content.includes('┼'))
+                content.includes('│') ||
+                content.includes('┊') ||
+                content.includes('├') ||
+                content.includes('┤') ||
+                content.includes('┼') ||
+                content.includes('╰') ||
+                content.includes('╯') ||
+                content.includes('▬') ||
+                content.includes('░') ||
+                content.includes('●') ||
+                content.includes('○') ||
+                content.includes('◆') ||
+                content.includes('▲') ||
+                content.includes('▼')
               );
 
               if (inline) {
                 return (
                   <code
-                    className="bg-gray-100 dark:bg-gray-800 text-pink-600 dark:text-pink-400 px-1.5 py-0.5 rounded text-sm font-mono"
+                    className="bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-300 px-1.5 py-0.5 rounded text-sm md-mono"
                     {...props}
                   >
                     {children}
@@ -537,25 +560,22 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
                 );
               }
 
-              // Custom styling for ASCII tables to make them look cleaner
-              if (isAsciiTable) {
+              // Custom styling for ASCII art/tables to preserve formatting
+              if (isAsciiArt) {
                 return (
-                  <div className="table-scroll-wrapper my-4">
-                    <code
-                      className="block bg-gray-50 dark:bg-gray-800/30 text-gray-900 dark:text-gray-100 text-sm whitespace-pre leading-tight p-3 rounded"
-                      style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace' }}
-                      {...props}
-                    >
-                      {children}
-                    </code>
-                  </div>
+                  <code
+                    className="block bg-zinc-50 dark:bg-zinc-900/50 text-zinc-700 dark:text-zinc-300 text-sm whitespace-pre leading-relaxed md-mono"
+                    {...props}
+                  >
+                    {children}
+                  </code>
                 );
               }
 
               // Standard block code styling
               return (
                 <code
-                  className="block bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono my-4"
+                  className="block bg-zinc-100 dark:bg-zinc-900 text-zinc-800 dark:text-zinc-300 p-4 rounded-xl overflow-x-auto text-sm md-mono my-4 whitespace-pre-wrap"
                   {...props}
                 >
                   {children}
@@ -563,33 +583,43 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
               );
             },
             pre: ({ node, children, ...props }) => {
-              // Check if the content is an ASCII table to remove the background styling
-              // We need to peek into the children (usually a code element)
+              // Check if the content is ASCII art to apply special styling
               const firstChild = React.Children.toArray(children)[0];
-              let isAsciiTable = false;
+              let isAsciiArt = false;
 
               if (React.isValidElement(firstChild) && firstChild.props.children) {
                 const content = String(firstChild.props.children).trim();
-                isAsciiTable =
+                isAsciiArt =
                   content.startsWith('┌') ||
                   content.startsWith('╔') ||
+                  content.startsWith('╭') ||
                   content.startsWith('┏') ||
                   content.startsWith('+') ||
                   content.startsWith('━') ||
                   content.startsWith('─') ||
-                  (content.includes('│') && content.includes('─')) ||
-                  (content.includes('│') && content.includes('━')) ||
-                  (content.includes('├') || content.includes('┤') || content.includes('┼'));
+                  content.includes('│') ||
+                  content.includes('┊') ||
+                  content.includes('├') ||
+                  content.includes('┤') ||
+                  content.includes('┼') ||
+                  content.includes('╰') ||
+                  content.includes('╯') ||
+                  content.includes('▬') ||
+                  content.includes('░') ||
+                  content.includes('●') ||
+                  content.includes('○') ||
+                  content.includes('◆') ||
+                  content.includes('▲') ||
+                  content.includes('▼');
               }
 
               return (
                 <pre
                   className={cn(
-                    "overflow-hidden my-4 block",
-                    // Different styling for ASCII tables vs regular code blocks
-                    isAsciiTable
-                      ? "bg-gray-50 dark:bg-gray-800/30 rounded"
-                      : "bg-gray-100 dark:bg-gray-900 rounded-lg"
+                    "overflow-x-auto my-4 block whitespace-pre",
+                    isAsciiArt
+                      ? "bg-zinc-50 dark:bg-zinc-900/50 rounded-lg p-4"
+                      : "bg-zinc-100 dark:bg-zinc-900 rounded-xl p-4"
                   )}
                   {...props}
                 >
@@ -597,27 +627,27 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
                 </pre>
               );
             },
-            // Blockquote
+            // Blockquote - Minimal left border styling
             blockquote: ({ node, ...props }) => (
               <blockquote
-                className="border-l-4 border-blue-500 dark:border-blue-400 pl-4 py-2 my-4 italic text-gray-700 dark:text-gray-300 bg-blue-50/50 dark:bg-blue-900/20"
+                className="border-l-2 border-zinc-300 dark:border-zinc-700 pl-4 py-2 my-4 italic text-zinc-600 dark:text-zinc-400"
                 {...props}
               />
             ),
-            // Links
+            // Links - Blue accent
             a: ({ node, ...props }) => (
               <a
-                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline"
+                className="text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 underline decoration-blue-500/30 hover:decoration-blue-500 transition-colors"
                 target="_blank"
                 rel="noopener noreferrer"
                 {...props}
               />
             ),
-            // Horizontal rule
+            // Horizontal rule - Subtle zinc border
             hr: ({ node, ...props }) => (
-              <hr className="my-6 border-gray-300 dark:border-gray-600" {...props} />
+              <hr className="my-6 border-zinc-300 dark:border-zinc-800" {...props} />
             ),
-            // Tables
+            // Tables - Premium grid styling
             table: ({ node, children, ...props }) => {
               // Simpler approach: check if table has only 1 column by counting th/td in first row
               let isSingleColumn = false;
@@ -653,7 +683,7 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
               return (
                 <div className="table-scroll-wrapper my-4">
                   <table
-                    className={`w-full divide-y divide-gray-300 dark:divide-gray-600 border border-gray-300 dark:border-gray-600 ${isSingleColumn ? '' : 'md:min-w-[500px]'}`}
+                    className={`w-full border border-zinc-200 dark:border-zinc-800 rounded-lg overflow-hidden ${isSingleColumn ? '' : 'md:min-w-[500px]'}`}
                     {...props}
                   >
                     {children}
@@ -662,10 +692,10 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
               );
             },
             thead: ({ node, ...props }) => (
-              <thead className="bg-[rgb(235,225,215)] dark:bg-gray-800" {...props} />
+              <thead className="bg-zinc-100 dark:bg-zinc-900" {...props} />
             ),
             tbody: ({ node, ...props }) => (
-              <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-[rgb(242,235,225)] dark:bg-gray-900" {...props} />
+              <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800 bg-white dark:bg-zinc-950" {...props} />
             ),
             tr: ({ node, children, ...props }) => {
               // Check if this row is just a horizontal divider
@@ -681,10 +711,10 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
 
               if (isDividerRow) return null;
 
-              return <tr {...props}>{children}</tr>;
+              return <tr className="hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors" {...props}>{children}</tr>;
             },
             th: ({ node, ...props }) => (
-              <th className="px-2 py-1 sm:px-4 sm:py-2 text-center text-xs sm:text-sm font-semibold text-gray-900 dark:text-gray-100" {...props} />
+              <th className="px-3 py-2 sm:px-4 sm:py-3 text-left text-xs font-medium text-zinc-600 dark:text-zinc-400 uppercase tracking-wider" {...props} />
             ),
             td: ({ node, children, ...props }) => {
               const hasLongUnbreakableWord = React.Children.toArray(children).some(
@@ -693,12 +723,17 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
                   child.split(" ").some((word) => word.length > 30)
               );
 
+              // Check if content looks like a number or percentage
+              const textContent = React.Children.toArray(children).map(c => String(c)).join('');
+              const looksLikeNumber = /^[\d€$%+\-.,\s]+$/.test(textContent.trim());
+
               if (hasAnalysisMarker(children)) {
                 return (
                   <td
                     className={cn(
-                      "px-2 py-1 sm:px-4 sm:py-2 text-center text-xs sm:text-sm text-gray-700 dark:text-gray-300",
-                      hasLongUnbreakableWord ? "break-all" : "break-words"
+                      "px-3 py-2 sm:px-4 sm:py-3 text-sm text-zinc-700 dark:text-zinc-300",
+                      hasLongUnbreakableWord ? "break-all" : "break-words",
+                      looksLikeNumber && "md-mono text-right"
                     )}
                     {...props}
                   >
@@ -710,8 +745,9 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
               return (
                 <td
                   className={cn(
-                    "px-2 py-1 sm:px-4 sm:py-2 text-center text-xs sm:text-sm text-gray-700 dark:text-gray-300",
-                    hasLongUnbreakableWord ? "break-all" : "break-words"
+                    "px-3 py-2 sm:px-4 sm:py-3 text-sm text-zinc-700 dark:text-zinc-300",
+                    hasLongUnbreakableWord ? "break-all" : "break-words",
+                    looksLikeNumber && "md-mono text-right"
                   )}
                   {...props}
                 >
@@ -719,12 +755,12 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
                 </td>
               );
             },
-            // Strong and emphasis
+            // Strong and emphasis - White for strong, italic for em
             strong: ({ node, ...props }) => (
-              <strong className="font-semibold text-gray-900 dark:text-gray-100" {...props} />
+              <strong className="font-medium text-gray-900 dark:text-white" {...props} />
             ),
             em: ({ node, ...props }) => (
-              <em className="italic" {...props} />
+              <em className="italic text-gray-600 dark:text-zinc-300" {...props} />
             ),
           }}
         >
