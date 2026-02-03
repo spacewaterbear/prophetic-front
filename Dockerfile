@@ -2,9 +2,10 @@
 FROM node:20-alpine AS deps
 WORKDIR /app
 
-# Install dependencies based on the preferred package manager
+# Install dependencies with npm cache for faster rebuilds
 COPY package.json package-lock.json* ./
-RUN npm ci
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --prefer-offline
 
 # Stage 2: Builder
 FROM node:20-alpine AS builder
@@ -15,60 +16,50 @@ ARG NEXT_PUBLIC_SUPABASE_URL
 ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 # Set environment variables for build
-ENV NEXT_TELEMETRY_DISABLED=1
-ENV NODE_ENV=production
-ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
-ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
+ENV NEXT_TELEMETRY_DISABLED=1 \
+    NODE_ENV=production \
+    NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL \
+    NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 # Copy dependencies from deps stage
 COPY --from=deps /app/node_modules ./node_modules
 
-# Copy package.json (needed for build scripts and Next.js config)
-COPY package.json package-lock.json* ./
+# Copy configuration files first (change less frequently = better caching)
+COPY package.json next.config.* tsconfig.json tailwind.config.* postcss.config.* components.json ./
 
-# Copy configuration files (these change less frequently than source code)
-COPY next.config.* ./
-COPY tsconfig.json ./
-COPY tailwind.config.* ./
-COPY postcss.config.* ./
-COPY components.json ./
-COPY biome.json* ./
-
-# Copy source code (changes most frequently, so copied last for better caching)
+# Copy source code (changes most frequently)
 COPY src ./src
 
 # Cache bust argument - pass --build-arg CACHEBUST=$(date +%s) to force rebuild
 ARG CACHEBUST=1
 
-# Build the Next.js application
-RUN npm run build
+# Build with npm cache
+RUN --mount=type=cache,target=/root/.npm \
+    npm run build
 
 # Stage 3: Runner
 FROM node:20-alpine AS runner
 WORKDIR /app
 
-ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production \
+    NEXT_TELEMETRY_DISABLED=1 \
+    PORT=3000 \
+    HOSTNAME="0.0.0.0"
 
-# Create a non-root user
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+# Create non-root user in single layer
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
 
-# Copy necessary files from builder
+# Copy standalone build
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-
-# Set correct permissions
-RUN chown -R nextjs:nodejs /app
-
 USER nextjs
 
-# Expose the port
 EXPOSE 3000
 
-ENV PORT=3000
-ENV HOSTNAME="0.0.0.0"
+# Health check for production orchestrators (k8s, docker swarm, etc.)
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:3000/ || exit 1
 
-# Start the application
 CMD ["node", "server.js"]
