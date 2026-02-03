@@ -18,10 +18,10 @@ export default auth((req) => {
   // Public routes that don't require authentication
   const isPublicRoute = nextUrl.pathname === "/login" || nextUrl.pathname.startsWith("/share/") || nextUrl.pathname === "/test-verification" || nextUrl.pathname === "/test_visi";
   const isRegistrationPending = nextUrl.pathname === "/registration-pending";
+  const isRestrictedAccess = nextUrl.pathname === "/restricted-access";
 
   // Environment-based access control variables
   const appEnv = process.env.NEXT_PUBLIC_APP_ENV;
-  const productionUrl = process.env.NEXT_PUBLIC_PRODUCTION_URL;
   const isRestrictedEnv = appEnv === "staging" || appEnv === "preprod";
 
   // If not logged in and trying to access protected route, redirect to login
@@ -38,9 +38,9 @@ export default auth((req) => {
 
   // If logged in and on login page, redirect based on admin status for restricted envs
   if (isPublicRoute && nextUrl.pathname === "/login") {
-    // On restricted env, non-admin should be redirected to production
-    if (isRestrictedEnv && !isAdmin && productionUrl) {
-      return NextResponse.redirect(productionUrl);
+    // On restricted env, non-admin should be redirected to restricted access page
+    if (isRestrictedEnv && !isAdmin) {
+      return NextResponse.redirect(new URL("/restricted-access", nextUrl));
     }
     // Admin or production env: redirect to home or registration pending
     if (userStatus === 'unauthorized') {
@@ -56,9 +56,14 @@ export default auth((req) => {
 
   // --- From here, user is logged in and on a protected route ---
 
+  // Allow access to restricted-access page for non-admins in restricted environments
+  if (isRestrictedAccess) {
+    return NextResponse.next();
+  }
+
   // Environment-based access control: only admins can access staging/preprod
-  if (isRestrictedEnv && !isAdmin && productionUrl) {
-    return NextResponse.redirect(productionUrl);
+  if (isRestrictedEnv && !isAdmin) {
+    return NextResponse.redirect(new URL("/restricted-access", nextUrl));
   }
 
   // If logged in but unauthorized, redirect to registration pending page
