@@ -50,9 +50,48 @@ export default {
           '4': 'hsl(var(--chart-4))',
           '5': 'hsl(var(--chart-5))'
         },
+        // Prophetic Design System
+        prophetic: {
+          brand: {
+            primary: '#352ee8',
+            'primary-hover': '#2a25ba',
+            'primary-muted': 'rgba(53, 46, 232, 0.15)',
+          },
+          bg: {
+            app: '#000000',
+            card: '#09090b',
+            'card-hover': '#0f0f11',
+            elevated: '#18181b',
+          },
+          border: {
+            default: '#18181b',
+            subtle: '#27272a',
+            emphasis: '#3f3f46',
+          },
+          text: {
+            primary: '#ffffff',
+            secondary: '#a1a1aa',
+            tertiary: '#71717a',
+            muted: '#52525b',
+            disabled: '#3f3f46',
+          },
+          semantic: {
+            success: '#22c55e',
+            warning: '#f59e0b',
+            error: '#ef4444',
+            info: '#352ee8',
+          },
+          data: {
+            positive: '#22c55e',
+            negative: '#ef4444',
+            neutral: '#71717a',
+            highlight: '#352ee8',
+          },
+        },
+        // Keep custom for backwards compatibility
         custom: {
-          brand: 'rgb(50, 45, 230)',
-          'brand-hover': 'rgb(40, 35, 200)'
+          brand: '#352ee8',
+          'brand-hover': '#2a25ba'
         },
         // Premium dark theme palette
         zinc: {
@@ -65,10 +104,73 @@ export default {
           400: '#a1a1aa',
         }
       },
+      fontFamily: {
+        'serif': ['EB Garamond', 'Georgia', 'serif'],
+        'sans': ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        'mono': ['JetBrains Mono', 'SF Mono', 'Consolas', 'monospace'],
+      },
+      fontSize: {
+        // Prophetic design tokens (prefixed to avoid conflicts)
+        'prophetic-xs': ['10px', { lineHeight: '1.5' }],
+        'prophetic-sm': ['11px', { lineHeight: '1.5' }],
+        'prophetic-base': ['13px', { lineHeight: '1.7' }],
+        'prophetic-md': ['14px', { lineHeight: '1.5' }],
+        'prophetic-lg': ['16px', { lineHeight: '1.5' }],
+        'prophetic-xl': ['18px', { lineHeight: '1.5' }],
+        'prophetic-2xl': ['24px', { lineHeight: '1.2' }],
+        'prophetic-3xl': ['32px', { lineHeight: '1.2' }],
+      },
+      lineHeight: {
+        // Prophetic design tokens
+        'prophetic-tight': '1.2',
+        'prophetic-base': '1.5',
+        'prophetic-relaxed': '1.7',
+      },
+      letterSpacing: {
+        // Prophetic design tokens
+        'prophetic-tight': '-0.02em',
+        'prophetic-normal': '0',
+        'prophetic-wide': '0.1em',
+        'prophetic-wider': '0.2em',
+      },
+      spacing: {
+        // Prophetic design tokens (prefixed to avoid conflicts)
+        'prophetic-0': '0',
+        'prophetic-1': '4px',
+        'prophetic-2': '8px',
+        'prophetic-3': '12px',
+        'prophetic-4': '16px',
+        'prophetic-5': '20px',
+        'prophetic-6': '24px',
+        'prophetic-8': '32px',
+        'prophetic-10': '40px',
+        'prophetic-12': '48px',
+      },
       borderRadius: {
+        // Previous config for sidebar and UI components
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)'
+        sm: 'calc(var(--radius) - 4px)',
+        // Prophetic design tokens
+        'none': '0',
+        'prophetic-sm': '4px',
+        'prophetic-md': '8px',
+        'prophetic-lg': '14px',
+        'prophetic-xl': '16px',
+        'full': '9999px',
+      },
+      transitionDuration: {
+        'fast': '150ms',
+        'normal': '200ms',
+        'slow': '300ms',
+      },
+      transitionTimingFunction: {
+        'default': 'cubic-bezier(0.4, 0, 0.2, 1)',
+        'in': 'cubic-bezier(0.4, 0, 1, 1)',
+        'out': 'cubic-bezier(0, 0, 0.2, 1)',
+      },
+      maxWidth: {
+        'prophetic': '400px',
       },
       container: {
         center: true,

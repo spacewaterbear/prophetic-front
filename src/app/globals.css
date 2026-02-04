@@ -4,20 +4,99 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Premium Markdown Design System */
+/* Prophetic Design System */
 @layer components {
 
   /* Card container for markdown sections */
   .md-card {
-    @apply bg-zinc-950 border border-zinc-900 rounded-2xl p-5;
+    background-color: #09090b;
+    border: 1px solid #18181b;
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 12px;
   }
 
-  /* Uppercase label styling */
+  /* Section label - uppercase styling */
   .md-label {
-    font-size: 10px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 9px;
+    font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.2em;
-    @apply text-zinc-500 mb-4;
+    color: #52525b;
+    margin-bottom: 4px;
+  }
+
+  /* Section title */
+  .md-section-title {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: #ffffff;
+    margin-bottom: 14px;
+  }
+
+  /* Display typography */
+  .md-display-large {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 32px;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+  }
+
+  .md-display-medium {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+  }
+
+  .md-heading-1 {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    color: #ffffff;
+    margin: 8px 0 16px;
+  }
+
+  /* Body text */
+  .md-body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.7;
+    color: #a1a1aa;
+  }
+
+  .md-body-small {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #a1a1aa;
+  }
+
+  /* Data values */
+  .md-data-value {
+    font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #ffffff;
+  }
+
+  .md-data-value-large {
+    font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.2;
+    color: #ffffff;
   }
 
   /* Progress bar component */
@@ -30,34 +109,92 @@
   }
 
   .md-bar-fill-highlight {
-    @apply h-full rounded-full transition-all duration-700 bg-blue-400;
+    background-color: #352ee8;
+    @apply h-full rounded-full transition-all duration-700;
   }
 
   /* Horizontal divider */
   .md-divider {
-    @apply border-t border-zinc-900 my-6;
+    border-top: 1px solid #18181b;
+    margin: 14px 0;
+  }
+
+  .md-divider-sm {
+    border-top: 1px solid #18181b;
+    margin: 12px 0;
+  }
+
+  .md-divider-lg {
+    border-top: 1px solid #18181b;
+    margin: 20px 0;
   }
 
   /* Monospace font class */
   .md-mono {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
   }
 
   /* Row styling for key-value pairs */
   .md-row {
-    @apply flex justify-between items-center py-2;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid #18181b;
   }
 
   .md-row-label {
-    @apply text-zinc-500;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 12px;
+    color: #71717a;
   }
 
   .md-row-value {
-    @apply text-white;
+    font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+    font-size: 11px;
+    color: #ffffff;
   }
 
   .md-row-value-accent {
-    @apply text-blue-400;
+    font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+    font-size: 11px;
+    color: #352ee8;
+  }
+
+  .md-row-value-highlighted {
+    font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+    font-size: 11px;
+    color: #352ee8;
+  }
+
+  /* Data table */
+  .md-table {
+    width: 100%;
+  }
+
+  .md-table-row:last-child .md-row {
+    border-bottom: none;
+  }
+
+  /* Blockquote for quotes */
+  .md-blockquote {
+    border-left: 1px solid #27272a;
+    padding-left: 14px;
+    margin: 16px 0;
+  }
+
+  .md-quote-text {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 15px;
+    font-style: italic;
+    color: #d4d4d8;
+  }
+
+  .md-quote-author {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 10px;
+    color: #52525b;
+    margin-top: 6px;
   }
 }
 
