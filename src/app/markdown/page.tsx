@@ -27,11 +27,17 @@ export default function MarkdownTestPage() {
         // Convert markdown to HTML
         let html = await marked(markdownText);
 
+        // Post-process to convert standard markdown tables to styled tables
+        html = convertMarkdownTablesToStyledHtml(html);
+
         // Post-process to convert allocation profiles to styled cards (MUST be before ASCII tables)
         html = convertAllocationProfilesToHtml(html);
 
         // Post-process to convert ASCII box tables to HTML tables
         html = convertAsciiTablesToHtml(html);
+
+        // Post-process to convert extended artist rankings to styled cards
+        html = convertExtendedRankingsToHtml(html);
 
         // Post-process to convert ranking lists to styled cards
         html = convertRankingListsToHtml(html);
@@ -46,6 +52,61 @@ export default function MarkdownTestPage() {
 
     loadMarkdown();
   }, []);
+
+  // Function to convert standard markdown tables to styled HTML tables
+  function convertMarkdownTablesToStyledHtml(html: string): string {
+    // Match all <table> elements
+    const tableRegex = /<table>([\s\S]*?)<\/table>/g;
+
+    return html.replace(tableRegex, (match, tableContent) => {
+      // Parse the table to extract headers and rows
+      const theadMatch = tableContent.match(/<thead>([\s\S]*?)<\/thead>/);
+      const tbodyMatch = tableContent.match(/<tbody>([\s\S]*?)<\/tbody>/);
+
+      if (!theadMatch || !tbodyMatch) return match;
+
+      // Extract header cells
+      const headerCells = theadMatch[1].match(/<th>(.*?)<\/th>/g) || [];
+      const headers = headerCells.map((cell: string) =>
+        cell.replace(/<\/?th>/g, '').trim()
+      );
+
+      // Extract body rows
+      const bodyRows = tbodyMatch[1].match(/<tr>([\s\S]*?)<\/tr>/g) || [];
+      const rows = bodyRows.map((row: string) => {
+        const cells = row.match(/<td>(.*?)<\/td>/g) || [];
+        return cells.map((cell: string) =>
+          cell.replace(/<\/?td>/g, '').trim()
+        );
+      });
+
+      // Build styled table HTML
+      let styledTable = '<div class="table-scroll-wrapper my-4">';
+      styledTable += '<table class="w-full border border-zinc-200 dark:border-zinc-800 rounded-lg overflow-hidden md:min-w-[500px]">';
+
+      // Add thead
+      styledTable += '<thead class="bg-zinc-100 dark:bg-zinc-900"><tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors">';
+      headers.forEach((header: string) => {
+        styledTable += `<th class="px-3 py-2 sm:px-4 sm:py-3 text-left text-xs font-medium text-zinc-600 dark:text-zinc-400 uppercase tracking-wider">${header}</th>`;
+      });
+      styledTable += '</tr></thead>';
+
+      // Add tbody
+      styledTable += '<tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 bg-white dark:bg-zinc-950">';
+      rows.forEach((row: string[]) => {
+        styledTable += '<tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors">';
+        row.forEach((cell: string) => {
+          styledTable += `<td class="px-3 py-2 sm:px-4 sm:py-3 text-sm text-zinc-700 dark:text-zinc-300 break-words">${cell}</td>`;
+        });
+        styledTable += '</tr>';
+      });
+      styledTable += '</tbody>';
+
+      styledTable += '</table></div>';
+
+      return styledTable;
+    });
+  }
 
   // Function to convert ASCII box tables to HTML tables
   function convertAsciiTablesToHtml(html: string): string {
@@ -160,6 +221,95 @@ export default function MarkdownTestPage() {
       }
 
       // If not a ranking list, return the original code block
+      return match;
+    });
+  }
+
+  // Function to convert extended artist rankings to styled cards
+  function convertExtendedRankingsToHtml(html: string): string {
+    const codeBlockRegex = /<pre><code>([\s\S]*?)<\/code><\/pre>/g;
+
+    return html.replace(codeBlockRegex, (match, codeContent) => {
+      // Check if this code block contains extended rankings (with scores and detailed info)
+      const lines = codeContent.split('\n').map((line: string) => line.trim()).filter((line: string) => line);
+
+      // Pattern: #21 Wolfgang Tillmans  88
+      const hasExtendedRankings = lines.some((line: string) =>
+        /^#\d+\s+[A-Za-z\s]+\s+\d{2,3}$/.test(line)
+      );
+
+      if (hasExtendedRankings) {
+        const rankings: Array<{
+          rank: number;
+          name: string;
+          score: number;
+          details: string[];
+        }> = [];
+
+        let currentRanking: { rank: number; name: string; score: number; details: string[] } | null = null;
+
+        lines.forEach((line: string) => {
+          // Match ranking header: #21 Wolfgang Tillmans  88
+          const headerMatch = line.match(/^#(\d+)\s+(.+?)\s+(\d{2,3})$/);
+
+          if (headerMatch) {
+            // Save previous ranking if exists
+            if (currentRanking) {
+              rankings.push(currentRanking);
+            }
+
+            // Start new ranking
+            currentRanking = {
+              rank: parseInt(headerMatch[1]),
+              name: headerMatch[2].trim(),
+              score: parseInt(headerMatch[3]),
+              details: []
+            };
+          } else if (currentRanking && line) {
+            // Add detail line to current ranking
+            currentRanking.details.push(line);
+          }
+        });
+
+        // Don't forget the last ranking
+        if (currentRanking) {
+          rankings.push(currentRanking);
+        }
+
+        if (rankings.length > 0) {
+          // Generate HTML for extended ranking cards
+          let rankingHtml = '<div class="extended-rankings">';
+          rankings.forEach((ranking) => {
+            // Parse details to extract structured information
+            const detailsText = ranking.details.join(' · ');
+
+            // Extract trend indicators (▲, ►, etc.)
+            const trendMatch = detailsText.match(/(▲{1,3}|►|▼)/);
+            const trend = trendMatch ? trendMatch[1] : '';
+
+            // Extract medium/category (first detail usually)
+            const medium = ranking.details[0] ? ranking.details[0].split('·')[0].trim() : '';
+
+            rankingHtml += `
+              <div class="extended-ranking-card">
+                <div class="extended-ranking-header">
+                  <span class="extended-ranking-number">#${ranking.rank}</span>
+                  <span class="extended-ranking-score">${ranking.score}</span>
+                </div>
+                <div class="extended-ranking-name">${ranking.name}</div>
+                <div class="extended-ranking-details">
+                  ${ranking.details.map(detail => `<div class="extended-ranking-detail">${detail}</div>`).join('')}
+                </div>
+              </div>
+            `;
+          });
+          rankingHtml += '</div>';
+
+          return rankingHtml;
+        }
+      }
+
+      // If not an extended ranking list, return the original code block
       return match;
     });
   }
@@ -713,6 +863,101 @@ export default function MarkdownTestPage() {
             .markdown-container .ranking-description {
               font-size: 13px;
             }
+          }
+
+          /* ═══════════════════════════════════════════════════════════════════════
+             EXTENDED RANKINGS
+             ═══════════════════════════════════════════════════════════════════════ */
+
+          .markdown-container .extended-rankings {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--space-3);
+            margin: var(--space-5) 0;
+          }
+
+          @media (min-width: 768px) {
+            .markdown-container .extended-rankings {
+              grid-template-columns: repeat(2, 1fr);
+            }
+          }
+
+          @media (min-width: 1024px) {
+            .markdown-container .extended-rankings {
+              grid-template-columns: repeat(3, 1fr);
+              gap: var(--space-4);
+            }
+          }
+
+          .markdown-container .extended-ranking-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            transition: all 0.2s ease;
+            position: relative;
+          }
+
+          .markdown-container .extended-ranking-card:hover {
+            background: var(--bg-elevated);
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+          }
+
+          .markdown-container .extended-ranking-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+          }
+
+          .markdown-container .extended-ranking-number {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--brand-primary);
+            letter-spacing: 0.5px;
+          }
+
+          .markdown-container .extended-ranking-score {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.1);
+            padding: 4px 10px;
+            border-radius: var(--radius-md);
+          }
+
+          .markdown-container .extended-ranking-name {
+            font-family: var(--font-serif);
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            line-height: 1.3;
+          }
+
+          .markdown-container .extended-ranking-details {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+          }
+
+          .markdown-container .extended-ranking-detail {
+            font-family: var(--font-sans);
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+          }
+
+          .markdown-container .extended-ranking-trend {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            font-size: 16px;
+            opacity: 0.7;
           }
 
           /* ═══════════════════════════════════════════════════════════════════════
