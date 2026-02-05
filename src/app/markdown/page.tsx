@@ -593,7 +593,7 @@ export default function MarkdownTestPage() {
           .markdown-container .ascii-table td {
             padding: 12px 16px;
             font-size: 13px;
-            color: var(--text-secondary);
+            color: rgba(255, 255, 255, 0.95);
             word-break: break-words;
           }
 
@@ -605,13 +605,13 @@ export default function MarkdownTestPage() {
           }
 
           .markdown-container .ascii-table .label-cell {
-            color: var(--text-tertiary);
+            color: rgba(255, 255, 255, 0.95);
             font-weight: 400;
             min-width: 120px;
           }
 
           .markdown-container .ascii-table .value-cell {
-            color: var(--text-primary);
+            color: rgba(255, 255, 255, 0.95);
             font-family: var(--font-mono);
             font-size: 12px;
             text-align: right;
