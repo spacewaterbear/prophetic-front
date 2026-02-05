@@ -27,6 +27,9 @@ export default function MarkdownTestPage() {
         // Convert markdown to HTML
         let html = await marked(markdownText);
 
+        // Post-process to convert allocation profiles to styled cards (MUST be before ASCII tables)
+        html = convertAllocationProfilesToHtml(html);
+
         // Post-process to convert ASCII box tables to HTML tables
         html = convertAsciiTablesToHtml(html);
 
@@ -157,6 +160,128 @@ export default function MarkdownTestPage() {
       }
 
       // If not a ranking list, return the original code block
+      return match;
+    });
+  }
+
+  // Function to convert allocation profile boxes to styled cards
+  function convertAllocationProfilesToHtml(html: string): string {
+    // Match code blocks that contain allocation profiles with box-drawing characters
+    const codeBlockRegex = /<pre><code>([\s\S]*?)<\/code><\/pre>/g;
+
+    return html.replace(codeBlockRegex, (match, codeContent) => {
+      // Check if this code block contains allocation profile boxes
+      if (codeContent.includes('╭') && (
+        codeContent.includes('DÉCOUVERTE') ||
+        codeContent.includes('CONFIRMÉ') ||
+        codeContent.includes('EXPERT'))) {
+
+        // Split into individual profile boxes
+        const boxes = codeContent.split('╭────────────────────────╮').filter((box: string) => box.trim());
+        const profiles: Array<{ title: string, allocations: Array<{ category: string, percentage: number }>, focus: string[] }> = [];
+
+        boxes.forEach((box: string) => {
+          const lines = box.split('\n').map((line: string) => line.trim()).filter((line: string) => line);
+
+          if (lines.length === 0) return;
+
+          let title = '';
+          const allocations: Array<{ category: string, percentage: number }> = [];
+          const focus: string[] = [];
+          let inFocusSection = false;
+
+          lines.forEach((line: string) => {
+            // Remove box-drawing characters
+            const cleanLine = line.replace(/[│╰─]/g, '').trim();
+
+            if (!cleanLine) return;
+
+            // Title line (e.g., "DÉCOUVERTE €10-25K")
+            if (cleanLine.match(/^(DÉCOUVERTE|CONFIRMÉ|EXPERT)/)) {
+              title = cleanLine;
+            }
+            // Separator line (▔▔▔)
+            else if (cleanLine.match(/^▔+$/)) {
+              // Skip separator
+            }
+            // Allocation line with percentage (e.g., "Accessibles   100%")
+            else if (cleanLine.match(/\d+%/)) {
+              const match = cleanLine.match(/^([A-Za-z-]+)\s+(\d+)%/);
+              if (match) {
+                const category = match[1];
+                const percentage = parseInt(match[2]);
+                allocations.push({ category, percentage });
+              }
+            }
+            // Progress bar line (▬▬▬)
+            else if (cleanLine.match(/^▬+░*$/)) {
+              // Skip progress bar visualization
+            }
+            // Focus section
+            else if (cleanLine.startsWith('Focus:')) {
+              inFocusSection = true;
+              const artist = cleanLine.replace('Focus:', '').trim();
+              if (artist) focus.push(artist);
+            }
+            // Focus artists (continuation)
+            else if (inFocusSection && cleanLine) {
+              focus.push(cleanLine);
+            }
+          });
+
+          if (title) {
+            profiles.push({ title, allocations, focus });
+          }
+        });
+
+        if (profiles.length > 0) {
+          // Generate HTML for allocation profile cards
+          let profileHtml = '<div class="allocation-profiles">';
+          profiles.forEach((profile) => {
+            profileHtml += `
+              <div class="allocation-card">
+                <div class="allocation-title">${profile.title}</div>
+                <div class="allocation-divider"></div>
+                <div class="allocation-items">
+            `;
+
+            profile.allocations.forEach((allocation) => {
+              profileHtml += `
+                <div class="allocation-item">
+                  <div class="allocation-label">
+                    <span class="allocation-category">${allocation.category}</span>
+                    <span class="allocation-percentage">${allocation.percentage}%</span>
+                  </div>
+                  <div class="allocation-progress-bar">
+                    <div class="allocation-progress-fill" style="width: ${allocation.percentage}%"></div>
+                  </div>
+                </div>
+              `;
+            });
+
+            if (profile.focus.length > 0) {
+              profileHtml += `
+                <div class="allocation-focus">
+                  <div class="allocation-focus-label">Focus:</div>
+                  <div class="allocation-focus-artists">
+                    ${profile.focus.map(artist => `<span class="allocation-artist">${artist}</span>`).join('')}
+                  </div>
+                </div>
+              `;
+            }
+
+            profileHtml += `
+                </div>
+              </div>
+            `;
+          });
+          profileHtml += '</div>';
+
+          return profileHtml;
+        }
+      }
+
+      // If not an allocation profile, return the original code block
       return match;
     });
   }
@@ -588,6 +713,130 @@ export default function MarkdownTestPage() {
             .markdown-container .ranking-description {
               font-size: 13px;
             }
+          }
+
+          /* ═══════════════════════════════════════════════════════════════════════
+             ALLOCATION PROFILES
+             ═══════════════════════════════════════════════════════════════════════ */
+
+          .markdown-container .allocation-profiles {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--space-4);
+            margin: var(--space-5) 0;
+          }
+
+          @media (min-width: 768px) {
+            .markdown-container .allocation-profiles {
+              grid-template-columns: repeat(2, 1fr);
+            }
+          }
+
+          @media (min-width: 1024px) {
+            .markdown-container .allocation-profiles {
+              grid-template-columns: repeat(3, 1fr);
+            }
+          }
+
+          .markdown-container .allocation-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            transition: all 0.2s ease;
+          }
+
+          .markdown-container .allocation-card:hover {
+            background: var(--bg-elevated);
+            border-color: var(--border-hover);
+          }
+
+          .markdown-container .allocation-title {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+          }
+
+          .markdown-container .allocation-divider {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, var(--border-default), transparent);
+            margin-bottom: 16px;
+          }
+
+          .markdown-container .allocation-items {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+          }
+
+          .markdown-container .allocation-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+          }
+
+          .markdown-container .allocation-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
+
+          .markdown-container .allocation-category {
+            font-family: var(--font-sans);
+            font-size: 13px;
+            color: var(--text-secondary);
+          }
+
+          .markdown-container .allocation-percentage {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--text-primary);
+            font-weight: 600;
+          }
+
+          .markdown-container .allocation-progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+          }
+
+          .markdown-container .allocation-progress-fill {
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+          }
+
+          .markdown-container .allocation-focus {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-default);
+          }
+
+          .markdown-container .allocation-focus-label {
+            font-family: var(--font-sans);
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-bottom: 8px;
+          }
+
+          .markdown-container .allocation-focus-artists {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+          }
+
+          .markdown-container .allocation-artist {
+            font-family: var(--font-serif);
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.4;
           }
 
           /* ═══════════════════════════════════════════════════════════════════════
