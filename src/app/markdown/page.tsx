@@ -564,7 +564,7 @@ export default function MarkdownTestPage() {
           .markdown-container .ranking-progress-bar {
             width: 100%;
             height: 6px;
-            background: var(--bg-app);
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 3px;
             overflow: hidden;
             margin-bottom: 8px;
@@ -572,7 +572,7 @@ export default function MarkdownTestPage() {
 
           .markdown-container .ranking-progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--brand-primary), var(--brand-secondary));
+            background: rgba(255, 255, 255, 0.9);
             border-radius: 3px;
             transition: width 0.3s ease;
           }
