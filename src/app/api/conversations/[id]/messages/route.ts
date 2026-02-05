@@ -565,17 +565,45 @@ export async function POST(
 
           // If we captured clothes search data, store it in metadata
           if (clothesSearchData && clothesSearchData.type === "clothes_data") {
-            // If we already have structured data, add clothes_search_data to it
-            if (messageMetadata) {
-              messageMetadata.clothes_search_data = clothesSearchData.data;
-            } else {
-              messageMetadata = {
-                type: "clothes_data",
-                structured_data: clothesSearchData,
-                clothes_search_data: clothesSearchData.data
-              };
+            // Ensure the data is properly structured (not stringified)
+            let parsedClothesData = clothesSearchData.data;
+
+            // If data is a string, try to parse it
+            if (typeof parsedClothesData === 'string') {
+              try {
+                parsedClothesData = JSON.parse(parsedClothesData);
+                console.log('[Message Storage] Parsed stringified clothes_search_data');
+              } catch (e) {
+                console.error('[Message Storage] Failed to parse clothes_search_data string:', e);
+              }
             }
-            console.log(`[Message Storage] Storing clothes_search_data`);
+
+            // Validate the structure
+            if (parsedClothesData && typeof parsedClothesData === 'object' && !Array.isArray(parsedClothesData)) {
+              // If we already have structured data, add clothes_search_data to it
+              if (messageMetadata) {
+                messageMetadata.clothes_search_data = parsedClothesData;
+              } else {
+                messageMetadata = {
+                  type: "clothes_data",
+                  structured_data: clothesSearchData,
+                  clothes_search_data: parsedClothesData
+                };
+              }
+              console.log('[Message Storage] Storing clothes_search_data:', {
+                type: parsedClothesData.type,
+                totalListings: parsedClothesData.total_listings,
+                listingsCount: parsedClothesData.listings?.length,
+                isObject: typeof parsedClothesData === 'object',
+                isArray: Array.isArray(parsedClothesData)
+              });
+            } else {
+              console.error('[Message Storage] Invalid clothes_search_data structure:', {
+                type: typeof parsedClothesData,
+                isArray: Array.isArray(parsedClothesData),
+                data: parsedClothesData
+              });
+            }
           }
 
           console.log("[Message Storage] About to save message:", {

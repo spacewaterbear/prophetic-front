@@ -364,7 +364,7 @@ function ChatLayoutInner({
                                             <p className="text-sm font-medium truncate">
                                                 {session.user.name}
                                             </p>
-                                            <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
+                                            <p className="text-xs text-gray-600 dark:text-white truncate">
                                                 {session.user.email}
                                             </p>
                                         </div>
