@@ -1,0 +1,391 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   MARKDOWN ENHANCEMENTS - Custom styling for markdown content
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════════════════
+   TABLES (ASCII CONVERTED)
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.markdown-container .ascii-table-wrapper {
+    margin: var(--space-4, 16px) 0;
+    overflow-x: auto;
+    border-radius: var(--radius-lg, 14px);
+}
+
+.markdown-container .ascii-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--bg-card, #09090b);
+    border: 1px solid var(--border-default, #18181b);
+    border-radius: var(--radius-lg, 14px);
+}
+
+.markdown-container .ascii-table tbody {
+    background: var(--bg-card, #09090b);
+}
+
+.markdown-container .ascii-table tr {
+    border-bottom: 1px solid var(--border-default, #18181b);
+    transition: background-color 0.15s ease;
+}
+
+.markdown-container .ascii-table tr:last-child {
+    border-bottom: none;
+}
+
+.markdown-container .ascii-table tr:hover {
+    background: var(--bg-elevated, #18181b);
+}
+
+.markdown-container .ascii-table td {
+    padding: 12px 16px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.95);
+    word-break: break-words;
+}
+
+@media (min-width: 768px) {
+    .markdown-container .ascii-table td {
+        padding: 14px 18px;
+        font-size: 14px;
+    }
+}
+
+.markdown-container .ascii-table .label-cell {
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: 400;
+    min-width: 120px;
+}
+
+.markdown-container .ascii-table .value-cell {
+    color: rgba(255, 255, 255, 0.95);
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 12px;
+    text-align: right;
+}
+
+@media (min-width: 768px) {
+    .markdown-container .ascii-table .value-cell {
+        font-size: 13px;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   MARKDOWN TABLES (STYLED)
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.table-scroll-wrapper {
+    overflow-x: auto;
+    margin: 1rem 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   RANKING LISTS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.markdown-container .ranking-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-3, 12px);
+    margin: var(--space-4, 16px) 0;
+}
+
+@media (min-width: 768px) {
+    .markdown-container .ranking-list {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-4, 16px);
+    }
+}
+
+@media (min-width: 1024px) {
+    .markdown-container .ranking-list {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.markdown-container .ranking-card {
+    background: var(--bg-card, #09090b);
+    border: 1px solid var(--border-default, #18181b);
+    border-radius: var(--radius-lg, 14px);
+    padding: 16px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.markdown-container .ranking-card:hover {
+    background: var(--bg-elevated, #18181b);
+    border-color: var(--border-hover, #27272a);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.markdown-container .ranking-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.markdown-container .ranking-number {
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--brand-primary, #352ee8);
+    min-width: 32px;
+}
+
+.markdown-container .ranking-name {
+    font-family: var(--font-serif, 'EB Garamond', serif);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-primary, #ffffff);
+    letter-spacing: -0.01em;
+}
+
+.markdown-container .ranking-progress-bar {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.markdown-container .ranking-progress-fill {
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.markdown-container .ranking-description {
+    font-family: var(--font-sans, 'Inter', sans-serif);
+    font-size: 12px;
+    color: var(--text-tertiary, #71717a);
+    line-height: 1.4;
+}
+
+@media (min-width: 768px) {
+    .markdown-container .ranking-description {
+        font-size: 13px;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   EXTENDED RANKINGS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.markdown-container .extended-rankings {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-3, 12px);
+    margin: var(--space-5, 20px) 0;
+}
+
+@media (min-width: 768px) {
+    .markdown-container .extended-rankings {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .markdown-container .extended-rankings {
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-4, 16px);
+    }
+}
+
+.markdown-container .extended-ranking-card {
+    background: var(--bg-card, #09090b);
+    border: 1px solid var(--border-default, #18181b);
+    border-radius: var(--radius-lg, 14px);
+    padding: 16px;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.markdown-container .extended-ranking-card:hover {
+    background: var(--bg-elevated, #18181b);
+    border-color: var(--border-hover, #27272a);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.markdown-container .extended-ranking-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.markdown-container .extended-ranking-number {
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--brand-primary, #352ee8);
+    letter-spacing: 0.5px;
+}
+
+.markdown-container .extended-ranking-score {
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary, #ffffff);
+    background: rgba(255, 255, 255, 0.1);
+    padding: 4px 10px;
+    border-radius: var(--radius-md, 8px);
+}
+
+.markdown-container .extended-ranking-name {
+    font-family: var(--font-serif, 'EB Garamond', serif);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary, #ffffff);
+    margin-bottom: 12px;
+    line-height: 1.3;
+}
+
+.markdown-container .extended-ranking-details {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.markdown-container .extended-ranking-detail {
+    font-family: var(--font-sans, 'Inter', sans-serif);
+    font-size: 12px;
+    color: var(--text-secondary, #a1a1aa);
+    line-height: 1.5;
+}
+
+.markdown-container .extended-ranking-trend {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    font-size: 16px;
+    opacity: 0.7;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   ALLOCATION PROFILES
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.markdown-container .allocation-profiles {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4, 16px);
+    margin: var(--space-5, 20px) 0;
+}
+
+@media (min-width: 768px) {
+    .markdown-container .allocation-profiles {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .markdown-container .allocation-profiles {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.markdown-container .allocation-card {
+    background: var(--bg-card, #09090b);
+    border: 1px solid var(--border-default, #18181b);
+    border-radius: var(--radius-lg, 14px);
+    padding: 20px;
+    transition: all 0.2s ease;
+}
+
+.markdown-container .allocation-card:hover {
+    background: var(--bg-elevated, #18181b);
+    border-color: var(--border-hover, #27272a);
+}
+
+.markdown-container .allocation-title {
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-tertiary, #71717a);
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+}
+
+.markdown-container .allocation-divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border-default, #18181b), transparent);
+    margin-bottom: 16px;
+}
+
+.markdown-container .allocation-items {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.markdown-container .allocation-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.markdown-container .allocation-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.markdown-container .allocation-category {
+    font-family: var(--font-sans, 'Inter', sans-serif);
+    font-size: 13px;
+    color: var(--text-secondary, #a1a1aa);
+}
+
+.markdown-container .allocation-percentage {
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 12px;
+    color: var(--text-primary, #ffffff);
+    font-weight: 600;
+}
+
+.markdown-container .allocation-progress-bar {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.markdown-container .allocation-progress-fill {
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+
+.markdown-container .allocation-focus {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-default, #18181b);
+}
+
+.markdown-container .allocation-focus-label {
+    font-family: var(--font-sans, 'Inter', sans-serif);
+    font-size: 12px;
+    color: var(--text-tertiary, #71717a);
+    margin-bottom: 8px;
+}
+
+.markdown-container .allocation-focus-artists {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.markdown-container .allocation-artist {
+    font-family: var(--font-serif, 'EB Garamond', serif);
+    font-size: 13px;
+    color: var(--text-secondary, #a1a1aa);
+    line-height: 1.4;
+}
