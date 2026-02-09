@@ -49,7 +49,8 @@ export async function GET() {
       .from("conversations")
       .select("*")
       .eq("user_id", userId)
-      .order("updated_at", { ascending: false })
+      .order("updated_at", { ascending: false, nullsFirst: false })
+      .order("created_at", { ascending: false })
       .limit(5);
 
     if (error) {

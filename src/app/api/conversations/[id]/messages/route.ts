@@ -158,14 +158,17 @@ export async function POST(
       });
     }
 
-    // Auto-generate title from first message if needed
+    // Update conversation: auto-generate title if needed, and always update updated_at
+    const updateData: { updated_at: string; title?: string } = {
+      updated_at: new Date().toISOString(),
+    };
     if (!conversation.title || conversation.title === "New Chat") {
-      const title = content.slice(0, 50) + (content.length > 50 ? "..." : "");
-      await supabase
-        .from("conversations")
-        .update({ title })
-        .eq("id", conversationId);
+      updateData.title = content.slice(0, 50) + (content.length > 50 ? "..." : "");
     }
+    await supabase
+      .from("conversations")
+      .update(updateData)
+      .eq("id", conversationId);
 
     // Fetch last 5 messages (user + AI) for conversation history (excluding the current message)
     const { data: previousMessages } = await supabase
