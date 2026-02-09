@@ -1,885 +1,350 @@
-## ◈ 50 ARTISTES À SUIVRE
+MAROQUINERIE
 
-Guide Investissement Art Contemporain 2026
-`PRO-ART-2026-001`
+# -+-Hermès Birkin 25 Togo Gold GHW-+-
 
------
+PRO-MAR-B25TG-2026
 
-## Marché 2026
+---
 
-| Marché | $57,5 Mds |
-|--------|-----------|
-| Sell-through | 83,9% |
-| Nvx collect. | +38% |
-| Corr. S&P | -0,04 |
+VALEUR ACTUELLE
 
-**Notre lecture** — Marché robuste. Segment <€50K = plus forte croissance. Art africain femmes 52,8% ventes. Nouveaux collectionneurs massifs.
+# €14.500
 
-*→ Décorrélation · Croissance · Diversification*
+-15% vs ATH · Verified 138%
 
------
+---
 
-## Légende
+## Identification
 
-```
-SCORE PROPHETIC
-●●●●●●●●●● 90-100 Except.
-●●●●●●●●○○ 80-89  Très fort
-●●●●●●●○○○ 70-79  Fort
+| Critère | Détail |
+|:--|--:|
+| Année | 1984 (création) · 2024+ |
+| Rareté | Production contrôlée · ~100K/an monde |
+| État | Excellent · Full set |
+| Provenance | Secondaire authentifié |
 
-MOMENTUM
-▲▲▲ Forte hausse
-▲▲  Hausse
-▲   Légère hausse
-►   Stable
+---
 
-DISPONIBILITÉ
-✓✓✓ Immédiat
-✓✓  Limité
-✓   Sur demande
-○   Rare
-```
+## Marché Segment
 
------
+| Indicateur | Valeur |
+|:--|--:|
+| Marché | $32,5Md (resale luxe 2024) |
+| Sell-through | 95% (Hermès sacs) |
+| Nvx acheteurs | +136% (Gen Z depuis 2019) |
+| Corr. S&P | 0,15 |
 
-## SEGMENT BLUE-CHIP
+---
 
-**> €500.000**
-Refuge patrimonial · TCAC 8-11%
+## Récit Patrimonial
 
------
+Née d'une rencontre improbable sur un vol Paris–Londres en 1984 entre Jane Birkin et Jean-Louis Dumas, alors PDG d'Hermès, la Birkin est devenue en quatre décennies l'objet de maroquinerie le plus convoité au monde. Birkin déplorait l'absence d'un sac alliant élégance et fonctionnalité quotidienne ; Dumas dessina sur un carton la silhouette qui allait redéfinir le marché du luxe tangible. Le premier modèle — un Birkin 40 en Box Calf — posait déjà les codes fondateurs : double poignée roulée, fermoir tournant, pieds cloutés, cadenas iconique.
 
-## 01 Julie Mehretu
+Le cuir Togo, introduit dans la gamme Hermès en 1979, est devenu le matériau de référence du Birkin pour sa résistance aux rayures, son grain distinctif et sa capacité à vieillir sans se déformer. Le coloris Gold — un brun caramel chaud inspiré du cuir de sellerie originel — incarne l'ADN même de la maison. Associé à la quincaillerie dorée (GHW), il forme le duo chromatique le plus demandé avec le Noir et l'Étoupe, constituant le « triumvirat » des coloris à plus forte rétention de valeur sur le secondaire.
 
-Éthiopie-USA · 1970 · Abstraction
+En quarante ans, la Birkin a franchi tous les paliers symboliques : record de $10M pour le sac originel de Jane Birkin chez Sotheby's Paris en 2025, ventes Hermès en hausse de +70% sur la catégorie sacs en 2025, et un retail passé de $2.000 à $13.500 aux États-Unis. Hermès ne produit qu'environ 100.000 sacs par an toutes références confondues — une fraction de la production Louis Vuitton — garantissant une rareté structurelle qui alimente un marché secondaire où la demande excède systématiquement l'offre.
 
-```
-●●●●●●●●●● 95  ▲▲▲
-```
+---
 
-| ROI | +92% |
-|-----|------|
-| Papier | €15-200K |
-| Peintures | €5-11M |
-| Galerie | M.Goodman |
-| Dispo | ✓ |
+### Positionnement Marché
 
-Record $10,74M · 60+ musées
-BMW Art Car 2024
+Le Birkin 25 occupe une position dominante dans le segment de la maroquinerie d'investissement. Taille la plus demandée depuis 2020, portée par la tendance aux formats compacts et la forte appétence du marché asiatique, le B25 commande régulièrement un premium supérieur au B30 et au B35. La politique de restriction à deux sacs quota par client et par an, instaurée par Hermès, a renforcé les primes sur le secondaire. Malgré une normalisation post-Covid — le premium moyen Birkin/Kelly est passé de 2,2x en 2022 à 1,4x fin 2025 selon Bernstein — la Birkin reste le seul sac à main dont la valeur de revente dépasse systématiquement le prix retail, positionnant Hermès comme la référence absolue du marché avec une rétention de 138% selon le Clair Report 2025 de Rebag.
 
-**Signal** Works paper <€200K
+---
 
------
+> *« Desire is the main factor affecting the secondary market for Birkins. »*
+>
+> — Baghunter Research Study
 
-## 02 Yoshitomo Nara
+---
 
-Japon · 1959 · Pop/Manga
+### Notre Lecture
 
-```
-●●●●●●●●●○ 92  ▲▲▲
-```
+La compression des primes secondaires depuis le pic de 2022 constitue paradoxalement un point d'entrée stratégique. Le retail Hermès continue de progresser à +7% par an en moyenne, créant un plancher haussier mécanique. Le coloris Gold en Togo avec quincaillerie dorée représente la combinaison la plus patrimoniale du catalogue — elle ne subit pas les cycles de mode et concentre la demande des primo-accédants comme des collectionneurs confirmés. La récente contraction de 3% du marché du luxe global (Bain, 2025) affecte les marques aspirationnelles mais épargne le sommet de la pyramide : Hermès a vu ses ventes US progresser de +20% en 2023 et son chiffre Americas atteindre ~$2Md en 2025.
 
-| TCAC | 14% |
-|------|-----|
-| Appréciation | 88,9% |
-| Éditions | €4-15K |
-| Peintures | €5-25M |
-| Galerie | Zwirner |
-| Dispo | ✓✓ |
+---
 
-Record $24,95M · TIME 100
-Guggenheim Bilbao 2025
+## Score Prophetic
 
-**Signal** Cosmic eyes 2005-10
+**88** / 100
 
------
+Momentum ▲
 
-## 03 Yayoi Kusama
+| Critère | Note |
+|:--|--:|
+| Rareté | 92 |
+| Désirabilité | 95 |
+| Historique | 85 |
+| Liquidité | 90 |
+| Institution | 86 |
+| Potentiel | 78 |
 
-Japon · 1929 · Installations
+---
 
-```
-●●●●●●●●●● 98  ▲▲
-```
+## Performance 5 ans
 
-| #1 ventes | $58,8M |
-|-----------|--------|
-| Cap. | $2,2 Mds |
-| Éditions | €5-150K |
-| Sculptures | €500K-6M |
-| Peintures | €2-10M |
-| Galeries | Multi |
-| Dispo | ✓✓ |
+| Actif | Perf. |
+|:--|--:|
+| **-+-Birkin 25 Togo Gold-+-** | **+26%** |
+| Bitcoin | +650% |
+| S&P 500 | +85% |
+| Or | +74% |
+| Immobilier | +20% |
 
-LVMH partnership · Beyeler 2025
+---
 
-**Signal** Infinity Nets €500K-2M
-! Âge 96 ans · Rareté ↑
+## Trajectoire
 
------
+| Année | Valeur |
+|:--|--:|
+| 2020 | €11.500 |
+| 2021 | €14.000 |
+| 2022 | €17.000 ATH |
+| 2023 | €15.000 |
+| 2025 | €14.500 |
 
-## 04 Jenny Saville
+---
 
-UK · 1970 · Fig. monumentale
+## Scénarios ROI
 
-```
-●●●●●●●●○○ 88  ▲▲▲
-```
+**Bear** 25%
 
-| ROI | ×24 |
-|-----|-----|
-| £400K→£9,5M 2004-18 | |
-| Éditions | €5-50K |
-| Papier | €50-500K |
-| Peintures | €5-12M |
-| Galerie | Gagosian |
-| Dispo | ✓ |
+| Horizon | ROI |
+|:--|--:|
+| 12 mois | +2% |
+| 36 mois | +8% |
 
-Record $12,5M · NPG Londres 2025
+**Base** 50%
 
-**Signal** Période Sensation 92-97
+| Horizon | ROI |
+|:--|--:|
+| 12 mois | +8% |
+| 36 mois | +25% |
 
------
+**Bull** 25%
 
-## 05 Cecily Brown
+| Horizon | ROI |
+|:--|--:|
+| 12 mois | +15% |
+| 36 mois | +45% |
 
-UK · 1969 · Abstraction gestuelle
+---
 
-```
-●●●●●●●●●○ 90  ▲▲▲
-```
+## Métriques
 
-| ROI | +44% |
-|-----|------|
-| 2018-2025 | |
-| Papier | €15-500K |
-| Peintures | €2-10M |
-| Galerie | Gagosian |
-| Dispo | ✓ |
+| Indicateur | Valeur |
+|:--|--:|
+| CAGR | 14,2% (35 ans) · 4,7% (5 ans) |
+| Sharpe | 0,85 |
+| Volatilité | 12% |
+| Max DD | -18% (ATH 2022 → 2024) |
+| Corr. S&P | 0,15 |
 
-Record $9,81M · Met 2023
-Barnes Foundation 2025
+Décorrélé
 
-! Récentes < anciennes
+---
 
------
-
-## 06 George Condo
-
-USA · 1957 · Cubisme psy.
+## Comparables
 
 ```
-●●●●●●●●○○ 85  ▲▲
+#1 -+-Hermès Kelly Mini II-+- 95
+Maroquinerie · €18.000–25.000 · ▲▲▲
+282% rétention Rebag 2025
+
+#2 -+-Hermès Sellier Birkin-+- 91
+Maroquinerie · €16.000–22.000 · ▲▲▲
+183% rétention · Finition rigide premium
+
+#3 -+-Hermès Constance 24-+- 84
+Maroquinerie · €12.000–18.000 · ▲▲
+137% rétention · 3e pilier "Holy Trinity"
+
+#4 -+-Chanel Classic Flap M/L-+- 79
+Maroquinerie · €8.000–11.300 · ▲
+92% rétention · Retail doublé en 5 ans
 ```
 
-| Turnover | $39,2M |
-|----------|--------|
-| #3 vivant | |
-| 2400+ lots tracés | |
-| Pastels | €600K-1,5M |
-| Têtes | €500K-2,5M |
-| Peintures | €1,5-6,8M |
-| Galeries | Multi |
-| Dispo | ✓✓✓ |
+---
 
-Liquidité maximale
-
-! Contrefaçons · Output prolifique
-
------
-
-## 07 Marlene Dumas
-
-Afrique du Sud · 1953 · Figuration
+## Top Momentum
 
 ```
-●●●●●●●●●○ 93  ▲▲▲
+#1 -+-Hermès Kelly Mini II-+- ▬▬▬▬▬▬▬▬▬▬
+282%+Mini+Epsom
+
+#2 -+-Hermès Sellier Birkin-+- ▬▬▬▬▬▬▬▬▬░
+183%+Rigide+Rare
+
+#3 -+-Hermès Constance 24-+- ▬▬▬▬▬▬▬▬░░
+137%+Classique+H-Buckle
+
+#4 -+-Hermès Birkin 25-+- ▬▬▬▬▬▬▬▬░░
+138%+Compact+Togo
+
+#5 -+-Chanel Classic Flap-+- ▬▬▬▬▬▬▬░░░
+92%+Caviar+Matelassé
 ```
 
-| ROI | +115% |
-|-----|-------|
-| 2008-2025 | |
-| Prix | €500K-13,6M |
-| Galerie | Zwirner |
-| Dispo | ✓ |
+---
 
-**RECORD $13,6M** Christie's mai 2025
-Femme vivante la plus chère
+## Portfolio Recommandé
 
-**Signal** Doublement record
+**€20.000**
 
------
+ROI 36m +24%
 
-## 08 Banksy
+| Actif | Alloc. |
+|:--|--:|
+| -+-Birkin 25 Togo Gold-+- | 62% |
+| -+-Chanel WOC Caviar Noir-+- | 20% |
+| -+-Goyard Saint-Louis PM-+- | 10% |
+| Liquidités | 8% |
 
-UK · c.1974 · Street art
+---
 
-```
-●●●●●●●●●● 97  ►
-```
+## Signal
 
-| TCAC 5a | 26% |
-|---------|-----|
-| TCAC 20a | 28% |
-| Cap. | $444,7M |
-| Non signées | €8-100K |
-| Signées | €35-500K |
-| Originaux | €200K-18,6M |
-| Dispo | ✓✓✓ |
+| Action | Seuil |
+|:--|--:|
+| Renforcer | €12.500 |
+| Actuel | €14.500 |
+| Alléger | €18.000 |
 
-13M+ Instagram
-Catalogue raisonné 2025/26
+---
 
-! Correction depuis pic 2021
+## Disponibilité
 
------
+| Plateforme | Prix |
+|:--|--:|
+| Vestiaire Collective | €13.800 ● |
+| Rebag | €14.200 ● |
+| Sotheby's Buy Now | €15.500 ● |
+| Hermès Boutique (retail) | €9.600 ○ |
 
-## 09 KAWS
+● Dispo · ○ Indispo
 
-USA · 1974 · Pop/Sculptures
+---
 
-```
-●●●●●●●●●○ 91  ▲▲
-```
+## Sortie
 
-| TCAC | 16,2% |
-|------|-------|
-| Appréciation | 100% |
-| Figures | €500-20K |
-| Œuvres maj | €500K-15M |
-| Galeries | Multi |
-| Dispo | ✓✓✓ |
+| Canal | Délai · Frais |
+|:--|--:|
+| Vestiaire Collective | 7-21j · 15-25% |
+| Rebag (vente directe) | 7-14j · 20-30% |
+| Sotheby's / Christie's | 30-60j · 15-20% |
 
-Record $14,8M · SFMOMA 2024-25
+---
 
-! Saturation brand collabs
+## Leasing + Exit
 
------
+Éligible
 
-## 10 Michael Armitage
+**12 mois**
 
-Kenya · 1984 · Peinture Lubugo
+| Composante | Montant |
+|:--|--:|
+| Leasing | +€1.740 |
+| Plus-value | +€1.160 |
+| ROI Total | +20% |
 
-```
-●●●●●●●●●○ 89  ▲▲▲
-```
+**24 mois**
 
-| Peintures | €100-500K+ |
-|-----------|------------|
-| Papier | €20-80K |
-| Galeries | WhiteCube |
-| | + Zwirner |
-| Dispo | ✓✓ |
+| Composante | Montant |
+|:--|--:|
+| Leasing | +€3.480 |
+| Plus-value | +€2.175 |
+| ROI Total | +39% |
 
-Record $2,37M mai 2025
-Palazzo Grassi Venise 2026-27
+**36 mois**
 
-**Signal** Double top galeries
+| Composante | Montant |
+|:--|--:|
+| Leasing | +€5.220 |
+| Plus-value | +€3.625 |
+| ROI Total | +61% |
 
------
+---
 
-## 11-12 Blue-Chip Suite
+## Conservation
 
-| 11 Gabriel Orozco | |
-|-------------------|---|
-| Mexique · Conceptuel | |
-| ●●●●●●●●○○ 85  ► | |
-| Photos €3-30K | |
-| Sculpt. €100-500K+ | |
-| Museo Jumex 2025 | |
+| Poste | Détail |
+|:--|--:|
+| Stockage | Pochon anti-poussière · boîte orange · coussin de maintien |
+| Entretien | Conditionneur cuir 2×/an · pas d'exposition UV |
+| Assurance | 1,5-2% valeur/an (~€220–290) |
 
-| 12 Adriana Varejão | |
-|--------------------|---|
-| Brésil · Céramique | |
-| ●●●●●●●●○○ 84  ▲▲ | |
-| Papier €15-50K | |
-| Peint. €150-600K | |
-| Inhotim permanent | |
+**Documents**
 
------
+Facture originale · Certificat authenticité · Carte de soin · Reçu douane (si import)
 
-## SEGMENT MID-MARKET
+---
 
-**€50.000 — €500.000**
-Meilleur rendement ajusté risque
+## Fiscalité
 
------
+**France**
 
-## 13 Ibrahim Mahama
+| Régime | Taux |
+|:--|--:|
+| TVA | 20% (neuf UE) |
+| Plus-values | Forfait 6,5% ou régime général 36,2% |
+| Abattement | 5%/an dès 3e année |
+| Exonération | Totale après 22 ans |
 
-Ghana · 1987 · Installations
+**Suisse**
 
-```
-●●●●●●●●●● 98  ▲▲▲
-```
+| Régime | Taux |
+|:--|--:|
+| TVA | 8,1% |
+| Plus-values | Exonéré (biens mobiliers) |
 
-| Installations | €50-500K |
-|---------------|----------|
-| Papier | €10-40K |
-| Galeries | WhiteCube |
-| | + Goodman |
-| Dispo | ✓✓ |
+**HK/SG**
 
-**#1 ARTREVIEW POWER 100**
-Premier africain · UBS Artist 2025
+| Régime | Taux |
+|:--|--:|
+| TVA | 0% (HK) · 9% (SG) |
+| Plus-values | 0% |
 
-**Signal** Opportunité historique
+---
 
------
+## Risques
 
-## 14 Amoako Boafo
+| Facteur | Niveau |
+|:--|--:|
+| Contrefaçon | 6/10 |
+| Volatilité premium | 5/10 |
+| Illiquidité | 2/10 |
 
-Ghana · 1984 · Finger-painting
-
-```
-●●●●●●●●○○ 87  ▲▲
-```
-
-| ROI | ×10 |
-|-----|-----|
-| depuis 2020 | |
-| Primaire | €50-250K |
-| Secondaire | €100-500K |
-| Galeries | M.Ibrahim |
-| Dispo | ✓✓✓ |
-
-Record $3,42M (×10 estim.)
-Belvedere + Schiele 2024-25
-
-! Correction possible
-
------
-
-## 15 Lynette Yiadom-Boakye
-
-UK · 1977 · Portraits fictifs
-
-```
-●●●●●●●●●○ 91  ▲▲▲
-```
-
-| ROI | ×2,4 |
-|-----|------|
-| $1,5M→$3,6M 2017-23 | |
-| Prix | €100K-3,6M |
-| Galeries | Corvi-Mora |
-| Dispo | ✓ |
-
-Record $3,6M · #1 bankable
-**100% sell-through**
-
-! Production limitée
-
------
-
-## 16 Simone Leigh
-
-USA · 1967 · Sculpture bronze
-
-```
-●●●●●●●●●○ 94  ▲▲▲
-```
-
-| Sculptures | €300K-1M+ |
-|------------|-----------|
-| Céramiques | €100-500K |
-| Galerie | M.Marks |
-| Dispo | ✓ |
-
-**GOLDEN LION VENISE 2022**
-1ère femme noire USA
-Hugo Boss Prize 2018
-
-**Signal** Calibre vs prix = arbitrage
-
------
-
-## 17 Tyler Hobbs
-
-USA · 1987 · Art génératif
-
-```
-●●●●●●●●○○ 88  ▲▲
-```
-
-| ROI | ×195 |
-|-----|------|
-| $400→$3,3M Fidenza | |
-| Floor | ~$78K |
-| QQL | €5-100K |
-| Prints | €5-30K |
-| Galerie | Pace |
-| Dispo | ✓✓✓ |
-
-1er crypto-natif Pace
-Résilience post-crash
-
-! Dépendance Ethereum
-
------
-
-## 18 Refik Anadol
-
-Turquie-USA · Art IA
-
-```
-●●●●●●●●●○ 92  ▲▲▲
-```
-
-| Record HK | $2,3M |
-|-----------|-------|
-| Éditions | €15K+ |
-| Uniques | €500K-2,3M |
-| Dispo | ✓✓ |
-
-**ACQUISITION MoMA**
-Jalon historique art IA
-Sphere Las Vegas
-
------
-
-## 19-20 Mid-Market Suite
-
-| 19 XCOPY | |
-|----------|---|
-| UK · Art glitch | |
-| ●●●●●●●●○○ 85  ▲▲ | |
-| MAX PAIN €2,5K | |
-| Grifters €48K+ | |
-| 1/1 €600K-7M | |
-| Record $7M Snoop Dogg | |
-| Collection $61M+ | |
-
-| 20 Deana Lawson | |
-|-----------------|---|
-| USA · Photographie | |
-| ●●●●●●●●●○ 90  ▲▲▲ | |
-| Tirages €40-150K+ | |
-| Gagosian 2023 | |
-| HUGO BOSS PRIZE 2020 | |
-| 1ère photo | |
-
------
-
-## 21-40 Mid-Market Complet
-
-```
-#21 Wolfgang Tillmans  88
-    Photo · €200-500K+ · ►
-    Turner Prize 2000
-
-#22 Hiroshi Sugimoto   85
-    Photo · €20-300K · ▲▲
-    Lisson 2024
-
-#23 Christine Ay Tjoe  86
-    Abstraction · €5K-2,15M
-    Record $2,15M · ▲▲▲
-
-#24 Subodh Gupta       82
-    Sculpture · €30K-2M+
-    Hauser & Wirth · ▲▲
-
-#25 Haegue Yang        87
-    Installation · €10-500K
-    Power 100 · Dia 2026
-
-#26 Invader            83
-    Street · €2-500K · ▲▲
-    80+ villes
-
-#27 Stik               80
-    Street · €600-360K
-    ▲▲
-
-#28 Retna              78
-    Calligraphie · €5-950K
-    ▲
-
-#29 Lucy Bull          88
-    Abstraction · €55K-2,4M
-    Kordansky · ▲▲▲
-
-#30 Jadé Fadojutimi    89
-    Abstraction · €80K-2M
-    + jeune Tate · ▲▲▲
-
-#31 Christina Quarles  84
-    Figuration · €175-655K
-    MCA Chicago · ▲▲
-
-#32 Salman Toor        87
-    Figuration · €150K-1,5M
-    Whitney solo · ▲▲
-
-#33 Loie Hollowell     83
-    Abstraction · €100K-2,1M
-    Pace · ▲▲
-
-#34 Oscar Murillo      82
-    Peinture · €50-400K
-    Turner 2019 · ▲▲
-
-#35 Njideka Akunyili   91
-    Collage · €50K-4,74M
-    MacArthur · ▲▲
-
-#36 Dana Awartani      86
-    Textile · €10-75K+ · ▲▲▲
-    Venise 2024 · Lisson
-    BEST VALUE MO
-
-#37 Ahmed Mater        85
-    Photo · €20-150K+ · ▲▲
-    Vision 2030
-
-#38 Joana Choumali     84
-    Photo brodée · €8-50K
-    Prix Pictet 2019 · ▲▲
-
-#39 Rosana Paulino     86
-    Installation · €5-100K+
-    Munch Award 2024 · ▲▲▲
-
-#40 Issy Wood          83
-    Velours · €50-150K · ▲▲
-    Met Tate NPG LV
-```
-
------
-
-## SEGMENT ACCESSIBLE
-
-**< €50.000**
-Liquidité max · Croissance démographique
-
------
-
-## 41 Hettie Inniss
-
-UK-Caraïbes · 1999 · Peinture
-
-```
-●●●●●●●●○○ 82  ▲▲▲
-```
-
-| Prix | €8-30K |
-|------|--------|
-| Galerie | GRIMM |
-| Dispo | ✓✓✓ |
-
-**ARTSY VANGUARD 2025**
-Tate Collective à 24 ans
-
-**Signal** Trajectoire idéale
-
------
-
-## 42 Agnes Waruguru
-
-Kenya · 1994 · Peinture/Textile
-
-```
-●●●●●●●●○○ 85  ▲▲▲
-```
-
-| Prix | €3-15K |
-|------|--------|
-| Galeries | Circle Art |
-| Dispo | ✓✓✓ |
-
-**VENISE BIENNALE 2024**
-Rijksakademie · Vanguard 2025
-
-**Signal** BEST VALUE
-Venise + Rijks + Vanguard <€15K
-
------
-
-## 43-50 Accessibles Suite
-
-```
-#43 Sana Shahmuradova  81
-    Ukraine · €5-25K · ▲▲
-    Art Basel Statements 25
-    ✓✓✓
-
-#44 Laís Amaral        80
-    Brésil · €15-45K · ▲▲
-    Vanguard 2025 · PIPA
-    ✓✓✓
-
-#45 Tyler Mitchell     87
-    USA · Photo · €15-60K
-    1er noir Vogue · ▲▲▲
-    Gagosian 2024 · ✓✓
-
-#46 Lebohang Kganye    86
-    Afr.Sud · €8-40K · ▲▲▲
-    DEUTSCHE BÖRSE 2024
-    MoMA 2025 · ✓✓✓
-
-#47 Zanele Muholi      88
-    Afr.Sud · €15-80K · ▲▲▲
-    TATE MODERN record UK
-    ✓✓✓
-
-#48 Hebru Brantley     78
-    USA · €500-50K · ▲▲
-    LeBron Jay-Z Beyoncé
-    ! Volatilité · ✓✓✓
-
-#49 Emily Xie          79
-    USA · Génératif · €5-20K
-    UN Award 2024 · ▲▲
-    ✓✓✓
-
-#50 William Mapan      77
-    France · Génératif
-    €9-16K · ×7 depuis mint
-    LACMA · Unit · ▲▲ · ✓✓✓
-```
-
------
-
-## Artistes Bonus
-
-| Wynnie Mynerva | 85 |
-|----------------|-----|
-| Pérou · €15-80K · ▲▲▲ | |
-| +700-1000% depuis 21 | |
-
-| Mire Lee | 87 |
-|----------|-----|
-| Corée · €50-300K · ▲▲▲ | |
-| HYUNDAI TATE 2024 | |
-
-| Rita M. Benissan | 82 |
-|------------------|-----|
-| Ghana · €5-25K · ▲▲▲ | |
-| Zeitz MOCAA 24-25 | |
-
-| Pol Taburet | 84 |
-|-------------|-----|
-| France · €20-156K | |
-| Bienal SP 25 · ▲▲▲ | |
-
-| Chase Hall | 86 |
-|------------|-----|
-| USA · €30-96K · ▲▲▲ | |
-| MoMA Whitney LACMA LV | |
-
-| Ayako Rokkaku | 83 |
-|---------------|-----|
-| Japon · €5K-1,3M · ▲▲ | |
-| #43 Top 500 | |
-
-| Toyin Ojih Odutola | 88 |
-|--------------------|-----|
-| Nigeria · €10K-2,2M | |
-| Hamburger Bahnhof 25 | |
-
------
-
-## Top 5 par Segment
-
-**ACCESSIBLES < €50K**
-
-```
-#1  Waruguru    ▬▬▬▬▬▬▬▬▬▬
-    Venise+Rijks+Vanguard
-
-#2  Kganye      ▬▬▬▬▬▬▬▬▬░
-    Deutsche Börse+MoMA
-
-#3  Mitchell    ▬▬▬▬▬▬▬▬░░
-    Gagosian accessible
-
-#4  Inniss      ▬▬▬▬▬▬▬▬░░
-    Tate à 24 ans
-
-#5  Tanska      ▬▬▬▬▬▬▬▬░░
-    Art Basel Statements
-```
-
-**MID-MARKET €50K-500K**
-
-```
-#1  Mahama      ▬▬▬▬▬▬▬▬▬▬
-    Power 100 #1
-
-#2  Leigh       ▬▬▬▬▬▬▬▬▬░
-    Golden Lion · Arbitrage
-
-#3  Awartani    ▬▬▬▬▬▬▬▬▬░
-    Best value MO
-
-#4  Hobbs       ▬▬▬▬▬▬▬▬░░
-    Résilience post-crash
-
-#5  Yiadom-B.   ▬▬▬▬▬▬▬▬░░
-    100% sell-through
-```
-
-**BLUE-CHIP > €500K**
-
-```
-#1  Dumas       ▬▬▬▬▬▬▬▬▬▬
-    Record mai 2025
-
-#2  Nara        ▬▬▬▬▬▬▬▬▬░
-    TCAC 14%
-
-#3  Kusama      ▬▬▬▬▬▬▬▬▬░
-    Rareté 96 ans
-
-#4  Mehretu     ▬▬▬▬▬▬▬▬▬░
-    Works paper entrée
-
-#5  Saville     ▬▬▬▬▬▬▬▬░░
-    Catalyseur NPG 2025
-```
-
------
-
-## Allocation Profils
-
-| DÉCOUVERTE €10-25K | |
-|--------------------|---|
-| Accessibles | 100% |
-| ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬ | |
-| Focus: Waruguru | |
-| Kganye Inniss | |
-
-| CONFIRMÉ €50-150K | |
-|-------------------|---|
-| Accessibles | 60% |
-| ▬▬▬▬▬▬▬▬▬▬▬▬░░░░░░░░ | |
-| Mid-market | 40% |
-| ▬▬▬▬▬▬▬▬░░░░░░░░░░░░ | |
-| Focus: Awartani | |
-| Mitchell | |
-| Choumali | |
-
-| EXPERT €250K+ | |
-|---------------|---|
-| Accessibles | 40% |
-| ▬▬▬▬▬▬▬▬░░░░░░░░░░░░ | |
-| Mid-market | 35% |
-| ▬▬▬▬▬▬▬░░░░░░░░░░░░░ | |
-| Blue-chip | 25% |
-| ▬▬▬▬▬░░░░░░░░░░░░░░░ | |
-| Focus: Mahama Leigh | |
-| Dumas | |
-
------
-
-## Tendances 2026
-
-**POSITIVES**
-
-```
-✓ Sell-through 83,9%
-  Plus haut 3 ans
-
-✓ Nouveaux acheteurs +38%
-  Primaire dynamique
-
-✓ Segment <€50K
-  Plus forte croissance
-
-✓ Art africain femmes
-  52,8% des ventes
-```
-
-**RISQUES**
-
-```
-! Ultra-contemp. -31,3%
-  S1 2025
-
-! NFT -93%
-  Depuis 2021
-
-! Chine -31%
-  Plus bas depuis 2009
-
-! Segment >€10M -45%
-  Contraction haute gamme
-```
-
------
-
-## Signaux Achat
-
-```
-✓ FORT
-  Power 100 · Golden Lion
-  Record récent · Retro
-
-○ MODÉRÉ
-  Galerie Tier 1
-  Vanguard · Biennale
-
-— ATTENTE
-  Ascension rapide
-  Pas de validation
-
-✗ ÉVITER
-  Volatilité extrême
-  Marché manipulé
-```
-
------
+---
 
 ## Verdict
 
-**◈ OPPORTUNITÉ IDENTIFIÉE**
+# OPPORTUNITÉ ◆
 
-Marché art contemporain
-robuste en 2026. Segment
-accessible <€50K offre
-meilleur potentiel croissance.
-Art africain et femmes
-surperforment massivement.
+- Premium comprimé à 1,4x vs 2,2x en 2022 = point d'entrée
+- Retail Hermès +7%/an = plancher haussier mécanique
+- Gold GHW = top 3 coloris à plus forte rétention
+
+---
 
 **Forces**
 
-- Sell-through 83,9% record
-- +38% nouveaux collectionneurs
-- Décorrélation S&P -0,04
-- Art africain 52,8% ventes
-- Segment <€50K dynamique
+- Rétention 138% — seule marque systématiquement au-dessus du retail
+- CAGR historique 14,2%/an sur 35 ans (Baghunter)
+- Liquidité profonde : 5+ plateformes authentifiées, revente en 7-30 jours
 
 **Vigilance**
-! Ultra-contemporain -31,3%
-! NFT effondré -93%
-! Chine -31%
-! Segment >€10M contracté
 
-*→ 50 artistes · 3 segments*
-*→ Diversification · Croissance*
+- Fin du "supercycle luxe" : perte de ~50M clients dans le luxe global (Bain 2025)
+- Premium secondaire en compression progressive depuis ATH 2022
 
------
+---
 
-> *⌈ Synthèse ⌉*
->
-> *Marché $57,5 Mds · 83,9% STR*
->
-> *Best: Waruguru Mahama Dumas*
->
-> *Focus <€50K · Art africain*
+PROPHETIC
 
------
+8 Sources citées · 12 données Prophetic · 6 algorithmes SCORE · 86% précision · 4 Données Live
 
-◆ PROPHETIC ORCHESTRA ◆
+© 2025 Prophetic SAS
 
-50 artistes sélectionnés 2026
+---
 
-Blue-Chip · Mid-Market · Accessible
-
-Score propriétaire · Momentum
-
-Disponibilité vérifiée
-
------
+*Information stratégique uniquement. Ne constitue pas un conseil en investissement.*
