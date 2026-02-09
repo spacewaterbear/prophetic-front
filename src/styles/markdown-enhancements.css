@@ -3,6 +3,157 @@
    ═══════════════════════════════════════════════════════════════════════ */
 
 /* ═══════════════════════════════════════════════════════════════════════
+   TYPOGRAPHY
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.markdown-container h1 {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 1.75rem;
+    font-weight: 500;
+    color: #ffffff;
+    margin: 8px 0 16px;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+}
+
+@media (min-width: 768px) {
+    .markdown-container h1 {
+        font-size: 2rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .markdown-container h1 {
+        font-size: 2.25rem;
+    }
+}
+
+.markdown-container h2 {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: #ffffff;
+    margin: 20px 0 12px;
+    line-height: 1.3;
+}
+
+@media (min-width: 768px) {
+    .markdown-container h2 {
+        font-size: 1.25rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .markdown-container h2 {
+        font-size: 1.5rem;
+    }
+}
+
+.markdown-container h3 {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #a1a1aa;
+    margin: 16px 0 12px;
+}
+
+.markdown-container p {
+    margin-bottom: 12px;
+    line-height: 1.7;
+    color: #ffffff;
+}
+
+.markdown-container strong {
+    color: #ffffff;
+    font-weight: 500;
+}
+
+.markdown-container code {
+    font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+    font-size: 11px;
+    color: #52525b;
+    background: #09090b;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+@media (min-width: 1024px) {
+    .markdown-container code {
+        font-size: 12px;
+    }
+}
+
+.markdown-container pre {
+    background: #09090b;
+    border: 1px solid #18181b;
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 12px;
+    overflow-x: auto;
+}
+
+@media (min-width: 1024px) {
+    .markdown-container pre {
+        padding: 24px;
+    }
+}
+
+.markdown-container pre code {
+    background: transparent;
+    padding: 0;
+    font-size: 12px;
+    color: #a1a1aa;
+    white-space: pre;
+    line-height: 1.2;
+}
+
+@media (min-width: 1024px) {
+    .markdown-container pre code {
+        font-size: 13px;
+    }
+}
+
+.markdown-container blockquote {
+    border-left: 1px solid #27272a;
+    padding-left: 14px;
+    margin: 16px 0;
+}
+
+.markdown-container blockquote p {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 0.95rem;
+    font-style: italic;
+    color: #a1a1aa;
+    line-height: 1.6;
+    margin-bottom: 6px;
+}
+
+.markdown-container hr {
+    border: none;
+    border-top: 1px solid #18181b;
+    margin: 20px 0;
+}
+
+.markdown-container ul {
+    list-style: none;
+    margin: 12px 0;
+}
+
+.markdown-container li {
+    position: relative;
+    padding-left: 14px;
+    margin-bottom: 6px;
+    font-size: 12px;
+}
+
+.markdown-container li::before {
+    content: "·";
+    position: absolute;
+    left: 0;
+    color: #52525b;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
    TABLES (ASCII CONVERTED)
    ═══════════════════════════════════════════════════════════════════════ */
 
