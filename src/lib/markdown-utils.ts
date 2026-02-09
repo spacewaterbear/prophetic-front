@@ -112,17 +112,20 @@ export function convertRankingListsToHtml(html: string): string {
     return html.replace(codeBlockRegex, (match, codeContent) => {
         if (codeContent.includes('▬') && codeContent.match(/#\d+\s+\w+/)) {
             const lines = codeContent.split('\n').filter((line: string) => line.trim());
-            const rankingItems: Array<{ rank: string, name: string, progress: number, description: string }> = [];
+            const rankingItems: Array<{ rank: string, name: string, progress: number, description: string, hasAnalysis?: boolean }> = [];
 
             let i = 0;
             while (i < lines.length) {
                 const line = lines[i].trim();
-                const rankMatch = line.match(/^#(\d+)\s+(\w+)\s+(▬+░*)/);
+                const rankMatch = line.match(/^#(\d+)\s+(.+?)\s+(▬+░*)/);
 
                 if (rankMatch) {
                     const rank = rankMatch[1];
-                    const name = rankMatch[2];
+                    const rawName = rankMatch[2];
                     const progressBar = rankMatch[3];
+
+                    const hasMarkers = rawName.includes('-+-');
+                    const cleanName = rawName.replace(/-\+-/g, '').trim();
 
                     const filled = (progressBar.match(/▬/g) || []).length;
                     const total = progressBar.length;
@@ -134,7 +137,13 @@ export function convertRankingListsToHtml(html: string): string {
                         i++;
                     }
 
-                    rankingItems.push({ rank, name, progress, description });
+                    rankingItems.push({
+                        rank,
+                        name: cleanName,
+                        progress,
+                        description,
+                        hasAnalysis: hasMarkers
+                    });
                 }
                 i++;
             }
@@ -143,11 +152,11 @@ export function convertRankingListsToHtml(html: string): string {
                 let rankingHtml = '<div class="ranking-list">';
                 rankingItems.forEach((item) => {
                     rankingHtml += `
-            <div class="ranking-card group">
+            <div class="ranking-card group ${item.hasAnalysis ? 'cursor-pointer' : ''}" ${item.hasAnalysis ? `data-analysis data-analysis-query="${item.name}"` : ''}>
               <div class="ranking-header flex justify-between items-center">
                 <div class="flex items-center gap-2">
                   <span class="ranking-number text-prophetic-brand-primary font-bold">#${item.rank}</span>
-                  <span class="ranking-name font-serif font-medium text-prophetic-text-primary">${item.name}</span>
+                  <span class="ranking-name font-serif font-medium text-prophetic-text-primary text-base">${item.name}</span>
                 </div>
               </div>
               <div class="ranking-progress-bar bg-zinc-100 dark:bg-zinc-800 h-1.5 rounded-full overflow-hidden my-3">
@@ -177,7 +186,7 @@ export function convertExtendedRankingsToHtml(html: string): string {
         const lines = codeContent.split('\n').map((line: string) => line.trim()).filter((line: string) => line);
 
         const hasExtendedRankings = lines.some((line: string) =>
-            /^#\d+\s+[A-Za-z\s]+\s+\d{2,3}$/.test(line)
+            /^#\d+\s+.+?\s+\d{2,3}$/.test(line)
         );
 
         if (hasExtendedRankings) {
@@ -186,9 +195,10 @@ export function convertExtendedRankingsToHtml(html: string): string {
                 name: string;
                 score: number;
                 details: string[];
+                hasAnalysis?: boolean;
             }> = [];
 
-            let currentRanking: { rank: number; name: string; score: number; details: string[] } | null = null;
+            let currentRanking: { rank: number; name: string; score: number; details: string[]; hasAnalysis?: boolean } | null = null;
 
             lines.forEach((line: string) => {
                 const headerMatch = line.match(/^#(\d+)\s+(.+?)\s+(\d{2,3})$/);
@@ -197,11 +207,16 @@ export function convertExtendedRankingsToHtml(html: string): string {
                     if (currentRanking) {
                         rankings.push(currentRanking);
                     }
+                    const rawName = headerMatch[2].trim();
+                    const hasMarkers = rawName.includes('-+-');
+                    const cleanName = rawName.replace(/-\+-/g, '').trim();
+
                     currentRanking = {
                         rank: parseInt(headerMatch[1]),
-                        name: headerMatch[2].trim(),
+                        name: cleanName,
                         score: parseInt(headerMatch[3]),
-                        details: []
+                        details: [],
+                        hasAnalysis: hasMarkers
                     };
                 } else if (currentRanking && line) {
                     currentRanking.details.push(line);
@@ -216,7 +231,7 @@ export function convertExtendedRankingsToHtml(html: string): string {
                 let rankingHtml = '<div class="extended-rankings">';
                 rankings.forEach((ranking) => {
                     rankingHtml += `
-            <div class="extended-ranking-card group">
+            <div class="extended-ranking-card group ${ranking.hasAnalysis ? 'cursor-pointer' : ''}" ${ranking.hasAnalysis ? `data-analysis data-analysis-query="${ranking.name}"` : ''}>
               <div class="extended-ranking-header flex justify-between items-center mb-3">
                 <div class="flex items-center gap-2">
                   <span class="extended-ranking-number text-prophetic-brand-primary font-bold">#${ranking.rank}</span>

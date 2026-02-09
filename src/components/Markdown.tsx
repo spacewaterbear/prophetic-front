@@ -31,11 +31,8 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
   useEffect(() => {
     async function processMarkdown() {
       try {
-        // First, convert analysis markers before markdown processing
-        let processedContent = convertAnalysisMarkers(content);
-
-        // Convert markdown to HTML using marked
-        let html = await marked(processedContent);
+        // First, convert markdown to HTML using marked
+        let html = await marked(content);
 
         // Apply conversion functions in the correct order
         // 1. Allocation profiles (must be before ASCII tables to avoid conflicts)
@@ -52,6 +49,10 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
 
         // 5. Standard markdown tables (last, to style any remaining tables)
         html = convertMarkdownTablesToStyledHtml(html);
+
+        // Finally, convert analysis markers after all other processing
+        // This ensures they are correctly rendered even when inside code blocks or custom components
+        html = convertAnalysisMarkers(html);
 
         setHtmlContent(html);
       } catch (error) {
@@ -70,7 +71,10 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
     // Check if clicked element or its parent has the analysis marker
     const analysisElement = target.closest('[data-analysis]');
     if (analysisElement) {
-      const text = analysisElement.textContent?.replace(/-\+-/g, '').trim();
+      // Prioritize explicit query attribute, fallback to text content
+      const queryPlaceholder = (analysisElement as HTMLElement).getAttribute('data-analysis-query');
+      const text = queryPlaceholder || analysisElement.textContent?.replace(/-\+-/g, '').trim();
+
       if (text) {
         const customEvent = new CustomEvent("triggerDeepSearch", {
           detail: { text }
