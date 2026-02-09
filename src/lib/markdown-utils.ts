@@ -19,17 +19,17 @@ export function convertMarkdownTablesToStyledHtml(html: string): string {
 
         let headers: string[] = [];
         if (theadMatch) {
-            const headerCells = theadMatch[1].match(/<th>(.*?)<\/th>/g) || [];
+            const headerCells = theadMatch[1].match(/<th[^>]*>(.*?)<\/th>/g) || [];
             headers = headerCells.map((cell: string) =>
-                cell.replace(/<\/?th>/g, '').trim()
+                cell.replace(/<\/?th[^>]*>/g, '').trim()
             );
         }
 
         const bodyRows = tbodyMatch[1].match(/<tr>([\s\S]*?)<\/tr>/g) || [];
         const rows = bodyRows.map((row: string) => {
-            const cells = row.match(/<td>(.*?)<\/td>/g) || [];
+            const cells = row.match(/<td[^>]*>(.*?)<\/td>/g) || [];
             return cells.map((cell: string) =>
-                cell.replace(/<\/?td>/g, '').trim()
+                cell.replace(/<\/?td[^>]*>/g, '').trim()
             );
         });
 
