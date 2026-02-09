@@ -41,7 +41,7 @@ export const VignetteGridCard = memo(({ data, onVignetteClick }: VignetteGridCar
                                     alt={item.brand_name}
                                     fill
                                     className="object-cover"
-                                    sizes="(max-width: 640px) 50vw, 25vw"
+                                    sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 20vw"
                                 />
 
                                 {/* Score Badge with Trend */}

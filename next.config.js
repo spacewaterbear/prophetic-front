@@ -3,6 +3,7 @@ const nextConfig = {
     allowedDevOrigins: ["*.preview.same-app.com"],
     output: "standalone",
     images: {
+        formats: ["image/avif", "image/webp"],
         domains: [
             "source.unsplash.com",
             "images.unsplash.com",
