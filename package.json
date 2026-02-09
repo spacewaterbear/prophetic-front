@@ -17,6 +17,7 @@
     "cheerio": "^1.1.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "html2pdf.js": "^0.14.0",
     "lucide-react": "^0.546.0",
     "marked": "^17.0.1",
     "nanoid": "^5.1.6",

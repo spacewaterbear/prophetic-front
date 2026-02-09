@@ -159,7 +159,7 @@ export function convertRankingListsToHtml(html: string): string {
                   <span class="ranking-name font-serif font-medium text-prophetic-text-primary text-base">${item.name}</span>
                 </div>
               </div>
-              <div class="ranking-progress-bar bg-zinc-100 dark:bg-zinc-800 h-1.5 rounded-full overflow-hidden my-3">
+              <div class="ranking-progress-bar h-1.5 rounded-full overflow-hidden my-3">
                 <div class="ranking-progress-fill bg-prophetic-brand-primary h-full rounded-full transition-all duration-1000" style="width: ${item.progress}%"></div>
               </div>
               ${item.description ? `<div class="ranking-description text-prophetic-text-tertiary text-[11px] leading-relaxed">${item.description}</div>` : ''}

@@ -367,17 +367,25 @@
 .markdown-container .ranking-progress-bar {
     width: 100%;
     height: 6px;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.05);
     border-radius: 3px;
     overflow: hidden;
     margin-bottom: 8px;
 }
 
+.dark .markdown-container .ranking-progress-bar {
+    background: rgba(255, 255, 255, 0.1);
+}
+
 .markdown-container .ranking-progress-fill {
     height: 100%;
-    background: rgba(255, 255, 255, 0.9);
+    background: var(--brand-primary, #352ee8);
     border-radius: 3px;
     transition: width 0.3s ease;
+}
+
+.dark .markdown-container .ranking-progress-fill {
+    background: rgba(255, 255, 255, 0.9);
 }
 
 .markdown-container .ranking-description {
@@ -582,16 +590,24 @@
 .markdown-container .allocation-progress-bar {
     width: 100%;
     height: 4px;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.05);
     border-radius: 2px;
     overflow: hidden;
 }
 
+.dark .markdown-container .allocation-progress-bar {
+    background: rgba(255, 255, 255, 0.1);
+}
+
 .markdown-container .allocation-progress-fill {
     height: 100%;
-    background: rgba(255, 255, 255, 0.9);
+    background: var(--brand-primary, #352ee8);
     border-radius: 2px;
     transition: width 0.3s ease;
+}
+
+.dark .markdown-container .allocation-progress-fill {
+    background: rgba(255, 255, 255, 0.9);
 }
 
 .markdown-container .allocation-focus {
