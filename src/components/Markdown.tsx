@@ -20,11 +20,22 @@ interface MarkdownProps {
 export function Markdown({ content, className, categoryName, onCategoryClick }: MarkdownProps) {
   const [htmlContent, setHtmlContent] = useState<string>("");
 
+  // Helper to convert -+-word-+- markers to clickable elements
+  const convertAnalysisMarkers = (text: string): string => {
+    // Match -+-word-+- pattern and replace with HTML span
+    return text.replace(/-\+-(.+?)-\+-/g, (match, word) => {
+      return `<span data-analysis class="inline-block cursor-pointer border-l-4 border-orange-500 pl-3 pr-2 py-0.5 bg-orange-500/10 hover:bg-orange-500/20 transition-colors font-medium">${word}</span>`;
+    });
+  };
+
   useEffect(() => {
     async function processMarkdown() {
       try {
+        // First, convert analysis markers before markdown processing
+        let processedContent = convertAnalysisMarkers(content);
+
         // Convert markdown to HTML using marked
-        let html = await marked(content);
+        let html = await marked(processedContent);
 
         // Apply conversion functions in the correct order
         // 1. Allocation profiles (must be before ASCII tables to avoid conflicts)

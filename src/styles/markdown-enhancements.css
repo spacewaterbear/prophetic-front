@@ -10,10 +10,14 @@
     font-family: 'EB Garamond', Georgia, serif;
     font-size: 1.75rem;
     font-weight: 500;
-    color: #ffffff;
+    color: #18181b;
     margin: 8px 0 16px;
     letter-spacing: -0.01em;
     line-height: 1.2;
+}
+
+.dark .markdown-container h1 {
+    color: #ffffff;
 }
 
 @media (min-width: 768px) {
@@ -32,9 +36,13 @@
     font-family: 'EB Garamond', Georgia, serif;
     font-size: 1.125rem;
     font-weight: 500;
-    color: #ffffff;
+    color: #18181b;
     margin: 20px 0 12px;
     line-height: 1.3;
+}
+
+.dark .markdown-container h2 {
+    color: #ffffff;
 }
 
 @media (min-width: 768px) {
@@ -53,28 +61,47 @@
     font-family: 'EB Garamond', Georgia, serif;
     font-size: 0.95rem;
     font-weight: 500;
-    color: #a1a1aa;
+    color: #52525b;
     margin: 16px 0 12px;
+}
+
+.dark .markdown-container h3 {
+    color: #a1a1aa;
 }
 
 .markdown-container p {
     margin-bottom: 12px;
     line-height: 1.7;
+    color: #18181b;
+}
+
+.dark .markdown-container p {
     color: #ffffff;
 }
 
 .markdown-container strong {
-    color: #ffffff;
+    color: #18181b;
     font-weight: 500;
+}
+
+.dark .markdown-container strong {
+    color: #ffffff;
 }
 
 .markdown-container code {
     font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
     font-size: 11px;
+    color: #71717a;
+    background: hsl(var(--bg-card-surface));
+    padding: 2px 6px;
+    border: 1px solid hsl(var(--border-surface));
+    border-radius: 4px;
+}
+
+.dark .markdown-container code {
     color: #52525b;
     background: #09090b;
-    padding: 2px 6px;
-    border-radius: 4px;
+    border-color: #18181b;
 }
 
 @media (min-width: 1024px) {
@@ -84,12 +111,17 @@
 }
 
 .markdown-container pre {
-    background: #09090b;
-    border: 1px solid #18181b;
+    background: hsl(var(--bg-card-surface));
+    border: 1px solid hsl(var(--border-surface));
     border-radius: 14px;
     padding: 18px;
     margin-bottom: 12px;
     overflow-x: auto;
+}
+
+.dark .markdown-container pre {
+    background: #09090b;
+    border: 1px solid #18181b;
 }
 
 @media (min-width: 1024px) {
@@ -100,11 +132,16 @@
 
 .markdown-container pre code {
     background: transparent;
+    border: none;
     padding: 0;
     font-size: 12px;
-    color: #a1a1aa;
+    color: #52525b;
     white-space: pre;
     line-height: 1.2;
+}
+
+.dark .markdown-container pre code {
+    color: #a1a1aa;
 }
 
 @media (min-width: 1024px) {
@@ -161,38 +198,46 @@
     margin: var(--space-4, 16px) 0;
     overflow-x: auto;
     border-radius: var(--radius-lg, 14px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.markdown-container .ascii-table-wrapper:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+    transform: translateY(-2px);
 }
 
 .markdown-container .ascii-table {
     width: 100%;
     border-collapse: collapse;
-    background: var(--bg-card, #09090b);
-    border: 1px solid var(--border-default, #18181b);
+    background: hsl(var(--bg-card-surface));
+    border: 1px solid hsl(var(--border-surface));
     border-radius: var(--radius-lg, 14px);
 }
 
 .markdown-container .ascii-table tbody {
-    background: var(--bg-card, #09090b);
+    background: transparent;
 }
 
 .markdown-container .ascii-table tr {
-    border-bottom: 1px solid var(--border-default, #18181b);
+    border-bottom: 1px solid hsl(var(--border-surface));
     transition: background-color 0.15s ease;
 }
 
-.markdown-container .ascii-table tr:last-child {
-    border-bottom: none;
-}
-
 .markdown-container .ascii-table tr:hover {
-    background: var(--bg-elevated, #18181b);
+    background: rgba(53, 46, 232, 0.03);
+    /* Subtle brand tint on hover */
 }
 
 .markdown-container .ascii-table td {
     padding: 12px 16px;
     font-size: 13px;
-    color: rgba(255, 255, 255, 0.95);
+    color: #18181b;
     word-break: break-words;
+}
+
+.dark .markdown-container .ascii-table td {
+    color: rgba(255, 255, 255, 0.95);
 }
 
 @media (min-width: 768px) {
@@ -203,16 +248,24 @@
 }
 
 .markdown-container .ascii-table .label-cell {
-    color: rgba(255, 255, 255, 0.95);
+    color: #18181b;
     font-weight: 400;
     min-width: 120px;
 }
 
-.markdown-container .ascii-table .value-cell {
+.dark .markdown-container .ascii-table .label-cell {
     color: rgba(255, 255, 255, 0.95);
+}
+
+.markdown-container .ascii-table .value-cell {
+    color: #18181b;
     font-family: var(--font-mono, 'JetBrains Mono', monospace);
     font-size: 12px;
     text-align: right;
+}
+
+.dark .markdown-container .ascii-table .value-cell {
+    color: rgba(255, 255, 255, 0.95);
 }
 
 @media (min-width: 768px) {
@@ -228,6 +281,19 @@
 .table-scroll-wrapper {
     overflow-x: auto;
     margin: 1rem 0;
+}
+
+.table-scroll-wrapper table {
+    background: hsl(var(--bg-card-surface));
+    border: 1px solid hsl(var(--border-surface));
+    border-radius: var(--radius-lg, 14px);
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.dark .table-scroll-wrapper table {
+    background: #09090b;
+    border-color: #18181b;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -255,19 +321,20 @@
 }
 
 .markdown-container .ranking-card {
-    background: var(--bg-card, #09090b);
-    border: 1px solid var(--border-default, #18181b);
+    background: hsl(var(--bg-card-surface));
+    border: 1px solid hsl(var(--border-surface));
     border-radius: var(--radius-lg, 14px);
     padding: 16px;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 .markdown-container .ranking-card:hover {
-    background: var(--bg-elevated, #18181b);
-    border-color: var(--border-hover, #27272a);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    background: #ffffff;
+    border-color: var(--brand-primary, #352ee8);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+    transform: translateY(-4px) scale(1.02);
 }
 
 .markdown-container .ranking-header {
@@ -289,8 +356,12 @@
     font-family: var(--font-serif, 'EB Garamond', serif);
     font-size: 16px;
     font-weight: 500;
-    color: var(--text-primary, #ffffff);
+    color: #18181b;
     letter-spacing: -0.01em;
+}
+
+.dark .markdown-container .ranking-name {
+    color: #ffffff;
 }
 
 .markdown-container .ranking-progress-bar {
@@ -347,19 +418,20 @@
 }
 
 .markdown-container .extended-ranking-card {
-    background: var(--bg-card, #09090b);
-    border: 1px solid var(--border-default, #18181b);
+    background: hsl(var(--bg-card-surface));
+    border: 1px solid hsl(var(--border-surface));
     border-radius: var(--radius-lg, 14px);
     padding: 16px;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 .markdown-container .extended-ranking-card:hover {
-    background: var(--bg-elevated, #18181b);
-    border-color: var(--border-hover, #27272a);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    background: #ffffff;
+    border-color: var(--brand-primary, #352ee8);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+    transform: translateY(-4px);
 }
 
 .markdown-container .extended-ranking-header {
@@ -381,10 +453,15 @@
     font-family: var(--font-mono, 'JetBrains Mono', monospace);
     font-size: 13px;
     font-weight: 700;
-    color: var(--text-primary, #ffffff);
-    background: rgba(255, 255, 255, 0.1);
+    color: #18181b;
+    background: rgba(0, 0, 0, 0.05);
     padding: 4px 10px;
     border-radius: var(--radius-md, 8px);
+}
+
+.dark .markdown-container .extended-ranking-score {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .markdown-container .extended-ranking-name {
@@ -441,16 +518,18 @@
 }
 
 .markdown-container .allocation-card {
-    background: var(--bg-card, #09090b);
-    border: 1px solid var(--border-default, #18181b);
+    background: hsl(var(--bg-card-surface));
+    border: 1px solid hsl(var(--border-surface));
     border-radius: var(--radius-lg, 14px);
     padding: 20px;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 .markdown-container .allocation-card:hover {
-    background: var(--bg-elevated, #18181b);
-    border-color: var(--border-hover, #27272a);
+    background: #ffffff;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+    transform: translateY(-4px);
 }
 
 .markdown-container .allocation-title {

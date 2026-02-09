@@ -1,356 +1,885 @@
-[SEGMENT]
+## ◈ 50 ARTISTES À SUIVRE
 
-# -+-NOM DE L'ACTIF OU PRÉNOM NOM ARTISTE-+-
+Guide Investissement Art Contemporain 2026
+`PRO-ART-2026-001`
 
-[RÉFÉRENCE]
+-----
 
----
+## Marché 2026
 
-VALEUR ACTUELLE
+| Marché | $57,5 Mds |
+|--------|-----------|
+| Sell-through | 83,9% |
+| Nvx collect. | +38% |
+| Corr. S&P | -0,04 |
 
-# €[VALEUR]
+**Notre lecture** — Marché robuste. Segment <€50K = plus forte croissance. Art africain femmes 52,8% ventes. Nouveaux collectionneurs massifs.
 
-[VS_ATH]% vs ATH · Verified [VERIFIED]%
+*→ Décorrélation · Croissance · Diversification*
 
----
+-----
 
-## Identification
-
-| Critère | Détail |
-|:--|--:|
-| Année | [ANNÉE] |
-| Rareté | [RARETÉ] |
-| État | [ÉTAT] |
-| Provenance | [PROVENANCE] |
-
----
-
-<!-- CONDITION:TABLEAU — Afficher SI données macro segment disponibles -->
-
-## Marché Segment
-
-| Indicateur | Valeur |
-|:--|--:|
-| Marché | [TAILLE_MARCHE] |
-| Sell-through | [SELL_THROUGH]% |
-| Nvx acheteurs | +[NVX_ACHETEURS]% |
-| Corr. S&P | [CORR_SP] |
-
----
-
-## Récit Patrimonial
-
-[PARAGRAPHE_1]
-
-[PARAGRAPHE_2]
-
-[PARAGRAPHE_3]
-
----
-
-### Positionnement Marché
-
-[POSITIONNEMENT]
-
----
-
-> *« [CITATION] »*
->
-> — [AUTEUR]
-
----
-
-### Notre Lecture
-
-[ANALYSE]
-
----
-
-## Score Prophetic
-
-**[SCORE]** / 100
-
-Momentum [MOMENTUM]
-
-| Critère | Note |
-|:--|--:|
-| Rareté | [S_RARETE] |
-| Désirabilité | [S_DESIRABILITE] |
-| Historique | [S_HISTORIQUE] |
-| Liquidité | [S_LIQUIDITE] |
-| Institution | [S_INSTITUTION] |
-| Potentiel | [S_POTENTIEL] |
-
----
-
-## Performance 5 ans
-
-| Actif | Perf. |
-|:--|--:|
-| **-+-NOM_ACTIF-+-** | **+[PERF_ACTIF]%** |
-| Bitcoin | +[PERF_BTC]% |
-| S&P 500 | +[PERF_SP500]% |
-| Or | +[PERF_OR]% |
-| Immobilier | +[PERF_IMMO]% |
-
----
-
-## Trajectoire
-
-| Année | Valeur |
-|:--|--:|
-| [AN_1] | €[VAL_1] |
-| [AN_2] | €[VAL_2] |
-| [AN_3] | €[VAL_3] ATH |
-| [AN_4] | €[VAL_4] |
-| [AN_5] | €[VAL_5] |
-
----
-
-## Scénarios ROI
-
-**Bear** [PROB_BEAR]%
-
-| Horizon | ROI |
-|:--|--:|
-| 12 mois | +[ROI_BEAR_12]% |
-| 36 mois | +[ROI_BEAR_36]% |
-
-**Base** [PROB_BASE]%
-
-| Horizon | ROI |
-|:--|--:|
-| 12 mois | +[ROI_BASE_12]% |
-| 36 mois | +[ROI_BASE_36]% |
-
-**Bull** [PROB_BULL]%
-
-| Horizon | ROI |
-|:--|--:|
-| 12 mois | +[ROI_BULL_12]% |
-| 36 mois | +[ROI_BULL_36]% |
-
----
-
-## Métriques
-
-| Indicateur | Valeur |
-|:--|--:|
-| CAGR | [CAGR]% |
-| Sharpe | [SHARPE] |
-| Volatilité | [VOLATILITE]% |
-| Max DD | [MAX_DD]% |
-| Corr. S&P | [CORR_SP] |
-
-Décorrélé
-
----
-
-<!-- CONDITION:VIGNETTES — Afficher SI ≥3 actifs comparables identifiés dans le segment -->
-
-## Comparables
+## Légende
 
 ```
-#[RANG_1] -+-NOM_COMPARABLE_1-+- [SCORE_1]
-[SEGMENT_1] · €[FOURCHETTE_1] · [MOMENTUM_1]
-[ACHIEVEMENT_1]
+SCORE PROPHETIC
+●●●●●●●●●● 90-100 Except.
+●●●●●●●●○○ 80-89  Très fort
+●●●●●●●○○○ 70-79  Fort
 
-#[RANG_2] -+-NOM_COMPARABLE_2-+- [SCORE_2]
-[SEGMENT_2] · €[FOURCHETTE_2] · [MOMENTUM_2]
-[ACHIEVEMENT_2]
+MOMENTUM
+▲▲▲ Forte hausse
+▲▲  Hausse
+▲   Légère hausse
+►   Stable
 
-#[RANG_3] -+-NOM_COMPARABLE_3-+- [SCORE_3]
-[SEGMENT_3] · €[FOURCHETTE_3] · [MOMENTUM_3]
-[ACHIEVEMENT_3]
-
-#[RANG_4] -+-NOM_COMPARABLE_4-+- [SCORE_4]
-[SEGMENT_4] · €[FOURCHETTE_4] · [MOMENTUM_4]
-[ACHIEVEMENT_4]
+DISPONIBILITÉ
+✓✓✓ Immédiat
+✓✓  Limité
+✓   Sur demande
+○   Rare
 ```
 
----
+-----
 
-<!-- CONDITION:PROGRESS BAR — Afficher SI classement momentum segment disponible -->
+## SEGMENT BLUE-CHIP
 
-## Top Momentum
+**> €500.000**
+Refuge patrimonial · TCAC 8-11%
+
+-----
+
+## 01 Julie Mehretu
+
+Éthiopie-USA · 1970 · Abstraction
 
 ```
-#1 -+-NOM_TOP_1-+- ▬▬▬▬▬▬▬▬▬▬
-[TAG_1]+[TAG_2]+[TAG_3]
-
-#2 -+-NOM_TOP_2-+- ▬▬▬▬▬▬▬▬▬░
-[TAG_1]+[TAG_2]
-
-#3 -+-NOM_TOP_3-+- ▬▬▬▬▬▬▬▬░░
-[TAG_1]+[TAG_2]
-
-#4 -+-NOM_TOP_4-+- ▬▬▬▬▬▬▬▬░░
-[TAG_1]+[TAG_2]
-
-#5 -+-NOM_TOP_5-+- ▬▬▬▬▬▬▬▬░░
-[TAG_1]+[TAG_2]
+●●●●●●●●●● 95  ▲▲▲
 ```
 
----
+| ROI | +92% |
+|-----|------|
+| Papier | €15-200K |
+| Peintures | €5-11M |
+| Galerie | M.Goodman |
+| Dispo | ✓ |
 
-## Portfolio Recommandé
+Record $10,74M · 60+ musées
+BMW Art Car 2024
 
-**€[BUDGET]**
+**Signal** Works paper <€200K
 
-ROI 36m +[ROI_PORTFOLIO]%
+-----
 
-| Actif | Alloc. |
-|:--|--:|
-| -+-ACTIF_1-+- | [PCT_1]% |
-| -+-ACTIF_2-+- | [PCT_2]% |
-| -+-ACTIF_3-+- | [PCT_3]% |
-| Liquidités | [PCT_4]% |
+## 02 Yoshitomo Nara
 
----
+Japon · 1959 · Pop/Manga
 
-## Signal
+```
+●●●●●●●●●○ 92  ▲▲▲
+```
 
-| Action | Seuil |
-|:--|--:|
-| Renforcer | €[SEUIL_BUY] |
-| Actuel | €[SEUIL_HOLD] |
-| Alléger | €[SEUIL_SELL] |
+| TCAC | 14% |
+|------|-----|
+| Appréciation | 88,9% |
+| Éditions | €4-15K |
+| Peintures | €5-25M |
+| Galerie | Zwirner |
+| Dispo | ✓✓ |
 
----
+Record $24,95M · TIME 100
+Guggenheim Bilbao 2025
 
-## Disponibilité
+**Signal** Cosmic eyes 2005-10
 
-| Plateforme | Prix |
-|:--|--:|
-| [PLATFORM_1] | €[PRIX_1] ● |
-| [PLATFORM_2] | €[PRIX_2] ● |
-| [PLATFORM_3] | €[PRIX_3] ○ |
-| [PLATFORM_4] | €[PRIX_4] ○ |
+-----
 
-● Dispo · ○ Indispo
+## 03 Yayoi Kusama
 
----
+Japon · 1929 · Installations
 
-## Sortie
+```
+●●●●●●●●●● 98  ▲▲
+```
 
-| Canal | Délai · Frais |
-|:--|--:|
-| [CANAL_1] | [DELAI_1] · [FRAIS_1] |
-| [CANAL_2] | [DELAI_2] · [FRAIS_2] |
-| [CANAL_3] | [DELAI_3] · [FRAIS_3] |
+| #1 ventes | $58,8M |
+|-----------|--------|
+| Cap. | $2,2 Mds |
+| Éditions | €5-150K |
+| Sculptures | €500K-6M |
+| Peintures | €2-10M |
+| Galeries | Multi |
+| Dispo | ✓✓ |
 
----
+LVMH partnership · Beyeler 2025
 
-## Leasing + Exit
+**Signal** Infinity Nets €500K-2M
+! Âge 96 ans · Rareté ↑
 
-Éligible
+-----
 
-**12 mois**
+## 04 Jenny Saville
 
-| Composante | Montant |
-|:--|--:|
-| Leasing | +€[LEASING_12] |
-| Plus-value | +€[PV_12] |
-| ROI Total | +[ROI_12]% |
+UK · 1970 · Fig. monumentale
 
-**24 mois**
+```
+●●●●●●●●○○ 88  ▲▲▲
+```
 
-| Composante | Montant |
-|:--|--:|
-| Leasing | +€[LEASING_24] |
-| Plus-value | +€[PV_24] |
-| ROI Total | +[ROI_24]% |
+| ROI | ×24 |
+|-----|-----|
+| £400K→£9,5M 2004-18 | |
+| Éditions | €5-50K |
+| Papier | €50-500K |
+| Peintures | €5-12M |
+| Galerie | Gagosian |
+| Dispo | ✓ |
 
-**36 mois**
+Record $12,5M · NPG Londres 2025
 
-| Composante | Montant |
-|:--|--:|
-| Leasing | +€[LEASING_36] |
-| Plus-value | +€[PV_36] |
-| ROI Total | +[ROI_36]% |
+**Signal** Période Sensation 92-97
 
----
+-----
 
-## Conservation
+## 05 Cecily Brown
 
-| Poste | Détail |
-|:--|--:|
-| Stockage | [STOCKAGE] |
-| Entretien | [ENTRETIEN] |
-| Assurance | [ASSURANCE] |
+UK · 1969 · Abstraction gestuelle
 
-**Documents**
+```
+●●●●●●●●●○ 90  ▲▲▲
+```
 
-[DOC_1] · [DOC_2] · [DOC_3] · [DOC_4]
+| ROI | +44% |
+|-----|------|
+| 2018-2025 | |
+| Papier | €15-500K |
+| Peintures | €2-10M |
+| Galerie | Gagosian |
+| Dispo | ✓ |
 
----
+Record $9,81M · Met 2023
+Barnes Foundation 2025
 
-## Fiscalité
+! Récentes < anciennes
 
-**France**
+-----
 
-| Régime | Taux |
-|:--|--:|
-| TVA | [TVA_FR] |
-| Plus-values | [PV_FR] |
-| Abattement | [ABAT_FR] |
-| Exonération | [EXON_FR] |
+## 06 George Condo
 
-**Suisse**
+USA · 1957 · Cubisme psy.
 
-| Régime | Taux |
-|:--|--:|
-| TVA | [TVA_CH] |
-| Plus-values | [PV_CH] |
+```
+●●●●●●●●○○ 85  ▲▲
+```
 
-**HK/SG**
+| Turnover | $39,2M |
+|----------|--------|
+| #3 vivant | |
+| 2400+ lots tracés | |
+| Pastels | €600K-1,5M |
+| Têtes | €500K-2,5M |
+| Peintures | €1,5-6,8M |
+| Galeries | Multi |
+| Dispo | ✓✓✓ |
 
-| Régime | Taux |
-|:--|--:|
-| TVA | [TVA_HK] |
-| Plus-values | [PV_HK] |
+Liquidité maximale
 
----
+! Contrefaçons · Output prolifique
 
-## Risques
+-----
 
-| Facteur | Niveau |
-|:--|--:|
-| [RISQUE_1] | [NIVEAU_1]/10 |
-| [RISQUE_2] | [NIVEAU_2]/10 |
-| [RISQUE_3] | [NIVEAU_3]/10 |
+## 07 Marlene Dumas
 
----
+Afrique du Sud · 1953 · Figuration
+
+```
+●●●●●●●●●○ 93  ▲▲▲
+```
+
+| ROI | +115% |
+|-----|-------|
+| 2008-2025 | |
+| Prix | €500K-13,6M |
+| Galerie | Zwirner |
+| Dispo | ✓ |
+
+**RECORD $13,6M** Christie's mai 2025
+Femme vivante la plus chère
+
+**Signal** Doublement record
+
+-----
+
+## 08 Banksy
+
+UK · c.1974 · Street art
+
+```
+●●●●●●●●●● 97  ►
+```
+
+| TCAC 5a | 26% |
+|---------|-----|
+| TCAC 20a | 28% |
+| Cap. | $444,7M |
+| Non signées | €8-100K |
+| Signées | €35-500K |
+| Originaux | €200K-18,6M |
+| Dispo | ✓✓✓ |
+
+13M+ Instagram
+Catalogue raisonné 2025/26
+
+! Correction depuis pic 2021
+
+-----
+
+## 09 KAWS
+
+USA · 1974 · Pop/Sculptures
+
+```
+●●●●●●●●●○ 91  ▲▲
+```
+
+| TCAC | 16,2% |
+|------|-------|
+| Appréciation | 100% |
+| Figures | €500-20K |
+| Œuvres maj | €500K-15M |
+| Galeries | Multi |
+| Dispo | ✓✓✓ |
+
+Record $14,8M · SFMOMA 2024-25
+
+! Saturation brand collabs
+
+-----
+
+## 10 Michael Armitage
+
+Kenya · 1984 · Peinture Lubugo
+
+```
+●●●●●●●●●○ 89  ▲▲▲
+```
+
+| Peintures | €100-500K+ |
+|-----------|------------|
+| Papier | €20-80K |
+| Galeries | WhiteCube |
+| | + Zwirner |
+| Dispo | ✓✓ |
+
+Record $2,37M mai 2025
+Palazzo Grassi Venise 2026-27
+
+**Signal** Double top galeries
+
+-----
+
+## 11-12 Blue-Chip Suite
+
+| 11 Gabriel Orozco | |
+|-------------------|---|
+| Mexique · Conceptuel | |
+| ●●●●●●●●○○ 85  ► | |
+| Photos €3-30K | |
+| Sculpt. €100-500K+ | |
+| Museo Jumex 2025 | |
+
+| 12 Adriana Varejão | |
+|--------------------|---|
+| Brésil · Céramique | |
+| ●●●●●●●●○○ 84  ▲▲ | |
+| Papier €15-50K | |
+| Peint. €150-600K | |
+| Inhotim permanent | |
+
+-----
+
+## SEGMENT MID-MARKET
+
+**€50.000 — €500.000**
+Meilleur rendement ajusté risque
+
+-----
+
+## 13 Ibrahim Mahama
+
+Ghana · 1987 · Installations
+
+```
+●●●●●●●●●● 98  ▲▲▲
+```
+
+| Installations | €50-500K |
+|---------------|----------|
+| Papier | €10-40K |
+| Galeries | WhiteCube |
+| | + Goodman |
+| Dispo | ✓✓ |
+
+**#1 ARTREVIEW POWER 100**
+Premier africain · UBS Artist 2025
+
+**Signal** Opportunité historique
+
+-----
+
+## 14 Amoako Boafo
+
+Ghana · 1984 · Finger-painting
+
+```
+●●●●●●●●○○ 87  ▲▲
+```
+
+| ROI | ×10 |
+|-----|-----|
+| depuis 2020 | |
+| Primaire | €50-250K |
+| Secondaire | €100-500K |
+| Galeries | M.Ibrahim |
+| Dispo | ✓✓✓ |
+
+Record $3,42M (×10 estim.)
+Belvedere + Schiele 2024-25
+
+! Correction possible
+
+-----
+
+## 15 Lynette Yiadom-Boakye
+
+UK · 1977 · Portraits fictifs
+
+```
+●●●●●●●●●○ 91  ▲▲▲
+```
+
+| ROI | ×2,4 |
+|-----|------|
+| $1,5M→$3,6M 2017-23 | |
+| Prix | €100K-3,6M |
+| Galeries | Corvi-Mora |
+| Dispo | ✓ |
+
+Record $3,6M · #1 bankable
+**100% sell-through**
+
+! Production limitée
+
+-----
+
+## 16 Simone Leigh
+
+USA · 1967 · Sculpture bronze
+
+```
+●●●●●●●●●○ 94  ▲▲▲
+```
+
+| Sculptures | €300K-1M+ |
+|------------|-----------|
+| Céramiques | €100-500K |
+| Galerie | M.Marks |
+| Dispo | ✓ |
+
+**GOLDEN LION VENISE 2022**
+1ère femme noire USA
+Hugo Boss Prize 2018
+
+**Signal** Calibre vs prix = arbitrage
+
+-----
+
+## 17 Tyler Hobbs
+
+USA · 1987 · Art génératif
+
+```
+●●●●●●●●○○ 88  ▲▲
+```
+
+| ROI | ×195 |
+|-----|------|
+| $400→$3,3M Fidenza | |
+| Floor | ~$78K |
+| QQL | €5-100K |
+| Prints | €5-30K |
+| Galerie | Pace |
+| Dispo | ✓✓✓ |
+
+1er crypto-natif Pace
+Résilience post-crash
+
+! Dépendance Ethereum
+
+-----
+
+## 18 Refik Anadol
+
+Turquie-USA · Art IA
+
+```
+●●●●●●●●●○ 92  ▲▲▲
+```
+
+| Record HK | $2,3M |
+|-----------|-------|
+| Éditions | €15K+ |
+| Uniques | €500K-2,3M |
+| Dispo | ✓✓ |
+
+**ACQUISITION MoMA**
+Jalon historique art IA
+Sphere Las Vegas
+
+-----
+
+## 19-20 Mid-Market Suite
+
+| 19 XCOPY | |
+|----------|---|
+| UK · Art glitch | |
+| ●●●●●●●●○○ 85  ▲▲ | |
+| MAX PAIN €2,5K | |
+| Grifters €48K+ | |
+| 1/1 €600K-7M | |
+| Record $7M Snoop Dogg | |
+| Collection $61M+ | |
+
+| 20 Deana Lawson | |
+|-----------------|---|
+| USA · Photographie | |
+| ●●●●●●●●●○ 90  ▲▲▲ | |
+| Tirages €40-150K+ | |
+| Gagosian 2023 | |
+| HUGO BOSS PRIZE 2020 | |
+| 1ère photo | |
+
+-----
+
+## 21-40 Mid-Market Complet
+
+```
+#21 Wolfgang Tillmans  88
+    Photo · €200-500K+ · ►
+    Turner Prize 2000
+
+#22 Hiroshi Sugimoto   85
+    Photo · €20-300K · ▲▲
+    Lisson 2024
+
+#23 Christine Ay Tjoe  86
+    Abstraction · €5K-2,15M
+    Record $2,15M · ▲▲▲
+
+#24 Subodh Gupta       82
+    Sculpture · €30K-2M+
+    Hauser & Wirth · ▲▲
+
+#25 Haegue Yang        87
+    Installation · €10-500K
+    Power 100 · Dia 2026
+
+#26 Invader            83
+    Street · €2-500K · ▲▲
+    80+ villes
+
+#27 Stik               80
+    Street · €600-360K
+    ▲▲
+
+#28 Retna              78
+    Calligraphie · €5-950K
+    ▲
+
+#29 Lucy Bull          88
+    Abstraction · €55K-2,4M
+    Kordansky · ▲▲▲
+
+#30 Jadé Fadojutimi    89
+    Abstraction · €80K-2M
+    + jeune Tate · ▲▲▲
+
+#31 Christina Quarles  84
+    Figuration · €175-655K
+    MCA Chicago · ▲▲
+
+#32 Salman Toor        87
+    Figuration · €150K-1,5M
+    Whitney solo · ▲▲
+
+#33 Loie Hollowell     83
+    Abstraction · €100K-2,1M
+    Pace · ▲▲
+
+#34 Oscar Murillo      82
+    Peinture · €50-400K
+    Turner 2019 · ▲▲
+
+#35 Njideka Akunyili   91
+    Collage · €50K-4,74M
+    MacArthur · ▲▲
+
+#36 Dana Awartani      86
+    Textile · €10-75K+ · ▲▲▲
+    Venise 2024 · Lisson
+    BEST VALUE MO
+
+#37 Ahmed Mater        85
+    Photo · €20-150K+ · ▲▲
+    Vision 2030
+
+#38 Joana Choumali     84
+    Photo brodée · €8-50K
+    Prix Pictet 2019 · ▲▲
+
+#39 Rosana Paulino     86
+    Installation · €5-100K+
+    Munch Award 2024 · ▲▲▲
+
+#40 Issy Wood          83
+    Velours · €50-150K · ▲▲
+    Met Tate NPG LV
+```
+
+-----
+
+## SEGMENT ACCESSIBLE
+
+**< €50.000**
+Liquidité max · Croissance démographique
+
+-----
+
+## 41 Hettie Inniss
+
+UK-Caraïbes · 1999 · Peinture
+
+```
+●●●●●●●●○○ 82  ▲▲▲
+```
+
+| Prix | €8-30K |
+|------|--------|
+| Galerie | GRIMM |
+| Dispo | ✓✓✓ |
+
+**ARTSY VANGUARD 2025**
+Tate Collective à 24 ans
+
+**Signal** Trajectoire idéale
+
+-----
+
+## 42 Agnes Waruguru
+
+Kenya · 1994 · Peinture/Textile
+
+```
+●●●●●●●●○○ 85  ▲▲▲
+```
+
+| Prix | €3-15K |
+|------|--------|
+| Galeries | Circle Art |
+| Dispo | ✓✓✓ |
+
+**VENISE BIENNALE 2024**
+Rijksakademie · Vanguard 2025
+
+**Signal** BEST VALUE
+Venise + Rijks + Vanguard <€15K
+
+-----
+
+## 43-50 Accessibles Suite
+
+```
+#43 Sana Shahmuradova  81
+    Ukraine · €5-25K · ▲▲
+    Art Basel Statements 25
+    ✓✓✓
+
+#44 Laís Amaral        80
+    Brésil · €15-45K · ▲▲
+    Vanguard 2025 · PIPA
+    ✓✓✓
+
+#45 Tyler Mitchell     87
+    USA · Photo · €15-60K
+    1er noir Vogue · ▲▲▲
+    Gagosian 2024 · ✓✓
+
+#46 Lebohang Kganye    86
+    Afr.Sud · €8-40K · ▲▲▲
+    DEUTSCHE BÖRSE 2024
+    MoMA 2025 · ✓✓✓
+
+#47 Zanele Muholi      88
+    Afr.Sud · €15-80K · ▲▲▲
+    TATE MODERN record UK
+    ✓✓✓
+
+#48 Hebru Brantley     78
+    USA · €500-50K · ▲▲
+    LeBron Jay-Z Beyoncé
+    ! Volatilité · ✓✓✓
+
+#49 Emily Xie          79
+    USA · Génératif · €5-20K
+    UN Award 2024 · ▲▲
+    ✓✓✓
+
+#50 William Mapan      77
+    France · Génératif
+    €9-16K · ×7 depuis mint
+    LACMA · Unit · ▲▲ · ✓✓✓
+```
+
+-----
+
+## Artistes Bonus
+
+| Wynnie Mynerva | 85 |
+|----------------|-----|
+| Pérou · €15-80K · ▲▲▲ | |
+| +700-1000% depuis 21 | |
+
+| Mire Lee | 87 |
+|----------|-----|
+| Corée · €50-300K · ▲▲▲ | |
+| HYUNDAI TATE 2024 | |
+
+| Rita M. Benissan | 82 |
+|------------------|-----|
+| Ghana · €5-25K · ▲▲▲ | |
+| Zeitz MOCAA 24-25 | |
+
+| Pol Taburet | 84 |
+|-------------|-----|
+| France · €20-156K | |
+| Bienal SP 25 · ▲▲▲ | |
+
+| Chase Hall | 86 |
+|------------|-----|
+| USA · €30-96K · ▲▲▲ | |
+| MoMA Whitney LACMA LV | |
+
+| Ayako Rokkaku | 83 |
+|---------------|-----|
+| Japon · €5K-1,3M · ▲▲ | |
+| #43 Top 500 | |
+
+| Toyin Ojih Odutola | 88 |
+|--------------------|-----|
+| Nigeria · €10K-2,2M | |
+| Hamburger Bahnhof 25 | |
+
+-----
+
+## Top 5 par Segment
+
+**ACCESSIBLES < €50K**
+
+```
+#1  Waruguru    ▬▬▬▬▬▬▬▬▬▬
+    Venise+Rijks+Vanguard
+
+#2  Kganye      ▬▬▬▬▬▬▬▬▬░
+    Deutsche Börse+MoMA
+
+#3  Mitchell    ▬▬▬▬▬▬▬▬░░
+    Gagosian accessible
+
+#4  Inniss      ▬▬▬▬▬▬▬▬░░
+    Tate à 24 ans
+
+#5  Tanska      ▬▬▬▬▬▬▬▬░░
+    Art Basel Statements
+```
+
+**MID-MARKET €50K-500K**
+
+```
+#1  Mahama      ▬▬▬▬▬▬▬▬▬▬
+    Power 100 #1
+
+#2  Leigh       ▬▬▬▬▬▬▬▬▬░
+    Golden Lion · Arbitrage
+
+#3  Awartani    ▬▬▬▬▬▬▬▬▬░
+    Best value MO
+
+#4  Hobbs       ▬▬▬▬▬▬▬▬░░
+    Résilience post-crash
+
+#5  Yiadom-B.   ▬▬▬▬▬▬▬▬░░
+    100% sell-through
+```
+
+**BLUE-CHIP > €500K**
+
+```
+#1  Dumas       ▬▬▬▬▬▬▬▬▬▬
+    Record mai 2025
+
+#2  Nara        ▬▬▬▬▬▬▬▬▬░
+    TCAC 14%
+
+#3  Kusama      ▬▬▬▬▬▬▬▬▬░
+    Rareté 96 ans
+
+#4  Mehretu     ▬▬▬▬▬▬▬▬▬░
+    Works paper entrée
+
+#5  Saville     ▬▬▬▬▬▬▬▬░░
+    Catalyseur NPG 2025
+```
+
+-----
+
+## Allocation Profils
+
+| DÉCOUVERTE €10-25K | |
+|--------------------|---|
+| Accessibles | 100% |
+| ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬ | |
+| Focus: Waruguru | |
+| Kganye Inniss | |
+
+| CONFIRMÉ €50-150K | |
+|-------------------|---|
+| Accessibles | 60% |
+| ▬▬▬▬▬▬▬▬▬▬▬▬░░░░░░░░ | |
+| Mid-market | 40% |
+| ▬▬▬▬▬▬▬▬░░░░░░░░░░░░ | |
+| Focus: Awartani | |
+| Mitchell | |
+| Choumali | |
+
+| EXPERT €250K+ | |
+|---------------|---|
+| Accessibles | 40% |
+| ▬▬▬▬▬▬▬▬░░░░░░░░░░░░ | |
+| Mid-market | 35% |
+| ▬▬▬▬▬▬▬░░░░░░░░░░░░░ | |
+| Blue-chip | 25% |
+| ▬▬▬▬▬░░░░░░░░░░░░░░░ | |
+| Focus: Mahama Leigh | |
+| Dumas | |
+
+-----
+
+## Tendances 2026
+
+**POSITIVES**
+
+```
+✓ Sell-through 83,9%
+  Plus haut 3 ans
+
+✓ Nouveaux acheteurs +38%
+  Primaire dynamique
+
+✓ Segment <€50K
+  Plus forte croissance
+
+✓ Art africain femmes
+  52,8% des ventes
+```
+
+**RISQUES**
+
+```
+! Ultra-contemp. -31,3%
+  S1 2025
+
+! NFT -93%
+  Depuis 2021
+
+! Chine -31%
+  Plus bas depuis 2009
+
+! Segment >€10M -45%
+  Contraction haute gamme
+```
+
+-----
+
+## Signaux Achat
+
+```
+✓ FORT
+  Power 100 · Golden Lion
+  Record récent · Retro
+
+○ MODÉRÉ
+  Galerie Tier 1
+  Vanguard · Biennale
+
+— ATTENTE
+  Ascension rapide
+  Pas de validation
+
+✗ ÉVITER
+  Volatilité extrême
+  Marché manipulé
+```
+
+-----
 
 ## Verdict
 
-# [SIGNAL]
+**◈ OPPORTUNITÉ IDENTIFIÉE**
 
-- [POINT_1]
-- [POINT_2]
-- [POINT_3]
-
----
+Marché art contemporain
+robuste en 2026. Segment
+accessible <€50K offre
+meilleur potentiel croissance.
+Art africain et femmes
+surperforment massivement.
 
 **Forces**
 
-- [FORCE_1]
-- [FORCE_2]
-- [FORCE_3]
+- Sell-through 83,9% record
+- +38% nouveaux collectionneurs
+- Décorrélation S&P -0,04
+- Art africain 52,8% ventes
+- Segment <€50K dynamique
 
 **Vigilance**
+! Ultra-contemporain -31,3%
+! NFT effondré -93%
+! Chine -31%
+! Segment >€10M contracté
 
-- [VIGILANCE_1]
-- [VIGILANCE_2]
+*→ 50 artistes · 3 segments*
+*→ Diversification · Croissance*
 
----
+-----
 
-PROPHETIC
+> *⌈ Synthèse ⌉*
+>
+> *Marché $57,5 Mds · 83,9% STR*
+>
+> *Best: Waruguru Mahama Dumas*
+>
+> *Focus <€50K · Art africain*
 
-[X] Sources citées · [X] données Prophetic · [X] algorithmes SCORE · 86% précision · [X] Données Live
+-----
 
-© 2025 Prophetic SAS
+◆ PROPHETIC ORCHESTRA ◆
 
----
+50 artistes sélectionnés 2026
 
-*Information stratégique uniquement. Ne constitue pas un conseil en investissement.*
+Blue-Chip · Mid-Market · Accessible
+
+Score propriétaire · Momentum
+
+Disponibilité vérifiée
+
+-----

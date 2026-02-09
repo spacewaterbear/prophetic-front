@@ -58,15 +58,15 @@ export default {
             'primary-muted': 'rgba(53, 46, 232, 0.15)',
           },
           bg: {
-            app: '#000000',
-            card: '#09090b',
-            'card-hover': '#0f0f11',
-            elevated: '#18181b',
+            app: 'hsl(var(--background))',
+            card: 'hsl(var(--bg-card-surface))',
+            'card-hover': 'hsl(var(--bg-elevated-surface))',
+            elevated: 'hsl(var(--bg-elevated-surface))',
           },
           border: {
-            default: '#18181b',
-            subtle: '#27272a',
-            emphasis: '#3f3f46',
+            default: 'hsl(var(--border-surface))',
+            subtle: 'hsl(var(--border-surface))',
+            emphasis: 'hsl(var(--border-surface))',
           },
           text: {
             primary: '#ffffff',

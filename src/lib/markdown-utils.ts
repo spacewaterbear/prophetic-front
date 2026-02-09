@@ -15,12 +15,15 @@ export function convertMarkdownTablesToStyledHtml(html: string): string {
         const theadMatch = tableContent.match(/<thead>([\s\S]*?)<\/thead>/);
         const tbodyMatch = tableContent.match(/<tbody>([\s\S]*?)<\/tbody>/);
 
-        if (!theadMatch || !tbodyMatch) return match;
+        if (!tbodyMatch) return match;
 
-        const headerCells = theadMatch[1].match(/<th>(.*?)<\/th>/g) || [];
-        const headers = headerCells.map((cell: string) =>
-            cell.replace(/<\/?th>/g, '').trim()
-        );
+        let headers: string[] = [];
+        if (theadMatch) {
+            const headerCells = theadMatch[1].match(/<th>(.*?)<\/th>/g) || [];
+            headers = headerCells.map((cell: string) =>
+                cell.replace(/<\/?th>/g, '').trim()
+            );
+        }
 
         const bodyRows = tbodyMatch[1].match(/<tr>([\s\S]*?)<\/tr>/g) || [];
         const rows = bodyRows.map((row: string) => {
@@ -30,20 +33,22 @@ export function convertMarkdownTablesToStyledHtml(html: string): string {
             );
         });
 
-        let styledTable = '<div class="table-scroll-wrapper my-4">';
-        styledTable += '<table class="w-full border border-zinc-200 dark:border-zinc-800 rounded-lg overflow-hidden md:min-w-[500px]">';
+        let styledTable = '<div class="table-scroll-wrapper premium-table-container my-4">';
+        styledTable += '<table class="w-full border border-prophetic-border-default rounded-lg overflow-hidden md:min-w-[500px] bg-prophetic-bg-card shadow-sm">';
 
-        styledTable += '<thead class="bg-zinc-100 dark:bg-zinc-900"><tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors">';
-        headers.forEach((header: string) => {
-            styledTable += `<th class="px-3 py-2 sm:px-4 sm:py-3 text-left text-xs font-medium text-zinc-600 dark:text-zinc-400 uppercase tracking-wider">${header}</th>`;
-        });
-        styledTable += '</tr></thead>';
+        if (headers.length > 0) {
+            styledTable += '<thead class="bg-prophetic-bg-elevated/50 backdrop-blur-sm"><tr class="hover:bg-prophetic-bg-card-hover transition-colors">';
+            headers.forEach((header: string) => {
+                styledTable += `<th class="px-3 py-2 sm:px-4 sm:py-3 text-left text-xs font-semibold text-prophetic-text-secondary uppercase tracking-wider">${header}</th>`;
+            });
+            styledTable += '</tr></thead>';
+        }
 
-        styledTable += '<tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 bg-white dark:bg-zinc-950">';
+        styledTable += '<tbody class="divide-y divide-prophetic-border-default">';
         rows.forEach((row: string[]) => {
-            styledTable += '<tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors">';
+            styledTable += '<tr class="hover:bg-prophetic-bg-card-hover/50 transition-colors">';
             row.forEach((cell: string) => {
-                styledTable += `<td class="px-3 py-2 sm:px-4 sm:py-3 text-sm text-zinc-700 dark:text-zinc-300 break-words">${cell}</td>`;
+                styledTable += `<td class="px-3 py-2 sm:px-4 sm:py-3 text-sm text-prophetic-text-primary break-words">${cell}</td>`;
             });
             styledTable += '</tr>';
         });
@@ -138,15 +143,17 @@ export function convertRankingListsToHtml(html: string): string {
                 let rankingHtml = '<div class="ranking-list">';
                 rankingItems.forEach((item) => {
                     rankingHtml += `
-            <div class="ranking-card">
-              <div class="ranking-header">
-                <span class="ranking-number">#${item.rank}</span>
-                <span class="ranking-name">${item.name}</span>
+            <div class="ranking-card group">
+              <div class="ranking-header flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                  <span class="ranking-number text-prophetic-brand-primary font-bold">#${item.rank}</span>
+                  <span class="ranking-name font-serif font-medium text-prophetic-text-primary">${item.name}</span>
+                </div>
               </div>
-              <div class="ranking-progress-bar">
-                <div class="ranking-progress-fill" style="width: ${item.progress}%"></div>
+              <div class="ranking-progress-bar bg-zinc-100 dark:bg-zinc-800 h-1.5 rounded-full overflow-hidden my-3">
+                <div class="ranking-progress-fill bg-prophetic-brand-primary h-full rounded-full transition-all duration-1000" style="width: ${item.progress}%"></div>
               </div>
-              ${item.description ? `<div class="ranking-description">${item.description}</div>` : ''}
+              ${item.description ? `<div class="ranking-description text-prophetic-text-tertiary text-[11px] leading-relaxed">${item.description}</div>` : ''}
             </div>
           `;
                 });
@@ -209,14 +216,22 @@ export function convertExtendedRankingsToHtml(html: string): string {
                 let rankingHtml = '<div class="extended-rankings">';
                 rankings.forEach((ranking) => {
                     rankingHtml += `
-            <div class="extended-ranking-card">
-              <div class="extended-ranking-header">
-                <span class="extended-ranking-number">#${ranking.rank}</span>
-                <span class="extended-ranking-score">${ranking.score}</span>
+            <div class="extended-ranking-card group">
+              <div class="extended-ranking-header flex justify-between items-center mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="extended-ranking-number text-prophetic-brand-primary font-bold">#${ranking.rank}</span>
+                  <span class="extended-ranking-name font-serif font-semibold text-prophetic-text-primary text-base">${ranking.name}</span>
+                </div>
+                <span class="extended-ranking-score bg-prophetic-brand-primary/10 text-prophetic-brand-primary px-2 py-0.5 rounded text-xs font-bold">${ranking.score}</span>
               </div>
-              <div class="extended-ranking-name">${ranking.name}</div>
-              <div class="extended-ranking-details">
-                ${ranking.details.map(detail => `<div class="extended-ranking-detail">${detail}</div>`).join('')}
+              <div class="extended-ranking-details space-y-1.5 pt-2 border-t border-prophetic-border-default/30">
+                ${ranking.details.map(detail => {
+                        const parts = detail.split(/\s{2,}/);
+                        if (parts.length >= 2) {
+                            return `<div class="extended-ranking-detail flex justify-between text-[11px]"><span class="text-prophetic-text-tertiary">${parts[0]}</span><span class="text-prophetic-text-primary font-medium">${parts[1]}</span></div>`;
+                        }
+                        return `<div class="extended-ranking-detail text-[11px] text-prophetic-text-tertiary">${detail}</div>`;
+                    }).join('')}
               </div>
             </div>
           `;
