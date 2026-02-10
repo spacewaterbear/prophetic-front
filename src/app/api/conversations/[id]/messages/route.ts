@@ -331,14 +331,24 @@ export async function POST(
 
                 // Handle marketplace_data messages
                 if (parsed.type && parsed.type === "marketplace_data") {
-                  console.log("[Prophetic API] Received marketplace_data");
-                  // Capture marketplace data for database storage
-                  marketplaceData = parsed;
+                  console.log("[Prophetic API] Received marketplace_data, data type:", typeof parsed.data);
+                  // If data is a string, parse it
+                  let marketplacePayload = parsed.data;
+                  if (typeof marketplacePayload === 'string') {
+                    try {
+                      marketplacePayload = JSON.parse(marketplacePayload);
+                      console.log("[Prophetic API] Parsed stringified marketplace_data.data");
+                    } catch {
+                      console.error("[Prophetic API] Failed to parse marketplace_data.data string");
+                    }
+                  }
+                  // Capture marketplace data for database storage (with parsed data)
+                  marketplaceData = { ...parsed, data: marketplacePayload };
 
                   // Forward marketplace_data to client immediately (SSE format)
                   const marketplaceChunk = `data: ${JSON.stringify({
                     type: "marketplace_data",
-                    data: parsed.data
+                    data: marketplacePayload
                   })}\n\n`;
                   controller.enqueue(encoder.encode(marketplaceChunk));
                   continue;
@@ -444,8 +454,67 @@ export async function POST(
                         continue;
                       }
 
+                      // Handle marketplace_data nested in content
+                      if (nestedData.type === "marketplace_data") {
+                        console.log("[Prophetic API] Received marketplace_data (from nested content)");
+                        marketplaceData = nestedData;
+                        const nestedMarketplaceChunk = `data: ${JSON.stringify({
+                          type: "marketplace_data",
+                          data: nestedData.data
+                        })}\n\n`;
+                        controller.enqueue(encoder.encode(nestedMarketplaceChunk));
+                        continue;
+                      }
+
+                      // Handle real_estate_data nested in content
+                      if (nestedData.type === "real_estate_data") {
+                        console.log("[Prophetic API] Received real_estate_data (from nested content)");
+                        realEstateData = nestedData;
+                        const nestedRealEstateChunk = `data: ${JSON.stringify({
+                          type: "real_estate_data",
+                          data: nestedData.data
+                        })}\n\n`;
+                        controller.enqueue(encoder.encode(nestedRealEstateChunk));
+                        continue;
+                      }
+
+                      // Handle vignette_data nested in content
+                      if (nestedData.type === "vignette_data") {
+                        console.log("[Prophetic API] Received vignette_data (from nested content)");
+                        vignetteData = nestedData;
+                        const nestedVignetteChunk = `data: ${JSON.stringify({
+                          type: "vignette_data",
+                          data: nestedData.data
+                        })}\n\n`;
+                        controller.enqueue(encoder.encode(nestedVignetteChunk));
+                        continue;
+                      }
+
+                      // Handle clothes_data nested in content
+                      if (nestedData.type === "clothes_data") {
+                        console.log("[Prophetic API] Received clothes_data (from nested content)");
+                        clothesSearchData = nestedData;
+                        const nestedClothesChunk = `data: ${JSON.stringify({
+                          type: "clothes_data",
+                          data: nestedData.data
+                        })}\n\n`;
+                        controller.enqueue(encoder.encode(nestedClothesChunk));
+                        continue;
+                      }
+
+                      // Handle status nested in content
+                      if (nestedData.type === "status") {
+                        console.log("[Prophetic API] Received status (from nested content)");
+                        const nestedStatusChunk = `data: ${JSON.stringify({
+                          type: "status",
+                          message: nestedData.message
+                        })}\n\n`;
+                        controller.enqueue(encoder.encode(nestedStatusChunk));
+                        continue;
+                      }
+
                       // If it's some other nested type, log and skip
-                      console.log("[NESTED SSE] Unhandled nested type, skipping");
+                      console.log("[NESTED SSE] Unhandled nested type, skipping:", nestedData.type);
                       continue;
                     } catch (e) {
                       // Not valid JSON after "data: ", skip this chunk
@@ -454,9 +523,64 @@ export async function POST(
                     }
                   }
 
-                  // Skip standalone JSON objects (shouldn't happen but defensive)
+                  // Handle standalone JSON objects in content field
                   if (trimmedContent.startsWith('{')) {
-                    console.log("[SKIP] Ignoring standalone JSON in content field");
+                    try {
+                      const standaloneData = JSON.parse(trimmedContent);
+                      if (standaloneData.type === "marketplace_data") {
+                        console.log("[Prophetic API] Received marketplace_data (from standalone JSON in content)");
+                        marketplaceData = standaloneData;
+                        const standaloneMarketplaceChunk = `data: ${JSON.stringify({
+                          type: "marketplace_data",
+                          data: standaloneData.data
+                        })}\n\n`;
+                        controller.enqueue(encoder.encode(standaloneMarketplaceChunk));
+                        continue;
+                      }
+                      if (standaloneData.type === "real_estate_data") {
+                        console.log("[Prophetic API] Received real_estate_data (from standalone JSON in content)");
+                        realEstateData = standaloneData;
+                        const standaloneRealEstateChunk = `data: ${JSON.stringify({
+                          type: "real_estate_data",
+                          data: standaloneData.data
+                        })}\n\n`;
+                        controller.enqueue(encoder.encode(standaloneRealEstateChunk));
+                        continue;
+                      }
+                      if (standaloneData.type === "vignette_data") {
+                        console.log("[Prophetic API] Received vignette_data (from standalone JSON in content)");
+                        vignetteData = standaloneData;
+                        const standaloneVignetteChunk = `data: ${JSON.stringify({
+                          type: "vignette_data",
+                          data: standaloneData.data
+                        })}\n\n`;
+                        controller.enqueue(encoder.encode(standaloneVignetteChunk));
+                        continue;
+                      }
+                      if (standaloneData.type === "clothes_data") {
+                        console.log("[Prophetic API] Received clothes_data (from standalone JSON in content)");
+                        clothesSearchData = standaloneData;
+                        const standaloneClothesChunk = `data: ${JSON.stringify({
+                          type: "clothes_data",
+                          data: standaloneData.data
+                        })}\n\n`;
+                        controller.enqueue(encoder.encode(standaloneClothesChunk));
+                        continue;
+                      }
+                      if (standaloneData.type === "artist_info") {
+                        console.log("[Prophetic API] Received artist_info (from standalone JSON in content)");
+                        structuredData = standaloneData;
+                        const standaloneArtistChunk = `data: ${JSON.stringify({
+                          type: "artist_info",
+                          data: standaloneData
+                        })}\n\n`;
+                        controller.enqueue(encoder.encode(standaloneArtistChunk));
+                        continue;
+                      }
+                    } catch {
+                      // Not valid JSON, fall through
+                    }
+                    console.log("[SKIP] Ignoring unrecognized standalone JSON in content field");
                     continue;
                   }
 
@@ -495,6 +619,51 @@ export async function POST(
               } catch (e) {
                 // If JSON parsing fails, log and skip this chunk
                 console.error("[Prophetic API] Failed to parse JSON:", eventData, e);
+              }
+            }
+          }
+
+          // Process any remaining data left in the buffer after stream ends
+          if (buffer.trim()) {
+            console.log("[Prophetic API] Processing remaining buffer after stream end:", buffer.substring(0, 200));
+            const lines = buffer.split("\n");
+            let eventData = "";
+            for (const line of lines) {
+              if (line.startsWith("data: ")) {
+                eventData += line.slice(6);
+              }
+            }
+            if (eventData && eventData !== "[DONE]") {
+              try {
+                const parsed = JSON.parse(eventData);
+                console.log("[Prophetic API] Remaining buffer parsed type:", parsed.type);
+                if (parsed.type === "marketplace_data" && !marketplaceData) {
+                  console.log("[Prophetic API] Captured marketplace_data from remaining buffer");
+                  marketplaceData = parsed;
+                  const marketplaceChunk = `data: ${JSON.stringify({
+                    type: "marketplace_data",
+                    data: parsed.data
+                  })}\n\n`;
+                  controller.enqueue(encoder.encode(marketplaceChunk));
+                } else if (parsed.type === "real_estate_data" && !realEstateData) {
+                  realEstateData = parsed;
+                  const chunk = `data: ${JSON.stringify({ type: "real_estate_data", data: parsed.data })}\n\n`;
+                  controller.enqueue(encoder.encode(chunk));
+                } else if (parsed.type === "vignette_data" && !vignetteData) {
+                  vignetteData = parsed;
+                  const chunk = `data: ${JSON.stringify({ type: "vignette_data", data: parsed.data })}\n\n`;
+                  controller.enqueue(encoder.encode(chunk));
+                } else if (parsed.type === "clothes_data" && !clothesSearchData) {
+                  clothesSearchData = parsed;
+                  const chunk = `data: ${JSON.stringify({ type: "clothes_data", data: parsed.data })}\n\n`;
+                  controller.enqueue(encoder.encode(chunk));
+                } else if (parsed.content) {
+                  fullResponse += parsed.content;
+                  const chunkData = `data: ${JSON.stringify({ type: "chunk", content: parsed.content })}\n\n`;
+                  controller.enqueue(encoder.encode(chunkData));
+                }
+              } catch (e) {
+                console.log("[Prophetic API] Could not parse remaining buffer:", e);
               }
             }
           }

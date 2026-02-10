@@ -57,6 +57,14 @@ export async function GET(
 
     // Transform messages to include structured data from metadata
     const messages = (rawMessages || []).map((msg: Record<string, unknown>) => {
+      // Parse metadata if it's a string (happens when DB column is text instead of jsonb)
+      if (msg.metadata && typeof msg.metadata === 'string') {
+        try {
+          msg = { ...msg, metadata: JSON.parse(msg.metadata as string) };
+        } catch {
+          console.error("[GET Conversation] Failed to parse metadata string for message:", msg.id);
+        }
+      }
       // If message has metadata with structured_data, expand it into the message object
       if (msg.metadata && typeof msg.metadata === 'object' && msg.metadata !== null) {
         const metadata = msg.metadata as Record<string, unknown>;
@@ -89,6 +97,12 @@ export async function GET(
       }
       return msg;
     }).map((msg: Record<string, unknown>) => {
+      // Parse metadata if it's still a string
+      if (msg.metadata && typeof msg.metadata === 'string') {
+        try {
+          msg = { ...msg, metadata: JSON.parse(msg.metadata as string) };
+        } catch { /* ignore */ }
+      }
       // If a message has marketplace_data in metadata, include it in the message object
       if (msg.metadata && typeof msg.metadata === 'object' && msg.metadata !== null) {
         const metadata = msg.metadata as Record<string, unknown>;
@@ -96,12 +110,24 @@ export async function GET(
           try {
             console.log("[GET Conversation] Processing marketplace_data for message:", msg.id);
             console.log("[GET Conversation] marketplace_data type:", typeof metadata.marketplace_data);
-            console.log("[GET Conversation] marketplace_data keys:", Object.keys(metadata.marketplace_data as object));
+
+            // Parse marketplace_data if it's a string (double-encoded JSON)
+            let parsedMarketplaceData = metadata.marketplace_data;
+            if (typeof parsedMarketplaceData === 'string') {
+              try {
+                parsedMarketplaceData = JSON.parse(parsedMarketplaceData as string);
+                console.log("[GET Conversation] Parsed stringified marketplace_data");
+              } catch {
+                console.error("[GET Conversation] Failed to parse marketplace_data string for message:", msg.id);
+              }
+            }
+
+            console.log("[GET Conversation] marketplace_data keys:", Object.keys(parsedMarketplaceData as object));
 
             // Include marketplace_data and marketplace_position directly in the message
             return {
               ...msg,
-              marketplace_data: metadata.marketplace_data,
+              marketplace_data: parsedMarketplaceData,
               marketplace_position: metadata.marketplace_position || "before" // Default to 'before' if not specified
             };
           } catch (error) {

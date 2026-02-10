@@ -146,7 +146,14 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
             const response = await fetch(`/api/conversations/${id}`);
             if (response.ok) {
                 const data = await response.json();
-                setMessages(data.messages || []);
+                const msgs = data.messages || [];
+                // Debug: log marketplace data presence in loaded messages
+                msgs.forEach((m: Record<string, unknown>, i: number) => {
+                    if (m.marketplace_data) {
+                        console.log(`[loadConversation] Message ${i} has marketplace_data, type:`, typeof m.marketplace_data, "found:", (m.marketplace_data as Record<string, unknown>)?.found);
+                    }
+                });
+                setMessages(msgs);
             } else if (response.status === 404) {
                 console.error("Conversation not found, redirecting to home");
                 router.push("/");
@@ -405,16 +412,22 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
             if (!reader) throw new Error("No response stream");
 
             let streamContent = "";
+            let sseBuffer = "";
             while (true) {
                 const { done, value } = await reader.read();
                 if (done) break;
 
-                const chunk = decoder.decode(value);
-                const lines = chunk.split("\n").filter((line) => line.trim());
+                sseBuffer += decoder.decode(value, { stream: true });
+                const sseEvents = sseBuffer.split("\n\n");
+                sseBuffer = sseEvents.pop() || "";
 
-                for (const line of lines) {
-                    let cleanedLine = line;
-                    if (line.startsWith("data: ")) cleanedLine = line.slice(6);
+                for (const event of sseEvents) {
+                    if (!event.trim()) continue;
+                    let cleanedLine = "";
+                    for (const line of event.split("\n")) {
+                        if (line.startsWith("data: ")) cleanedLine += line.slice(6);
+                    }
+                    if (!cleanedLine) continue;
 
                     try {
                         const data = JSON.parse(cleanedLine);
@@ -424,7 +437,12 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                             setLastStreamingActivity(Date.now());
                             setCurrentStatus("");
                         } else if (data.type === "marketplace_data") {
-                            setStreamingMarketplaceData(data.data);
+                            console.log("[SSE Client] Received marketplace_data, data type:", typeof data.data, "found:", data.data?.found);
+                            let marketplacePayload = data.data;
+                            if (typeof marketplacePayload === 'string') {
+                                try { marketplacePayload = JSON.parse(marketplacePayload); } catch { /* keep as-is */ }
+                            }
+                            setStreamingMarketplaceData(marketplacePayload);
                         } else if (data.type === "real_estate_data") {
                             setStreamingRealEstateData(data.data);
                         } else if (data.type === "vignette_data") {
@@ -444,7 +462,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
                             setLastStreamingActivity(Date.now());
                         }
                     } catch (error) {
-                        console.error("Error parsing chunk:", error);
+                        console.error("Error parsing SSE event:", error, "data:", cleanedLine.substring(0, 200));
                     }
                 }
             }

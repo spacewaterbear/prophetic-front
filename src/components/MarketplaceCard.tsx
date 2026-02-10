@@ -41,6 +41,7 @@ interface MarketplaceCardProps {
  * - Error handling and empty states
  */
 export const MarketplaceCard = memo(({ data }: MarketplaceCardProps) => {
+    console.log("[MarketplaceCard] Rendering with data:", { found: data?.found, marketplace: data?.marketplace, artworksCount: data?.artworks?.length, dataType: typeof data });
     const { found, marketplace, artist_profile, artworks = [], total_artworks = 0, error_message } = data;
 
     // Marketplace branding colors
