@@ -262,6 +262,97 @@ export function convertExtendedRankingsToHtml(html: string): string {
 }
 
 /**
+ * Converts ASCII bar charts (Label  ||||||  score) to styled horizontal bar components
+ */
+export function convertBarChartsToHtml(html: string): string {
+    const codeBlockRegex = /<pre><code>([\s\S]*?)<\/code><\/pre>/g;
+
+    return html.replace(codeBlockRegex, (match, codeContent) => {
+        const lines = codeContent.split('\n').map((l: string) => l.trim()).filter((l: string) => l);
+
+        // Detect bar chart pattern: Label  |||||  number
+        const barPattern = /^(.+?)\s{2,}(\|+)\s+(\d{1,3})$/;
+        const barLines = lines.filter((line: string) => barPattern.test(line));
+
+        // Only convert if ALL lines match the pattern (avoid false positives)
+        if (barLines.length < 3 || barLines.length !== lines.length) return match;
+
+        const bars: Array<{ label: string; score: number }> = barLines.map((line: string) => {
+            const m = line.match(barPattern)!;
+            return { label: m[1].trim(), score: parseInt(m[3]) };
+        });
+
+        const maxScore = Math.max(...bars.map((b: { score: number }) => b.score));
+
+        let barHtml = '<div class="bar-chart-container">';
+        bars.forEach((bar: { label: string; score: number }) => {
+            const pct = Math.round((bar.score / 100) * 100);
+            const isHigh = bar.score >= 75;
+            const isMid = bar.score >= 50 && bar.score < 75;
+            const tier = isHigh ? 'high' : isMid ? 'mid' : 'low';
+
+            barHtml += `
+        <div class="bar-chart-row">
+          <span class="bar-chart-label">${bar.label}</span>
+          <div class="bar-chart-track">
+            <div class="bar-chart-fill bar-chart-fill--${tier}" style="width: ${pct}%"></div>
+          </div>
+          <span class="bar-chart-score bar-chart-score--${tier}">${bar.score}</span>
+        </div>`;
+        });
+        barHtml += '</div>';
+
+        return barHtml;
+    });
+}
+
+/**
+ * Converts performance comparison bars (+18%  ||||||||  Label) to styled components
+ */
+export function convertPerfBarsToHtml(html: string): string {
+    const codeBlockRegex = /<pre><code>([\s\S]*?)<\/code><\/pre>/g;
+
+    return html.replace(codeBlockRegex, (match, codeContent) => {
+        const lines = codeContent.split('\n').map((l: string) => l.trim()).filter((l: string) => l);
+
+        // Detect perf bar pattern: +18%  ||||||||  Label text
+        const perfPattern = /^([+-]?\d+%?)\s{2,}(\|+)\s{2,}(.+)$/;
+        const perfLines = lines.filter((line: string) => perfPattern.test(line));
+
+        if (perfLines.length < 2 || perfLines.length !== lines.length) return match;
+
+        const bars: Array<{ pct: string; pctNum: number; label: string; barLen: number }> = perfLines.map((line: string) => {
+            const m = line.match(perfPattern)!;
+            const pctStr = m[1].trim();
+            const pctNum = parseFloat(pctStr.replace('%', ''));
+            return { pct: pctStr.includes('%') ? pctStr : pctStr + '%', pctNum, label: m[3].trim(), barLen: m[2].length };
+        });
+
+        const maxBarLen = Math.max(...bars.map((b: { barLen: number }) => b.barLen));
+
+        let perfHtml = '<div class="perf-bars-container">';
+        bars.forEach((bar: { pct: string; pctNum: number; label: string; barLen: number }) => {
+            const fillPct = Math.round((bar.barLen / maxBarLen) * 100);
+            const isPositive = bar.pctNum > 0;
+            const isNegative = bar.pctNum < 0;
+            const sign = isPositive ? 'positive' : isNegative ? 'negative' : 'neutral';
+
+            perfHtml += `
+        <div class="perf-bar-row">
+          <span class="perf-bar-pct perf-bar-pct--${sign}">${bar.pct}</span>
+          <div class="perf-bar-track">
+            <div class="perf-bar-fill perf-bar-fill--${sign}" style="width: ${fillPct}%"></div>
+          </div>
+          <span class="perf-bar-label">${bar.label}</span>
+        </div>`;
+        });
+        perfHtml += '</div>';
+
+        return perfHtml;
+    });
+}
+
+/**
  * Converts allocation profile boxes (with box-drawing characters) to styled cards
  */
 export function convertAllocationProfilesToHtml(html: string): string {

@@ -635,3 +635,272 @@
     color: var(--text-secondary, #a1a1aa);
     line-height: 1.4;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   BAR CHARTS (Horizontal score bars)
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.markdown-container .bar-chart-container {
+    background: hsl(var(--bg-card-surface));
+    border: 1px solid hsl(var(--border-surface));
+    border-radius: var(--radius-lg, 14px);
+    padding: 20px;
+    margin: var(--space-4, 16px) 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.markdown-container .bar-chart-container:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+    transform: translateY(-2px);
+}
+
+.markdown-container .bar-chart-row {
+    display: grid;
+    grid-template-columns: 90px 1fr 36px;
+    align-items: center;
+    gap: 12px;
+}
+
+@media (min-width: 768px) {
+    .markdown-container .bar-chart-row {
+        grid-template-columns: 100px 1fr 40px;
+        gap: 16px;
+    }
+}
+
+.markdown-container .bar-chart-label {
+    font-family: var(--font-sans, 'Inter', sans-serif);
+    font-size: 12px;
+    font-weight: 500;
+    color: #52525b;
+    letter-spacing: 0.02em;
+    text-transform: capitalize;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dark .markdown-container .bar-chart-label {
+    color: #a1a1aa;
+}
+
+@media (min-width: 768px) {
+    .markdown-container .bar-chart-label {
+        font-size: 13px;
+    }
+}
+
+.markdown-container .bar-chart-track {
+    width: 100%;
+    height: 8px;
+    background: rgba(0, 0, 0, 0.04);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+.dark .markdown-container .bar-chart-track {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.markdown-container .bar-chart-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.markdown-container .bar-chart-fill--high {
+    background: var(--brand-primary, #352ee8);
+}
+
+.markdown-container .bar-chart-fill--mid {
+    background: var(--brand-primary, #352ee8);
+    opacity: 0.65;
+}
+
+.markdown-container .bar-chart-fill--low {
+    background: var(--brand-primary, #352ee8);
+    opacity: 0.35;
+}
+
+.dark .markdown-container .bar-chart-fill--high {
+    background: rgba(255, 255, 255, 0.85);
+}
+
+.dark .markdown-container .bar-chart-fill--mid {
+    background: rgba(255, 255, 255, 0.55);
+}
+
+.dark .markdown-container .bar-chart-fill--low {
+    background: rgba(255, 255, 255, 0.30);
+}
+
+.markdown-container .bar-chart-score {
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 13px;
+    font-weight: 600;
+    text-align: right;
+    min-width: 28px;
+}
+
+.markdown-container .bar-chart-score--high {
+    color: var(--brand-primary, #352ee8);
+}
+
+.markdown-container .bar-chart-score--mid {
+    color: #52525b;
+}
+
+.markdown-container .bar-chart-score--low {
+    color: #a1a1aa;
+}
+
+.dark .markdown-container .bar-chart-score--high {
+    color: #ffffff;
+}
+
+.dark .markdown-container .bar-chart-score--mid {
+    color: #a1a1aa;
+}
+
+.dark .markdown-container .bar-chart-score--low {
+    color: #71717a;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   PERFORMANCE COMPARISON BARS (+18%  ||||  Label)
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.markdown-container .perf-bars-container {
+    background: hsl(var(--bg-card-surface));
+    border: 1px solid hsl(var(--border-surface));
+    border-radius: var(--radius-lg, 14px);
+    padding: 20px;
+    margin: var(--space-4, 16px) 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.markdown-container .perf-bars-container:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+    transform: translateY(-2px);
+}
+
+.markdown-container .perf-bar-row {
+    display: grid;
+    grid-template-columns: 52px 1fr minmax(120px, 45%);
+    align-items: center;
+    gap: 12px;
+}
+
+@media (min-width: 768px) {
+    .markdown-container .perf-bar-row {
+        grid-template-columns: 56px 1fr minmax(160px, 40%);
+        gap: 16px;
+    }
+}
+
+.markdown-container .perf-bar-pct {
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 13px;
+    font-weight: 700;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.markdown-container .perf-bar-pct--positive {
+    color: #16a34a;
+}
+
+.markdown-container .perf-bar-pct--negative {
+    color: #dc2626;
+}
+
+.markdown-container .perf-bar-pct--neutral {
+    color: #52525b;
+}
+
+.dark .markdown-container .perf-bar-pct--positive {
+    color: #4ade80;
+}
+
+.dark .markdown-container .perf-bar-pct--negative {
+    color: #f87171;
+}
+
+.dark .markdown-container .perf-bar-pct--neutral {
+    color: #a1a1aa;
+}
+
+.markdown-container .perf-bar-track {
+    width: 100%;
+    height: 8px;
+    background: rgba(0, 0, 0, 0.04);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.dark .markdown-container .perf-bar-track {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.markdown-container .perf-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.markdown-container .perf-bar-fill--positive {
+    background: #16a34a;
+}
+
+.markdown-container .perf-bar-fill--negative {
+    background: #dc2626;
+    opacity: 0.7;
+}
+
+.markdown-container .perf-bar-fill--neutral {
+    background: #52525b;
+    opacity: 0.5;
+}
+
+.dark .markdown-container .perf-bar-fill--positive {
+    background: #4ade80;
+}
+
+.dark .markdown-container .perf-bar-fill--negative {
+    background: #f87171;
+    opacity: 0.7;
+}
+
+.dark .markdown-container .perf-bar-fill--neutral {
+    background: #a1a1aa;
+    opacity: 0.5;
+}
+
+.markdown-container .perf-bar-label {
+    font-family: var(--font-sans, 'Inter', sans-serif);
+    font-size: 12px;
+    font-weight: 500;
+    color: #52525b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dark .markdown-container .perf-bar-label {
+    color: #a1a1aa;
+}
+
+@media (min-width: 768px) {
+    .markdown-container .perf-bar-label {
+        font-size: 13px;
+    }
+}

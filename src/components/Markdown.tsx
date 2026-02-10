@@ -8,6 +8,8 @@ import {
   convertRankingListsToHtml,
   convertExtendedRankingsToHtml,
   convertAllocationProfilesToHtml,
+  convertBarChartsToHtml,
+  convertPerfBarsToHtml,
 } from "@/lib/markdown-utils";
 
 interface MarkdownProps {
@@ -38,10 +40,16 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
         // 1. Allocation profiles (must be before ASCII tables to avoid conflicts)
         html = convertAllocationProfilesToHtml(html);
 
-        // 2. ASCII tables
+        // 2. Bar charts (before ASCII tables to avoid conflicts)
+        html = convertBarChartsToHtml(html);
+
+        // 2b. Performance comparison bars
+        html = convertPerfBarsToHtml(html);
+
+        // 3. ASCII tables
         html = convertAsciiTablesToHtml(html);
 
-        // 3. Extended rankings
+        // 4. Extended rankings
         html = convertExtendedRankingsToHtml(html);
 
         // 4. Simple ranking lists

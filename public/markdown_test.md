@@ -14,6 +14,27 @@ VALEUR ACTUELLE
 
 ---
 
+## Particularité ?
+
+```
+Rarete   ||||||||||  75
+Demande   |||||||    65
+Qualite   |||||||||  82
+Reconn.   |||||||||| 80
+Liquidite  |||||    45
+Potentiel  |||||||   68
+```
+
+
+```
++18%  ||||||||||||||||  Segment calligraphie (Artprice)
++12%  ||||||||||||    MSCI World
++10%  ||||||||||     Or (XAU)
++8%  ||||||||      Immobilier Paris
+-15%  ||||        BTC (volatil)
+```
+
+
 ## Identification
 
 | Critère | Détail |
