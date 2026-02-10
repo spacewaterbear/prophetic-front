@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ExternalLink, Store, CheckCircle2, XCircle } from "lucide-react";
+import { ExternalLink, Store, CheckCircle2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { memo } from "react";
 
@@ -78,29 +78,9 @@ export const MarketplaceCard = memo(({ data }: MarketplaceCardProps) => {
 
     const style = getMarketplaceStyle(marketplace);
 
-    // Error state
+    // Hide failed marketplace data entirely
     if (!found || error_message) {
-        return (
-            <Card className="overflow-hidden border-red-200 dark:border-red-700/30 bg-gradient-to-r from-red-50/80 to-red-100/60 dark:from-red-900/20 dark:to-red-800/15">
-                <div className="p-6">
-                    <div className="flex items-start gap-4">
-                        <div className="p-3 rounded-full bg-red-100 dark:bg-red-950/40">
-                            <XCircle className="w-6 h-6 text-red-600 dark:text-red-300" />
-                        </div>
-                        <div className="flex-1">
-                            <h3 className="text-lg font-semibold text-red-900 dark:text-red-100 mb-2">
-                                Artist Not Found on {marketplace}
-                            </h3>
-                            {error_message && (
-                                <p className="text-sm text-red-700 dark:text-red-300">
-                                    {error_message}
-                                </p>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            </Card>
-        );
+        return null;
     }
 
     return (
