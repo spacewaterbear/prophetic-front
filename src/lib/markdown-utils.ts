@@ -353,6 +353,196 @@ export function convertPerfBarsToHtml(html: string): string {
 }
 
 /**
+ * Converts ASCII scatter plots (risk-return charts with * and o markers) to styled scatter plots.
+ * Detects code blocks containing a L___ axis line, : separators, and * or o data point markers.
+ */
+export function convertScatterPlotsToHtml(html: string): string {
+    const codeBlockRegex = /<pre><code>([\s\S]*?)<\/code><\/pre>/g;
+
+    return html.replace(codeBlockRegex, (match, codeContent: string) => {
+        const decoded = codeContent
+            .replace(/&amp;/g, '&')
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>');
+
+        const lines = decoded.split('\n');
+
+        // Detection: must have L___ axis line
+        const axisLineIdx = lines.findIndex((l: string) => /^\s*L_+\s*$/.test(l));
+        if (axisLineIdx === -1) return match;
+
+        // Must have : separator lines with * or o markers
+        let hasColon = false;
+        let hasMarker = false;
+        for (let i = 0; i < axisLineIdx; i++) {
+            if (lines[i].includes(':')) {
+                hasColon = true;
+                const afterColon = lines[i].substring(lines[i].indexOf(':') + 1);
+                if (/[*o]/.test(afterColon)) hasMarker = true;
+            }
+        }
+        if (!hasColon || !hasMarker) return match;
+
+        // Parse y-axis labels: lines matching  \d+%  :
+        const yLabels: Array<{ value: number; lineIdx: number }> = [];
+        for (let i = 0; i < axisLineIdx; i++) {
+            const m = lines[i].match(/^\s*(\d+)%?\s*:/);
+            if (m) {
+                yLabels.push({ value: parseFloat(m[1]), lineIdx: i });
+            }
+        }
+        if (yLabels.length < 2) return match;
+        yLabels.sort((a: { lineIdx: number }, b: { lineIdx: number }) => a.lineIdx - b.lineIdx);
+
+        // Parse x-axis labels from line after L___
+        const xLabelLine = lines[axisLineIdx + 1] || '';
+        const xLabels: Array<{ value: number; charPos: number }> = [];
+        const xLabelRegex = /(\d+)%/g;
+        let xm: RegExpExecArray | null;
+        while ((xm = xLabelRegex.exec(xLabelLine)) !== null) {
+            xLabels.push({ value: parseFloat(xm[1]), charPos: xm.index });
+        }
+        if (xLabels.length < 2) return match;
+
+        // Parse x-axis title (line after x-axis labels)
+        const xAxisTitle = (lines[axisLineIdx + 2] || '').trim();
+
+        // Determine axis ranges
+        const xMin = Math.min(...xLabels.map((l: { value: number }) => l.value));
+        const xMax = Math.max(...xLabels.map((l: { value: number }) => l.value));
+        const yDataMax = Math.max(...yLabels.map((l: { value: number }) => l.value));
+        const yMin = 0;
+        const yMax = Math.ceil((yDataMax + 1) / 5) * 5;
+
+        // Parse data points by finding * or o markers on lines with :
+        const points: Array<{
+            label: string;
+            xVal: number;
+            yVal: number;
+            isHighlighted: boolean;
+        }> = [];
+
+        for (let i = 0; i < axisLineIdx; i++) {
+            const line = lines[i];
+            const colonIdx = line.indexOf(':');
+            if (colonIdx === -1) continue;
+
+            const afterColon = line.substring(colonIdx + 1);
+
+            for (let c = 0; c < afterColon.length; c++) {
+                const ch = afterColon[c];
+                if (ch !== '*' && ch !== 'o') continue;
+
+                const markerCharPos = colonIdx + 1 + c;
+                const label = afterColon.substring(c + 1).trim();
+
+                // Calculate y-value by interpolation between y-axis labels
+                let yVal = yLabels[0].value;
+                const exactLabel = yLabels.find((yl: { lineIdx: number }) => yl.lineIdx === i);
+                if (exactLabel) {
+                    yVal = exactLabel.value;
+                } else {
+                    let prev = yLabels[0];
+                    let next = yLabels[yLabels.length - 1];
+                    for (let j = 0; j < yLabels.length; j++) {
+                        if (yLabels[j].lineIdx <= i) prev = yLabels[j];
+                        if (yLabels[j].lineIdx > i) { next = yLabels[j]; break; }
+                    }
+                    if (prev.lineIdx !== next.lineIdx) {
+                        const t = (i - prev.lineIdx) / (next.lineIdx - prev.lineIdx);
+                        yVal = prev.value + t * (next.value - prev.value);
+                    }
+                }
+
+                // Calculate x-value by interpolation from marker character position vs x-axis label positions
+                let xVal = xMin;
+                let leftLabel = xLabels[0];
+                let rightLabel = xLabels[xLabels.length - 1];
+                for (let j = 0; j < xLabels.length - 1; j++) {
+                    if (xLabels[j].charPos <= markerCharPos && xLabels[j + 1].charPos >= markerCharPos) {
+                        leftLabel = xLabels[j];
+                        rightLabel = xLabels[j + 1];
+                        break;
+                    }
+                }
+                if (markerCharPos <= leftLabel.charPos) {
+                    xVal = leftLabel.value;
+                } else if (markerCharPos >= rightLabel.charPos) {
+                    xVal = rightLabel.value;
+                } else {
+                    const t = (markerCharPos - leftLabel.charPos) / (rightLabel.charPos - leftLabel.charPos);
+                    xVal = leftLabel.value + t * (rightLabel.value - leftLabel.value);
+                }
+
+                points.push({ label, xVal, yVal, isHighlighted: ch === '*' });
+                break; // one marker per line
+            }
+        }
+
+        if (points.length < 2) return match;
+
+        // Generate HTML
+        const xRange = xMax - xMin;
+        const yRange = yMax - yMin;
+
+        // Y-axis labels + horizontal grid lines
+        let yLabelHtml = '';
+        let gridHtml = '';
+        yLabels.forEach((yl: { value: number; lineIdx: number }) => {
+            const pct = ((yl.value - yMin) / yRange) * 100;
+            yLabelHtml += `<span class="scatter-plot-y-label" style="bottom: ${pct.toFixed(1)}%">${yl.value}%</span>`;
+            gridHtml += `<div class="scatter-plot-gridline-h" style="bottom: ${pct.toFixed(1)}%"></div>`;
+        });
+
+        // Vertical grid lines (skip endpoints at 0% and 100%)
+        xLabels.forEach((xl: { value: number; charPos: number }) => {
+            const pct = ((xl.value - xMin) / xRange) * 100;
+            if (pct > 0 && pct < 100) {
+                gridHtml += `<div class="scatter-plot-gridline-v" style="left: ${pct.toFixed(1)}%"></div>`;
+            }
+        });
+
+        // Data points
+        let pointsHtml = '';
+        points.forEach((pt: { label: string; xVal: number; yVal: number; isHighlighted: boolean }) => {
+            const xPct = ((pt.xVal - xMin) / xRange) * 100;
+            const yPct = ((pt.yVal - yMin) / yRange) * 100;
+            const hlClass = pt.isHighlighted ? ' scatter-plot-point--highlighted' : '';
+
+            pointsHtml += `
+            <div class="scatter-plot-point${hlClass}" style="left: ${xPct.toFixed(1)}%; bottom: ${yPct.toFixed(1)}%">
+              <div class="scatter-plot-dot"></div>
+              <span class="scatter-plot-point-label">${pt.label}</span>
+            </div>`;
+        });
+
+        // X-axis labels
+        let xLabelHtml = '';
+        xLabels.forEach((xl: { value: number; charPos: number }) => {
+            const pct = ((xl.value - xMin) / xRange) * 100;
+            xLabelHtml += `<span class="scatter-plot-x-label" style="left: ${pct.toFixed(1)}%">${xl.value}%</span>`;
+        });
+
+        return `
+        <div class="scatter-plot-container">
+          <div class="scatter-plot-wrapper">
+            <div class="scatter-plot-y-axis-labels">
+              ${yLabelHtml}
+            </div>
+            <div class="scatter-plot-area">
+              ${gridHtml}
+              ${pointsHtml}
+            </div>
+          </div>
+          <div class="scatter-plot-x-axis-labels">
+            ${xLabelHtml}
+          </div>
+          ${xAxisTitle ? `<div class="scatter-plot-x-title">${xAxisTitle}</div>` : ''}
+        </div>`;
+    });
+}
+
+/**
  * Converts allocation profile boxes (with box-drawing characters) to styled cards
  */
 export function convertAllocationProfilesToHtml(html: string): string {

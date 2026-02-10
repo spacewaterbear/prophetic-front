@@ -35,6 +35,22 @@ Potentiel  |||||||   68
 ```
 
 
+```
+|
+ 18% :    * Metoui (estime)
+    :  o Crypto (vol. elevee)
+ 12% :     o Tech
+    :  o Or
+ 8% :  o Immo
+    : o Oblig
+ 3% :
+    L________________
+    0%  10%  20%  30%
+         Risque
+```
+
+
+
 ## Identification
 
 | Critère | Détail |

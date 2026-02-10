@@ -10,6 +10,7 @@ import {
   convertAllocationProfilesToHtml,
   convertBarChartsToHtml,
   convertPerfBarsToHtml,
+  convertScatterPlotsToHtml,
 } from "@/lib/markdown-utils";
 
 interface MarkdownProps {
@@ -39,6 +40,9 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
         // Apply conversion functions in the correct order
         // 1. Allocation profiles (must be before ASCII tables to avoid conflicts)
         html = convertAllocationProfilesToHtml(html);
+
+        // 1b. Scatter plots (before bar charts to avoid conflicts with | character)
+        html = convertScatterPlotsToHtml(html);
 
         // 2. Bar charts (before ASCII tables to avoid conflicts)
         html = convertBarChartsToHtml(html);

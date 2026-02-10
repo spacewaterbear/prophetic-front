@@ -904,3 +904,205 @@
         font-size: 13px;
     }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   SCATTER PLOTS (Risk-Return charts)
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.markdown-container .scatter-plot-container {
+    background: hsl(var(--bg-card-surface));
+    border: 1px solid hsl(var(--border-surface));
+    border-radius: var(--radius-lg, 14px);
+    padding: 24px 24px 16px;
+    margin: var(--space-4, 16px) 0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    overflow: visible;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.markdown-container .scatter-plot-container:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+    transform: translateY(-2px);
+}
+
+.markdown-container .scatter-plot-wrapper {
+    display: flex;
+    align-items: stretch;
+}
+
+.markdown-container .scatter-plot-y-axis-labels {
+    position: relative;
+    width: 40px;
+    flex-shrink: 0;
+}
+
+.markdown-container .scatter-plot-y-label {
+    position: absolute;
+    right: 8px;
+    transform: translateY(50%);
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 10px;
+    color: #71717a;
+    white-space: nowrap;
+}
+
+.dark .markdown-container .scatter-plot-y-label {
+    color: #52525b;
+}
+
+.markdown-container .scatter-plot-area {
+    position: relative;
+    flex: 1;
+    height: 200px;
+    border-left: 1px solid rgba(0, 0, 0, 0.12);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    overflow: visible;
+}
+
+.dark .markdown-container .scatter-plot-area {
+    border-left-color: rgba(255, 255, 255, 0.12);
+    border-bottom-color: rgba(255, 255, 255, 0.12);
+}
+
+@media (min-width: 768px) {
+    .markdown-container .scatter-plot-area {
+        height: 260px;
+    }
+}
+
+.markdown-container .scatter-plot-gridline-h {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: rgba(0, 0, 0, 0.04);
+    pointer-events: none;
+}
+
+.dark .markdown-container .scatter-plot-gridline-h {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.markdown-container .scatter-plot-gridline-v {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: rgba(0, 0, 0, 0.04);
+    pointer-events: none;
+}
+
+.dark .markdown-container .scatter-plot-gridline-v {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+/* Points use zero-dimensional anchor for precise positioning */
+.markdown-container .scatter-plot-point {
+    position: absolute;
+    width: 0;
+    height: 0;
+    z-index: 2;
+}
+
+.markdown-container .scatter-plot-dot {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #a1a1aa;
+    transform: translate(-50%, -50%);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    flex-shrink: 0;
+}
+
+.dark .markdown-container .scatter-plot-dot {
+    background: #71717a;
+}
+
+.markdown-container .scatter-plot-point:hover .scatter-plot-dot {
+    transform: translate(-50%, -50%) scale(1.5);
+}
+
+.markdown-container .scatter-plot-point--highlighted .scatter-plot-dot {
+    width: 12px;
+    height: 12px;
+    background: var(--brand-primary, #352ee8);
+    box-shadow: 0 0 12px rgba(53, 46, 232, 0.35);
+}
+
+.dark .markdown-container .scatter-plot-point--highlighted .scatter-plot-dot {
+    background: #818cf8;
+    box-shadow: 0 0 12px rgba(129, 140, 248, 0.35);
+}
+
+.markdown-container .scatter-plot-point-label {
+    position: absolute;
+    left: 10px;
+    top: 0;
+    transform: translateY(-50%);
+    font-family: var(--font-sans, 'Inter', sans-serif);
+    font-size: 10px;
+    color: #52525b;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.dark .markdown-container .scatter-plot-point-label {
+    color: #a1a1aa;
+}
+
+.markdown-container .scatter-plot-point--highlighted .scatter-plot-point-label {
+    font-weight: 600;
+    color: var(--brand-primary, #352ee8);
+    font-size: 11px;
+}
+
+.dark .markdown-container .scatter-plot-point--highlighted .scatter-plot-point-label {
+    color: #818cf8;
+}
+
+@media (min-width: 768px) {
+    .markdown-container .scatter-plot-point-label {
+        font-size: 11px;
+    }
+
+    .markdown-container .scatter-plot-point--highlighted .scatter-plot-point-label {
+        font-size: 12px;
+    }
+}
+
+.markdown-container .scatter-plot-x-axis-labels {
+    position: relative;
+    height: 20px;
+    margin-left: 40px;
+    margin-top: 6px;
+}
+
+.markdown-container .scatter-plot-x-label {
+    position: absolute;
+    transform: translateX(-50%);
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 10px;
+    color: #71717a;
+    white-space: nowrap;
+}
+
+.dark .markdown-container .scatter-plot-x-label {
+    color: #52525b;
+}
+
+.markdown-container .scatter-plot-x-title {
+    text-align: center;
+    font-family: var(--font-sans, 'Inter', sans-serif);
+    font-size: 11px;
+    font-weight: 500;
+    color: #71717a;
+    margin-top: 4px;
+    margin-left: 40px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.dark .markdown-container .scatter-plot-x-title {
+    color: #52525b;
+}
