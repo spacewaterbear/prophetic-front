@@ -353,6 +353,80 @@ export function convertPerfBarsToHtml(html: string): string {
 }
 
 /**
+ * Converts comparison benchmark bars (+40% (est.) ======== Label) to styled components.
+ * Distinguishes between estimated values (gradient fade), confirmed values (solid), and volatile items (amber shimmer).
+ */
+export function convertComparisonBarsToHtml(html: string): string {
+    const codeBlockRegex = /<pre><code>([\s\S]*?)<\/code><\/pre>/g;
+
+    return html.replace(codeBlockRegex, (match, codeContent: string) => {
+        const decoded = codeContent
+            .replace(/&amp;/g, '&')
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>');
+
+        const lines = decoded.split('\n').map((l: string) => l.trim()).filter((l: string) => l);
+
+        // Detect pattern: +40% (est.) ======== Label text
+        const compPattern = /^([+\-/\d.]+%)\s*(\(est\.\))?\s*(={3,})\s+(.+)$/;
+        const compLines = lines.filter((line: string) => compPattern.test(line));
+
+        // All lines must match, minimum 2 lines
+        if (compLines.length < 2 || compLines.length !== lines.length) return match;
+
+        const bars = compLines.map((line: string, index: number) => {
+            const m = line.match(compPattern)!;
+            const pctStr = m[1].trim();
+            const isEstimated = !!m[2];
+            const barLen = m[3].length;
+            const label = m[4].trim();
+            const isVolatile = pctStr.includes('/') || /\bvol\.?\b/i.test(label);
+            return { pct: pctStr, isEstimated, barLen, label, isVolatile, index };
+        });
+
+        const maxBarLen = Math.max(...bars.map((b: { barLen: number }) => b.barLen));
+
+        let output = '<div class="comp-bars-container">';
+        bars.forEach((bar) => {
+            const fillPct = Math.round((bar.barLen / maxBarLen) * 100);
+
+            let fillMod = '';
+            if (bar.isVolatile) fillMod = 'comp-bar-fill--volatile';
+            else if (bar.isEstimated) fillMod = 'comp-bar-fill--estimated';
+            else fillMod = 'comp-bar-fill--confirmed';
+
+            const pctMod = bar.isVolatile ? 'comp-bar-pct--volatile' : 'comp-bar-pct--positive';
+
+            // Display ± for +/- notation
+            const displayPct = bar.pct.replace('+/-', '&plusmn;');
+
+            // Small badge for estimated or volatile
+            let badge = '';
+            if (bar.isEstimated) {
+                badge = '<span class="comp-bar-badge">est.</span>';
+            } else if (bar.isVolatile) {
+                badge = '<span class="comp-bar-badge comp-bar-badge--volatile">vol.</span>';
+            }
+
+            output += `
+        <div class="comp-bar-row" style="--row-index: ${bar.index}">
+          <div class="comp-bar-meta">
+            <span class="comp-bar-pct ${pctMod}">${displayPct}</span>
+            ${badge}
+          </div>
+          <div class="comp-bar-track">
+            <div class="comp-bar-fill ${fillMod}" style="width: ${fillPct}%"></div>
+          </div>
+          <span class="comp-bar-label">${bar.label}</span>
+        </div>`;
+        });
+        output += '</div>';
+
+        return output;
+    });
+}
+
+/**
  * Converts ASCII scatter plots (risk-return charts with * and o markers) to styled scatter plots.
  * Detects code blocks containing a L___ axis line, : separators, and * or o data point markers.
  */

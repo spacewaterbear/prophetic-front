@@ -10,6 +10,7 @@ import {
   convertAllocationProfilesToHtml,
   convertBarChartsToHtml,
   convertPerfBarsToHtml,
+  convertComparisonBarsToHtml,
   convertScatterPlotsToHtml,
 } from "@/lib/markdown-utils";
 
@@ -49,6 +50,9 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
 
         // 2b. Performance comparison bars
         html = convertPerfBarsToHtml(html);
+
+        // 2c. Comparison benchmark bars (=== pattern with est./vol. support)
+        html = convertComparisonBarsToHtml(html);
 
         // 3. ASCII tables
         html = convertAsciiTablesToHtml(html);
