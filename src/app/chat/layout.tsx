@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { LogOut, Menu, MessageSquare, Plus, X, ChevronDown, ChevronRight } from "lucide-react";
 import { useI18n } from "@/contexts/i18n-context";
 import { useSidebar, SidebarProvider } from "@/contexts/sidebar-context";
-import { useTheme } from "next-themes";
 import Image from "next/image";
 import {
     DropdownMenu,
@@ -34,21 +33,13 @@ function ChatLayoutInner({
     const router = useRouter();
     const pathname = usePathname();
     const { t } = useI18n();
-    const { theme } = useTheme();
-
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const { sidebarOpen, setSidebarOpen, isMobile } = useSidebar();
     const [consultationsExpanded, setConsultationsExpanded] = useState(false);
-    const [mounted, setMounted] = useState(false);
 
     // Extract conversation ID from pathname
     const currentConversationId = pathname?.match(/\/chat\/(\d+)/)?.[1];
     const conversationId = currentConversationId ? parseInt(currentConversationId, 10) : null;
-
-    // Track mounted state to prevent hydration mismatch
-    useEffect(() => {
-        setMounted(true);
-    }, []);
 
     // Load conversations once on mount
     useEffect(() => {
@@ -178,15 +169,20 @@ function ChatLayoutInner({
                                 onClick={() => setConsultationsExpanded(!consultationsExpanded)}
                                 className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2"
                             >
-                                {mounted && (
-                                    <Image
-                                        src={`https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/consultations_${theme === 'dark' ? 'b' : 'n'}.svg`}
-                                        alt="Conversations"
-                                        width={20}
-                                        height={20}
-                                        className="flex-shrink-0"
-                                    />
-                                )}
+                                <Image
+                                    src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/consultations_n.svg"
+                                    alt="Conversations"
+                                    width={20}
+                                    height={20}
+                                    className="flex-shrink-0 block dark:hidden"
+                                />
+                                <Image
+                                    src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/consultations_b.svg"
+                                    alt="Conversations"
+                                    width={20}
+                                    height={20}
+                                    className="flex-shrink-0 hidden dark:block"
+                                />
                                 <span className="flex-1">Conversations</span>
                                 {consultationsExpanded ? (
                                     <ChevronDown className="h-4 w-4" />
@@ -290,15 +286,20 @@ function ChatLayoutInner({
                             }}
                             className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2"
                         >
-                            {mounted && (
-                                <Image
-                                    src={`https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/book_${theme === 'dark' ? 'b' : 'n'}.svg`}
-                                    alt="Art Trading Value"
-                                    width={22}
-                                    height={22}
-                                    className="flex-shrink-0"
-                                />
-                            )}
+                            <Image
+                                src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/book_n.svg"
+                                alt="Art Trading Value"
+                                width={22}
+                                height={22}
+                                className="flex-shrink-0 block dark:hidden"
+                            />
+                            <Image
+                                src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/book_b.svg"
+                                alt="Art Trading Value"
+                                width={22}
+                                height={22}
+                                className="flex-shrink-0 hidden dark:block"
+                            />
                             <span>Art Trading Value</span>
                         </button>
 
@@ -310,15 +311,20 @@ function ChatLayoutInner({
                             }}
                             className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2"
                         >
-                            {mounted && (
-                                <Image
-                                    src={`https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/coin_${theme === 'dark' ? 'b' : 'n'}.svg`}
-                                    alt="Cash-Flow Leasing"
-                                    width={22}
-                                    height={22}
-                                    className="flex-shrink-0"
-                                />
-                            )}
+                            <Image
+                                src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/coin_n.svg"
+                                alt="Cash-Flow Leasing"
+                                width={22}
+                                height={22}
+                                className="flex-shrink-0 block dark:hidden"
+                            />
+                            <Image
+                                src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/coin_b.svg"
+                                alt="Cash-Flow Leasing"
+                                width={22}
+                                height={22}
+                                className="flex-shrink-0 hidden dark:block"
+                            />
                             <span>Cash-Flow Leasing</span>
                         </button>
 
@@ -333,15 +339,20 @@ function ChatLayoutInner({
                             }}
                             className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2"
                         >
-                            {mounted && (
-                                <Image
-                                    src={`https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/stars_${theme === 'dark' ? 'b' : 'n'}.svg`}
-                                    alt="Marché spot"
-                                    width={22}
-                                    height={22}
-                                    className="flex-shrink-0"
-                                />
-                            )}
+                            <Image
+                                src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/stars_n.svg"
+                                alt="Marché spot"
+                                width={22}
+                                height={22}
+                                className="flex-shrink-0 block dark:hidden"
+                            />
+                            <Image
+                                src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/stars_b.svg"
+                                alt="Marché spot"
+                                width={22}
+                                height={22}
+                                className="flex-shrink-0 hidden dark:block"
+                            />
                             <span>Marché spot</span>
                         </button>
 
@@ -396,8 +407,7 @@ function ChatLayoutInner({
                         variant="ghost"
                         size="icon"
                         onClick={() => setSidebarOpen(!sidebarOpen)}
-                        className="backdrop-blur-sm h-10 w-10"
-                        style={mounted ? { backgroundColor: theme === 'dark' ? 'rgb(1,1,0)' : '#f7f0e8' } : undefined}
+                        className="backdrop-blur-sm h-10 w-10 bg-[#f7f0e8] dark:bg-[rgb(1,1,0)]"
                     >
                         <Menu className="h-5 w-5" />
                     </Button>
