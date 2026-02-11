@@ -4,6 +4,12 @@ import { NextResponse } from "next/server";
 export default auth((req) => {
   const { nextUrl } = req;
 
+  // Block dev-only routes when DEV_MODE is not enabled
+  const isDevRoute = nextUrl.pathname.startsWith("/markdown");
+  if (isDevRoute && process.env.DEV_MODE !== "true") {
+    return NextResponse.rewrite(new URL("/404", nextUrl));
+  }
+
   // Dev mode: skip all auth checks when NEXT_PUBLIC_SKIP_AUTH is set
   if (process.env.NEXT_PUBLIC_SKIP_AUTH === "true") {
     return NextResponse.next();
