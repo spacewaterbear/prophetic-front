@@ -441,8 +441,10 @@ export function convertScatterPlotsToHtml(html: string): string {
 
         const lines = decoded.split('\n');
 
-        // Detection: must have L___ axis line
-        const axisLineIdx = lines.findIndex((l: string) => /^\s*L_+\s*$/.test(l));
+        // Detection: must have L___ axis line OR +--- axis line (with optional y-label prefix)
+        const axisLineIdx = lines.findIndex((l: string) =>
+            /^\s*L_+\s*$/.test(l) || /^\s*(\d+%?\s*)?\+\-{3,}\s*$/.test(l)
+        );
         if (axisLineIdx === -1) return match;
 
         // Must have : separator lines with * or o markers
@@ -465,6 +467,12 @@ export function convertScatterPlotsToHtml(html: string): string {
                 yLabels.push({ value: parseFloat(m[1]), lineIdx: i });
             }
         }
+        // Also check if the axis line itself contains a y-label (e.g., " 0% +---...")
+        const axisYMatch = lines[axisLineIdx].match(/^\s*(\d+)%?\s*\+/);
+        if (axisYMatch) {
+            yLabels.push({ value: parseFloat(axisYMatch[1]), lineIdx: axisLineIdx });
+        }
+
         if (yLabels.length < 2) return match;
         yLabels.sort((a: { lineIdx: number }, b: { lineIdx: number }) => a.lineIdx - b.lineIdx);
 
