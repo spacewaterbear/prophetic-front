@@ -5,7 +5,7 @@ export default auth((req) => {
   const { nextUrl } = req;
 
   // Block dev-only routes when DEV_MODE is not enabled
-  const isDevRoute = nextUrl.pathname.startsWith("/markdown");
+  const isDevRoute = nextUrl.pathname.startsWith("/markdown") || nextUrl.pathname.startsWith("/test-markdown");
   if (isDevRoute && process.env.DEV_MODE !== "true") {
     return NextResponse.rewrite(new URL("/404", nextUrl));
   }
