@@ -11,7 +11,7 @@ const nextConfig = {
             "ext.same-assets.com",
             "ugc.same-assets.com",
             "*.cloudfront.net",
-            "nqwovhetvhmtjigonohq.supabase.co",
+            "siomjdoyjuuwlpimzaju.supabase.co",
             "lh3.googleusercontent.com",
             "images.saatchiart.com",
             "media.artsper.com",
@@ -40,7 +40,7 @@ const nextConfig = {
             },
             {
                 protocol: "https",
-                hostname: "nqwovhetvhmtjigonohq.supabase.co",
+                hostname: "siomjdoyjuuwlpimzaju.supabase.co",
                 pathname: "/**",
             },
             {

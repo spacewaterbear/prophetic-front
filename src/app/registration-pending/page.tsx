@@ -40,8 +40,8 @@ export default function RegistrationPendingPage() {
             <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden flex items-center justify-center">
               <Image
                 src={isDark
-                  ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/logo_form_blanc.svg"
-                  : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_new.svg"
+                  ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo_form_blanc.svg"
+                  : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/flavicon_new.svg"
                 }
                 alt="Prophetic Orchestra"
                 width={96}

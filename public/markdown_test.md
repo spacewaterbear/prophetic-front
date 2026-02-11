@@ -36,6 +36,16 @@ Potentiel  |||||||   68
 
 
 ```
++40% (est.) ======================== Segment calligraphie
++35% (est.) =====================    Artiste Metoui
++28%        ==================       MSCI World
++25%        ================         Or
++15%        ===========              Immo Paris
++/-50%      ========                 BTC (vol.)
+```
+
+
+```
 |
  18% :    * Metoui (estime)
     :  o Crypto (vol. elevee)

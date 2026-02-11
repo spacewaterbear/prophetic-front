@@ -170,14 +170,14 @@ function ChatLayoutInner({
                                 className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2"
                             >
                                 <Image
-                                    src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/consultations_n.svg"
+                                    src="https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons/consultations_n.svg"
                                     alt="Conversations"
                                     width={20}
                                     height={20}
                                     className="flex-shrink-0 block dark:hidden"
                                 />
                                 <Image
-                                    src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/consultations_b.svg"
+                                    src="https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons/consultations_b.svg"
                                     alt="Conversations"
                                     width={20}
                                     height={20}
@@ -287,14 +287,14 @@ function ChatLayoutInner({
                             className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2"
                         >
                             <Image
-                                src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/book_n.svg"
+                                src="https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons/book_n.svg"
                                 alt="Art Trading Value"
                                 width={22}
                                 height={22}
                                 className="flex-shrink-0 block dark:hidden"
                             />
                             <Image
-                                src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/book_b.svg"
+                                src="https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons/book_b.svg"
                                 alt="Art Trading Value"
                                 width={22}
                                 height={22}
@@ -312,14 +312,14 @@ function ChatLayoutInner({
                             className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2"
                         >
                             <Image
-                                src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/coin_n.svg"
+                                src="https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons/coin_n.svg"
                                 alt="Cash-Flow Leasing"
                                 width={22}
                                 height={22}
                                 className="flex-shrink-0 block dark:hidden"
                             />
                             <Image
-                                src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/coin_b.svg"
+                                src="https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons/coin_b.svg"
                                 alt="Cash-Flow Leasing"
                                 width={22}
                                 height={22}
@@ -340,14 +340,14 @@ function ChatLayoutInner({
                             className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2"
                         >
                             <Image
-                                src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/stars_n.svg"
+                                src="https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons/stars_n.svg"
                                 alt="Marché spot"
                                 width={22}
                                 height={22}
                                 className="flex-shrink-0 block dark:hidden"
                             />
                             <Image
-                                src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/stars_b.svg"
+                                src="https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons/stars_b.svg"
                                 alt="Marché spot"
                                 width={22}
                                 height={22}

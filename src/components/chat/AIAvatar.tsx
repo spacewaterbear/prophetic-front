@@ -18,8 +18,8 @@ export const AIAvatar = memo(() => {
       <Image
         src={
           mounted && isDark
-            ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_white.svg"
-            : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_new.svg"
+            ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/flavicon_white.svg"
+            : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/flavicon_new.svg"
         }
         alt="Prophetic Orchestra"
         width={40}

@@ -261,8 +261,8 @@ export default function LoginPage() {
                 <Image
                   src={
                     isDark
-                      ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/logo_form_blanc.svg"
-                      : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_new.svg"
+                      ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo_form_blanc.svg"
+                      : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/flavicon_new.svg"
                   }
                   alt="Prophetic Orchestra"
                   width={96}
@@ -374,8 +374,8 @@ export default function LoginPage() {
               <Image
                 src={
                   isDark
-                    ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/logo_form_blanc.svg"
-                    : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_new.svg"
+                    ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo_form_blanc.svg"
+                    : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/flavicon_new.svg"
                 }
                 alt="Prophetic Orchestra"
                 width={96}
@@ -391,8 +391,8 @@ export default function LoginPage() {
               <Image
                 src={
                   isDark
-                    ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/logo_text_blanc.svg"
-                    : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/logo_text.svg"
+                    ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo_text_blanc.svg"
+                    : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo_text.svg"
                 }
                 alt="Prophetic Orchestra"
                 width={192}

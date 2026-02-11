@@ -55,7 +55,7 @@ export async function GET() {
       needsManualMigration: true,
       message: "⚠️  Automatic migration not possible. Please run this SQL in Supabase Studio:",
       instructions: [
-        "1. Go to https://supabase.com/dashboard/project/nqwovhetvhmtjigonohq/sql",
+        "1. Go to https://supabase.com/dashboard/project/siomjdoyjuuwlpimzaju/sql",
         "2. Create a new query",
         "3. Paste and run the SQL below:"
       ],

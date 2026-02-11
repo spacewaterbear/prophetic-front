@@ -33,7 +33,7 @@ const AIAvatar = memo(() => (
     <div
         className="hidden sm:flex w-8 h-8 sm:w-10 sm:h-10 mt-1 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 items-center justify-center flex-shrink-0 overflow-hidden">
         <Image
-            src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon.png"
+            src="https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/flavicon.png"
             alt="Prophetic Orchestra"
             width={40}
             height={40}

@@ -594,7 +594,7 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                             }}
                         >
                             <Image
-                                src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon_white.svg"
+                                src="https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/flavicon_white.svg"
                                 alt="Prophetic"
                                 width={20}
                                 height={20}
@@ -709,8 +709,8 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                             <Image
                                 src={
                                     mounted && isDark
-                                        ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/chrono_b.svg"
-                                        : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/chrono.svg"
+                                        ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/chrono_b.svg"
+                                        : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/chrono.svg"
                                 }
                                 alt="Chrono"
                                 width={24}
@@ -819,8 +819,8 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                             <Image
                                 src={
                                     mounted && isDark
-                                        ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/ranking_b.svg"
-                                        : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/ranking.svg"
+                                        ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/ranking_b.svg"
+                                        : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/ranking.svg"
                                 }
                                 alt="Ranking"
                                 width={24}
@@ -929,8 +929,8 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                             <Image
                                 src={
                                     mounted && isDark
-                                        ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/portfolio_b.svg"
-                                        : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/portfolio.svg"
+                                        ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/portfolio_b.svg"
+                                        : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/portfolio.svg"
                                 }
                                 alt="Portfolio"
                                 width={24}
@@ -1033,8 +1033,8 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                             <Image
                                 src={
                                     mounted && isDark
-                                        ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/settings_b.svg"
-                                        : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/settings_n.svg"
+                                        ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons/settings_b.svg"
+                                        : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons/settings_n.svg"
                                 }
                                 alt="Settings"
                                 width={24}
@@ -1093,8 +1093,8 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                             <Image
                                                 src={
                                                     mounted && isDark
-                                                        ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/scout_b.svg"
-                                                        : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/scout_n.svg"
+                                                        ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons/scout_b.svg"
+                                                        : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons/scout_n.svg"
                                                 }
                                                 alt="Market Scout"
                                                 width={24}
@@ -1126,8 +1126,8 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                             <Image
                                                 src={
                                                     mounted && isDark
-                                                        ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/radar_b.svg"
-                                                        : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/radar_n.svg"
+                                                        ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons/radar_b.svg"
+                                                        : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons/radar_n.svg"
                                                 }
                                                 alt="Community Radar"
                                                 width={24}
@@ -1269,8 +1269,8 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                                 <Image
                                                     src={
                                                         mounted && isDark
-                                                            ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/chrono_b.svg"
-                                                            : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/chrono.svg"
+                                                            ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/chrono_b.svg"
+                                                            : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/chrono.svg"
                                                     }
                                                     alt="Flashcards"
                                                     width={24}
@@ -1288,8 +1288,8 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                                 <Image
                                                     src={
                                                         mounted && isDark
-                                                            ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/ranking_b.svg"
-                                                            : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/ranking.svg"
+                                                            ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/ranking_b.svg"
+                                                            : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/ranking.svg"
                                                     }
                                                     alt="Rankings"
                                                     width={24}
@@ -1307,8 +1307,8 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                                 <Image
                                                     src={
                                                         mounted && isDark
-                                                            ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/portfolio_b.svg"
-                                                            : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/portfolio.svg"
+                                                            ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/portfolio_b.svg"
+                                                            : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/portfolio.svg"
                                                     }
                                                     alt="Portfolio"
                                                     width={24}
@@ -1499,8 +1499,8 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                         <Image
                                             src={
                                                 mounted && isDark
-                                                    ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/scout_b.svg"
-                                                    : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/scout_n.svg"
+                                                    ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons/scout_b.svg"
+                                                    : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons/scout_n.svg"
                                             }
                                             alt="Market Scout"
                                             width={24}
@@ -1532,8 +1532,8 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
                                         <Image
                                             src={
                                                 mounted && isDark
-                                                    ? "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/radar_b.svg"
-                                                    : "https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/icons/radar_n.svg"
+                                                    ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons/radar_b.svg"
+                                                    : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons/radar_n.svg"
                                             }
                                             alt="Community Radar"
                                             width={24}

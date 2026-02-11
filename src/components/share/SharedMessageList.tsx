@@ -16,7 +16,7 @@ interface Message {
 const AIAvatar = memo(() => (
   <div className="w-10 h-10 mt-1 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center flex-shrink-0 overflow-hidden">
     <Image
-      src="https://nqwovhetvhmtjigonohq.supabase.co/storage/v1/object/public/front/logo/flavicon.png"
+      src="https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/flavicon.png"
       alt="Prophetic Orchestra"
       width={40}
       height={40}
