@@ -231,8 +231,9 @@ const MessageItem = memo(
                 `;
 
                 const filename = `prophetic-report-${now.toISOString().slice(0, 10)}.pdf`;
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                await (html2pdf() as any)
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+                const worker = (html2pdf() as any)
                     .set({
                         margin: [15, 15, 15, 15],
                         filename,
@@ -241,8 +242,17 @@ const MessageItem = memo(
                         jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
                         pagebreak: { mode: ["avoid-all", "css", "legacy"] },
                     })
-                    .from(fullHtml, "string")
-                    .save();
+                    .from(fullHtml, "string");
+
+                if (isIOS) {
+                    // iOS Safari doesn't support blob: URL downloads or the <a download> attribute.
+                    // Open the PDF in a new tab so the user can use the native share/save dialog.
+                    const blob: Blob = await worker.outputPdf("blob");
+                    const blobUrl = URL.createObjectURL(blob);
+                    window.open(blobUrl, "_blank");
+                } else {
+                    await worker.save();
+                }
 
                 toast.success("PDF report downloaded");
             } catch (error) {
