@@ -57,7 +57,9 @@ const formatPrice = (amount: number): string => {
  * RealEstateCard - Bold modern luxury real estate component
  */
 export const RealEstateCard = memo(({ data }: RealEstateCardProps) => {
-    const { found, marketplace, location, properties = [], error_message, title, subtitle } = data;
+    const { found, marketplace, location, properties = [], error_message } = data;
+    const title = data.title || "Disponibilité à l'investissement";
+    const subtitle = data.subtitle || "Note technique : Des écarts marginaux peuvent subsister entre l'affichage temps réel et la disponibilité notifiée dans l'Insight. Nos équipes travaillent actuellement à l'optimisation de la synchronisation pour une précision absolue";
 
     if (!found || error_message) {
         return null;
@@ -68,18 +70,14 @@ export const RealEstateCard = memo(({ data }: RealEstateCardProps) => {
 
     return (
         <div>
-            {title && (
-                <div className="mb-3">
-                    <h2 className="text-[16px] font-bold text-gray-900 dark:text-white">
-                        {title}
-                    </h2>
-                    {subtitle && (
-                        <p className="text-[12px] text-gray-400 dark:text-gray-500 mt-1 italic">
-                            {subtitle}
-                        </p>
-                    )}
-                </div>
-            )}
+            <div className="mb-3">
+                <h2 className="text-[16px] font-bold text-gray-900 dark:text-white">
+                    {title}
+                </h2>
+                <p className="text-[12px] text-gray-400 dark:text-gray-500 mt-1 italic">
+                    {subtitle}
+                </p>
+            </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {displayedProperties.map((property, index) => (
                 <a

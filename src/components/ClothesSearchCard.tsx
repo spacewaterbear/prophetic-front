@@ -50,7 +50,9 @@ const formatPrice = (price: number | null): string => {
  * ClothesSearchCard - VignetteGridCard-inspired design
  */
 export const ClothesSearchCard = memo(({ data }: ClothesSearchCardProps) => {
-    const { listings, title, subtitle } = data;
+    const { listings } = data;
+    const title = data.title || "Disponibilité à l'investissement";
+    const subtitle = data.subtitle || "Note technique : Des écarts marginaux peuvent subsister entre l'affichage temps réel et la disponibilité notifiée dans l'Insight. Nos équipes travaillent actuellement à l'optimisation de la synchronisation pour une précision absolue";
 
     // Filter valid listings (must have image)
     const validListings = listings.filter(listing => listing.image_url);
@@ -64,18 +66,14 @@ export const ClothesSearchCard = memo(({ data }: ClothesSearchCardProps) => {
 
     return (
         <div>
-            {title && (
-                <div className="mb-3">
-                    <h2 className="text-[16px] font-bold text-gray-900 dark:text-white">
-                        {title}
-                    </h2>
-                    {subtitle && (
-                        <p className="text-[12px] text-gray-400 dark:text-gray-500 mt-1 italic">
-                            {subtitle}
-                        </p>
-                    )}
-                </div>
-            )}
+            <div className="mb-3">
+                <h2 className="text-[16px] font-bold text-gray-900 dark:text-white">
+                    {title}
+                </h2>
+                <p className="text-[12px] text-gray-400 dark:text-gray-500 mt-1 italic">
+                    {subtitle}
+                </p>
+            </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {displayedListings.map((listing, index) => (
                     <ProductCard key={`${listing.marketplace}-${index}`} listing={listing} />
