@@ -1,9 +1,6 @@
 import Image from "next/image";
-import { ExternalLink, Tag, ShoppingBag, ChevronLeft, ChevronRight } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { memo, useState, useEffect } from "react";
-
-const ITEMS_PER_PAGE = 8;
+import { ShoppingBag } from "lucide-react";
+import { memo, useState } from "react";
 
 interface ClothesListing {
     marketplace: string;
@@ -31,254 +28,116 @@ export interface ClothesSearchData {
     marketplace_breakdown: Record<string, MarketplaceBreakdown>;
     listings: ClothesListing[];
     error_message: string | null;
+    title?: string;
+    subtitle?: string;
 }
 
 interface ClothesSearchCardProps {
     data: ClothesSearchData;
 }
 
-// Format price with currency symbol
-const formatPrice = (price: number | null, currency: string | null): string => {
-    if (price === null || price === undefined) return "Price on request";
-
-    const currencySymbol = currency === "EUR" ? "€" : currency === "USD" ? "$" : currency === "GBP" ? "£" : "";
+// Format price without currency
+const formatPrice = (price: number | null): string => {
+    if (price === null || price === undefined) return "N/A";
 
     if (price >= 10000) {
-        return `${currencySymbol}${(price / 1000).toFixed(0)}K`;
+        return `${(price / 1000).toFixed(0)}K`;
     }
-    return `${currencySymbol}${price.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+    return price.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 };
 
-// Get marketplace display name
-const getMarketplaceName = (marketplace: string): string => {
-    const mp = marketplace.toLowerCase();
-    if (mp.includes("farfetch")) return "Farfetch";
-    if (mp.includes("vestiaire")) return "Vestiaire Collective";
-    if (mp.includes("rebag")) return "Rebag";
-    return marketplace;
-};
+/**
+ * ClothesSearchCard - VignetteGridCard-inspired design
+ */
+export const ClothesSearchCard = memo(({ data }: ClothesSearchCardProps) => {
+    const { listings, title, subtitle } = data;
 
-// Individual product card - James Edition style
+    // Filter valid listings (must have image)
+    const validListings = listings.filter(listing => listing.image_url);
+
+    // Limit to 4 items
+    const displayedListings = validListings.slice(0, 4);
+
+    if (displayedListings.length === 0) {
+        return null;
+    }
+
+    return (
+        <div>
+            {title && (
+                <div className="mb-3">
+                    <h2 className="text-[16px] font-bold text-gray-900 dark:text-white">
+                        {title}
+                    </h2>
+                    {subtitle && (
+                        <p className="text-[12px] text-gray-400 dark:text-gray-500 mt-1 italic">
+                            {subtitle}
+                        </p>
+                    )}
+                </div>
+            )}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {displayedListings.map((listing, index) => (
+                    <ProductCard key={`${listing.marketplace}-${index}`} listing={listing} />
+                ))}
+            </div>
+        </div>
+    );
+});
+
+ClothesSearchCard.displayName = "ClothesSearchCard";
+
 const ProductCard = memo(({ listing }: { listing: ClothesListing }) => {
     const [imageError, setImageError] = useState(false);
-
-    // Skip items without image or price
-    if (!listing.image_url && !listing.price) return null;
 
     return (
         <a
             href={listing.url || "#"}
             target="_blank"
             rel="noopener noreferrer"
-            className="group block"
+            className="block"
             onClick={(e) => !listing.url && e.preventDefault()}
         >
-            <Card className="h-full overflow-hidden border-2 border-gray-200 dark:border-gray-800 hover:border-gray-900 dark:hover:border-white transition-all duration-300 hover:shadow-2xl">
+            <div className="border border-gray-200/20 bg-[#e6e6e6] dark:bg-gray-800 rounded-[24px] p-3">
                 {/* Image */}
-                <div className="relative aspect-square overflow-hidden bg-gray-100 dark:bg-gray-900">
+                <div className="relative w-full aspect-square rounded-[24px] mb-2 overflow-hidden">
                     {listing.image_url && !imageError ? (
-                        <>
-                            <Image
-                                src={listing.image_url}
-                                alt={listing.description || "Luxury item"}
-                                fill
-                                className="object-cover group-hover:scale-110 transition-transform duration-700"
-                                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-                                onError={() => setImageError(true)}
-                            />
-                            {/* Dark overlay on hover */}
-                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
-                        </>
+                        <Image
+                            src={listing.image_url}
+                            alt={listing.description || "Luxury item"}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 20vw"
+                            onError={() => setImageError(true)}
+                        />
                     ) : (
-                        <div className="flex items-center justify-center h-full">
-                            <ShoppingBag className="w-16 h-16 text-gray-300 dark:text-gray-700" />
+                        <div className="flex items-center justify-center h-full bg-gray-200 dark:bg-gray-700">
+                            <ShoppingBag className="w-12 h-12 text-gray-400 dark:text-gray-500" />
                         </div>
                     )}
 
-                    {/* Price overlay */}
-                    <div className="absolute top-0 left-0 right-0 bg-gradient-to-b from-black/80 to-transparent p-4">
-                        <span className="text-2xl font-bold text-white">
-                            {formatPrice(listing.price, listing.currency)}
-                        </span>
-                    </div>
-
-                    {/* External link indicator */}
-                    {listing.url && (
-                        <div className="absolute bottom-4 right-4 bg-white dark:bg-gray-900 p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            <ExternalLink className="w-5 h-5 text-gray-900 dark:text-white" />
-                        </div>
-                    )}
-
-                    {/* Condition badge */}
-                    {listing.condition && (
-                        <div className="absolute bottom-4 left-4 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm px-2 py-1">
-                            <span className="text-xs font-semibold text-gray-900 dark:text-white uppercase">
-                                {listing.condition}
+                    {/* Price badge */}
+                    <div className="absolute bottom-3 right-3">
+                        <div className="bg-white rounded-full px-3 py-1.5 shadow-md">
+                            <span className="text-sm font-semibold text-gray-900">
+                                {formatPrice(listing.price)}
                             </span>
                         </div>
-                    )}
-                </div>
-
-                {/* Content */}
-                <div className="p-5">
-                    {/* Brand */}
-                    {listing.brand && (
-                        <div className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
-                            {listing.brand}
-                        </div>
-                    )}
-
-                    {/* Description */}
-                    <h3
-                        className="text-lg font-normal text-gray-900 dark:text-white mb-4 line-clamp-2 min-h-[3rem]"
-                        style={{ fontFamily: "'Spectral', serif" }}
-                    >
-                        {listing.description || "Luxury Item"}
-                    </h3>
-
-                    {/* Marketplace badge */}
-                    <div className="pt-4 border-t-2 border-gray-100 dark:border-gray-800">
-                        <span className="inline-block px-3 py-1 bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-xs font-bold uppercase tracking-wider">
-                            {getMarketplaceName(listing.marketplace)}
-                        </span>
                     </div>
                 </div>
-            </Card>
+
+                {/* Text */}
+                <div className="flex flex-col px-1 text-center">
+                    <h3 className="text-[16px] font-bold text-gray-900 dark:text-white leading-tight line-clamp-2">
+                        {listing.brand || listing.description || "Luxury Item"}
+                    </h3>
+                    <p className="text-[14px] font-light italic text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-1">
+                        {listing.description}
+                    </p>
+                </div>
+            </div>
         </a>
     );
 });
 
 ProductCard.displayName = "ProductCard";
-
-/**
- * ClothesSearchCard - Luxury component matching James Edition style
- */
-export const ClothesSearchCard = memo(({ data }: ClothesSearchCardProps) => {
-    const [selectedMarketplace, setSelectedMarketplace] = useState<string | null>(null);
-    const [currentPage, setCurrentPage] = useState(1);
-
-    const { listings, marketplace_breakdown, total_listings, successful_marketplaces } = data;
-
-    // Filter valid listings (must have image)
-    const validListings = listings.filter(
-        listing => listing.image_url
-    );
-
-    // Get filtered listings based on selected marketplace
-    const displayedListings = selectedMarketplace
-        ? validListings.filter(l => l.marketplace === selectedMarketplace)
-        : validListings;
-
-    // Pagination calculations
-    const totalPages = Math.ceil(displayedListings.length / ITEMS_PER_PAGE);
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    const endIndex = startIndex + ITEMS_PER_PAGE;
-    const paginatedListings = displayedListings.slice(startIndex, endIndex);
-
-    // Reset to page 1 when marketplace filter changes
-    useEffect(() => {
-        setCurrentPage(1);
-    }, [selectedMarketplace]);
-
-    // Get marketplace options for filter
-    const marketplaces = Object.keys(marketplace_breakdown).filter(
-        mp => marketplace_breakdown[mp].success && marketplace_breakdown[mp].total_listings > 0
-    );
-
-    if (validListings.length === 0) {
-        return (
-            <Card className="border-2 border-gray-200 dark:border-gray-800">
-                <div className="p-8 flex items-start gap-4">
-                    <Tag className="w-6 h-6 text-gray-400 shrink-0 mt-1" />
-                    <div>
-                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                            No Items Found
-                        </h3>
-                        <p className="text-gray-600 dark:text-gray-400">
-                            We couldn&apos;t find any items matching your search. Try adjusting your search terms.
-                        </p>
-                    </div>
-                </div>
-            </Card>
-        );
-    }
-
-    return (
-        <div>
-            {/* Header with marketplace filters */}
-            {marketplaces.length > 1 && (
-                <div className="flex flex-wrap items-center gap-3 mb-6">
-                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                        {total_listings} items from {successful_marketplaces} marketplace{successful_marketplaces > 1 ? "s" : ""}
-                    </span>
-                    <div className="flex gap-2">
-                        <button
-                            onClick={() => setSelectedMarketplace(null)}
-                            className={`px-4 py-2 text-xs font-bold uppercase tracking-wider transition-all duration-200 ${
-                                selectedMarketplace === null
-                                    ? "bg-gray-900 dark:bg-white text-white dark:text-gray-900"
-                                    : "bg-transparent border-2 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-gray-900 dark:hover:border-white"
-                            }`}
-                        >
-                            All
-                        </button>
-                        {marketplaces.map((mp) => {
-                            const count = marketplace_breakdown[mp].total_listings;
-                            return (
-                                <button
-                                    key={mp}
-                                    onClick={() => setSelectedMarketplace(mp)}
-                                    className={`px-4 py-2 text-xs font-bold uppercase tracking-wider transition-all duration-200 ${
-                                        selectedMarketplace === mp
-                                            ? "bg-gray-900 dark:bg-white text-white dark:text-gray-900"
-                                            : "bg-transparent border-2 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-gray-900 dark:hover:border-white"
-                                    }`}
-                                >
-                                    {getMarketplaceName(mp)} ({count})
-                                </button>
-                            );
-                        })}
-                    </div>
-                </div>
-            )}
-
-            {/* Products Grid - 2 columns like James Edition */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {paginatedListings.map((listing, index) => (
-                    <ProductCard key={`${listing.marketplace}-${startIndex + index}`} listing={listing} />
-                ))}
-            </div>
-
-            {/* Pagination */}
-            {totalPages > 1 && (
-                <div className="flex items-center justify-center gap-4 mt-6 pt-6 border-t-2 border-gray-100 dark:border-gray-800">
-                    <button
-                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                        disabled={currentPage === 1}
-                        className="p-2 border-2 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-gray-900 dark:hover:border-white disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-gray-300 dark:disabled:hover:border-gray-700 transition-all duration-200"
-                    >
-                        <ChevronLeft className="w-5 h-5" />
-                    </button>
-
-                    <span className="text-sm text-gray-600 dark:text-gray-400">
-                        Showing {startIndex + 1}-{Math.min(endIndex, displayedListings.length)} of {displayedListings.length} items
-                    </span>
-
-                    <button
-                        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                        disabled={currentPage === totalPages}
-                        className="p-2 border-2 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-gray-900 dark:hover:border-white disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-gray-300 dark:disabled:hover:border-gray-700 transition-all duration-200"
-                    >
-                        <ChevronRight className="w-5 h-5" />
-                    </button>
-                </div>
-            )}
-
-            <style jsx>{`
-                @import url('https://fonts.googleapis.com/css2?family=Spectral:wght@400&display=swap');
-            `}</style>
-        </div>
-    );
-});
-
-ClothesSearchCard.displayName = "ClothesSearchCard";
