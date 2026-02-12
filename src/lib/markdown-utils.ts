@@ -37,7 +37,7 @@ export function convertMarkdownTablesToStyledHtml(html: string): string {
         styledTable += '<table class="w-full border border-prophetic-border-default rounded-lg overflow-hidden md:min-w-[500px] bg-prophetic-bg-card shadow-sm">';
 
         if (headers.length > 0) {
-            styledTable += '<thead class="bg-prophetic-bg-elevated/50 backdrop-blur-sm"><tr class="hover:bg-prophetic-bg-card-hover transition-colors">';
+            styledTable += '<thead class="bg-prophetic-bg-elevated/50"><tr class="hover:bg-prophetic-bg-card-hover transition-colors">';
             headers.forEach((header: string) => {
                 styledTable += `<th class="px-3 py-2 sm:px-4 sm:py-3 text-left text-xs font-semibold text-prophetic-text-secondary uppercase tracking-wider">${header}</th>`;
             });
