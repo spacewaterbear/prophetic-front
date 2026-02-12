@@ -29,6 +29,8 @@ export interface RealEstateData {
     search_url?: string;
     filters_applied?: Record<string, unknown>;
     error_message?: string | null;
+    title?: string;
+    subtitle?: string;
 }
 
 interface RealEstateCardProps {
@@ -55,30 +57,29 @@ const formatPrice = (amount: number): string => {
  * RealEstateCard - Bold modern luxury real estate component
  */
 export const RealEstateCard = memo(({ data }: RealEstateCardProps) => {
-    const { found, marketplace, location, properties = [], error_message } = data;
+    const { found, marketplace, location, properties = [], error_message, title, subtitle } = data;
 
     if (!found || error_message) {
-        return (
-            <Card className="border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/20">
-                <div className="p-8 flex items-start gap-4">
-                    <XCircle className="w-6 h-6 text-red-600 dark:text-red-400 shrink-0 mt-1" />
-                    <div>
-                        <h3 className="text-xl font-semibold text-red-900 dark:text-red-100 mb-2">
-                            No Properties Found
-                        </h3>
-                        <p className="text-red-700 dark:text-red-300">
-                            {error_message || `No listings available in ${location} on ${marketplace}.`}
-                        </p>
-                    </div>
-                </div>
-            </Card>
-        );
+        return null;
     }
 
     // Limit to 4 properties
     const displayedProperties = properties.slice(0, 4);
 
     return (
+        <div>
+            {title && (
+                <div className="mb-3">
+                    <h2 className="text-[16px] font-bold text-gray-900 dark:text-white">
+                        {title}
+                    </h2>
+                    {subtitle && (
+                        <p className="text-[12px] text-gray-400 dark:text-gray-500 mt-1 italic">
+                            {subtitle}
+                        </p>
+                    )}
+                </div>
+            )}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {displayedProperties.map((property, index) => (
                 <a
@@ -127,6 +128,7 @@ export const RealEstateCard = memo(({ data }: RealEstateCardProps) => {
                     </div>
                 </a>
             ))}
+        </div>
         </div>
     );
 });
