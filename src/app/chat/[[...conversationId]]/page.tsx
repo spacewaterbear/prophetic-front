@@ -507,8 +507,20 @@ export default function ChatPage() {
             }
         };
 
+        const handleChatButton = (e: CustomEvent<{ text?: string }>) => {
+            const text = e.detail?.text;
+            if (text) {
+                console.log(`[Chat Page] Chat button clicked: ${text}`);
+                handleSend(text);
+            }
+        };
+
         window.addEventListener("triggerDeepSearch", handleDeepSearch as EventListener);
-        return () => window.removeEventListener("triggerDeepSearch", handleDeepSearch as EventListener);
+        window.addEventListener("triggerChatButton", handleChatButton as EventListener);
+        return () => {
+            window.removeEventListener("triggerDeepSearch", handleDeepSearch as EventListener);
+            window.removeEventListener("triggerChatButton", handleChatButton as EventListener);
+        };
     }, [handleSend]);
 
     useEffect(() => {

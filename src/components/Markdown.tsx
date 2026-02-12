@@ -32,6 +32,33 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
     });
   };
 
+  // Helper to convert ++text++ markers to clickable chat buttons in a 2-column grid
+  const convertChatButtons = (html: string): string => {
+    const buttonTag = (label: string) =>
+      `<button data-chat-button class="chat-btn-grid-item">${label}</button>`;
+
+    // Step 1: Replace individual ++text++ markers with button tags
+    let result = html.replace(/\+\+(.+?)\+\+/g, (_, label) => buttonTag(label));
+
+    // Step 2: Merge consecutive <p> blocks that contain only buttons into a single grid.
+    // marked() wraps each line in its own <p>, so we need to collect them together.
+    result = result.replace(
+      /(?:<p>\s*(?:<button data-chat-button[^>]*>.*?<\/button>\s*)+<\/p>\s*)+/g,
+      (match) => {
+        const buttons: string[] = [];
+        match.replace(/<button data-chat-button[^>]*>.*?<\/button>/g, (btn) => {
+          buttons.push(btn);
+          return '';
+        });
+        return buttons.length > 0
+          ? `<div class="chat-btn-grid">${buttons.join('')}</div>`
+          : match;
+      }
+    );
+
+    return result;
+  };
+
   useEffect(() => {
     async function processMarkdown() {
       try {
@@ -70,6 +97,9 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
         // This ensures they are correctly rendered even when inside code blocks or custom components
         html = convertAnalysisMarkers(html);
 
+        // Convert ++text++ chat button markers
+        html = convertChatButtons(html);
+
         setHtmlContent(html);
       } catch (error) {
         console.error("Error processing markdown:", error);
@@ -81,8 +111,21 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
   }, [content]);
 
   // Helper to handle analysis markers (-+-)
-  const handleAnalysisClick = (event: React.MouseEvent) => {
+  const handleClick = (event: React.MouseEvent) => {
     const target = event.target as HTMLElement;
+
+    // Check if clicked element or its parent has the chat button marker
+    const chatButtonElement = target.closest('[data-chat-button]');
+    if (chatButtonElement) {
+      const text = chatButtonElement.textContent?.trim();
+      if (text) {
+        const customEvent = new CustomEvent("triggerChatButton", {
+          detail: { text }
+        });
+        window.dispatchEvent(customEvent);
+      }
+      return;
+    }
 
     // Check if clicked element or its parent has the analysis marker
     const analysisElement = target.closest('[data-analysis]');
@@ -128,7 +171,7 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
       <div
         className={`max-w-none px-0 markdown-container ${className || ''}`}
         style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif" }}
-        onClick={handleAnalysisClick}
+        onClick={handleClick}
         dangerouslySetInnerHTML={{ __html: htmlContent }}
       />
     </div>

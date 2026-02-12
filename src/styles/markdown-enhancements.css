@@ -1302,3 +1302,61 @@
         font-size: 13px;
     }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   CHAT BUTTON GRID (++text++ markers)
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.markdown-container .chat-btn-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin: 12px 0;
+}
+
+.markdown-container .chat-btn-grid-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 10px 16px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.4;
+    color: #352ee8;
+    background: rgba(53, 46, 232, 0.04);
+    border: 1px solid rgba(53, 46, 232, 0.2);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 44px;
+}
+
+.markdown-container .chat-btn-grid-item:hover {
+    background: rgba(53, 46, 232, 0.1);
+    border-color: rgba(53, 46, 232, 0.35);
+    box-shadow: 0 1px 4px rgba(53, 46, 232, 0.1);
+}
+
+.markdown-container .chat-btn-grid-item:active {
+    transform: scale(0.97);
+}
+
+.dark .markdown-container .chat-btn-grid-item {
+    color: #8b8aff;
+    background: rgba(139, 138, 255, 0.06);
+    border-color: rgba(139, 138, 255, 0.2);
+}
+
+.dark .markdown-container .chat-btn-grid-item:hover {
+    background: rgba(139, 138, 255, 0.12);
+    border-color: rgba(139, 138, 255, 0.35);
+    box-shadow: 0 1px 4px rgba(139, 138, 255, 0.1);
+}
+
+@media (max-width: 480px) {
+    .markdown-container .chat-btn-grid {
+        grid-template-columns: 1fr;
+    }
+}
