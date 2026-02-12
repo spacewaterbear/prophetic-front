@@ -117,6 +117,7 @@
     padding: 18px;
     margin-bottom: 12px;
     overflow-x: auto;
+    max-width: 100%;
 }
 
 .dark .markdown-container pre {
@@ -142,6 +143,12 @@
 
 .dark .markdown-container pre code {
     color: #a1a1aa;
+}
+
+@media (max-width: 767px) {
+    .markdown-container pre code {
+        font-size: clamp(7px, 2.5vw, 11px);
+    }
 }
 
 @media (min-width: 1024px) {
@@ -233,11 +240,18 @@
     padding: 12px 16px;
     font-size: 13px;
     color: #18181b;
-    word-break: break-words;
+    word-break: break-word;
 }
 
 .dark .markdown-container .ascii-table td {
     color: rgba(255, 255, 255, 0.95);
+}
+
+@media (max-width: 767px) {
+    .markdown-container .ascii-table td {
+        padding: 6px 8px;
+        font-size: clamp(9px, 2.5vw, 12px);
+    }
 }
 
 @media (min-width: 768px) {
@@ -253,6 +267,12 @@
     min-width: 120px;
 }
 
+@media (max-width: 767px) {
+    .markdown-container .ascii-table .label-cell {
+        min-width: 0;
+    }
+}
+
 .dark .markdown-container .ascii-table .label-cell {
     color: rgba(255, 255, 255, 0.95);
 }
@@ -262,6 +282,12 @@
     font-family: var(--font-mono, 'JetBrains Mono', monospace);
     font-size: 12px;
     text-align: right;
+}
+
+@media (max-width: 767px) {
+    .markdown-container .ascii-table .value-cell {
+        font-size: clamp(8px, 2.5vw, 11px);
+    }
 }
 
 .dark .markdown-container .ascii-table .value-cell {
@@ -281,6 +307,7 @@
 .table-scroll-wrapper {
     overflow-x: auto;
     margin: 1rem 0;
+    max-width: 100%;
 }
 
 .table-scroll-wrapper table {
@@ -289,6 +316,17 @@
     border-radius: var(--radius-lg, 14px);
     border-collapse: separate;
     border-spacing: 0;
+    width: 100%;
+    table-layout: auto;
+}
+
+@media (max-width: 767px) {
+    .table-scroll-wrapper table th,
+    .table-scroll-wrapper table td {
+        font-size: clamp(9px, 2.5vw, 12px);
+        padding: 4px 6px;
+        word-break: break-word;
+    }
 }
 
 .dark .table-scroll-wrapper table {
@@ -1358,5 +1396,196 @@
 @media (max-width: 480px) {
     .markdown-container .chat-btn-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   MOBILE RESPONSIVE OVERRIDES
+   ═══════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 767px) {
+    /* --- Typography --- */
+    .markdown-container p {
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .markdown-container li {
+        font-size: 11px;
+    }
+
+    /* --- Code blocks --- */
+    .markdown-container pre {
+        padding: 12px;
+        border-radius: 10px;
+    }
+
+    /* --- Cards: tighter padding across the board --- */
+    .markdown-container .ranking-card,
+    .markdown-container .extended-ranking-card,
+    .markdown-container .allocation-card {
+        padding: 12px;
+        border-radius: 10px;
+    }
+
+    .markdown-container .ranking-number {
+        font-size: 15px;
+        min-width: 24px;
+    }
+
+    .markdown-container .ranking-name,
+    .markdown-container .extended-ranking-name {
+        font-size: 14px;
+    }
+
+    .markdown-container .ranking-header {
+        gap: 8px;
+        margin-bottom: 8px;
+    }
+
+    .markdown-container .allocation-title {
+        font-size: 11px;
+    }
+
+    .markdown-container .allocation-category {
+        font-size: 12px;
+    }
+
+    .markdown-container .allocation-percentage {
+        font-size: 11px;
+    }
+
+    .markdown-container .allocation-items {
+        gap: 10px;
+    }
+
+    /* --- Bar charts --- */
+    .markdown-container .bar-chart-container,
+    .markdown-container .perf-bars-container,
+    .markdown-container .comp-bars-container {
+        padding: 14px;
+        gap: 10px;
+        border-radius: 10px;
+    }
+
+    .markdown-container .bar-chart-row {
+        grid-template-columns: 70px 1fr 30px;
+        gap: 8px;
+    }
+
+    .markdown-container .bar-chart-label {
+        font-size: 11px;
+    }
+
+    .markdown-container .bar-chart-score {
+        font-size: 11px;
+        min-width: 24px;
+    }
+
+    .markdown-container .bar-chart-track {
+        height: 6px;
+    }
+
+    /* --- Performance bars --- */
+    .markdown-container .perf-bar-row {
+        grid-template-columns: 44px 1fr minmax(80px, 45%);
+        gap: 8px;
+    }
+
+    .markdown-container .perf-bar-pct {
+        font-size: 11px;
+    }
+
+    .markdown-container .perf-bar-label {
+        font-size: 11px;
+    }
+
+    .markdown-container .perf-bar-track {
+        height: 6px;
+    }
+
+    /* --- Comparison bars --- */
+    .markdown-container .comp-bar-row {
+        grid-template-columns: 64px 1fr minmax(70px, 38%);
+        gap: 8px;
+    }
+
+    .markdown-container .comp-bar-pct {
+        font-size: 11px;
+    }
+
+    .markdown-container .comp-bar-label {
+        font-size: 11px;
+    }
+
+    .markdown-container .comp-bar-track {
+        height: 5px;
+    }
+
+    /* --- Scatter plots --- */
+    .markdown-container .scatter-plot-container {
+        padding: 14px 12px 12px;
+        border-radius: 10px;
+    }
+
+    .markdown-container .scatter-plot-area {
+        height: 160px;
+    }
+
+    .markdown-container .scatter-plot-y-axis-labels {
+        width: 30px;
+    }
+
+    .markdown-container .scatter-plot-y-label {
+        font-size: 8px;
+    }
+
+    .markdown-container .scatter-plot-x-label {
+        font-size: 8px;
+    }
+
+    .markdown-container .scatter-plot-x-title {
+        font-size: 9px;
+        margin-left: 30px;
+    }
+
+    .markdown-container .scatter-plot-x-axis-labels {
+        margin-left: 30px;
+    }
+
+    .markdown-container .scatter-plot-point-label {
+        font-size: 8px;
+        left: 7px;
+    }
+
+    .markdown-container .scatter-plot-point--highlighted .scatter-plot-point-label {
+        font-size: 9px;
+    }
+
+    .markdown-container .scatter-plot-dot {
+        width: 6px;
+        height: 6px;
+    }
+
+    .markdown-container .scatter-plot-point--highlighted .scatter-plot-dot {
+        width: 9px;
+        height: 9px;
+    }
+
+    /* --- ASCII table wrapper --- */
+    .markdown-container .ascii-table-wrapper {
+        border-radius: 10px;
+    }
+
+    .markdown-container .ascii-table {
+        border-radius: 10px;
+    }
+
+    /* --- Chat buttons --- */
+    .markdown-container .chat-btn-grid-item {
+        padding: 8px 12px;
+        font-size: 12px;
+        min-height: 40px;
+        border-radius: 10px;
     }
 }

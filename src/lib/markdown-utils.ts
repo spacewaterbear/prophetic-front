@@ -34,7 +34,7 @@ export function convertMarkdownTablesToStyledHtml(html: string): string {
         });
 
         let styledTable = '<div class="table-scroll-wrapper premium-table-container my-4">';
-        styledTable += '<table class="w-full border border-prophetic-border-default rounded-lg overflow-hidden md:min-w-[500px] bg-prophetic-bg-card shadow-sm">';
+        styledTable += '<table class="w-full border border-prophetic-border-default rounded-lg overflow-hidden bg-prophetic-bg-card shadow-sm">';
 
         if (headers.length > 0) {
             styledTable += '<thead class="bg-prophetic-bg-elevated/50"><tr class="hover:bg-prophetic-bg-card-hover transition-colors">';
