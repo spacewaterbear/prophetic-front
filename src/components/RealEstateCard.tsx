@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ExternalLink, MapPin, Bed, Bath, Maximize, Home, XCircle } from "lucide-react";
+import { ExternalLink, MapPin, Home, XCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { memo } from "react";
 
@@ -107,7 +107,7 @@ export const RealEstateCard = memo(({ data }: RealEstateCardProps) => {
                                             src={property.image_url}
                                             alt={property.title}
                                             fill
-                                            className="object-cover group-hover/card:scale-110 transition-transform duration-700"
+                                            className="object-cover"
                                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                         />
                                         {/* Dark overlay on hover */}
@@ -148,48 +148,6 @@ export const RealEstateCard = memo(({ data }: RealEstateCardProps) => {
                                     <span className="text-sm font-medium">{location}</span>
                                 </div>
 
-                                {/* Specs */}
-                                <div className="grid grid-cols-3 gap-4 pt-4 border-t-2 border-gray-100 dark:border-gray-800">
-                                    {property.bedrooms !== undefined && (
-                                        <div>
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <Bed className="w-4 h-4 text-gray-400" />
-                                                <span className="text-2xl font-bold text-gray-900 dark:text-white">
-                                                    {property.bedrooms}
-                                                </span>
-                                            </div>
-                                            <div className="text-xs font-semibold text-gray-500 uppercase">Beds</div>
-                                        </div>
-                                    )}
-
-                                    {property.bathrooms !== undefined && (
-                                        <div>
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <Bath className="w-4 h-4 text-gray-400" />
-                                                <span className="text-2xl font-bold text-gray-900 dark:text-white">
-                                                    {property.bathrooms}
-                                                </span>
-                                            </div>
-                                            <div className="text-xs font-semibold text-gray-500 uppercase">Baths</div>
-                                        </div>
-                                    )}
-
-                                    {(property.square_meters || property.square_feet) && (
-                                        <div>
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <Maximize className="w-4 h-4 text-gray-400" />
-                                                <span className="text-2xl font-bold text-gray-900 dark:text-white">
-                                                    {(property.square_meters || property.square_feet || 0) > 999
-                                                        ? `${Math.round((property.square_meters || property.square_feet || 0) / 1000)}k`
-                                                        : property.square_meters || property.square_feet}
-                                                </span>
-                                            </div>
-                                            <div className="text-xs font-semibold text-gray-500 uppercase">
-                                                {property.square_meters ? 'm²' : 'ft²'}
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
 
                                 {/* Property type badge */}
                                 {property.property_type && (
