@@ -96,7 +96,7 @@ export const RealEstateCard = memo(({ data }: RealEstateCardProps) => {
                         href={property.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group block"
+                        className="group/card block"
                     >
                         <Card className="h-full overflow-hidden border-2 border-gray-200 dark:border-gray-800 hover:border-gray-900 dark:hover:border-white transition-all duration-300 hover:shadow-2xl">
                             {/* Image */}
@@ -107,11 +107,11 @@ export const RealEstateCard = memo(({ data }: RealEstateCardProps) => {
                                             src={property.image_url}
                                             alt={property.title}
                                             fill
-                                            className="object-cover group-hover:scale-110 transition-transform duration-700"
+                                            className="object-cover group-hover/card:scale-110 transition-transform duration-700"
                                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                         />
                                         {/* Dark overlay on hover */}
-                                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+                                        <div className="absolute inset-0 bg-black/0 group-hover/card:bg-black/20 transition-colors duration-300" />
                                     </>
                                 ) : (
                                     <div className="flex items-center justify-center h-full">
@@ -127,7 +127,7 @@ export const RealEstateCard = memo(({ data }: RealEstateCardProps) => {
                                 </div>
 
                                 {/* External link indicator */}
-                                <div className="absolute bottom-4 right-4 bg-white dark:bg-gray-900 p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <div className="absolute bottom-4 right-4 bg-white dark:bg-gray-900 p-2 opacity-0 group-hover/card:opacity-100 transition-opacity duration-300">
                                     <ExternalLink className="w-5 h-5 text-gray-900 dark:text-white" />
                                 </div>
                             </div>
