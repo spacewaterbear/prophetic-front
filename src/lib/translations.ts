@@ -47,6 +47,10 @@ export const translations = {
             createAccount: "Créer mon compte",
             creating: "Création en cours...",
         },
+        // Context Menu
+        contextMenu: {
+            deepSearch: "Faire une recherche approfondie",
+        },
         // Common
         common: {
             loading: "Chargement...",
@@ -60,6 +64,9 @@ export const translations = {
         },
     },
     en: {
+        contextMenu: {
+            deepSearch: "Make a deep search about it",
+        },
         nav: {
             newChat: "New Chat",
             recentChats: "Recent Chats",
@@ -115,6 +122,9 @@ export const translations = {
         },
     },
     es: {
+        contextMenu: {
+            deepSearch: "Hacer una búsqueda profunda",
+        },
         nav: {
             newChat: "Nuevo Chat",
             recentChats: "Chats Recientes",
@@ -161,6 +171,9 @@ export const translations = {
         },
     },
     de: {
+        contextMenu: {
+            deepSearch: "Eine Tiefensuche durchführen",
+        },
         nav: {
             newChat: "Neuer Chat",
             recentChats: "Letzte Chats",
@@ -207,6 +220,9 @@ export const translations = {
         },
     },
     it: {
+        contextMenu: {
+            deepSearch: "Effettuare una ricerca approfondita",
+        },
         nav: {
             newChat: "Nuova Chat",
             recentChats: "Chat Recenti",
@@ -253,6 +269,9 @@ export const translations = {
         },
     },
     pt: {
+        contextMenu: {
+            deepSearch: "Fazer uma pesquisa aprofundada",
+        },
         nav: {
             newChat: "Novo Chat",
             recentChats: "Chats Recentes",
@@ -299,6 +318,9 @@ export const translations = {
         },
     },
     nl: {
+        contextMenu: {
+            deepSearch: "Een diepgaande zoekopdracht uitvoeren",
+        },
         nav: {
             newChat: "Nieuwe Chat",
             recentChats: "Recente Chats",
@@ -345,6 +367,9 @@ export const translations = {
         },
     },
     ja: {
+        contextMenu: {
+            deepSearch: "詳細検索を行う",
+        },
         nav: {
             newChat: "新しいチャット",
             recentChats: "最近のチャット",
@@ -391,6 +416,9 @@ export const translations = {
         },
     },
     zh: {
+        contextMenu: {
+            deepSearch: "进行深度搜索",
+        },
         nav: {
             newChat: "新聊天",
             recentChats: "最近的聊天",

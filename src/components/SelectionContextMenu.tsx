@@ -2,8 +2,10 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Search } from "lucide-react";
+import { useI18n } from "@/contexts/i18n-context";
 
 export function SelectionContextMenu() {
+    const { t } = useI18n();
     const [isVisible, setIsVisible] = useState(false);
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const [selectedText, setSelectedText] = useState("");
@@ -65,7 +67,7 @@ export function SelectionContextMenu() {
                 className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors text-left font-medium"
             >
                 <Search className="h-4 w-4 text-blue-500" />
-                <span>Make a deep search about it</span>
+                <span>{t("contextMenu.deepSearch")}</span>
             </button>
         </div>
     );
