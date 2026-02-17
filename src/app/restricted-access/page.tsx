@@ -40,7 +40,7 @@ export default function RestrictedAccessPage() {
             <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden flex items-center justify-center">
               <Image
                 src={isDark
-                  ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo_form_blanc.svg"
+                  ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/flavicon_new_dark.svg"
                   : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/flavicon_new.svg"
                 }
                 alt="Prophetic Orchestra"

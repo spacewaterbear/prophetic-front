@@ -899,7 +899,7 @@ export default function ChatPage() {
                             /* Welcome Screen */
                             <>
                                 {/* Logo */}
-                                <div className="w-[200px] h-[200px] flex items-center justify-center">
+                                <div className="w-[170px] h-[170px] flex items-center justify-center">
                                     <Image
                                         src="https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/flavicon_new.svg"
                                         alt="Prophetic Orchestra"
