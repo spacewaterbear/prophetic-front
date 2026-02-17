@@ -899,7 +899,7 @@ export default function ChatPage() {
                             /* Welcome Screen */
                             <>
                                 {/* Logo */}
-                                <div className="w-[200px] h-[200px] mb-8 flex items-center justify-center">
+                                <div className="w-[200px] h-[200px] flex items-center justify-center">
                                     <Image
                                         src="https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/flavicon_new.svg"
                                         alt="Prophetic Orchestra"
@@ -910,14 +910,9 @@ export default function ChatPage() {
                                 </div>
 
                                 {/* Greeting */}
-                                <h1 className="text-3xl sm:text-4xl font-medium text-gray-900 dark:text-white mb-3">
+                                <h1 className="text-3xl sm:text-4xl font-medium text-gray-900 dark:text-white mb-3 pb-[30px]">
                                     {t('chat.greeting').replace('{name}', profileUsername || session?.user?.name?.split(' ')[0] || '')}
                                 </h1>
-
-                                {/* Subtitle */}
-                                <p className="text-base text-gray-600 dark:text-gray-400 mb-12">
-                                    {t('chat.welcomeSubtitle')}
-                                </p>
 
                                 {/* Chat Input */}
                                 <ChatInput
