@@ -4,7 +4,8 @@ WORKDIR /app
 
 # Install dependencies based on the preferred package manager
 COPY package.json package-lock.json* ./
-RUN npm ci
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci
 
 # Stage 2: Builder
 FROM node:20-alpine AS builder
@@ -36,12 +37,11 @@ COPY biome.json* ./
 
 # Copy source code (changes most frequently, so copied last for better caching)
 COPY src ./src
+COPY public ./public
 
-# Cache bust argument - pass --build-arg CACHEBUST=$(date +%s) to force rebuild
-ARG CACHEBUST=1
-
-# Build the Next.js application
-RUN npm run build
+# Build the Next.js application with Next.js cache mount
+RUN --mount=type=cache,target=/app/.next/cache \
+    npm run build
 
 # Stage 3: Runner
 FROM node:20-alpine AS runner
@@ -51,17 +51,13 @@ ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
 # Create a non-root user
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
 
 # Copy necessary files from builder
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-COPY --chown=nextjs:nodejs public/markdown_test.md ./public/markdown_test.md
-
-
-# Set correct permissions
-RUN chown -R nextjs:nodejs /app
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
 USER nextjs
 
