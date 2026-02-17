@@ -73,7 +73,7 @@ const AIAvatar = memo(() => {
             <Image
                 src={
                     mounted && isDark
-                        ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/flavicon_white.svg"
+                        ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/flavicon_new_dark.svg"
                         : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/flavicon_new.svg"
                 }
                 alt="Prophetic Orchestra"
@@ -901,7 +901,11 @@ export default function ChatPage() {
                                 {/* Logo */}
                                 <div className="w-[170px] h-[170px] flex items-center justify-center">
                                     <Image
-                                        src="https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/flavicon_new.svg"
+                                        src={
+                                            mounted && isDark
+                                                ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/flavicon_new_dark.svg"
+                                                : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/flavicon_new.svg"
+                                        }
                                         alt="Prophetic Orchestra"
                                         width={300}
                                         height={300}
