@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Plus, Send, ChevronDown, Paperclip } from "lucide-react";
+import { Plus, Send, ChevronDown, Paperclip, Info } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useTheme } from "next-themes";
@@ -425,6 +425,36 @@ export function ChatInput({ input, setInput, handleSend, isLoading, className = 
             className={`relative flex flex-col w-full max-w-3xl mx-auto bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-[24px] p-4 shadow-sm transition-colors ${className}`}
             onClick={() => ref.current?.focus()}
         >
+            {/* Info icon - top right */}
+            <div className="absolute top-2 right-3 z-10 group">
+                <div className="flex items-center justify-center w-6 h-6 rounded-full text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-pointer transition-colors">
+                    <Info className="w-4 h-4" />
+                </div>
+                <div className="absolute right-0 top-full mt-2 w-[320px] bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-2xl p-4 shadow-2xl border dark:border-transparent opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 ease-out">
+                    <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Exemples de questions</p>
+                    <div className="space-y-2.5">
+                        <div>
+                            <p className="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">Stratégie</p>
+                            <p className="text-sm text-gray-700 dark:text-gray-300">&quot;Portfolio diversifié [Budget X] avec ROI&quot;</p>
+                            <p className="text-sm text-gray-700 dark:text-gray-300">&quot;Top 5 actifs pour [Budget X]&quot;</p>
+                            <p className="text-sm text-gray-700 dark:text-gray-300">&quot;Stratégie de réinvestissement des gains&quot;</p>
+                        </div>
+                        <div>
+                            <p className="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">Analyse</p>
+                            <p className="text-sm text-gray-700 dark:text-gray-300">&quot;Investir sur [Artiste/Marque] : Oui/Non ?&quot;</p>
+                            <p className="text-sm text-gray-700 dark:text-gray-300">&quot;Potentiel de revente de [Nom de l&apos;actif]&quot;</p>
+                            <p className="text-sm text-gray-700 dark:text-gray-300">&quot;Scoring de rareté vs demande actuelle&quot;</p>
+                        </div>
+                        <div>
+                            <p className="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">Comparaison</p>
+                            <p className="text-sm text-gray-700 dark:text-gray-300">&quot;Luxe vs Locatif (Ville A/Ville B)&quot;</p>
+                            <p className="text-sm text-gray-700 dark:text-gray-300">&quot;Comparatif [Actif A] vs [Actif B]&quot;</p>
+                            <p className="text-sm text-gray-700 dark:text-gray-300">&quot;Performance Art vs S&amp;P 500&quot;</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             {/* Hidden file input */}
             <input
                 type="file"
