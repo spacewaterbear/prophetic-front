@@ -2,8 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import { Check, Copy } from "lucide-react";
-import Image from "next/image";
 import { memo, useState, Suspense } from "react";
+import { AIAvatar } from "@/components/chat/AIAvatar";
 
 // Mock interfaces
 interface Artist {
@@ -27,22 +27,6 @@ interface Message {
     text?: string;
     streaming_text?: string;
 }
-
-// Copied AIAvatar with the fix
-const AIAvatar = memo(() => (
-    <div
-        className="hidden sm:flex w-8 h-8 sm:w-10 sm:h-10 mt-1 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 items-center justify-center flex-shrink-0 overflow-hidden">
-        <Image
-            src="https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/flavicon.png"
-            alt="Prophetic Orchestra"
-            width={40}
-            height={40}
-            className="w-full h-full object-cover"
-            priority
-        />
-    </div>
-));
-AIAvatar.displayName = "AIAvatar";
 
 // Copied MessageItem with the fix
 const MessageItem = memo(({ message, userName }: { message: Message; userName: string }) => {

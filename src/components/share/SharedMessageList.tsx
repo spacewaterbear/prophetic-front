@@ -1,9 +1,9 @@
 "use client";
 
 import { Suspense, memo } from "react";
-import Image from "next/image";
 import { Markdown } from "@/components/Markdown";
 import { CopyButton } from "@/components/share/CopyButton";
+import { AIAvatar } from "@/components/chat/AIAvatar";
 
 interface Message {
   id: number;
@@ -11,22 +11,6 @@ interface Message {
   sender: "user" | "ai";
   created_at: string;
 }
-
-// Reusable AI Avatar component
-const AIAvatar = memo(() => (
-  <div className="w-10 h-10 mt-1 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center flex-shrink-0 overflow-hidden">
-    <Image
-      src="https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/flavicon.png"
-      alt="Prophetic Orchestra"
-      width={40}
-      height={40}
-      className="w-full h-full object-cover"
-      priority
-    />
-  </div>
-));
-
-AIAvatar.displayName = "AIAvatar";
 
 // Message component for shared conversations (read-only)
 const SharedMessageItem = memo(({ message }: { message: Message }) => {

@@ -14,6 +14,7 @@ import { DEFAULT_NON_ADMIN_MODEL } from "@/lib/models";
 import { TypingIndicator } from "@/components/TypingIndicator";
 import { VignetteData } from "@/types/vignettes";
 import { useChatConversation, Message } from "@/hooks/useChatConversation";
+import { AIAvatar } from "@/components/chat/AIAvatar";
 import { Button } from "@/components/ui/button";
 import { Check, Copy, FileDown } from "lucide-react";
 import Image from "next/image";
@@ -57,36 +58,6 @@ const ClothesSearchCard = lazy(() =>
         default: mod.ClothesSearchCard,
     })),
 );
-
-// Reusable AI Avatar component
-const AIAvatar = memo(() => {
-    const { theme, resolvedTheme } = useTheme();
-    const [mounted, setMounted] = useState(false);
-    const isDark = theme === "dark" || resolvedTheme === "dark";
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
-
-    return (
-        <div className="hidden sm:flex w-8 h-8 sm:w-10 sm:h-10 mt-1 rounded-full items-center justify-center flex-shrink-0 overflow-hidden">
-            <Image
-                src={
-                    mounted && isDark
-                        ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/flavicon_new_dark.svg"
-                        : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/flavicon_new.svg"
-                }
-                alt="Prophetic Orchestra"
-                width={40}
-                height={40}
-                className="w-full h-full object-cover"
-                priority
-            />
-        </div>
-    );
-});
-
-AIAvatar.displayName = "AIAvatar";
 
 // Memoized message component
 const MessageItem = memo(

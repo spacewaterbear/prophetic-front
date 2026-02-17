@@ -3,6 +3,7 @@ import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@supabase/supabase-js";
+import { upsertProfile } from "@/lib/supabase/profiles";
 
 // Generate a deterministic UUID v5 from Google account ID using Web Crypto API
 // This ensures the same Google account always gets the same UUID
@@ -183,49 +184,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (googleId && user.email) {
         try {
           const supabase = createAdminClient();
+          const userId = await googleIdToUuid(googleId);
 
-          // Check if a profile with this email already exists
-          const { data: existingProfile } = await supabase
-            .from("profiles")
-            .select("id")
-            .eq("mail", user.email)
-            .maybeSingle();
-
-          if (existingProfile) {
-            // Profile exists - update metadata and status
-            const { error: updateError } = await supabase
-              .from("profiles")
-              .update({
-                username: user.name || user.email.split("@")[0],
-                avatar_url: user.image || null,
-                status: "oracle",
-                updated_at: new Date().toISOString(),
-              })
-              .eq("id", existingProfile.id);
-
-            if (updateError) {
-              console.error("Error updating profile:", updateError);
-            }
-          } else {
-            // No existing profile - create new one with generated UUID
-            const userId = await googleIdToUuid(googleId);
-
-            const { error } = await supabase
-              .from("profiles")
-              .insert({
-                id: userId,
-                mail: user.email,
-                username: user.name || user.email.split("@")[0],
-                avatar_url: user.image || null,
-                status: "oracle",
-                updated_at: new Date().toISOString(),
-              });
-
-            if (error) {
-              console.error("Error creating profile:", error);
-              // Don't block login if profile creation fails
-            }
-          }
+          await upsertProfile(supabase, {
+            id: userId,
+            email: user.email,
+            username: user.name || user.email.split("@")[0],
+            avatarUrl: user.image ?? null,
+            status: "oracle",
+          });
         } catch (error) {
           console.error("Error in signIn callback:", error);
         }
@@ -241,15 +208,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         try {
           const supabase = createAdminClient();
 
-          const { data: profile } = await supabase
+          const { data: profile, error: profileError } = await supabase
             .from('profiles')
-            .select('status, is_admin')
+            .select('status')
             .eq('id', session.user.id)
             .maybeSingle();
 
           if (profile) {
             session.user.status = profile.status;
-            session.user.isAdmin = profile.is_admin ?? false;
+          } else if (profileError) {
+            console.error('[Auth] Error querying profile:', profileError);
           }
         } catch (error) {
           console.error('[Auth] Error fetching user status:', error);

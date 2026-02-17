@@ -401,7 +401,7 @@ function ChatLayoutInner({
             </aside>
 
             {/* Main content area with menu button */}
-            <div className="flex-1 flex flex-col">
+            <div className="flex-1 flex flex-col overflow-hidden">
                 <div className="absolute top-2 left-3 z-20 md:hidden">
                     <Button
                         variant="ghost"

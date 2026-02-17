@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { auth } from "@/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { MAX_FILE_SIZE } from "@/lib/utils/fileValidation";
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,7 +26,6 @@ export async function POST(request: NextRequest) {
     }
 
     // File validation
-    const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
     if (file.size > MAX_FILE_SIZE) {
       return new Response(JSON.stringify({ error: "File size exceeds 50MB limit" }), {
         status: 400,
