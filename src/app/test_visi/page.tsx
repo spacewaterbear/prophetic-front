@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, lazy, Suspense } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -9,59 +9,58 @@ import Image from "next/image";
 import { useTheme } from "next-themes";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { MessageItem } from "@/components/chat/MessageItem";
+import { Message } from "@/types/chat";
 
-// Lazy load Markdown component
-const Markdown = lazy(() =>
-  import("@/components/Markdown").then((mod) => ({ default: mod.Markdown })),
-);
 
 const CORRECT_PASSWORD = "wholehigh75";
-
-interface Message {
-  id: number;
-  sender: "user" | "assistant";
-  content: string;
-}
 
 const LOREM_MESSAGES: Message[] = [
   {
     id: 1,
     sender: "user",
+    created_at: new Date().toISOString(),
     content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua?"
   },
   {
     id: 2,
-    sender: "assistant",
+    sender: "ai",
+    created_at: new Date().toISOString(),
     content: "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.\n\n| Asset | Price | Change (24h) | Market Cap |\n|-------|-------|--------------|------------|\n| Lorem Ipsum | $45,230 | +5.2% | $850B |\n| Dolor Sit | $3,120 | -2.1% | $420B |\n| Consectetur | $890 | +12.4% | $125B |\n| Adipiscing | $0.85 | -0.3% | $45B |"
   },
   {
     id: 3,
     sender: "user",
+    created_at: new Date().toISOString(),
     content: "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum?"
   },
   {
     id: 4,
-    sender: "assistant",
+    sender: "ai",
+    created_at: new Date().toISOString(),
     content: "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.\n\n### Investment Portfolio Analysis\n\n| Category | Allocation | Annual Return | Risk Level |\n|----------|------------|---------------|------------|\n| Stocks | 45% | 12.5% | High |\n| Bonds | 30% | 4.2% | Low |\n| Real Estate | 15% | 8.7% | Medium |\n| Commodities | 10% | 6.3% | High |\n\nNeque porro quisquam est, qui dolorem ipsum quia dolor sit amet."
   },
   {
     id: 5,
     sender: "user",
+    created_at: new Date().toISOString(),
     content: "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit?"
   },
   {
     id: 6,
-    sender: "assistant",
+    sender: "ai",
+    created_at: new Date().toISOString(),
     content: "Sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Here's a comparison table:\n\n| Feature | Basic Plan | Premium Plan | Enterprise |\n|---------|-----------|--------------|------------|\n| Lorem Ipsum | ✓ | ✓ | ✓ |\n| Dolor Sit Amet | ✗ | ✓ | ✓ |\n| Consectetur | ✗ | ✗ | ✓ |\n| Price/month | $29 | $99 | $299 |\n\nNeque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit."
   },
   {
     id: 7,
     sender: "user",
+    created_at: new Date().toISOString(),
     content: "Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam?"
   },
   {
     id: 8,
-    sender: "assistant",
+    sender: "ai",
+    created_at: new Date().toISOString(),
     content: "Nisi ut aliquid ex ea commodi consequatur? Here's the detailed breakdown:\n\n| Quarter | Revenue | Growth | Profit Margin |\n|---------|---------|--------|---------------|\n| Q1 2024 | $2.4M | +15% | 22% |\n| Q2 2024 | $2.8M | +16.7% | 24% |\n| Q3 2024 | $3.1M | +10.7% | 26% |\n| Q4 2024 | $3.5M | +12.9% | 28% |\n\nQuis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur."
   }
 ];
@@ -213,17 +212,7 @@ export default function TestVisiPage() {
       <div className="py-4 sm:py-8 px-3 sm:px-6">
         <div className="max-w-5xl mx-auto space-y-6">
           {LOREM_MESSAGES.map((message) => (
-            <MessageItem key={message.id} message={message} userName="U">
-              {message.sender === "assistant" ? (
-                <Suspense fallback={<div className="text-base text-gray-400 px-[10px]">Loading...</div>}>
-                  <Markdown content={message.content} className="text-base" />
-                </Suspense>
-              ) : (
-                <p className="text-base leading-relaxed whitespace-pre-wrap px-[10px]">
-                  {message.content}
-                </p>
-              )}
-            </MessageItem>
+            <MessageItem key={message.id} message={message} userName="U" />
           ))}
         </div>
       </div>
