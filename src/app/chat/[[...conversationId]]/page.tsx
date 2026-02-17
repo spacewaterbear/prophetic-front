@@ -74,7 +74,7 @@ const AIAvatar = memo(() => {
                 src={
                     mounted && isDark
                         ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/flavicon_white.svg"
-                        : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/flavicon_new.svg"
+                        : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/flavicon_new.svg"
                 }
                 alt="Prophetic Orchestra"
                 width={40}
@@ -899,16 +899,12 @@ export default function ChatPage() {
                             /* Welcome Screen */
                             <>
                                 {/* Logo */}
-                                <div className="w-20 h-20 mb-8 flex items-center justify-center">
+                                <div className="w-[200px] h-[200px] mb-8 flex items-center justify-center">
                                     <Image
-                                        src={
-                                            mounted && isDark
-                                                ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/flavicon_white.svg"
-                                                : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/flavicon_new.svg"
-                                        }
+                                        src="https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/flavicon_new.svg"
                                         alt="Prophetic Orchestra"
-                                        width={80}
-                                        height={80}
+                                        width={300}
+                                        height={300}
                                         className="w-full h-full object-contain"
                                     />
                                 </div>

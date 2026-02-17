@@ -41,7 +41,7 @@ export default function RegistrationPendingPage() {
               <Image
                 src={isDark
                   ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo_form_blanc.svg"
-                  : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/flavicon_new.svg"
+                  : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/flavicon_new.svg"
                 }
                 alt="Prophetic Orchestra"
                 width={96}

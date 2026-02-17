@@ -19,7 +19,7 @@ export const AIAvatar = memo(() => {
         src={
           mounted && isDark
             ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/flavicon_white.svg"
-            : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/flavicon_new.svg"
+            : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/flavicon_new.svg"
         }
         alt="Prophetic Orchestra"
         width={40}

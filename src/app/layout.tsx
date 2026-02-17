@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   title: "Prophetic",
   description: "Prophetic",
   icons: {
-    icon: "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/flavicon_new.svg",
+    icon: "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/flavicon_new.svg",
   },
 };
 
