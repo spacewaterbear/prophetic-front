@@ -1,5 +1,7 @@
 services:
   prophetic-front:
+    image: prophetic/prophetic-front:latest
+    container_name: prophetic-front-staging
     build:
       context: .
       dockerfile: Dockerfile
@@ -8,7 +10,6 @@ services:
         NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
         NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
         CACHEBUST: ${CACHEBUST:-1}
-    container_name: prophetic-front-staging
     environment:
       - NODE_ENV=production
       - NEXT_TELEMETRY_DISABLED=1

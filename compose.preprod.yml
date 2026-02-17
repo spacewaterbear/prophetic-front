@@ -1,12 +1,13 @@
 services:
   prophetic-front:
+    image: prophetic/prophetic-front:latest
+    container_name: prophetic-front-preprod
     build:
       context: .
       dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
         NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
-    container_name: prophetic-front-preprod
     environment:
       - NODE_ENV=production
       - NEXT_TELEMETRY_DISABLED=1
