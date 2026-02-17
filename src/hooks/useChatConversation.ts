@@ -588,6 +588,7 @@ export function useChatConversation({ conversationId, selectedModel = "anthropic
             messagesContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
             sessionStorage.removeItem('pendingScrollToTopVignette');
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [conversationId, loadConversation, sendMessageToApi, streamVignetteMarkdown]);
 
     // Handle standard auto-scroll and precise scroll to top

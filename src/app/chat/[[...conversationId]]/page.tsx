@@ -204,6 +204,7 @@ const MessageItem = memo(
                 const filename = `prophetic-report-${now.toISOString().slice(0, 10)}.pdf`;
                 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const worker = (html2pdf() as any)
                     .set({
                         margin: [15, 15, 15, 15],
@@ -645,6 +646,7 @@ export default function ChatPage() {
             setVignetteError(null);
         }
         // If conversationId exists but no category, do nothing (viewing a conversation)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchParams, conversationId, clearMessages, isLoading]);
 
 

@@ -134,6 +134,7 @@ function ChatLayoutInner({
             console.log('[Layout] Removing closeSidebar event listener');
             window.removeEventListener("closeSidebar", handleCloseSidebar);
         };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (
