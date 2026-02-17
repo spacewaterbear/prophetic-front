@@ -46,7 +46,7 @@ export const MessageItem = memo(({ message, userName, children }: MessageItemPro
           className={`py-4 sm:py-5 rounded-2xl ${
             isUser
               ? "bg-[rgb(230,220,210)] dark:bg-gray-700 text-gray-900 dark:text-white max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-1.5"
-              : "bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] text-gray-900 dark:text-white w-full"
+              : "bg-[rgb(249,248,244)] dark:bg-[rgb(1,1,0)] text-gray-900 dark:text-white w-full"
           }`}
         >
           {children ? (

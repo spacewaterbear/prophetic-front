@@ -39,7 +39,7 @@ export default function Home() {
   // Show loading screen while checking authentication
   if (status === "loading") {
     return (
-      <div className="flex h-screen items-center justify-center bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)]">
+      <div className="flex h-screen items-center justify-center bg-[rgb(249,248,244)] dark:bg-[rgb(1,1,0)]">
         <div className="text-center">
           <div className="w-64 h-32 mx-auto mb-4 flex items-center justify-center animate-pulse">
             <Image

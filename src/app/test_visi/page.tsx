@@ -133,7 +133,7 @@ export default function TestVisiPage() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] p-4">
+      <div className="min-h-screen flex items-center justify-center bg-[rgb(249,248,244)] dark:bg-[rgb(1,1,0)] p-4">
         <Card className="w-full max-w-md p-8 bg-[rgb(230,220,210)] dark:bg-[#1e1f20]">
           <h1 className="text-2xl font-bold mb-6 text-center text-gray-900 dark:text-white">Test Visi Access</h1>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -176,9 +176,9 @@ export default function TestVisiPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)]">
+    <div className="min-h-screen bg-[rgb(249,248,244)] dark:bg-[rgb(1,1,0)]">
       {/* Header matching main chat design */}
-      <header className="bg-[rgba(247,240,232,0.8)] dark:bg-black backdrop-blur-md border-b border-gray-300 dark:border-gray-800 px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+      <header className="bg-[rgba(249,248,244,0.8)] dark:bg-black backdrop-blur-md border-b border-gray-300 dark:border-gray-800 px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Image
             src={

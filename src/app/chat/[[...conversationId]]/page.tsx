@@ -270,7 +270,7 @@ const MessageItem = memo(
                     <div
                         className={`py-4 sm:py-5 rounded-2xl overflow-hidden ${message.sender === "user"
                             ? "bg-[rgb(230,220,210)] dark:bg-gray-700 text-gray-900 dark:text-white max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-3 sm:px-4"
-                            : "bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] text-gray-900 dark:text-white max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-3 sm:px-4"
+                            : "bg-[rgb(249,248,244)] dark:bg-[rgb(1,1,0)] text-gray-900 dark:text-white max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-3 sm:px-4"
                             }`}
                     >
                         {message.sender === "user" ? (
@@ -777,7 +777,7 @@ export default function ChatPage() {
     // Show loading while checking authentication
     if (status === "loading") {
         return (
-            <div className="flex h-screen items-center justify-center bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)]">
+            <div className="flex h-screen items-center justify-center bg-[rgb(249,248,244)] dark:bg-[rgb(1,1,0)]">
                 <div className="text-center">
                     <div className="w-64 h-32 mx-auto mb-4 flex items-center justify-center animate-pulse">
                         <Image
@@ -808,7 +808,7 @@ export default function ChatPage() {
     return (
         <>
             {/* Header */}
-            <header className={`relative z-10 bg-[rgba(247,240,232,0.8)] dark:bg-black backdrop-blur-md border-b border-gray-400 dark:border-gray-800 pl-14 pr-6 md:px-6 h-[52px] sm:h-[60px] flex items-center justify-between`}>
+            <header className={`relative z-10 bg-[rgba(249,248,244,0.8)] dark:bg-black backdrop-blur-md border-b border-gray-400 dark:border-gray-800 pl-14 pr-6 md:px-6 h-[52px] sm:h-[60px] flex items-center justify-between`}>
                 <div className="flex items-center gap-2 sm:gap-4 min-w-0">
                     <div className="flex items-center gap-3 min-w-0">
                         <Link href="/" className="cursor-pointer">
@@ -849,7 +849,7 @@ export default function ChatPage() {
                 /* Welcome Screen */
                 <div
                     ref={welcomeContainerRef}
-                    className="relative flex-1 bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] px-6 overflow-y-auto"
+                    className="relative flex-1 bg-[rgb(249,248,244)] dark:bg-[rgb(1,1,0)] px-6 overflow-y-auto"
                 >
                     <div className={`w-full max-w-4xl flex flex-col items-center py-10 mx-auto ${vignettes.length === 0 && messages.length === 0 && !streamingMessage && !vignetteLoading && !vignetteError ? 'min-h-full justify-center' : ''}`}>
                         {/* Show messages if any (e.g., from vignette click in dev mode) or streaming content */}
@@ -868,7 +868,7 @@ export default function ChatPage() {
                                 {streamingMessage && (
                                     <div className="flex gap-2 sm:gap-4 items-start justify-start">
                                         <AIAvatar />
-                                        <div className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-3 sm:px-4 py-4 sm:py-5 rounded-2xl overflow-hidden bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] text-gray-900 dark:text-white">
+                                        <div className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-3 sm:px-4 py-4 sm:py-5 rounded-2xl overflow-hidden bg-[rgb(249,248,244)] dark:bg-[rgb(1,1,0)] text-gray-900 dark:text-white">
                                             <Markdown
                                                 content={streamingMessage}
                                                 className="text-base"
@@ -954,7 +954,7 @@ export default function ChatPage() {
                             {isLoading && !streamingMessage && !streamingMarketplaceData && !streamingVignetteData && !streamingClothesSearchData && (
                                 <div className="flex gap-2 sm:gap-4 items-start justify-start">
                                     <AIAvatar />
-                                    <div className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-3 sm:px-4 py-4 sm:py-5 rounded-2xl overflow-hidden bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)]">
+                                    <div className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-3 sm:px-4 py-4 sm:py-5 rounded-2xl overflow-hidden bg-[rgb(249,248,244)] dark:bg-[rgb(1,1,0)]">
                                         <TypingIndicator />
                                         {currentStatus && (
                                             <p className="text-sm text-gray-500 dark:text-gray-400 italic mt-2">
@@ -973,7 +973,7 @@ export default function ChatPage() {
                                 streamingClothesSearchData) && (
                                     <div className="flex gap-2 sm:gap-4 items-start justify-start">
                                         <AIAvatar />
-                                        <div className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-3 sm:px-4 py-4 sm:py-5 rounded-2xl overflow-hidden bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)] text-gray-900 dark:text-white">
+                                        <div className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-3 sm:px-4 py-4 sm:py-5 rounded-2xl overflow-hidden bg-[rgb(249,248,244)] dark:bg-[rgb(1,1,0)] text-gray-900 dark:text-white">
                                             {streamingMessage && (
                                                 <Markdown
                                                     content={streamingMessage}
@@ -1050,7 +1050,7 @@ export default function ChatPage() {
                     </div>
 
                     {/* Input Area */}
-                    <div className="input-area px-6 py-3 sm:py-4 bg-[rgb(247,240,232)] dark:bg-black flex justify-center">
+                    <div className="input-area px-6 py-3 sm:py-4 bg-[rgb(249,248,244)] dark:bg-black flex justify-center">
                         <ChatInput
                             input={input}
                             setInput={setInput}

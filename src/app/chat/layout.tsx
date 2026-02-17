@@ -137,7 +137,7 @@ function ChatLayoutInner({
     }, []);
 
     return (
-        <div className="main-container bg-[rgb(247,240,232)] dark:bg-[rgb(1,1,0)]">
+        <div className="main-container bg-[rgb(249,248,244)] dark:bg-[rgb(1,1,0)]">
             {/* Mobile overlay */}
             {sidebarOpen && (
                 <div
@@ -407,7 +407,7 @@ function ChatLayoutInner({
                         variant="ghost"
                         size="icon"
                         onClick={() => setSidebarOpen(!sidebarOpen)}
-                        className="backdrop-blur-sm h-10 w-10 bg-[#f7f0e8] dark:bg-[rgb(1,1,0)]"
+                        className="backdrop-blur-sm h-10 w-10 bg-[#f9f8f4] dark:bg-[rgb(1,1,0)]"
                     >
                         <Menu className="h-5 w-5" />
                     </Button>
