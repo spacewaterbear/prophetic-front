@@ -30,8 +30,8 @@ services:
       # Environment-based access control (admin-only for staging/preprod)
       - NEXT_PUBLIC_APP_ENV=staging
       - NEXT_PUBLIC_PRODUCTION_URL=${NEXT_PUBLIC_PRODUCTION_URL}
-
       - DEV_MODE=true
+      - SPECIALITY=${SPECIALITY:main}
 
     restart: unless-stopped
     networks:
