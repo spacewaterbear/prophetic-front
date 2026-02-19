@@ -27,7 +27,8 @@ services:
       - NEXTAUTH_URL=${NEXTAUTH_URL}
       # Environment identifier (no access restriction for production)
       - NEXT_PUBLIC_APP_ENV=production
-
+      - SPECIALITY=${SPECIALITY}
+      -
     restart: unless-stopped
     networks:
       - prophetic-network
