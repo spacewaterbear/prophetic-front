@@ -16,6 +16,7 @@ import { useI18n } from "@/contexts/i18n-context";
 import { ChatHeader } from "@/components/chat/ChatHeader";
 import { WelcomeScreen } from "@/components/chat/WelcomeScreen";
 import { ConversationView } from "@/components/chat/ConversationView";
+import { VignetteDetailView } from "./VignetteDetailView";
 
 const isAdminUser = (
   session: { user?: { status?: string } } | null,
@@ -264,7 +265,7 @@ export default function ChatPage() {
     );
 
     const slug = imageName.replace(/\.[^/.]+$/, "");
-    router.push(`/${slug}`);
+    router.push(`/chat?d=${slug}`);
   };
 
   const handleBackToCategory = (category: string) => {
@@ -301,7 +302,8 @@ export default function ChatPage() {
     return null;
   }
 
-  const isWelcomeScreen = !conversationId;
+  const vignetteSlug = searchParams.get("d");
+  const isWelcomeScreen = !conversationId && !vignetteSlug;
   const userStatus = (session?.user as { status?: string })?.status as
     | "unauthorized"
     | "free"
@@ -325,7 +327,16 @@ export default function ChatPage() {
         isDark={isDark}
       />
 
-      {isWelcomeScreen ? (
+      {vignetteSlug && !conversationId ? (
+        <VignetteDetailView
+          key={vignetteSlug}
+          vignetteSlug={vignetteSlug}
+          selectedAgent={selectedAgent}
+          onAgentChange={handleAgentChange}
+          selectedModel={selectedModel}
+          userStatus={userStatus}
+        />
+      ) : isWelcomeScreen ? (
         <WelcomeScreen
           messages={messages}
           streamingMessage={streamingMessage}
