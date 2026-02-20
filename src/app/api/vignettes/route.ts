@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
             );
         }
 
-        const speciality = process.env.SPECIALITY || "main";
+        const speciality = process.env.NEXT_PUBLIC_SPECIALITY || "main";
         const cacheKey = `${speciality}:${category.toUpperCase()}`;
 
         // Check cache first

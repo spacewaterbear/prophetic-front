@@ -3,7 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 
 export async function GET() {
   try {
-    const speciality = process.env.SPECIALITY || "main";
+    const speciality = process.env.NEXT_PUBLIC_SPECIALITY || "main";
     const supabase = createAdminClient();
 
     const filterField = speciality === "art" ? "is_art" : "is_main";

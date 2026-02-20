@@ -1,7 +1,7 @@
 services:
   prophetic-front:
     image: prophetic/prophetic-front:latest
-    container_name: prophetic-front-${NEXT_PUBLIC_APP_ENV}-${SPECIALITY}
+    container_name: prophetic-front-${NEXT_PUBLIC_APP_ENV}-${NEXT_PUBLIC_SPECIALITY}
     build:
       context: .
       dockerfile: Dockerfile
@@ -29,7 +29,7 @@ services:
       - NEXT_PUBLIC_APP_ENV=${NEXT_PUBLIC_APP_ENV}
       - NEXT_PUBLIC_PRODUCTION_URL=${NEXT_PUBLIC_PRODUCTION_URL}
       - DEV_MODE=${DEV_MODE}
-      - SPECIALITY=${SPECIALITY}
+      - NEXT_PUBLIC_SPECIALITY=${NEXT_PUBLIC_SPECIALITY}
 
     restart: unless-stopped
     networks:

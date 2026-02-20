@@ -215,7 +215,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             .maybeSingle();
 
           if (profile) {
-            const speciality = process.env.SPECIALITY || 'main';
+            const speciality = process.env.NEXT_PUBLIC_SPECIALITY || 'main';
             session.user.status = speciality === 'art'
               ? (profile.art_status ?? 'unauthorized')
               : profile.status;

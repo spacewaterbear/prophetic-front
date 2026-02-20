@@ -43,7 +43,7 @@ export async function GET() {
       await ensureDevProfile(supabase);
     }
 
-    const speciality = process.env.SPECIALITY || "main";
+    const speciality = process.env.NEXT_PUBLIC_SPECIALITY || "main";
 
     // Using admin client, so we manually filter by user_id for security
     // Limit to 5 most recent conversations
@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
       await ensureDevProfile(supabase);
     }
 
-    const speciality = process.env.SPECIALITY || "main";
+    const speciality = process.env.NEXT_PUBLIC_SPECIALITY || "main";
 
     // Using admin client, so we ensure user_id matches the session
     const { data: conversation, error } = await supabase

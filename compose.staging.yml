@@ -31,7 +31,7 @@ services:
       - NEXT_PUBLIC_APP_ENV=staging
       - NEXT_PUBLIC_PRODUCTION_URL=${NEXT_PUBLIC_PRODUCTION_URL}
       - DEV_MODE=true
-      - SPECIALITY=${SPECIALITY}
+      - NEXT_PUBLIC_SPECIALITY=${NEXT_PUBLIC_SPECIALITY}
 
     restart: unless-stopped
     networks:
