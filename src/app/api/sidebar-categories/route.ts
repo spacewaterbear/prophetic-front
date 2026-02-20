@@ -22,7 +22,7 @@ export async function GET() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const categories: string[] = [
       ...new Set((data || []).map((v: any) => v.category as string)),
-    ];
+    ] as string[];
 
     return NextResponse.json({ categories });
   } catch (error) {
