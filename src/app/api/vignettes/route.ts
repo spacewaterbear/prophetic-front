@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 // In-memory cache for vignettes data
 const vignetteCache = new Map<string, { data: unknown; timestamp: number }>();
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes cache
 
-// GET /api/vignettes?category=WINE
+// GET /api/vignettes?category=ART
 export async function GET(request: NextRequest) {
     try {
         const searchParams = request.nextUrl.searchParams;
@@ -17,14 +18,37 @@ export async function GET(request: NextRequest) {
             );
         }
 
+        const speciality = process.env.SPECIALITY || "main";
+        const cacheKey = `${speciality}:${category.toUpperCase()}`;
+
         // Check cache first
-        const cacheKey = category.toUpperCase();
         const cached = vignetteCache.get(cacheKey);
         if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
-            console.log(`[Vignettes API] Cache HIT for category: ${cacheKey}`);
             return NextResponse.json(cached.data);
         }
 
+        // When SPECIALITY=art, query Supabase directly for is_art=true vignettes
+        if (speciality === "art") {
+            const supabase = createAdminClient();
+
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const { data, error } = await (supabase as any)
+                .from("vignettes")
+                .select("*")
+                .eq("is_art", true)
+                .eq("category", category.toUpperCase());
+
+            if (error) {
+                console.error("[Vignettes API] Supabase error:", error);
+                return NextResponse.json({ error: error.message }, { status: 500 });
+            }
+
+            const result = { vignettes: data || [] };
+            vignetteCache.set(cacheKey, { data: result, timestamp: Date.now() });
+            return NextResponse.json(result);
+        }
+
+        // Default (SPECIALITY=main): fetch from Prophetic backend
         if (!process.env.PROPHETIC_API_URL) {
             console.error("[Vignettes API] PROPHETIC_API_URL not configured");
             return NextResponse.json(
@@ -63,12 +87,7 @@ export async function GET(request: NextRequest) {
         }
 
         const data = await response.json();
-        console.log(`[Vignettes API] Successfully fetched ${data.vignettes?.length || 0} vignettes for ${cacheKey}`);
-
-        // Store in cache
         vignetteCache.set(cacheKey, { data, timestamp: Date.now() });
-        console.log(`[Vignettes API] Cached data for category: ${cacheKey}`);
-
         return NextResponse.json(data);
     } catch (error) {
         console.error("[Vignettes API] Error:", error);

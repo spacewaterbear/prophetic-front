@@ -169,6 +169,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          art_status: Database["public"]["Enums"]["user_status"] | null
           avatar_url: string | null
           first_name: string | null
           id: string
@@ -180,6 +181,7 @@ export type Database = {
           username: string | null
         }
         Insert: {
+          art_status?: Database["public"]["Enums"]["user_status"] | null
           avatar_url?: string | null
           first_name?: string | null
           id: string
@@ -191,6 +193,7 @@ export type Database = {
           username?: string | null
         }
         Update: {
+          art_status?: Database["public"]["Enums"]["user_status"] | null
           avatar_url?: string | null
           first_name?: string | null
           id?: string

@@ -23,6 +23,50 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { SelectionContextMenu } from "@/components/SelectionContextMenu";
+import { CATEGORY_DISPLAY_NAMES } from "@/types/chat";
+
+const STORAGE = "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons";
+
+const IS_ART_SPECIALITY = process.env.NEXT_PUBLIC_SPECIALITY === "art";
+
+// Hardcoded list used only for SPECIALITY=main
+const MAIN_CATEGORY_DEFS: {
+  label: string;
+  category: string;
+  iconLight?: string;
+  iconDark?: string;
+}[] = [
+  { label: "Marché de l'Art", category: "ART" },
+  { label: "Vins Patrimoniaux", category: "WINE" },
+  { label: "Sacs de Luxe", category: "SACS" },
+  { label: "Immobilier de Prestige", category: "IMMO_LUXE" },
+  { label: "Montres Iconiques", category: "MONTRES_LUXE" },
+  { label: "Voitures de Collection", category: "CARS" },
+  { label: "Sneakers Heritage", category: "SNEAKERS" },
+  { label: "Whisky Rares", category: "WHISKY" },
+  { label: "Bijoux Précieux", category: "BIJOUX" },
+  { label: "Cartes Sportives", category: "CARDS_US" },
+  { label: "Art Trading Value", category: "ART_TRADING_VALUE", iconLight: `${STORAGE}/book_n.svg`, iconDark: `${STORAGE}/book_b.svg` },
+  { label: "Cash-Flow Leasing", category: "CASH_FLOW_LEASING", iconLight: `${STORAGE}/coin_n.svg`, iconDark: `${STORAGE}/coin_b.svg` },
+  { label: "Marché spot", category: "MARCHE_SPOT", iconLight: `${STORAGE}/stars_n.svg`, iconDark: `${STORAGE}/stars_b.svg` },
+];
+
+// Icons for known categories in art mode
+const ART_CATEGORY_ICONS: Record<string, { light: string; dark: string }> = {
+  ART_TRADING_VALUE: { light: `${STORAGE}/book_n.svg`, dark: `${STORAGE}/book_b.svg` },
+  CASH_FLOW_LEASING: { light: `${STORAGE}/coin_n.svg`, dark: `${STORAGE}/coin_b.svg` },
+  MARCHE_SPOT: { light: `${STORAGE}/stars_n.svg`, dark: `${STORAGE}/stars_b.svg` },
+};
+
+function getCategoryLabel(category: string): string {
+  return (
+    CATEGORY_DISPLAY_NAMES[category] ??
+    category
+      .split("_")
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+      .join(" ")
+  );
+}
 
 interface Conversation {
   id: number;
@@ -44,6 +88,7 @@ function ChatLayoutInner({
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const { sidebarOpen, setSidebarOpen, isMobile } = useSidebar();
   const [consultationsExpanded, setConsultationsExpanded] = useState(false);
+  const [artCategories, setArtCategories] = useState<string[]>([]);
 
   // Extract conversation ID from pathname
   const currentConversationId = pathname?.match(/\/chat\/(\d+)/)?.[1];
@@ -57,6 +102,26 @@ function ChatLayoutInner({
       loadConversations();
     }
   }, [session]);
+
+  // Fetch art categories dynamically from Supabase when SPECIALITY=art
+  useEffect(() => {
+    if (!IS_ART_SPECIALITY) return;
+    fetch("/api/sidebar-categories")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data.categories) && data.categories.length > 0) {
+          setArtCategories(data.categories);
+        }
+      })
+      .catch((err) => console.error("Failed to load art categories:", err));
+  }, []);
+
+  // When SPECIALITY=art, auto-redirect /chat to the first loaded art category
+  useEffect(() => {
+    if (IS_ART_SPECIALITY && pathname === "/chat" && artCategories.length > 0) {
+      router.replace(`/chat?category=${artCategories[0]}`, { scroll: false });
+    }
+  }, [pathname, router, artCategories]);
 
   // Responsive sidebar behavior is now handled by SidebarContext
 
@@ -246,143 +311,51 @@ function ChatLayoutInner({
               )}
             </div>
 
-            {/* Investment Categories - Top Level */}
-            {[
-              { label: "Marché de l'Art", category: "ART", disabled: false },
-              { label: "Vins Patrimoniaux", category: "WINE", disabled: false },
-              { label: "Sacs de Luxe", category: "SACS", disabled: false },
-              {
-                label: "Immobilier de Prestige",
-                category: "IMMO_LUXE",
-                disabled: false,
-              },
-              {
-                label: "Montres Iconiques",
-                category: "MONTRES_LUXE",
-                disabled: false,
-              },
-              {
-                label: "Voitures de Collection",
-                category: "CARS",
-                disabled: false,
-              },
-              {
-                label: "Sneakers Heritage",
-                category: "SNEAKERS",
-                disabled: false,
-              },
-              { label: "Whisky Rares", category: "WHISKY", disabled: false },
-              { label: "Bijoux Précieux", category: "BIJOUX", disabled: false },
-              {
-                label: "Cartes Sportives",
-                category: "CARDS_US",
-                disabled: false,
-              },
-            ].map(({ label, category, disabled }) => (
-              <button
-                key={category}
-                onClick={() => {
-                  if (disabled) return;
-                  router.push(`/chat?category=${category}`, { scroll: false });
-
-                  // Close sidebar on mobile
-                  if (isMobile) {
-                    setSidebarOpen(false);
-                  }
-                }}
-                disabled={disabled}
-                className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
-                  disabled
-                    ? "opacity-50 cursor-not-allowed text-gray-400 dark:text-gray-600"
-                    : "hover:bg-gray-600/30 dark:hover:bg-white/10 cursor-pointer"
-                }`}
-                style={{ lineHeight: "15px" }}
-              >
-                {label}
-              </button>
-            ))}
-
-            {/* Art Value Trading - Simple category button like Cards US */}
-            <button
-              onClick={() => {
-                router.push("/chat?category=ART_TRADING_VALUE", {
-                  scroll: false,
-                });
-                if (isMobile) {
-                  setSidebarOpen(false);
-                }
-              }}
-              className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2"
-            >
-              <Image
-                src="https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons/book_n.svg"
-                alt="Art Trading Value"
-                width={22}
-                height={22}
-                className="flex-shrink-0 block dark:hidden"
-              />
-              <Image
-                src="https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons/book_b.svg"
-                alt="Art Trading Value"
-                width={22}
-                height={22}
-                className="flex-shrink-0 hidden dark:block"
-              />
-              <span>Art Trading Value</span>
-            </button>
-
-            {/* Cash-Flow Leasing */}
-            <button
-              onClick={() => {
-                router.push("/chat?category=CASH_FLOW_LEASING", {
-                  scroll: false,
-                });
-              }}
-              className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2"
-            >
-              <Image
-                src="https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons/coin_n.svg"
-                alt="Cash-Flow Leasing"
-                width={22}
-                height={22}
-                className="flex-shrink-0 block dark:hidden"
-              />
-              <Image
-                src="https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons/coin_b.svg"
-                alt="Cash-Flow Leasing"
-                width={22}
-                height={22}
-                className="flex-shrink-0 hidden dark:block"
-              />
-              <span>Cash-Flow Leasing</span>
-            </button>
-
-            {/* Marché spot */}
-            <button
-              onClick={() => {
-                router.push("/chat?category=MARCHE_SPOT", { scroll: false });
-                if (isMobile) {
-                  setSidebarOpen(false);
-                }
-              }}
-              className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2"
-            >
-              <Image
-                src="https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons/stars_n.svg"
-                alt="Marché spot"
-                width={22}
-                height={22}
-                className="flex-shrink-0 block dark:hidden"
-              />
-              <Image
-                src="https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons/stars_b.svg"
-                alt="Marché spot"
-                width={22}
-                height={22}
-                className="flex-shrink-0 hidden dark:block"
-              />
-              <span>Marché spot</span>
-            </button>
+            {/* Investment Categories */}
+            {IS_ART_SPECIALITY
+              ? artCategories.map((category) => {
+                  const icons = ART_CATEGORY_ICONS[category];
+                  const label = getCategoryLabel(category);
+                  return (
+                    <button
+                      key={category}
+                      onClick={() => {
+                        router.push(`/chat?category=${category}`, { scroll: false });
+                        if (isMobile) setSidebarOpen(false);
+                      }}
+                      className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2"
+                      style={{ lineHeight: "15px" }}
+                    >
+                      {icons && (
+                        <>
+                          <Image src={icons.light} alt={label} width={22} height={22} className="flex-shrink-0 block dark:hidden" />
+                          <Image src={icons.dark} alt={label} width={22} height={22} className="flex-shrink-0 hidden dark:block" />
+                        </>
+                      )}
+                      <span>{label}</span>
+                    </button>
+                  );
+                })
+              : MAIN_CATEGORY_DEFS.map(({ label, category, iconLight, iconDark }) => (
+                  <button
+                    key={category}
+                    onClick={() => {
+                      router.push(`/chat?category=${category}`, { scroll: false });
+                      if (isMobile) setSidebarOpen(false);
+                    }}
+                    className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2"
+                    style={{ lineHeight: "15px" }}
+                  >
+                    {iconLight && iconDark && (
+                      <>
+                        <Image src={iconLight} alt={label} width={22} height={22} className="flex-shrink-0 block dark:hidden" />
+                        <Image src={iconDark} alt={label} width={22} height={22} className="flex-shrink-0 hidden dark:block" />
+                      </>
+                    )}
+                    <span>{label}</span>
+                  </button>
+                ))
+            }
           </div>
         </div>
 

@@ -11,18 +11,25 @@ import {
   ORACLE_PORTFOLIO_TIERS,
 } from "@/lib/constants/portfolio-tiers";
 
-const MOBILE_CATEGORIES = [
-  "Contemp. Art",
-  "Luxury Bags",
-  "Prestigious Wines",
-  "Precious Jewelry",
-  "Luxury Watch",
-  "Collectible Cars",
-  "Limited Sneakers",
-  "Rare Whiskey",
-  "Real Estate",
-  "US sports cards",
+const ALL_MOBILE_CATEGORIES = [
+  { label: "Contemp. Art", isArt: true },
+  { label: "Luxury Bags", isArt: false },
+  { label: "Prestigious Wines", isArt: false },
+  { label: "Precious Jewelry", isArt: false },
+  { label: "Luxury Watch", isArt: false },
+  { label: "Collectible Cars", isArt: false },
+  { label: "Limited Sneakers", isArt: false },
+  { label: "Rare Whiskey", isArt: false },
+  { label: "Real Estate", isArt: false },
+  { label: "US sports cards", isArt: false },
 ];
+
+const isArtSpeciality = process.env.NEXT_PUBLIC_SPECIALITY === "art";
+const MOBILE_CATEGORIES = (
+  isArtSpeciality
+    ? ALL_MOBILE_CATEGORIES.filter((c) => c.isArt)
+    : ALL_MOBILE_CATEGORIES
+).map((c) => c.label);
 
 interface MobileBottomSheetsProps {
   // Mode selector
