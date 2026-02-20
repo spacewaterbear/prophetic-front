@@ -51,6 +51,17 @@ const MAIN_CATEGORY_DEFS: {
   { label: "Marché spot", category: "MARCHE_SPOT", iconLight: `${STORAGE}/stars_n.svg`, iconDark: `${STORAGE}/stars_b.svg` },
 ];
 
+const ART_CATEGORY_ORDER = [
+  "CLASSIQUES",
+  "MODERNES",
+  "SURREALISME",
+  "POST-WAR",
+  "POP_ART",
+  "FIGURATION",
+  "STREET_ART",
+  "EMERGENTS",
+];
+
 // Icons for known categories in art mode
 const ART_CATEGORY_ICONS: Record<string, { light: string; dark: string }> = {
   ART_TRADING_VALUE: { light: `${STORAGE}/book_n.svg`, dark: `${STORAGE}/book_b.svg` },
@@ -110,7 +121,15 @@ function ChatLayoutInner({
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data.categories) && data.categories.length > 0) {
-          setArtCategories(data.categories);
+          const sorted = [...data.categories].sort((a, b) => {
+            const ia = ART_CATEGORY_ORDER.indexOf(a);
+            const ib = ART_CATEGORY_ORDER.indexOf(b);
+            if (ia === -1 && ib === -1) return 0;
+            if (ia === -1) return 1;
+            if (ib === -1) return -1;
+            return ia - ib;
+          });
+          setArtCategories(sorted);
         }
       })
       .catch((err) => console.error("Failed to load art categories:", err));

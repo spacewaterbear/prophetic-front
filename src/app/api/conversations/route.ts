@@ -43,12 +43,15 @@ export async function GET() {
       await ensureDevProfile(supabase);
     }
 
+    const speciality = process.env.SPECIALITY || "main";
+
     // Using admin client, so we manually filter by user_id for security
     // Limit to 5 most recent conversations
     const { data: conversations, error } = await supabase
       .from("conversations")
       .select("*")
       .eq("user_id", userId)
+      .eq("speciality", speciality)
       .order("updated_at", { ascending: false, nullsFirst: false })
       .order("created_at", { ascending: false })
       .limit(5);
@@ -88,6 +91,8 @@ export async function POST(request: NextRequest) {
       await ensureDevProfile(supabase);
     }
 
+    const speciality = process.env.SPECIALITY || "main";
+
     // Using admin client, so we ensure user_id matches the session
     const { data: conversation, error } = await supabase
       .from("conversations")
@@ -95,6 +100,7 @@ export async function POST(request: NextRequest) {
         user_id: userId,
         title: title || "New Chat",
         model: model || "anthropic/claude-3.7-sonnet",
+        speciality,
       })
       .select()
       .single();

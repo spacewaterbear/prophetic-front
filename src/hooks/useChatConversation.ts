@@ -509,6 +509,32 @@ export function useChatConversation({
       if (pendingMessageStr) {
         pendingMessageProcessedRef.current = true;
         sessionStorage.removeItem(PENDING_MESSAGE_KEY);
+
+        // Also pre-load any vignette content that was displayed before the chat
+        const pendingVignetteContentStr = sessionStorage.getItem(
+          PENDING_VIGNETTE_CONTENT_KEY,
+        );
+        if (pendingVignetteContentStr) {
+          sessionStorage.removeItem(PENDING_VIGNETTE_CONTENT_KEY);
+          try {
+            const parsed = JSON.parse(pendingVignetteContentStr);
+            const text = parsed.text || pendingVignetteContentStr;
+            if (text) {
+              setMessages([
+                {
+                  id: -Date.now(), // negative to avoid collision with user message id
+                  content: text,
+                  sender: "ai" as const,
+                  created_at: new Date().toISOString(),
+                  vignetteCategory: parsed.vignetteCategory,
+                },
+              ]);
+            }
+          } catch {
+            /* ignore */
+          }
+        }
+
         try {
           const pendingMessage: PendingMessage = JSON.parse(pendingMessageStr);
           sendMessageToApi(

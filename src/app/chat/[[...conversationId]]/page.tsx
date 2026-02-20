@@ -10,7 +10,6 @@ import { VignetteData } from "@/types/vignettes";
 import { useChatConversation } from "@/hooks/useChatConversation";
 import { getAvailableAgents, AgentType } from "@/types/agents";
 import { supabase } from "@/lib/supabase/client";
-import { toast } from "sonner";
 import Image from "next/image";
 import { useI18n } from "@/contexts/i18n-context";
 
@@ -247,7 +246,7 @@ export default function ChatPage() {
     localStorage.setItem("selectedAgent", agent);
   };
 
-  const handleVignetteClick = async (vignette: VignetteData) => {
+  const handleVignetteClick = (vignette: VignetteData) => {
     const imageName = getImageNameFromUrl(vignette.public_url);
 
     const isMobileView = window.innerWidth < 768;
@@ -255,56 +254,17 @@ export default function ChatPage() {
       setSidebarOpen(false);
     }
 
-    sessionStorage.setItem("disableAutoScroll", "true");
-    sessionStorage.setItem("pendingScrollToTopVignette", "true");
-    if (disableAutoScrollRef) {
-      disableAutoScrollRef.current = true;
-    }
-
-    try {
-      const title =
-        vignette.brand_name.length > 50
-          ? vignette.brand_name.substring(0, 50) + "..."
-          : vignette.brand_name;
-
-      const response = await fetch("/api/conversations", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, model: selectedModel }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to create conversation");
-      }
-
-      const data = await response.json();
-      const newConversationId = data.conversation.id;
-
-      const pendingStream = {
-        imageName: imageName,
+    sessionStorage.setItem(
+      "pendingVignetteView",
+      JSON.stringify({
+        imageName,
         category: vignette.category,
-        streamType: "sse",
         tier: selectedAgent.toUpperCase(),
-      };
-      sessionStorage.setItem(
-        "pendingVignetteStream",
-        JSON.stringify(pendingStream),
-      );
+      }),
+    );
 
-      window.dispatchEvent(new Event("refreshConversations"));
-      router.push(`/chat/${newConversationId}`);
-    } catch (error) {
-      console.error(
-        "[Chat Page] Error creating conversation for vignette:",
-        error,
-      );
-      toast.error("Failed to create conversation");
-
-      sessionStorage.removeItem("disableAutoScroll");
-      if (disableAutoScrollRef) {
-        disableAutoScrollRef.current = false;
-      }
-    }
+    const slug = imageName.replace(/\.[^/.]+$/, "");
+    router.push(`/${slug}`);
   };
 
   const handleBackToCategory = (category: string) => {
