@@ -20,6 +20,9 @@ const PRODUCT_STATUS_MAP: Record<string, string> = {
   [process.env.POLAR_ORACLE_ID!]: "oracle",
 };
 
+// "status" for main app, "art_status" for art speciality
+const STATUS_COLUMN = process.env.NEXT_PUBLIC_SPECIALITY === "art" ? "art_status" : "status";
+
 export const POST = Webhooks({
   webhookSecret: process.env.POLAR_WEBHOOK_SECRET!,
   onSubscriptionActive: async (payload: SubscriptionPayload) => {
@@ -32,7 +35,7 @@ export const POST = Webhooks({
     await supabase
       .from("profiles")
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .update({ status: newStatus as any })
+      .update({ [STATUS_COLUMN]: newStatus as any })
       .eq("id", externalId);
   },
   onSubscriptionRevoked: async (payload: SubscriptionPayload) => {
@@ -42,7 +45,7 @@ export const POST = Webhooks({
     await supabase
       .from("profiles")
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .update({ status: "unauthorized" as any })
+      .update({ [STATUS_COLUMN]: "unauthorized" as any })
       .eq("id", externalId);
   },
   onSubscriptionCanceled: async (payload: SubscriptionPayload) => {
@@ -52,7 +55,7 @@ export const POST = Webhooks({
     await supabase
       .from("profiles")
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .update({ status: "unauthorized" as any })
+      .update({ [STATUS_COLUMN]: "unauthorized" as any })
       .eq("id", externalId);
   },
 });

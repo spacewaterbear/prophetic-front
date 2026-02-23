@@ -8,39 +8,57 @@ import Image from "next/image";
 const PLANS = [
   {
     name: "Discover",
-    description: "Essential luxury investment intelligence for the discerning beginner.",
+    price: "Free",
+    priceDetail: "1,000 credits included",
+    description: "Explore luxury investment opportunities guided by AI. Start free, no commitment.",
     productId: process.env.POLAR_DISCOVER_ID!,
+    credits: [
+      "10 credits = 20 Discover insights",
+      "200 credits = 5 Intelligence insights",
+      "700 credits = 1 Oracle insight",
+    ],
     features: [
       "Access to Discover agent",
       "Luxury asset market overviews",
       "Investment category vignettes",
-      "10 categories covered",
+      "10 asset categories covered",
     ],
+    cta: "Try Prophetic Orchestra",
   },
   {
     name: "Intelligence",
+    price: "€29.99",
+    priceDetail: "per month",
     description: "Advanced analysis and portfolio insights for serious collectors.",
     productId: process.env.POLAR_INTELLIGENCE_ID!,
     features: [
-      "Everything in Discover",
-      "Access to Intelligence agent",
-      "Deep market analysis",
-      "Portfolio tier recommendations",
-      "Artist & market data",
+      "Unlimited Intelligence insights",
+      "Prophetic Score™ + Momentum",
+      "Multi-segment portfolio",
+      "Rarity & demand indicators",
+      "Marketplace mapping",
+      "Exit strategy",
     ],
     highlighted: true,
+    cta: "Subscribe to Intelligence",
   },
   {
     name: "Oracle",
-    description: "Complete advisory suite for professional luxury asset managers.",
+    price: "€149.99",
+    priceDetail: "per month",
+    description: "Complete advisory suite for UHNWI and professional luxury asset managers.",
     productId: process.env.POLAR_ORACLE_ID!,
     features: [
-      "Everything in Intelligence",
-      "Access to Oracle agent",
-      "Priority AI responses",
-      "Full portfolio orchestration",
-      "Exclusive market signals",
+      "Unlimited Oracle insights",
+      "Advanced Prophetic Score™ + Momentum",
+      "ROI projections (12/24/36/60 months)",
+      "Exit Timing™ alerts",
+      "Dual performance (Leasing + Exit)",
+      "Estate & succession strategy",
+      "Integrated tax optimization",
+      "UHNWI custom allocation",
     ],
+    cta: "Subscribe to Oracle",
   },
 ];
 
@@ -84,7 +102,7 @@ export default async function PricingPage() {
             Choose Your Plan
           </h1>
           <p className="text-gray-600 dark:text-gray-400 text-lg max-w-xl mx-auto">
-            Unlock Prophetic Orchestra's luxury investment intelligence — curated for collectors, advisors, and connoisseurs.
+            Transform your passions into a portfolio. AI-driven luxury investment intelligence for collectors, advisors, and connoisseurs.
           </p>
         </div>
 
@@ -115,12 +133,28 @@ export default async function PricingPage() {
 
                 <div className="mb-6">
                   <h2
-                    className={`text-2xl font-light mb-2 ${
+                    className={`text-2xl font-light mb-3 ${
                       plan.highlighted ? "text-white dark:text-gray-900" : "text-gray-900 dark:text-white"
                     }`}
                   >
                     {plan.name}
                   </h2>
+                  <div className="mb-3">
+                    <span
+                      className={`text-3xl font-semibold ${
+                        plan.highlighted ? "text-white dark:text-gray-900" : "text-gray-900 dark:text-white"
+                      }`}
+                    >
+                      {plan.price}
+                    </span>
+                    <span
+                      className={`text-sm ml-1 ${
+                        plan.highlighted ? "text-gray-300 dark:text-gray-600" : "text-gray-500 dark:text-gray-400"
+                      }`}
+                    >
+                      {plan.priceDetail}
+                    </span>
+                  </div>
                   <p
                     className={`text-sm leading-relaxed ${
                       plan.highlighted ? "text-gray-300 dark:text-gray-600" : "text-gray-600 dark:text-gray-400"
@@ -129,6 +163,25 @@ export default async function PricingPage() {
                     {plan.description}
                   </p>
                 </div>
+
+                {"credits" in plan && plan.credits && (
+                  <div
+                    className={`rounded-lg p-3 mb-4 text-xs space-y-1 ${
+                      plan.highlighted
+                        ? "bg-white/10 dark:bg-gray-900/10"
+                        : "bg-gray-50 dark:bg-gray-700/50"
+                    }`}
+                  >
+                    {(plan.credits as string[]).map((c) => (
+                      <p
+                        key={c}
+                        className={plan.highlighted ? "text-gray-300 dark:text-gray-600" : "text-gray-500 dark:text-gray-400"}
+                      >
+                        {c}
+                      </p>
+                    ))}
+                  </div>
+                )}
 
                 <ul className="space-y-2 mb-8 flex-1">
                   {plan.features.map((feature) => (
@@ -161,7 +214,7 @@ export default async function PricingPage() {
                     }`}
                   >
                     <a href={checkoutUrl}>
-                      {userStatus === plan.name.toLowerCase() ? "Current plan" : `Subscribe to ${plan.name}`}
+                      {userStatus === plan.name.toLowerCase() ? "Current plan" : plan.cta}
                     </a>
                   </Button>
                 </div>
