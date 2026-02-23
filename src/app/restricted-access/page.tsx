@@ -70,13 +70,6 @@ export default function RestrictedAccessPage() {
             </div>
           </div>
 
-          {/* Divider */}
-          <div className="relative my-8">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
-            </div>
-          </div>
-
           {/* Actions */}
           <div className="text-center space-y-4">
             <a
