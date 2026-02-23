@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
+// Note: checkout/portal links use <a> (not Link) to force full navigation for HTTP redirects
 
 const PLANS = [
   {
@@ -159,9 +160,9 @@ export default async function PricingPage() {
                         : "bg-gray-900 text-white hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100"
                     }`}
                   >
-                    <Link href={checkoutUrl}>
+                    <a href={checkoutUrl}>
                       {userStatus === plan.name.toLowerCase() ? "Current plan" : `Subscribe to ${plan.name}`}
-                    </Link>
+                    </a>
                   </Button>
                 </div>
               </Card>
@@ -173,9 +174,9 @@ export default async function PricingPage() {
         <div className="text-center space-y-2">
           {isAuthorized && (
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              <Link href="/api/polar/portal" className="text-gray-900 dark:text-white font-medium underline hover:opacity-75">
+              <a href="/api/polar/portal" className="text-gray-900 dark:text-white font-medium underline hover:opacity-75">
                 Manage existing subscription
-              </Link>
+              </a>
             </p>
           )}
           {!session && (
