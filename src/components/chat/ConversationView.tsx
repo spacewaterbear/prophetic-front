@@ -69,12 +69,12 @@ export function ConversationView({
   onAgentChange,
 }: ConversationViewProps) {
   return (
-    <>
+    <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
       {/* Messages */}
       <div
         ref={messagesContainerRef}
         onScroll={handleScroll}
-        className="chat-history py-4 sm:py-8 px-3 sm:px-6"
+        className="flex-1 min-h-0 overflow-y-auto py-4 sm:py-8 px-3 sm:px-6 pb-5"
       >
         <div className="max-w-5xl mx-auto space-y-6">
           {messages.map((message) => (
@@ -124,7 +124,7 @@ export function ConversationView({
       </div>
 
       {/* Input Area */}
-      <div className="input-area px-6 py-3 sm:py-4 bg-[rgb(249,248,244)] dark:bg-black flex justify-center">
+      <div className="flex-shrink-0 w-full px-6 py-3 sm:py-4 bg-[rgb(249,248,244)] dark:bg-black flex justify-center">
         <ChatInput
           input={input}
           setInput={setInput}
@@ -137,6 +137,6 @@ export function ConversationView({
           className="max-w-3xl"
         />
       </div>
-    </>
+    </div>
   );
 }

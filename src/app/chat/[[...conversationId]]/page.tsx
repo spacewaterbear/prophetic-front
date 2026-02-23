@@ -315,7 +315,7 @@ export default function ChatPage() {
     | undefined;
 
   return (
-    <>
+    <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
       <ChatHeader
         isWelcomeScreen={isWelcomeScreen}
         isAdmin={isAdminUser(session)}
@@ -386,6 +386,6 @@ export default function ChatPage() {
           onAgentChange={handleAgentChange}
         />
       )}
-    </>
+    </div>
   );
 }

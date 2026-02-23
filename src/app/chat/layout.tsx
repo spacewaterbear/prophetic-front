@@ -59,7 +59,7 @@ const ART_CATEGORY_ORDER = [
   "SURREALISME",
   "POST-WAR",
   "POP_ART",
-  "FIGURATION",
+  "FIGURATIF",
   "STREET_ART",
   "EMERGENTS",
 ];
@@ -432,7 +432,7 @@ function ChatLayoutInner({
       </aside>
 
       {/* Main content area with menu button */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 h-full min-h-0 flex flex-col overflow-hidden">
         <div className="absolute top-2 left-3 z-20 md:hidden">
           <Button
             variant="ghost"

@@ -213,47 +213,53 @@ export function VignetteDetailView({
     : undefined;
 
   return (
-    <div className="relative flex-1 bg-[rgb(249,248,244)] dark:bg-[rgb(1,1,0)] px-6 overflow-y-auto">
-      <div className="w-full max-w-4xl flex flex-col items-center py-10 mx-auto">
-        {displayContent ? (
-          <div className="w-full max-w-5xl space-y-6 mb-8">
-            <div className="flex gap-2 sm:gap-4 items-start justify-start">
-              <AIAvatar />
-              <div className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-3 sm:px-4 py-4 sm:py-5 rounded-2xl overflow-hidden bg-[rgb(249,248,244)] dark:bg-[rgb(1,1,0)] text-gray-900 dark:text-white">
-                <Suspense
-                  fallback={
-                    <div className="text-base text-gray-400">Loading...</div>
-                  }
-                >
-                  <Markdown
-                    content={displayContent}
-                    className="text-base"
-                    categoryName={categoryName}
-                    onCategoryClick={
-                      vignetteCategory
-                        ? () => handleBackToCategory(vignetteCategory)
-                        : undefined
+    <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
+      {/* Scrollable content */}
+      <div className="flex-1 min-h-0 overflow-y-auto px-6">
+        <div className="w-full max-w-4xl flex flex-col items-center py-10 mx-auto">
+          {displayContent ? (
+            <div className="w-full max-w-5xl space-y-6 mb-8">
+              <div className="flex gap-2 sm:gap-4 items-start justify-start">
+                <AIAvatar />
+                <div className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-3 sm:px-4 py-4 sm:py-5 rounded-2xl overflow-hidden bg-[rgb(249,248,244)] dark:bg-[rgb(1,1,0)] text-gray-900 dark:text-white">
+                  <Suspense
+                    fallback={
+                      <div className="text-base text-gray-400">Loading...</div>
                     }
-                  />
-                </Suspense>
-              </div>
-            </div>
-          </div>
-        ) : isLoading ? (
-          <div className="w-full max-w-5xl space-y-6 mb-8">
-            <div className="flex gap-2 sm:gap-4 items-start justify-start">
-              <AIAvatar />
-              <div className="flex items-center gap-2 px-4 py-4">
-                <div className="flex gap-1">
-                  <span className="w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-500 animate-bounce [animation-delay:0ms]" />
-                  <span className="w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-500 animate-bounce [animation-delay:150ms]" />
-                  <span className="w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-500 animate-bounce [animation-delay:300ms]" />
+                  >
+                    <Markdown
+                      content={displayContent}
+                      className="text-base"
+                      categoryName={categoryName}
+                      onCategoryClick={
+                        vignetteCategory
+                          ? () => handleBackToCategory(vignetteCategory)
+                          : undefined
+                      }
+                    />
+                  </Suspense>
                 </div>
               </div>
             </div>
-          </div>
-        ) : null}
+          ) : isLoading ? (
+            <div className="w-full max-w-5xl space-y-6 mb-8">
+              <div className="flex gap-2 sm:gap-4 items-start justify-start">
+                <AIAvatar />
+                <div className="flex items-center gap-2 px-4 py-4">
+                  <div className="flex gap-1">
+                    <span className="w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-500 animate-bounce [animation-delay:0ms]" />
+                    <span className="w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-500 animate-bounce [animation-delay:150ms]" />
+                    <span className="w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-500 animate-bounce [animation-delay:300ms]" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : null}
+        </div>
+      </div>
 
+      {/* Input pinned at bottom */}
+      <div className="flex-shrink-0 w-full px-6 py-3 sm:py-4 bg-[rgb(249,248,244)] dark:bg-black flex justify-center">
         <ChatInput
           input={input}
           setInput={setInput}
