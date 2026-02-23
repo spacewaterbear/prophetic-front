@@ -1,6 +1,15 @@
 // Translation dictionary for all UI text in the application
 export const translations = {
     fr: {
+        // Restricted Access Page
+        restrictedAccess: {
+            title: "Environnement Restreint",
+            subtitle: "Cet environnement n'est pas accessible avec votre compte",
+            message: "Vous essayez d'accéder à un environnement restreint réservé aux administrateurs. Veuillez utiliser l'application en production à la place.",
+            goToProduction: "Accéder à la production",
+            signOut: "Se déconnecter",
+            productionUrl: "URL de production :",
+        },
         // Navigation
         nav: {
             newChat: "Nouveau Chat",
@@ -64,6 +73,14 @@ export const translations = {
         },
     },
     en: {
+        restrictedAccess: {
+            title: "Restricted Environment",
+            subtitle: "This environment is not accessible with your account",
+            message: "You are trying to access a restricted environment reserved for administrators. Please use the production application instead.",
+            goToProduction: "Go to Production",
+            signOut: "Sign Out",
+            productionUrl: "Production URL:",
+        },
         contextMenu: {
             deepSearch: "Make a deep search about it",
         },
@@ -122,6 +139,14 @@ export const translations = {
         },
     },
     es: {
+        restrictedAccess: {
+            title: "Entorno Restringido",
+            subtitle: "Este entorno no es accesible con su cuenta",
+            message: "Está intentando acceder a un entorno restringido reservado para administradores. Por favor, utilice la aplicación de producción en su lugar.",
+            goToProduction: "Ir a Producción",
+            signOut: "Cerrar Sesión",
+            productionUrl: "URL de producción:",
+        },
         contextMenu: {
             deepSearch: "Hacer una búsqueda profunda",
         },
@@ -171,6 +196,14 @@ export const translations = {
         },
     },
     de: {
+        restrictedAccess: {
+            title: "Eingeschränkte Umgebung",
+            subtitle: "Diese Umgebung ist mit Ihrem Konto nicht zugänglich",
+            message: "Sie versuchen, auf eine eingeschränkte Umgebung zuzugreifen, die Administratoren vorbehalten ist. Bitte verwenden Sie stattdessen die Produktionsanwendung.",
+            goToProduction: "Zur Produktion",
+            signOut: "Abmelden",
+            productionUrl: "Produktions-URL:",
+        },
         contextMenu: {
             deepSearch: "Eine Tiefensuche durchführen",
         },
@@ -220,6 +253,14 @@ export const translations = {
         },
     },
     it: {
+        restrictedAccess: {
+            title: "Ambiente Limitato",
+            subtitle: "Questo ambiente non è accessibile con il tuo account",
+            message: "Stai cercando di accedere a un ambiente limitato riservato agli amministratori. Utilizza invece l'applicazione in produzione.",
+            goToProduction: "Vai alla Produzione",
+            signOut: "Disconnetti",
+            productionUrl: "URL di produzione:",
+        },
         contextMenu: {
             deepSearch: "Effettuare una ricerca approfondita",
         },
@@ -269,6 +310,14 @@ export const translations = {
         },
     },
     pt: {
+        restrictedAccess: {
+            title: "Ambiente Restrito",
+            subtitle: "Este ambiente não está acessível com a sua conta",
+            message: "Você está tentando acessar um ambiente restrito reservado para administradores. Por favor, use o aplicativo de produção.",
+            goToProduction: "Ir para Produção",
+            signOut: "Sair",
+            productionUrl: "URL de produção:",
+        },
         contextMenu: {
             deepSearch: "Fazer uma pesquisa aprofundada",
         },
@@ -318,6 +367,14 @@ export const translations = {
         },
     },
     nl: {
+        restrictedAccess: {
+            title: "Beperkte Omgeving",
+            subtitle: "Deze omgeving is niet toegankelijk met uw account",
+            message: "U probeert toegang te krijgen tot een beperkte omgeving die gereserveerd is voor beheerders. Gebruik in plaats daarvan de productieapplicatie.",
+            goToProduction: "Naar Productie",
+            signOut: "Uitloggen",
+            productionUrl: "Productie-URL:",
+        },
         contextMenu: {
             deepSearch: "Een diepgaande zoekopdracht uitvoeren",
         },
@@ -367,6 +424,14 @@ export const translations = {
         },
     },
     ja: {
+        restrictedAccess: {
+            title: "制限された環境",
+            subtitle: "この環境はお客様のアカウントではアクセスできません",
+            message: "管理者専用の制限された環境にアクセスしようとしています。代わりに本番アプリケーションをご利用ください。",
+            goToProduction: "本番環境へ",
+            signOut: "サインアウト",
+            productionUrl: "本番URL：",
+        },
         contextMenu: {
             deepSearch: "詳細検索を行う",
         },
@@ -416,6 +481,14 @@ export const translations = {
         },
     },
     zh: {
+        restrictedAccess: {
+            title: "受限环境",
+            subtitle: "此环境无法通过您的账户访问",
+            message: "您正在尝试访问专为管理员保留的受限环境。请改用生产应用程序。",
+            goToProduction: "前往生产环境",
+            signOut: "登出",
+            productionUrl: "生产URL：",
+        },
         contextMenu: {
             deepSearch: "进行深度搜索",
         },

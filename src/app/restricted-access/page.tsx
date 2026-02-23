@@ -7,10 +7,12 @@ import { useTheme } from "next-themes";
 import { ShieldX, ExternalLink } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import { useI18n } from "@/contexts/i18n-context";
 
 export default function RestrictedAccessPage() {
   const { theme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const { t } = useI18n();
 
   const productionUrl = process.env.NEXT_PUBLIC_PRODUCTION_URL || "https://chat.prophetic-orchestra.com";
 
@@ -52,8 +54,8 @@ export default function RestrictedAccessPage() {
               />
             </div>
 
-            <h1 className="text-3xl sm:text-4xl font-light mb-3 text-gray-900 dark:text-white">Restricted Environment</h1>
-            <p className="text-gray-600 dark:text-gray-400 text-base sm:text-lg">This environment is not accessible with your account</p>
+            <h1 className="text-3xl sm:text-4xl font-light mb-3 text-gray-900 dark:text-white">{t("restrictedAccess.title")}</h1>
+            <p className="text-gray-600 dark:text-gray-400 text-base sm:text-lg">{t("restrictedAccess.subtitle")}</p>
           </div>
 
           {/* Main Message */}
@@ -63,8 +65,7 @@ export default function RestrictedAccessPage() {
                 <ShieldX className="w-8 h-8 text-white dark:text-gray-300" />
               </div>
               <p className="text-gray-700 dark:text-gray-300 text-base sm:text-lg leading-relaxed">
-                You are trying to access a restricted environment reserved for administrators.
-                Please use the production application instead.
+                {t("restrictedAccess.message")}
               </p>
             </div>
           </div>
@@ -86,7 +87,7 @@ export default function RestrictedAccessPage() {
                 className="w-full max-w-xs mx-auto h-12 rounded-xl font-medium bg-gray-800 dark:bg-white hover:bg-gray-700 dark:hover:bg-gray-100 text-white dark:text-gray-900 transition-colors"
               >
                 <ExternalLink className="w-4 h-4 mr-2" />
-                Go to Production
+                {t("restrictedAccess.goToProduction")}
               </Button>
             </a>
 
@@ -95,7 +96,7 @@ export default function RestrictedAccessPage() {
               variant="outline"
               className="w-full max-w-xs mx-auto h-12 rounded-xl font-medium border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-white transition-colors"
             >
-              Sign Out
+              {t("restrictedAccess.signOut")}
             </Button>
           </div>
         </Card>
@@ -103,7 +104,7 @@ export default function RestrictedAccessPage() {
         {/* Additional Info */}
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Production URL:{" "}
+            {t("restrictedAccess.productionUrl")}{" "}
             <a href={productionUrl} className="text-gray-900 dark:text-white hover:text-gray-700 dark:hover:text-gray-300 font-medium underline">
               {productionUrl}
             </a>
