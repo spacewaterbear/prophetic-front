@@ -150,30 +150,19 @@ export default async function PricingPage() {
                   ))}
                 </ul>
 
-                <div>
-                  {isAuthorized ? (
-                    <Button
-                      asChild
-                      className={`w-full h-11 rounded-xl font-medium ${
-                        plan.highlighted
-                          ? "bg-white text-gray-900 hover:bg-gray-100 dark:bg-gray-900 dark:text-white dark:hover:bg-gray-800"
-                          : "bg-gray-900 text-white hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100"
-                      }`}
-                    >
-                      <Link href="/api/polar/portal">Manage Subscription</Link>
-                    </Button>
-                  ) : (
-                    <Button
-                      asChild
-                      className={`w-full h-11 rounded-xl font-medium ${
-                        plan.highlighted
-                          ? "bg-white text-gray-900 hover:bg-gray-100 dark:bg-gray-900 dark:text-white dark:hover:bg-gray-800"
-                          : "bg-gray-900 text-white hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100"
-                      }`}
-                    >
-                      <Link href={checkoutUrl}>Subscribe to {plan.name}</Link>
-                    </Button>
-                  )}
+                <div className="space-y-2">
+                  <Button
+                    asChild
+                    className={`w-full h-11 rounded-xl font-medium ${
+                      plan.highlighted
+                        ? "bg-white text-gray-900 hover:bg-gray-100 dark:bg-gray-900 dark:text-white dark:hover:bg-gray-800"
+                        : "bg-gray-900 text-white hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100"
+                    }`}
+                  >
+                    <Link href={checkoutUrl}>
+                      {userStatus === plan.name.toLowerCase() ? "Current plan" : `Subscribe to ${plan.name}`}
+                    </Link>
+                  </Button>
                 </div>
               </Card>
             );
@@ -181,13 +170,22 @@ export default async function PricingPage() {
         </div>
 
         {/* Footer */}
-        <div className="text-center">
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Already have an account?{" "}
-            <Link href="/login" className="text-gray-900 dark:text-white font-medium underline hover:opacity-75">
-              Sign in
-            </Link>
-          </p>
+        <div className="text-center space-y-2">
+          {isAuthorized && (
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              <Link href="/api/polar/portal" className="text-gray-900 dark:text-white font-medium underline hover:opacity-75">
+                Manage existing subscription
+              </Link>
+            </p>
+          )}
+          {!session && (
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Already have an account?{" "}
+              <Link href="/login" className="text-gray-900 dark:text-white font-medium underline hover:opacity-75">
+                Sign in
+              </Link>
+            </p>
+          )}
         </div>
       </div>
     </div>
