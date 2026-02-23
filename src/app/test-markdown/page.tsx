@@ -2,6 +2,18 @@
 
 import { useState, useEffect } from "react";
 import { Markdown } from "@/components/Markdown";
+import { AudioCard } from "@/components/AudioCard";
+import { supabase } from "@/lib/supabase/client";
+
+interface AudioRow {
+  id: string;
+  title: string;
+  subtitle: string;
+  src: string;
+  score: number;
+  trend: "up" | "down" | "neutral";
+  label: string;
+}
 
 const PLACEHOLDER = `# Heading 1
 ## Heading 2
@@ -29,6 +41,8 @@ def hello():
 export default function TestMarkdownPage() {
   const [input, setInput] = useState(PLACEHOLDER);
   const [isDark, setIsDark] = useState(true);
+  const [audioRow, setAudioRow] = useState<AudioRow | null>(null);
+  const [audioError, setAudioError] = useState<string | null>(null);
 
   useEffect(() => {
     if (isDark) {
@@ -37,6 +51,19 @@ export default function TestMarkdownPage() {
       document.documentElement.classList.remove("dark");
     }
   }, [isDark]);
+
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    supabase.from("audio" as any).select("*").eq("id", "example").maybeSingle().then(({ data, error }) => {
+      if (error) {
+        setAudioError(error.message);
+      } else if (!data) {
+        setAudioError("No row found with id = 'example'");
+      } else {
+        setAudioRow(data as AudioRow);
+      }
+    });
+  }, []);
 
   return (
     <div className="min-h-screen bg-white dark:bg-black transition-colors">
@@ -68,6 +95,31 @@ export default function TestMarkdownPage() {
             </svg>
           )}
         </button>
+      </div>
+
+      {/* Audio Card demo */}
+      <div className="max-w-6xl mx-auto px-6 pt-6 pb-2">
+        <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider block mb-3">
+          Audio Card
+        </label>
+        <div className="max-w-sm">
+          {audioError && (
+            <p className="text-xs text-red-500 font-mono">{audioError}</p>
+          )}
+          {!audioRow && !audioError && (
+            <p className="text-xs text-zinc-400">Loading…</p>
+          )}
+          {audioRow && (
+            <AudioCard
+              title={audioRow.title}
+              subtitle={audioRow.subtitle}
+              src={audioRow.src}
+              score={audioRow.score}
+              trend={audioRow.trend}
+              label={audioRow.label}
+            />
+          )}
+        </div>
       </div>
 
       <div className="max-w-6xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
