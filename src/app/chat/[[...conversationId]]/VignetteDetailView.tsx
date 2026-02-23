@@ -28,7 +28,7 @@ interface VignetteDetailViewProps {
 }
 
 export function VignetteDetailView({
-  vignetteSlug: _vignetteSlug,
+  vignetteSlug,
   selectedAgent,
   onAgentChange,
   selectedModel,
@@ -46,7 +46,17 @@ export function VignetteDetailView({
     if (streamStartedRef.current) return;
 
     const paramsStr = sessionStorage.getItem(PENDING_VIGNETTE_VIEW_KEY);
-    if (!paramsStr) return;
+
+    if (!paramsStr) {
+      // Direct URL access (e.g. copy-pasted link) — stream using the slug from the URL
+      streamStartedRef.current = true;
+      streamVignetteContent({
+        imageName: vignetteSlug,
+        category: "",
+        tier: selectedAgent.toUpperCase(),
+      });
+      return;
+    }
 
     streamStartedRef.current = true;
     sessionStorage.removeItem(PENDING_VIGNETTE_VIEW_KEY);
