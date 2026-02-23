@@ -1,7 +1,7 @@
 import Image from "next/image";
-import { ExternalLink, Store, CheckCircle2 } from "lucide-react";
+import { ExternalLink, Store, CheckCircle2, ImageOff } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { memo } from "react";
+import { memo, useState } from "react";
 
 interface ArtistProfile {
     name: string;
@@ -29,6 +29,57 @@ interface MarketplaceData {
 interface MarketplaceCardProps {
     data: MarketplaceData;
 }
+
+const ArtworkCard = memo(({ artwork }: { artwork: Artwork }) => {
+    const [imageError, setImageError] = useState(false);
+
+    return (
+        <a
+            href={artwork.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group"
+        >
+            <Card className="overflow-hidden border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-xl hover:scale-[1.02] transition-all duration-300">
+                {/* Artwork Image */}
+                <div className="relative w-full aspect-square bg-gray-100 dark:bg-gray-900 overflow-hidden">
+                    {artwork.image_url && !imageError ? (
+                        <>
+                            <Image
+                                src={artwork.image_url}
+                                alt={artwork.title || "Artwork"}
+                                fill
+                                className="object-cover group-hover:scale-110 transition-transform duration-500"
+                                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                onError={() => setImageError(true)}
+                            />
+                            {/* Overlay on hover */}
+                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
+                                <ExternalLink className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                            </div>
+                        </>
+                    ) : (
+                        <div className="flex items-center justify-center h-full bg-gray-200 dark:bg-gray-700">
+                            <ImageOff className="w-12 h-12 text-gray-400 dark:text-gray-500" />
+                        </div>
+                    )}
+                </div>
+
+                {/* Artwork Info */}
+                <div className="p-4">
+                    <h4 className="font-semibold text-gray-900 dark:text-white mb-2 line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                        {artwork.title}
+                    </h4>
+                    <p className="text-lg font-bold text-emerald-700 dark:text-emerald-400">
+                        {artwork.price}
+                    </p>
+                </div>
+            </Card>
+        </a>
+    );
+});
+
+ArtworkCard.displayName = "ArtworkCard";
 
 /**
  * MarketplaceCard - Premium component for displaying marketplace search results
@@ -89,42 +140,7 @@ export const MarketplaceCard = memo(({ data }: MarketplaceCardProps) => {
             {artworks.length > 0 && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {artworks.slice(0, 6).map((artwork, index) => (
-                        <a
-                            key={index}
-                            href={artwork.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="group"
-                        >
-                            <Card className="overflow-hidden border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-xl hover:scale-[1.02] transition-all duration-300">
-                                {/* Artwork Image */}
-                                {artwork.image_url && (
-                                    <div className="relative w-full aspect-square bg-gray-100 dark:bg-gray-900 overflow-hidden">
-                                        <Image
-                                            src={artwork.image_url}
-                                            alt={artwork.title || "Artwork"}
-                                            fill
-                                            className="object-cover group-hover:scale-110 transition-transform duration-500"
-                                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                                        />
-                                        {/* Overlay on hover */}
-                                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
-                                            <ExternalLink className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                        </div>
-                                    </div>
-                                )}
-
-                                {/* Artwork Info */}
-                                <div className="p-4">
-                                    <h4 className="font-semibold text-gray-900 dark:text-white mb-2 line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                                        {artwork.title}
-                                    </h4>
-                                    <p className="text-lg font-bold text-emerald-700 dark:text-emerald-400">
-                                        {artwork.price}
-                                    </p>
-                                </div>
-                            </Card>
-                        </a>
+                        <ArtworkCard key={index} artwork={artwork} />
                     ))}
                 </div>
             )}

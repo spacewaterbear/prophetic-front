@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Home, XCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { memo } from "react";
+import { memo, useState } from "react";
 
 // Interfaces based on the user provided JSON structure
 export interface RealEstateProperty {
@@ -53,6 +53,53 @@ const formatPrice = (amount: number): string => {
     return amount.toLocaleString();
 };
 
+const PropertyCard = memo(({ property, location }: { property: RealEstateProperty; location: string }) => {
+    const [imageError, setImageError] = useState(false);
+
+    return (
+        <div className="border border-gray-200/20 bg-[#e6e6e6] dark:bg-gray-800 rounded-[24px] p-3">
+            {/* Image */}
+            <div className="relative w-full aspect-square rounded-[24px] mb-2 overflow-hidden">
+                {property.image_url && !imageError ? (
+                    <Image
+                        src={property.image_url}
+                        alt={property.title}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 20vw"
+                        onError={() => setImageError(true)}
+                    />
+                ) : (
+                    <div className="flex items-center justify-center h-full bg-gray-200 dark:bg-gray-700">
+                        <Home className="w-12 h-12 text-gray-400 dark:text-gray-500" />
+                    </div>
+                )}
+
+                {/* Price badge */}
+                <div className="absolute bottom-3 right-3">
+                    <div className="bg-white rounded-full px-3 py-1.5 shadow-md">
+                        <span className="text-sm font-semibold text-gray-900">
+                            {formatPrice(property.price_amount)}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            {/* Text */}
+            <div className="flex flex-col px-1 text-center">
+                <h3 className="text-[16px] font-bold text-gray-900 dark:text-white leading-tight line-clamp-2">
+                    {property.title}
+                </h3>
+                <p className="text-[14px] font-light italic text-gray-500 dark:text-gray-400 mt-0.5">
+                    {location}
+                </p>
+            </div>
+        </div>
+    );
+});
+
+PropertyCard.displayName = "PropertyCard";
+
 /**
  * RealEstateCard - Bold modern luxury real estate component
  */
@@ -87,43 +134,7 @@ export const RealEstateCard = memo(({ data }: RealEstateCardProps) => {
                     rel="noopener noreferrer"
                     className="block"
                 >
-                    <div className="border border-gray-200/20 bg-[#e6e6e6] dark:bg-gray-800 rounded-[24px] p-3">
-                        {/* Image */}
-                        <div className="relative w-full aspect-square rounded-[24px] mb-2 overflow-hidden">
-                            {property.image_url ? (
-                                <Image
-                                    src={property.image_url}
-                                    alt={property.title}
-                                    fill
-                                    className="object-cover"
-                                    sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 20vw"
-                                />
-                            ) : (
-                                <div className="flex items-center justify-center h-full bg-gray-200 dark:bg-gray-700">
-                                    <Home className="w-12 h-12 text-gray-400 dark:text-gray-500" />
-                                </div>
-                            )}
-
-                            {/* Price badge */}
-                            <div className="absolute bottom-3 right-3">
-                                <div className="bg-white rounded-full px-3 py-1.5 shadow-md">
-                                    <span className="text-sm font-semibold text-gray-900">
-                                        {formatPrice(property.price_amount)}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Text */}
-                        <div className="flex flex-col px-1 text-center">
-                            <h3 className="text-[16px] font-bold text-gray-900 dark:text-white leading-tight line-clamp-2">
-                                {property.title}
-                            </h3>
-                            <p className="text-[14px] font-light italic text-gray-500 dark:text-gray-400 mt-0.5">
-                                {location}
-                            </p>
-                        </div>
-                    </div>
+                    <PropertyCard property={property} location={location} />
                 </a>
             ))}
         </div>

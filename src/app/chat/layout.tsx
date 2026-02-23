@@ -12,6 +12,7 @@ import {
   X,
   ChevronDown,
   ChevronRight,
+  MessageCircleHeart,
 } from "lucide-react";
 import { useI18n } from "@/contexts/i18n-context";
 import { useSidebar, SidebarProvider } from "@/contexts/sidebar-context";
@@ -23,6 +24,7 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { SelectionContextMenu } from "@/components/SelectionContextMenu";
+import { FeedbackModal } from "@/components/FeedbackModal";
 import { CATEGORY_DISPLAY_NAMES } from "@/types/chat";
 
 const STORAGE = "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons";
@@ -100,6 +102,7 @@ function ChatLayoutInner({
   const { sidebarOpen, setSidebarOpen, isMobile } = useSidebar();
   const [consultationsExpanded, setConsultationsExpanded] = useState(false);
   const [artCategories, setArtCategories] = useState<string[]>([]);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
 
   // Extract conversation ID from pathname
   const currentConversationId = pathname?.match(/\/chat\/(\d+)/)?.[1];
@@ -378,7 +381,17 @@ function ChatLayoutInner({
           </div>
         </div>
 
-        <div className="p-4 border-t border-gray-400 dark:border-gray-800">
+        <div className="px-4 pb-2 pt-3 border-t border-gray-400 dark:border-gray-800">
+          <button
+            onClick={() => setFeedbackOpen(true)}
+            className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2 text-gray-700 dark:text-gray-300"
+          >
+            <MessageCircleHeart className="h-4 w-4 flex-shrink-0" />
+            <span>Feedback</span>
+          </button>
+        </div>
+
+        <div className="px-4 pb-4">
           {session?.user && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -433,6 +446,11 @@ function ChatLayoutInner({
         {children}
       </div>
       <SelectionContextMenu />
+      <FeedbackModal
+        open={feedbackOpen}
+        onClose={() => setFeedbackOpen(false)}
+        userId={session?.user?.id ?? undefined}
+      />
     </div>
   );
 }

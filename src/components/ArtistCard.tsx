@@ -3,6 +3,7 @@ import { MapPin, Image as ImageIcon } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Markdown } from "@/components/Markdown";
 import { MetricBadge } from "@/components/MetricBadge";
+import { useState } from "react";
 
 interface Artist {
     artist_name: string;
@@ -24,6 +25,8 @@ interface ArtistCardProps {
 }
 
 export function ArtistCard({ artist, message, researchType, text, streamingText, hasExistingData }: ArtistCardProps) {
+    const [imageError, setImageError] = useState(false);
+
     return (
         <div className="space-y-4">
             {/* Artist Info Card */}
@@ -31,13 +34,14 @@ export function ArtistCard({ artist, message, researchType, text, streamingText,
                 <div className="grid md:grid-cols-[200px_1fr] gap-6 p-6">
                     {/* Artist Image - Fixed height container */}
                     <div className="relative w-full aspect-square md:h-[200px] rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-900">
-                        {artist.artist_picture_url ? (
+                        {artist.artist_picture_url && !imageError ? (
                             <Image
                                 src={artist.artist_picture_url}
                                 alt={artist.artist_name}
                                 fill
                                 className="object-cover"
                                 sizes="200px"
+                                onError={() => setImageError(true)}
                             />
                         ) : (
                             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900">

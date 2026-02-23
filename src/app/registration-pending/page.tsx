@@ -6,6 +6,7 @@ import { signOut } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { Clock, Mail, Shield } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useI18n } from "@/contexts/i18n-context";
 import { useState, useEffect } from "react";
 
@@ -101,8 +102,15 @@ export default function RegistrationPendingPage() {
           </div>
 
           {/* Actions */}
-          <div className="text-center space-y-8">
-            <div className="py-4">
+          <div className="text-center space-y-4">
+            <Button
+              asChild
+              className="w-full max-w-xs mx-auto h-12 rounded-xl font-medium bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
+            >
+              <Link href="/pricing">View Plans &amp; Subscribe</Link>
+            </Button>
+
+            <div className="py-2">
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 Need to sign in with a different account?
               </p>
