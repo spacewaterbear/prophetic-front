@@ -60,7 +60,7 @@ export default function TestMarkdownPage() {
       } else if (!data) {
         setAudioError("No row found with id = 'example'");
       } else {
-        setAudioRow(data as AudioRow);
+        setAudioRow(data as unknown as AudioRow);
       }
     });
   }, []);

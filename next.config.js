@@ -4,19 +4,6 @@ const nextConfig = {
     output: "standalone",
     images: {
         formats: ["image/avif", "image/webp"],
-        domains: [
-            "source.unsplash.com",
-            "images.unsplash.com",
-            "img.freepik.com",
-            "ext.same-assets.com",
-            "ugc.same-assets.com",
-            "*.cloudfront.net",
-            "siomjdoyjuuwlpimzaju.supabase.co",
-            "lh3.googleusercontent.com",
-            "images.saatchiart.com",
-            "media.artsper.com",
-            "img.jamesedition.com",
-        ],
         remotePatterns: [
             {
                 protocol: "https",
