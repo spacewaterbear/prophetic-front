@@ -53,17 +53,15 @@ export default function RegistrationPendingPage() {
               />
             </div>
 
-            <h1 className="text-3xl sm:text-4xl font-light mb-3 text-gray-900 dark:text-white">You're on Our Waitlist</h1>
-            <p className="text-gray-600 dark:text-gray-400 text-base sm:text-lg">Thank you for your interest in Prophetic Orchestra</p>
+            <h1 className="text-3xl sm:text-4xl font-light mb-3 text-gray-900 dark:text-white">{t("registrationPending.title")}</h1>
+            <p className="text-gray-600 dark:text-gray-400 text-base sm:text-lg">{t("registrationPending.subtitle")}</p>
           </div>
 
           {/* Main Message */}
           <div className="mb-10 text-center">
             <div className="bg-[rgb(230,220,210)]/50 dark:bg-gray-700/50 rounded-2xl p-6 sm:p-8 mb-6">
               <p className="text-gray-700 dark:text-gray-300 text-base sm:text-lg leading-relaxed">
-                Your registration has been received and is currently under review.
-                We will inform you via email when we grant you access to our exclusive
-                luxury investment platform.
+                {t("registrationPending.message")}
               </p>
             </div>
 
@@ -72,24 +70,24 @@ export default function RegistrationPendingPage() {
                 <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-gray-800 dark:bg-white/10 flex items-center justify-center">
                   <Mail className="w-6 h-6 text-white dark:text-gray-300" />
                 </div>
-                <h3 className="font-medium text-sm mb-1 text-gray-900 dark:text-white">Email Notification</h3>
-                <p className="text-xs text-gray-600 dark:text-gray-400">You'll receive updates at your registered email</p>
+                <h3 className="font-medium text-sm mb-1 text-gray-900 dark:text-white">{t("registrationPending.emailNotificationTitle")}</h3>
+                <p className="text-xs text-gray-600 dark:text-gray-400">{t("registrationPending.emailNotificationDesc")}</p>
               </div>
 
               <div className="text-center p-4">
                 <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-gray-800 dark:bg-white/10 flex items-center justify-center">
                   <Shield className="w-6 h-6 text-white dark:text-gray-300" />
                 </div>
-                <h3 className="font-medium text-sm mb-1 text-gray-900 dark:text-white">Exclusive Access</h3>
-                <p className="text-xs text-gray-600 dark:text-gray-400">Limited seats for premium members</p>
+                <h3 className="font-medium text-sm mb-1 text-gray-900 dark:text-white">{t("registrationPending.exclusiveAccessTitle")}</h3>
+                <p className="text-xs text-gray-600 dark:text-gray-400">{t("registrationPending.exclusiveAccessDesc")}</p>
               </div>
 
               <div className="text-center p-4">
                 <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-gray-800 dark:bg-white/10 flex items-center justify-center">
                   <Clock className="w-6 h-6 text-white dark:text-gray-300" />
                 </div>
-                <h3 className="font-medium text-sm mb-1 text-gray-900 dark:text-white">Review Process</h3>
-                <p className="text-xs text-gray-600 dark:text-gray-400">Typically 1-3 business days</p>
+                <h3 className="font-medium text-sm mb-1 text-gray-900 dark:text-white">{t("registrationPending.reviewProcessTitle")}</h3>
+                <p className="text-xs text-gray-600 dark:text-gray-400">{t("registrationPending.reviewProcessDesc")}</p>
               </div>
             </div>
           </div>
@@ -107,12 +105,12 @@ export default function RegistrationPendingPage() {
               asChild
               className="w-full max-w-xs mx-auto h-12 rounded-xl font-medium bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
             >
-              <Link href="/pricing">View Plans &amp; Subscribe</Link>
+              <Link href="/pricing">{t("registrationPending.viewPlans")}</Link>
             </Button>
 
             <div className="py-2">
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Need to sign in with a different account?
+                {t("registrationPending.differentAccount")}
               </p>
             </div>
 
@@ -121,7 +119,7 @@ export default function RegistrationPendingPage() {
               variant="outline"
               className="w-full max-w-xs mx-auto h-12 rounded-xl font-medium border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-white transition-colors"
             >
-              {t('nav.signOut')}
+              {t("nav.signOut")}
             </Button>
           </div>
         </Card>
@@ -129,7 +127,7 @@ export default function RegistrationPendingPage() {
         {/* Additional Info */}
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Questions? Contact us at{" "}
+            {t("registrationPending.contactUs")}{" "}
             <a href="mailto:support@propheticorchestra.com" className="text-gray-900 dark:text-white hover:text-gray-700 dark:hover:text-gray-300 font-medium underline">
               support@propheticorchestra.com
             </a>

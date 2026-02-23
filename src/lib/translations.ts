@@ -1,6 +1,28 @@
 // Translation dictionary for all UI text in the application
 export const translations = {
     fr: {
+        // Registration Pending Page
+        registrationPending: {
+            title: "Vous êtes sur notre liste d'attente",
+            subtitle: "Merci pour votre intérêt pour Prophetic Orchestra",
+            message: "Votre inscription a été reçue et est en cours d'examen. Nous vous informerons par email lorsque nous vous accorderons l'accès à notre plateforme exclusive d'investissement de luxe.",
+            emailNotificationTitle: "Notification par email",
+            emailNotificationDesc: "Vous recevrez des mises à jour à votre adresse email enregistrée",
+            exclusiveAccessTitle: "Accès exclusif",
+            exclusiveAccessDesc: "Places limitées pour les membres premium",
+            reviewProcessTitle: "Processus d'examen",
+            reviewProcessDesc: "Généralement 1 à 3 jours ouvrables",
+            viewPlans: "Voir les offres & s'abonner",
+            differentAccount: "Besoin de vous connecter avec un autre compte ?",
+            contactUs: "Des questions ? Contactez-nous à",
+        },
+        // Share Page
+        share: {
+            sharedConversation: "Conversation partagée",
+            poweredBy: "Propulsé par Prophetic Orchestra",
+            expiredTitle: "Lien de partage expiré",
+            expiredMessage: "Ce lien de partage de conversation a expiré et n'est plus accessible.",
+        },
         // Restricted Access Page
         restrictedAccess: {
             title: "Environnement Restreint",
@@ -73,6 +95,26 @@ export const translations = {
         },
     },
     en: {
+        registrationPending: {
+            title: "You're on Our Waitlist",
+            subtitle: "Thank you for your interest in Prophetic Orchestra",
+            message: "Your registration has been received and is currently under review. We will inform you via email when we grant you access to our exclusive luxury investment platform.",
+            emailNotificationTitle: "Email Notification",
+            emailNotificationDesc: "You'll receive updates at your registered email",
+            exclusiveAccessTitle: "Exclusive Access",
+            exclusiveAccessDesc: "Limited seats for premium members",
+            reviewProcessTitle: "Review Process",
+            reviewProcessDesc: "Typically 1-3 business days",
+            viewPlans: "View Plans & Subscribe",
+            differentAccount: "Need to sign in with a different account?",
+            contactUs: "Questions? Contact us at",
+        },
+        share: {
+            sharedConversation: "Shared conversation",
+            poweredBy: "Powered by Prophetic Orchestra",
+            expiredTitle: "Share Link Expired",
+            expiredMessage: "This conversation share link has expired and is no longer accessible.",
+        },
         restrictedAccess: {
             title: "Restricted Environment",
             subtitle: "This environment is not accessible with your account",
@@ -139,6 +181,26 @@ export const translations = {
         },
     },
     es: {
+        registrationPending: {
+            title: "Estás en nuestra lista de espera",
+            subtitle: "Gracias por tu interés en Prophetic Orchestra",
+            message: "Tu registro ha sido recibido y está siendo revisado. Te informaremos por correo electrónico cuando te concedamos acceso a nuestra exclusiva plataforma de inversión de lujo.",
+            emailNotificationTitle: "Notificación por email",
+            emailNotificationDesc: "Recibirás actualizaciones en tu correo electrónico registrado",
+            exclusiveAccessTitle: "Acceso exclusivo",
+            exclusiveAccessDesc: "Plazas limitadas para miembros premium",
+            reviewProcessTitle: "Proceso de revisión",
+            reviewProcessDesc: "Generalmente 1-3 días hábiles",
+            viewPlans: "Ver planes y suscribirse",
+            differentAccount: "¿Necesitas iniciar sesión con una cuenta diferente?",
+            contactUs: "¿Preguntas? Contáctanos en",
+        },
+        share: {
+            sharedConversation: "Conversación compartida",
+            poweredBy: "Desarrollado por Prophetic Orchestra",
+            expiredTitle: "Enlace de compartir expirado",
+            expiredMessage: "Este enlace de conversación compartida ha expirado y ya no es accesible.",
+        },
         restrictedAccess: {
             title: "Entorno Restringido",
             subtitle: "Este entorno no es accesible con su cuenta",
@@ -196,6 +258,26 @@ export const translations = {
         },
     },
     de: {
+        registrationPending: {
+            title: "Sie sind auf unserer Warteliste",
+            subtitle: "Vielen Dank für Ihr Interesse an Prophetic Orchestra",
+            message: "Ihre Registrierung wurde erhalten und wird derzeit überprüft. Wir werden Sie per E-Mail informieren, wenn wir Ihnen Zugang zu unserer exklusiven Luxusinvestitionsplattform gewähren.",
+            emailNotificationTitle: "E-Mail-Benachrichtigung",
+            emailNotificationDesc: "Sie erhalten Updates an Ihre registrierte E-Mail-Adresse",
+            exclusiveAccessTitle: "Exklusiver Zugang",
+            exclusiveAccessDesc: "Begrenzte Plätze für Premium-Mitglieder",
+            reviewProcessTitle: "Prüfungsprozess",
+            reviewProcessDesc: "In der Regel 1-3 Werktage",
+            viewPlans: "Pläne ansehen & abonnieren",
+            differentAccount: "Müssen Sie sich mit einem anderen Konto anmelden?",
+            contactUs: "Fragen? Kontaktieren Sie uns unter",
+        },
+        share: {
+            sharedConversation: "Geteiltes Gespräch",
+            poweredBy: "Unterstützt von Prophetic Orchestra",
+            expiredTitle: "Freigabelink abgelaufen",
+            expiredMessage: "Dieser Freigabelink für das Gespräch ist abgelaufen und nicht mehr zugänglich.",
+        },
         restrictedAccess: {
             title: "Eingeschränkte Umgebung",
             subtitle: "Diese Umgebung ist mit Ihrem Konto nicht zugänglich",
@@ -253,6 +335,26 @@ export const translations = {
         },
     },
     it: {
+        registrationPending: {
+            title: "Sei nella nostra lista d'attesa",
+            subtitle: "Grazie per il tuo interesse in Prophetic Orchestra",
+            message: "La tua registrazione è stata ricevuta ed è attualmente in fase di revisione. Ti informeremo via email quando ti concederemo l'accesso alla nostra esclusiva piattaforma di investimento di lusso.",
+            emailNotificationTitle: "Notifica via email",
+            emailNotificationDesc: "Riceverai aggiornamenti alla tua email registrata",
+            exclusiveAccessTitle: "Accesso esclusivo",
+            exclusiveAccessDesc: "Posti limitati per i membri premium",
+            reviewProcessTitle: "Processo di revisione",
+            reviewProcessDesc: "Di solito 1-3 giorni lavorativi",
+            viewPlans: "Visualizza piani e abbonati",
+            differentAccount: "Devi accedere con un account diverso?",
+            contactUs: "Domande? Contattaci a",
+        },
+        share: {
+            sharedConversation: "Conversazione condivisa",
+            poweredBy: "Powered by Prophetic Orchestra",
+            expiredTitle: "Link di condivisione scaduto",
+            expiredMessage: "Questo link di condivisione della conversazione è scaduto e non è più accessibile.",
+        },
         restrictedAccess: {
             title: "Ambiente Limitato",
             subtitle: "Questo ambiente non è accessibile con il tuo account",
@@ -310,6 +412,26 @@ export const translations = {
         },
     },
     pt: {
+        registrationPending: {
+            title: "Você está na nossa lista de espera",
+            subtitle: "Obrigado pelo seu interesse na Prophetic Orchestra",
+            message: "O seu registo foi recebido e está atualmente a ser revisto. Iremos informá-lo por email quando lhe concedermos acesso à nossa exclusiva plataforma de investimento de luxo.",
+            emailNotificationTitle: "Notificação por email",
+            emailNotificationDesc: "Receberá atualizações no seu email registado",
+            exclusiveAccessTitle: "Acesso exclusivo",
+            exclusiveAccessDesc: "Vagas limitadas para membros premium",
+            reviewProcessTitle: "Processo de revisão",
+            reviewProcessDesc: "Normalmente 1 a 3 dias úteis",
+            viewPlans: "Ver planos e subscrever",
+            differentAccount: "Precisa de entrar com uma conta diferente?",
+            contactUs: "Dúvidas? Contacte-nos em",
+        },
+        share: {
+            sharedConversation: "Conversa partilhada",
+            poweredBy: "Desenvolvido por Prophetic Orchestra",
+            expiredTitle: "Link de partilha expirado",
+            expiredMessage: "Este link de partilha de conversa expirou e já não está acessível.",
+        },
         restrictedAccess: {
             title: "Ambiente Restrito",
             subtitle: "Este ambiente não está acessível com a sua conta",
@@ -367,6 +489,26 @@ export const translations = {
         },
     },
     nl: {
+        registrationPending: {
+            title: "U staat op onze wachtlijst",
+            subtitle: "Bedankt voor uw interesse in Prophetic Orchestra",
+            message: "Uw registratie is ontvangen en wordt momenteel beoordeeld. We informeren u per e-mail wanneer we u toegang verlenen tot ons exclusieve luxe investeringsplatform.",
+            emailNotificationTitle: "E-mailmelding",
+            emailNotificationDesc: "U ontvangt updates op uw geregistreerde e-mailadres",
+            exclusiveAccessTitle: "Exclusieve toegang",
+            exclusiveAccessDesc: "Beperkte plaatsen voor premium leden",
+            reviewProcessTitle: "Beoordelingsproces",
+            reviewProcessDesc: "Doorgaans 1-3 werkdagen",
+            viewPlans: "Bekijk abonnementen",
+            differentAccount: "Wilt u inloggen met een ander account?",
+            contactUs: "Vragen? Neem contact op via",
+        },
+        share: {
+            sharedConversation: "Gedeeld gesprek",
+            poweredBy: "Mogelijk gemaakt door Prophetic Orchestra",
+            expiredTitle: "Deellink verlopen",
+            expiredMessage: "Deze deellink voor het gesprek is verlopen en niet meer toegankelijk.",
+        },
         restrictedAccess: {
             title: "Beperkte Omgeving",
             subtitle: "Deze omgeving is niet toegankelijk met uw account",
@@ -424,6 +566,26 @@ export const translations = {
         },
     },
     ja: {
+        registrationPending: {
+            title: "順番待ちリストに登録されました",
+            subtitle: "Prophetic Orchestraへのご関心ありがとうございます",
+            message: "ご登録を受け付け、現在審査中です。独自のラグジュアリー投資プラットフォームへのアクセスが許可された際に、メールでお知らせします。",
+            emailNotificationTitle: "メール通知",
+            emailNotificationDesc: "登録メールアドレスに更新情報が届きます",
+            exclusiveAccessTitle: "限定アクセス",
+            exclusiveAccessDesc: "プレミアム会員向けの限定席",
+            reviewProcessTitle: "審査プロセス",
+            reviewProcessDesc: "通常1〜3営業日",
+            viewPlans: "プランを見て登録する",
+            differentAccount: "別のアカウントでサインインしますか？",
+            contactUs: "ご質問はこちらまで",
+        },
+        share: {
+            sharedConversation: "共有された会話",
+            poweredBy: "Powered by Prophetic Orchestra",
+            expiredTitle: "共有リンクの有効期限切れ",
+            expiredMessage: "この会話の共有リンクは有効期限が切れており、アクセスできなくなっています。",
+        },
         restrictedAccess: {
             title: "制限された環境",
             subtitle: "この環境はお客様のアカウントではアクセスできません",
@@ -481,6 +643,26 @@ export const translations = {
         },
     },
     zh: {
+        registrationPending: {
+            title: "您已加入我们的候补名单",
+            subtitle: "感谢您对 Prophetic Orchestra 的关注",
+            message: "您的注册已收到，目前正在审核中。当我们授予您访问我们专属豪华投资平台的权限时，我们将通过电子邮件通知您。",
+            emailNotificationTitle: "电子邮件通知",
+            emailNotificationDesc: "您将在注册的电子邮件中收到更新",
+            exclusiveAccessTitle: "专属访问",
+            exclusiveAccessDesc: "高级会员名额有限",
+            reviewProcessTitle: "审核流程",
+            reviewProcessDesc: "通常需要1-3个工作日",
+            viewPlans: "查看计划并订阅",
+            differentAccount: "需要使用其他账户登录？",
+            contactUs: "有问题？请联系我们：",
+        },
+        share: {
+            sharedConversation: "共享对话",
+            poweredBy: "由 Prophetic Orchestra 提供支持",
+            expiredTitle: "分享链接已过期",
+            expiredMessage: "此对话分享链接已过期，无法再访问。",
+        },
         restrictedAccess: {
             title: "受限环境",
             subtitle: "此环境无法通过您的账户访问",

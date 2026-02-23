@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
+import { useI18n } from "@/contexts/i18n-context";
 
 /**
  * Root page - Redirects to appropriate route based on authentication status
@@ -18,6 +19,7 @@ export default function Home() {
   const router = useRouter();
   const { status } = useSession();
   const { theme, resolvedTheme } = useTheme();
+  const { t } = useI18n();
   const isDark = theme === "dark" || resolvedTheme === "dark";
 
   useEffect(() => {
@@ -54,7 +56,7 @@ export default function Home() {
               className="w-full h-full object-contain"
             />
           </div>
-          <p className="text-gray-600 dark:text-gray-400">Loading...</p>
+          <p className="text-gray-600 dark:text-gray-400">{t("common.loading")}</p>
         </div>
       </div>
     );
