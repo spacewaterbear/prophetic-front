@@ -30,28 +30,30 @@ import { CATEGORY_DISPLAY_NAMES } from "@/types/chat";
 const STORAGE = "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons";
 
 const IS_ART_SPECIALITY = process.env.NEXT_PUBLIC_SPECIALITY === "art";
+const IS_MAIN_SPECIALITY = process.env.NEXT_PUBLIC_SPECIALITY === "main" || !process.env.NEXT_PUBLIC_SPECIALITY;
 
-// Hardcoded list used only for SPECIALITY=main
-const MAIN_CATEGORY_DEFS: {
-  label: string;
-  category: string;
-  iconLight?: string;
-  iconDark?: string;
-}[] = [
-  { label: "Marché de l'Art", category: "ART" },
-  { label: "Vins Patrimoniaux", category: "WINE" },
-  { label: "Sacs de Luxe", category: "SACS" },
-  { label: "Immobilier de Prestige", category: "IMMO_LUXE" },
-  { label: "Montres Iconiques", category: "MONTRES_LUXE" },
-  { label: "Voitures de Collection", category: "CARS" },
-  { label: "Sneakers Heritage", category: "SNEAKERS" },
-  { label: "Whisky Rares", category: "WHISKY" },
-  { label: "Bijoux Précieux", category: "BIJOUX" },
-  { label: "Cartes Sportives", category: "CARDS_US" },
-  { label: "Art Trading Value", category: "ART_TRADING_VALUE", iconLight: `${STORAGE}/book_n.svg`, iconDark: `${STORAGE}/book_b.svg` },
-  { label: "Cash-Flow Leasing", category: "CASH_FLOW_LEASING", iconLight: `${STORAGE}/coin_n.svg`, iconDark: `${STORAGE}/coin_b.svg` },
-  { label: "Marché spot", category: "MARCHE_SPOT", iconLight: `${STORAGE}/stars_n.svg`, iconDark: `${STORAGE}/stars_b.svg` },
+const MAIN_CATEGORY_ORDER = [
+  "ART",
+  "WINE",
+  "SACS",
+  "IMMO_LUXE",
+  "MONTRES_LUXE",
+  "CARS",
+  "SNEAKERS",
+  "WHISKY",
+  "BIJOUX",
+  "CARDS_US",
+  "ART_TRADING_VALUE",
+  "CASH_FLOW_LEASING",
+  "MARCHE_SPOT",
 ];
+
+// Icons for known categories in main mode
+const MAIN_CATEGORY_ICONS: Record<string, { light: string; dark: string }> = {
+  ART_TRADING_VALUE: { light: `${STORAGE}/book_n.svg`, dark: `${STORAGE}/book_b.svg` },
+  CASH_FLOW_LEASING: { light: `${STORAGE}/coin_n.svg`, dark: `${STORAGE}/coin_b.svg` },
+  MARCHE_SPOT: { light: `${STORAGE}/stars_n.svg`, dark: `${STORAGE}/stars_b.svg` },
+};
 
 const ART_CATEGORY_ORDER = [
   "ART",
@@ -103,6 +105,7 @@ function ChatLayoutInner({
   const { sidebarOpen, setSidebarOpen, isMobile } = useSidebar();
   const [consultationsExpanded, setConsultationsExpanded] = useState(false);
   const [artCategories, setArtCategories] = useState<string[]>([]);
+  const [mainCategories, setMainCategories] = useState<string[]>([]);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
 
   // Extract conversation ID from pathname
@@ -137,6 +140,27 @@ function ChatLayoutInner({
         }
       })
       .catch((err) => console.error("Failed to load art categories:", err));
+  }, []);
+
+  // Fetch main categories dynamically from Supabase when SPECIALITY=main
+  useEffect(() => {
+    if (!IS_MAIN_SPECIALITY) return;
+    fetch("/api/sidebar-categories")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data.categories) && data.categories.length > 0) {
+          const sorted = [...data.categories].sort((a, b) => {
+            const ia = MAIN_CATEGORY_ORDER.indexOf(a);
+            const ib = MAIN_CATEGORY_ORDER.indexOf(b);
+            if (ia === -1 && ib === -1) return 0;
+            if (ia === -1) return 1;
+            if (ib === -1) return -1;
+            return ia - ib;
+          });
+          setMainCategories(sorted);
+        }
+      })
+      .catch((err) => console.error("Failed to load main categories:", err));
   }, []);
 
   // Responsive sidebar behavior is now handled by SidebarContext
@@ -352,25 +376,29 @@ function ChatLayoutInner({
                     </button>
                   );
                 })
-              : MAIN_CATEGORY_DEFS.map(({ label, category, iconLight, iconDark }) => (
-                  <button
-                    key={category}
-                    onClick={() => {
-                      router.push(`/chat?category=${category}`, { scroll: false });
-                      if (isMobile) setSidebarOpen(false);
-                    }}
-                    className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2"
-                    style={{ lineHeight: "15px" }}
-                  >
-                    {iconLight && iconDark && (
-                      <>
-                        <Image src={iconLight} alt={label} width={22} height={22} className="flex-shrink-0 block dark:hidden" />
-                        <Image src={iconDark} alt={label} width={22} height={22} className="flex-shrink-0 hidden dark:block" />
-                      </>
-                    )}
-                    <span>{label}</span>
-                  </button>
-                ))
+              : mainCategories.map((category) => {
+                  const icons = MAIN_CATEGORY_ICONS[category];
+                  const label = getCategoryLabel(category);
+                  return (
+                    <button
+                      key={category}
+                      onClick={() => {
+                        router.push(`/chat?category=${category}`, { scroll: false });
+                        if (isMobile) setSidebarOpen(false);
+                      }}
+                      className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2"
+                      style={{ lineHeight: "15px" }}
+                    >
+                      {icons && (
+                        <>
+                          <Image src={icons.light} alt={label} width={22} height={22} className="flex-shrink-0 block dark:hidden" />
+                          <Image src={icons.dark} alt={label} width={22} height={22} className="flex-shrink-0 hidden dark:block" />
+                        </>
+                      )}
+                      <span>{label}</span>
+                    </button>
+                  );
+                })
             }
           </div>
         </div>

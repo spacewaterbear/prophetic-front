@@ -42,7 +42,8 @@ export async function GET(request: NextRequest) {
                 .from(vignettesTable)
                 .select("*")
                 .eq("is_art", true)
-                .eq("category", category.toUpperCase());
+                .eq("category", category.toUpperCase())
+                .order("plan");
 
             if (error) {
                 console.error("[Vignettes API] Supabase error:", error);
@@ -54,7 +55,29 @@ export async function GET(request: NextRequest) {
             return NextResponse.json(result);
         }
 
-        // Default (SPECIALITY=main): fetch from Prophetic backend
+        // When SPECIALITY=main, query Supabase directly for is_main=true vignettes
+        if (speciality === "main") {
+            const supabase = createAdminClient();
+
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const { data, error } = await (supabase as any)
+                .from(vignettesTable)
+                .select("*")
+                .eq("is_main", true)
+                .eq("category", category.toUpperCase())
+                .order("plan");
+
+            if (error) {
+                console.error("[Vignettes API] Supabase error:", error);
+                return NextResponse.json({ error: error.message }, { status: 500 });
+            }
+
+            const result = { vignettes: data || [] };
+            vignetteCache.set(cacheKey, { data: result, timestamp: Date.now() });
+            return NextResponse.json(result);
+        }
+
+        // Fallback: fetch from Prophetic backend
         if (!process.env.PROPHETIC_API_URL) {
             console.error("[Vignettes API] PROPHETIC_API_URL not configured");
             return NextResponse.json(
