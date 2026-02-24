@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "fileName is required" }, { status: 400 });
   }
 
-  const appEnv = process.env.NEXT_PUBLIC_APP_ENV ?? "dev";
+  const appEnv = process.env.ENVIRONNEMENT ?? "dev";
   const storagePath = `${appEnv}/VIGNETTES/GUIDE/${fileName}`;
 
   try {
