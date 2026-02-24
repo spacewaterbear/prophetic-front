@@ -28,6 +28,7 @@ services:
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
       # Environment-based access control (admin-only for staging/preprod)
       - NEXT_PUBLIC_APP_ENV=${NEXT_PUBLIC_APP_ENV}
+      - ENVIRONNEMENT=${ENVIRONNEMENT}
       - NEXT_PUBLIC_PRODUCTION_URL=${NEXT_PUBLIC_PRODUCTION_URL}
       - DEV_MODE=${DEV_MODE}
       - NEXT_PUBLIC_SPECIALITY=${NEXT_PUBLIC_SPECIALITY}
