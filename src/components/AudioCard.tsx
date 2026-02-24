@@ -100,7 +100,7 @@ export function AudioCard({
     <div className="border border-gray-200/20 bg-[#e6e6e6] dark:bg-gray-800 rounded-[24px] p-3">
       {/* Player area */}
       <div
-        className="relative w-full aspect-[2/1] rounded-[24px] mb-2 overflow-hidden flex flex-col justify-between p-4"
+        className="relative w-full aspect-square sm:aspect-[2/1] rounded-[24px] mb-2 overflow-hidden flex flex-col justify-between p-3 sm:p-4"
         style={{ background: "#d6dcf5" }}
       >
         {/* Top row: play button + label + time */}
@@ -147,7 +147,7 @@ export function AudioCard({
         </div>
 
         {/* Waveform */}
-        <div className="flex items-end gap-[3px] h-[45%] w-full">
+        <div className="flex items-end gap-[2px] sm:gap-[3px] h-[45%] w-full overflow-hidden">
           {waveformBars.map((h, i) => (
             <button
               key={i}
@@ -157,7 +157,7 @@ export function AudioCard({
               style={{
                 height: `${h}%`,
                 background: i < activeBars ? "#374151" : "#9ca3af80",
-                minWidth: 0,
+                minWidth: "2px",
               }}
             />
           ))}
