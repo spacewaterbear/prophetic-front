@@ -138,13 +138,6 @@ function ChatLayoutInner({
       .catch((err) => console.error("Failed to load art categories:", err));
   }, []);
 
-  // When SPECIALITY=art, auto-redirect /chat to the first loaded art category
-  useEffect(() => {
-    if (IS_ART_SPECIALITY && pathname === "/chat" && artCategories.length > 0) {
-      router.replace(`/chat?category=${artCategories[0]}`, { scroll: false });
-    }
-  }, [pathname, router, artCategories]);
-
   // Responsive sidebar behavior is now handled by SidebarContext
 
   const loadConversations = async () => {
