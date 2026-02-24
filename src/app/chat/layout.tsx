@@ -409,7 +409,7 @@ function ChatLayoutInner({
             className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2 text-gray-700 dark:text-gray-300"
           >
             <MessageCircleHeart className="h-4 w-4 flex-shrink-0" />
-            <span>Feedback</span>
+            <span>{t("nav.feedback")}</span>
           </button>
         </div>
 

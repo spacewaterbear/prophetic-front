@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { X, MessageCircleHeart, Send, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useI18n } from "@/contexts/i18n-context";
 
 interface FeedbackModalProps {
   open: boolean;
@@ -11,6 +12,7 @@ interface FeedbackModalProps {
 }
 
 export function FeedbackModal({ open, onClose, userId }: FeedbackModalProps) {
+  const { t } = useI18n();
   const [likes, setLikes] = useState("");
   const [dislikes, setDislikes] = useState("");
   const [paidFeature, setPaidFeature] = useState("");
@@ -74,7 +76,7 @@ export function FeedbackModal({ open, onClose, userId }: FeedbackModalProps) {
           <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center gap-2">
               <MessageCircleHeart className="h-5 w-5 text-gray-700 dark:text-gray-300" />
-              <span className="font-semibold text-gray-900 dark:text-white">Feedback</span>
+              <span className="font-semibold text-gray-900 dark:text-white">{t("nav.feedback")}</span>
             </div>
             <button
               onClick={handleClose}

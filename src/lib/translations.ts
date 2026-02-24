@@ -38,6 +38,7 @@ export const translations = {
             recentChats: "Discussions Récentes",
             signOut: "Se Déconnecter",
             noConversations: "Aucune conversation pour le moment",
+            feedback: "Feed-back",
         },
         // Chat Interface
         chat: {
@@ -131,6 +132,7 @@ export const translations = {
             recentChats: "Recent Chats",
             signOut: "Sign Out",
             noConversations: "No conversations yet",
+            feedback: "Feedback",
         },
         chat: {
             greeting: "Hello, {name}",
@@ -217,6 +219,7 @@ export const translations = {
             recentChats: "Chats Recientes",
             signOut: "Cerrar Sesión",
             noConversations: "Aún no hay conversaciones",
+            feedback: "Feedback",
         },
         chat: {
             greeting: "Hola",
@@ -294,6 +297,7 @@ export const translations = {
             recentChats: "Letzte Chats",
             signOut: "Abmelden",
             noConversations: "Noch keine Gespräche",
+            feedback: "Feedback",
         },
         chat: {
             greeting: "Hallo",
@@ -371,6 +375,7 @@ export const translations = {
             recentChats: "Chat Recenti",
             signOut: "Disconnetti",
             noConversations: "Nessuna conversazione ancora",
+            feedback: "Feedback",
         },
         chat: {
             greeting: "Ciao",
@@ -448,6 +453,7 @@ export const translations = {
             recentChats: "Chats Recentes",
             signOut: "Sair",
             noConversations: "Ainda não há conversas",
+            feedback: "Feedback",
         },
         chat: {
             greeting: "Olá",
@@ -525,6 +531,7 @@ export const translations = {
             recentChats: "Recente Chats",
             signOut: "Uitloggen",
             noConversations: "Nog geen gesprekken",
+            feedback: "Feedback",
         },
         chat: {
             greeting: "Hallo",
@@ -602,6 +609,7 @@ export const translations = {
             recentChats: "最近のチャット",
             signOut: "サインアウト",
             noConversations: "まだ会話がありません",
+            feedback: "Feedback",
         },
         chat: {
             greeting: "こんにちは",
@@ -679,6 +687,7 @@ export const translations = {
             recentChats: "最近的聊天",
             signOut: "登出",
             noConversations: "还没有对话",
+            feedback: "Feedback",
         },
         chat: {
             greeting: "你好",
