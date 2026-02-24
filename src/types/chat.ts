@@ -96,7 +96,7 @@ export interface PendingMarkdownStream {
 }
 
 export const CATEGORY_DISPLAY_NAMES: Record<string, string> = {
-  ART: "Art",
+  ART: "Marché de l'art",
   ART_TRADING_VALUE: "Art Trading Value",
   BIJOUX: "Bijoux",
   CARDS_US: "US Sports Cards",

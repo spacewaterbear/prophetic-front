@@ -21,6 +21,7 @@ export interface VignetteData {
   score?: number;
   trend?: "up" | "down";
   subtitle?: string;
+  plan?: "discover" | "intelligence" | "oracle";
 }
 
 export interface VignetteResponse {
