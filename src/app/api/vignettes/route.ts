@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createAdminClient } from "@/lib/supabase/admin";
 
 // In-memory cache for vignettes data
 const vignetteCache = new Map<string, { data: unknown; timestamp: number }>();
@@ -27,57 +26,6 @@ export async function GET(request: NextRequest) {
             return NextResponse.json(cached.data);
         }
 
-        const nextauthUrl = process.env.NEXTAUTH_URL || "";
-        const vignettesTable =
-            nextauthUrl.startsWith("http://localhost") || nextauthUrl.startsWith("http://staging")
-                ? "vignettes_staging"
-                : "vignettes";
-
-        // When SPECIALITY=art, query Supabase directly for is_art=true vignettes
-        if (speciality === "art") {
-            const supabase = createAdminClient();
-
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const { data, error } = await (supabase as any)
-                .from(vignettesTable)
-                .select("*")
-                .eq("is_art", true)
-                .eq("category", category.toUpperCase())
-                .order("plan");
-
-            if (error) {
-                console.error("[Vignettes API] Supabase error:", error);
-                return NextResponse.json({ error: error.message }, { status: 500 });
-            }
-
-            const result = { vignettes: data || [] };
-            vignetteCache.set(cacheKey, { data: result, timestamp: Date.now() });
-            return NextResponse.json(result);
-        }
-
-        // When SPECIALITY=main, query Supabase directly for is_main=true vignettes
-        if (speciality === "main") {
-            const supabase = createAdminClient();
-
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const { data, error } = await (supabase as any)
-                .from(vignettesTable)
-                .select("*")
-                .eq("is_main", true)
-                .eq("category", category.toUpperCase())
-                .order("plan");
-
-            if (error) {
-                console.error("[Vignettes API] Supabase error:", error);
-                return NextResponse.json({ error: error.message }, { status: 500 });
-            }
-
-            const result = { vignettes: data || [] };
-            vignetteCache.set(cacheKey, { data: result, timestamp: Date.now() });
-            return NextResponse.json(result);
-        }
-
-        // Fallback: fetch from Prophetic backend
         if (!process.env.PROPHETIC_API_URL) {
             console.error("[Vignettes API] PROPHETIC_API_URL not configured");
             return NextResponse.json(
@@ -94,7 +42,8 @@ export async function GET(request: NextRequest) {
             );
         }
 
-        const apiUrl = `${process.env.PROPHETIC_API_URL}/prophetic/vignettes?category=${category}`;
+        const specialityParam = speciality === "art" ? "is_art=true" : "is_main=true";
+        const apiUrl = `${process.env.PROPHETIC_API_URL}/prophetic/vignettes?category=${category}&${specialityParam}`;
         console.log(`[Vignettes API] Fetching from:`, apiUrl);
 
         const response = await fetch(apiUrl, {
