@@ -54,6 +54,7 @@ const MAIN_CATEGORY_DEFS: {
 ];
 
 const ART_CATEGORY_ORDER = [
+  "ART",
   "CLASSIQUES",
   "MODERNES",
   "SURREALISME",

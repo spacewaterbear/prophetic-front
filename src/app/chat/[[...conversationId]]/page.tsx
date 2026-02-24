@@ -323,8 +323,6 @@ export default function ChatPage() {
         onModelChange={handleModelChange}
         isLoading={isLoading}
         conversationId={conversationId}
-        mounted={mounted}
-        isDark={isDark}
       />
 
       {vignetteSlug && !conversationId ? (

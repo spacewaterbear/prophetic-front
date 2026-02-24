@@ -299,8 +299,6 @@ export default function VignettePage() {
         onModelChange={() => {}}
         isLoading={isLoading}
         conversationId={null}
-        mounted={mounted}
-        isDark={isDark}
       />
 
       <div className="relative flex-1 bg-[rgb(249,248,244)] dark:bg-[rgb(1,1,0)] px-6 overflow-y-auto">

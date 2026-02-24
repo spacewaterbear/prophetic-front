@@ -27,13 +27,19 @@ export async function GET(request: NextRequest) {
             return NextResponse.json(cached.data);
         }
 
+        const nextauthUrl = process.env.NEXTAUTH_URL || "";
+        const vignettesTable =
+            nextauthUrl.startsWith("http://localhost") || nextauthUrl.startsWith("http://staging")
+                ? "vignettes_staging"
+                : "vignettes";
+
         // When SPECIALITY=art, query Supabase directly for is_art=true vignettes
         if (speciality === "art") {
             const supabase = createAdminClient();
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const { data, error } = await (supabase as any)
-                .from("vignettes")
+                .from(vignettesTable)
                 .select("*")
                 .eq("is_art", true)
                 .eq("category", category.toUpperCase());

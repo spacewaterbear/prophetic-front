@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ShareButton } from "@/components/ShareButton";
@@ -13,8 +12,6 @@ interface ChatHeaderProps {
   onModelChange: (model: string) => void;
   isLoading: boolean;
   conversationId: number | null;
-  mounted: boolean;
-  isDark: boolean;
 }
 
 export function ChatHeader({
@@ -24,27 +21,24 @@ export function ChatHeader({
   onModelChange,
   isLoading,
   conversationId,
-  mounted,
-  isDark,
 }: ChatHeaderProps) {
   return (
     <header className="relative z-10 bg-[rgba(249,248,244,0.8)] dark:bg-black backdrop-blur-md border-b border-gray-400 dark:border-gray-800 pl-14 pr-6 md:px-6 h-[52px] sm:h-[60px] flex items-center justify-between">
       <div className="flex items-center gap-2 sm:gap-4 min-w-0">
         <div className="flex items-center gap-3 min-w-0">
-          <Link href="/" className="cursor-pointer">
-            <Image
-              src={
-                mounted && isDark
-                  ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo_text_blanc.svg"
-                  : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo_text.svg"
-              }
-              alt="Prophetic Orchestra"
-              width={180}
-              height={45}
-              className={
-                isWelcomeScreen ? "h-7 sm:h-10 w-auto" : "h-6 sm:h-10 w-auto"
-              }
-            />
+          <Link href="/" className="cursor-pointer inline-flex items-start gap-1">
+            <span
+              className={`font-[family-name:var(--font-spectral)] tracking-wide text-gray-900 dark:text-white ${isWelcomeScreen ? "text-lg sm:text-2xl" : "text-base sm:text-2xl"}`}
+            >
+              {process.env.NEXT_PUBLIC_SPECIALITY === "art" ? (
+                <><span className="font-bold">Art</span><span className="font-normal"> Orchestra</span></>
+              ) : (
+                <span className="font-semibold">Prophetic Orchestra</span>
+              )}
+            </span>
+            <sup className="text-[10px] font-[family-name:var(--font-inter)] font-medium leading-none mt-1" style={{ color: "#372ee9" }}>
+              experimental
+            </sup>
           </Link>
         </div>
       </div>

@@ -8,9 +8,15 @@ export async function GET() {
 
     const filterField = speciality === "art" ? "is_art" : "is_main";
 
+    const nextauthUrl = process.env.NEXTAUTH_URL || "";
+    const vignettesTable =
+      nextauthUrl.startsWith("http://localhost") || nextauthUrl.startsWith("http://staging")
+        ? "vignettes_staging"
+        : "vignettes";
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data, error } = await (supabase as any)
-      .from("vignettes")
+      .from(vignettesTable)
       .select("category")
       .eq(filterField, true);
 

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Spectral } from "next/font/google";
+import { Geist, Geist_Mono, Spectral, Inter } from "next/font/google";
 import "./globals.css";
 import ClientBody from "./ClientBody";
 import Script from "next/script";
@@ -19,7 +19,12 @@ const geistMono = Geist_Mono({
 const spectral = Spectral({
   variable: "--font-spectral",
   subsets: ["latin"],
-  weight: ["400"],
+  weight: ["400", "600"],
+});
+
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
@@ -51,7 +56,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${spectral.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${spectral.variable} ${inter.variable}`} suppressHydrationWarning>
       <head>
         <Script
           crossOrigin="anonymous"

@@ -41,6 +41,8 @@ interface ChatInputProps {
   ) => void;
 }
 
+const isArtSpeciality = process.env.NEXT_PUBLIC_SPECIALITY === "art";
+
 export function ChatInput({
   input,
   setInput,
@@ -374,59 +376,65 @@ export function ChatInput({
           />
 
           {/* Flashcard Menu */}
-          <FlashcardMenu
-            type="flashcard"
-            isOpen={isChronoOpen}
-            onToggle={() => {
-              setIsChronoOpen(!isChronoOpen);
-              setIsDropdownOpen(false);
-              setIsFileUploadOpen(false);
-            }}
-            onMouseEnter={chronoHover.onMouseEnter}
-            onMouseLeave={chronoHover.onMouseLeave}
-            selectedCategory={selectedCategory}
-            onCategorySelect={handleFlashcardSelect}
-            mounted={mounted}
-            isDark={isDark}
-          />
+          {!isArtSpeciality && (
+            <FlashcardMenu
+              type="flashcard"
+              isOpen={isChronoOpen}
+              onToggle={() => {
+                setIsChronoOpen(!isChronoOpen);
+                setIsDropdownOpen(false);
+                setIsFileUploadOpen(false);
+              }}
+              onMouseEnter={chronoHover.onMouseEnter}
+              onMouseLeave={chronoHover.onMouseLeave}
+              selectedCategory={selectedCategory}
+              onCategorySelect={handleFlashcardSelect}
+              mounted={mounted}
+              isDark={isDark}
+            />
+          )}
 
           {/* Ranking Menu */}
-          <FlashcardMenu
-            type="ranking"
-            isOpen={isRankingOpen}
-            onToggle={() => {
-              setIsRankingOpen(!isRankingOpen);
-              setIsDropdownOpen(false);
-              setIsFileUploadOpen(false);
-              setIsChronoOpen(false);
-              setIsSettingsOpen(false);
-            }}
-            onMouseEnter={rankingHover.onMouseEnter}
-            onMouseLeave={rankingHover.onMouseLeave}
-            selectedCategory={selectedCategory}
-            onCategorySelect={handleFlashcardSelect}
-            mounted={mounted}
-            isDark={isDark}
-          />
+          {!isArtSpeciality && (
+            <FlashcardMenu
+              type="ranking"
+              isOpen={isRankingOpen}
+              onToggle={() => {
+                setIsRankingOpen(!isRankingOpen);
+                setIsDropdownOpen(false);
+                setIsFileUploadOpen(false);
+                setIsChronoOpen(false);
+                setIsSettingsOpen(false);
+              }}
+              onMouseEnter={rankingHover.onMouseEnter}
+              onMouseLeave={rankingHover.onMouseLeave}
+              selectedCategory={selectedCategory}
+              onCategorySelect={handleFlashcardSelect}
+              mounted={mounted}
+              isDark={isDark}
+            />
+          )}
 
           {/* Portfolio Menu */}
-          <PortfolioMenu
-            selectedAgent={selectedAgent}
-            isOpen={isPortfolioOpen}
-            onToggle={() => {
-              setIsPortfolioOpen(!isPortfolioOpen);
-              setIsDropdownOpen(false);
-              setIsFileUploadOpen(false);
-              setIsChronoOpen(false);
-              setIsRankingOpen(false);
-              setIsSettingsOpen(false);
-            }}
-            onMouseEnter={portfolioHover.onMouseEnter}
-            onMouseLeave={portfolioHover.onMouseLeave}
-            onPortfolioClick={handlePortfolioClick}
-            mounted={mounted}
-            isDark={isDark}
-          />
+          {!isArtSpeciality && (
+            <PortfolioMenu
+              selectedAgent={selectedAgent}
+              isOpen={isPortfolioOpen}
+              onToggle={() => {
+                setIsPortfolioOpen(!isPortfolioOpen);
+                setIsDropdownOpen(false);
+                setIsFileUploadOpen(false);
+                setIsChronoOpen(false);
+                setIsRankingOpen(false);
+                setIsSettingsOpen(false);
+              }}
+              onMouseEnter={portfolioHover.onMouseEnter}
+              onMouseLeave={portfolioHover.onMouseLeave}
+              onPortfolioClick={handlePortfolioClick}
+              mounted={mounted}
+              isDark={isDark}
+            />
+          )}
 
           {/* Settings Menu */}
           <SettingsMenu
