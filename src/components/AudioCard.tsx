@@ -11,37 +11,12 @@ interface AudioCardProps {
   label?: string;
 }
 
-const BAR_COUNT = 35;
 
 const FALLBACK_BARS = [
   18, 28, 22, 40, 35, 55, 45, 60, 50, 70, 65, 80, 72, 58, 42, 68, 75, 85, 90,
   78, 62, 88, 70, 52, 60, 45, 55, 38, 48, 32, 42, 28, 35, 22, 30,
 ];
 
-async function analyzeWaveform(src: string): Promise<number[]> {
-  const res = await fetch(src);
-  const arrayBuffer = await res.arrayBuffer();
-  const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-  const ctx = new AudioCtx();
-  const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
-  ctx.close();
-
-  const channelData = audioBuffer.getChannelData(0);
-  const samplesPerBar = Math.floor(channelData.length / BAR_COUNT);
-
-  const bars = Array.from({ length: BAR_COUNT }, (_, i) => {
-    const start = i * samplesPerBar;
-    const end = start + samplesPerBar;
-    let sum = 0;
-    for (let j = start; j < end; j++) {
-      sum += Math.abs(channelData[j]);
-    }
-    return sum / samplesPerBar;
-  });
-
-  const max = Math.max(...bars);
-  return bars.map((v) => Math.max(8, Math.round((v / max) * 100)));
-}
 
 function formatTime(seconds: number): string {
   if (!isFinite(seconds) || seconds === 0) return "00:00";
@@ -62,8 +37,7 @@ export function AudioCard({
   const [playing, setPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [waveformBars, setWaveformBars] = useState<number[]>(FALLBACK_BARS);
-  const [waveformLoading, setWaveformLoading] = useState(!!src);
+  const waveformBars = FALLBACK_BARS;
   const [resolvedSrc, setResolvedSrc] = useState<string | undefined>(undefined);
 
   useEffect(() => {
@@ -76,11 +50,8 @@ export function AudioCard({
           throw new Error(data.error ?? "No signed URL returned");
         }
         setResolvedSrc(data.signedUrl);
-        setWaveformLoading(true);
-        return analyzeWaveform(data.signedUrl);
       })
-      .then((bars) => { setWaveformBars(bars); setWaveformLoading(false); })
-      .catch((e) => { console.error("[AudioCard] setup failed:", e); setWaveformLoading(false); });
+      .catch((e) => { console.error("[AudioCard] setup failed:", e); });
   }, [src]);
 
   const progress = duration > 0 ? currentTime / duration : 0;
@@ -177,42 +148,19 @@ export function AudioCard({
 
         {/* Waveform */}
         <div className="flex items-end gap-[3px] h-[45%] w-full">
-          {waveformLoading ? (
-            <>
-              <style>{`
-                @keyframes audio-bar {
-                  0%, 100% { height: 20%; }
-                  50% { height: 85%; }
-                }
-              `}</style>
-              {Array.from({ length: BAR_COUNT }).map((_, i) => (
-                <div
-                  key={i}
-                  className="flex-1 rounded-sm"
-                  style={{
-                    background: "#9ca3af80",
-                    minWidth: 0,
-                    animation: "audio-bar 1s ease-in-out infinite",
-                    animationDelay: `${(i / BAR_COUNT) * 1000}ms`,
-                  }}
-                />
-              ))}
-            </>
-          ) : (
-            waveformBars.map((h, i) => (
-              <button
-                key={i}
-                onClick={() => handleBarClick(i)}
-                aria-label={`Seek to position ${i}`}
-                className="flex-1 rounded-sm transition-colors focus:outline-none"
-                style={{
-                  height: `${h}%`,
-                  background: i < activeBars ? "#374151" : "#9ca3af80",
-                  minWidth: 0,
-                }}
-              />
-            ))
-          )}
+          {waveformBars.map((h, i) => (
+            <button
+              key={i}
+              onClick={() => handleBarClick(i)}
+              aria-label={`Seek to position ${i}`}
+              className="flex-1 rounded-sm transition-colors focus:outline-none"
+              style={{
+                height: `${h}%`,
+                background: i < activeBars ? "#374151" : "#9ca3af80",
+                minWidth: 0,
+              }}
+            />
+          ))}
         </div>
 
         {/* Score badge */}
