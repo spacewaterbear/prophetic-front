@@ -22,6 +22,9 @@ export interface VignetteData {
   trend?: "up" | "down";
   subtitle?: string;
   plan?: "discover" | "intelligence" | "oracle";
+  media_type?: "audio" | "image" | "pdf";
+  audio_url?: string;
+  pdf_url?: string;
 }
 
 export interface VignetteResponse {

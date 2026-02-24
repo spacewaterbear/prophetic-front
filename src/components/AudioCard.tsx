@@ -64,13 +64,23 @@ export function AudioCard({
   const [duration, setDuration] = useState(0);
   const [waveformBars, setWaveformBars] = useState<number[]>(FALLBACK_BARS);
   const [waveformLoading, setWaveformLoading] = useState(!!src);
+  const [resolvedSrc, setResolvedSrc] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     if (!src) return;
-    setWaveformLoading(true);
-    analyzeWaveform(src)
+    fetch(`/api/audio-url?fileName=${encodeURIComponent(src)}`)
+      .then((res) => res.json())
+      .then((data: { signedUrl?: string; error?: string; detail?: string; bucket?: string; path?: string }) => {
+        if (!data.signedUrl) {
+          console.error("[AudioCard] signed URL error:", data);
+          throw new Error(data.error ?? "No signed URL returned");
+        }
+        setResolvedSrc(data.signedUrl);
+        setWaveformLoading(true);
+        return analyzeWaveform(data.signedUrl);
+      })
       .then((bars) => { setWaveformBars(bars); setWaveformLoading(false); })
-      .catch((e) => { console.error("[AudioCard] waveform analysis failed:", e); setWaveformLoading(false); });
+      .catch((e) => { console.error("[AudioCard] setup failed:", e); setWaveformLoading(false); });
   }, [src]);
 
   const progress = duration > 0 ? currentTime / duration : 0;
@@ -97,7 +107,7 @@ export function AudioCard({
 
   function toggle() {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || !resolvedSrc) return;
     if (playing) {
       audio.pause();
       setPlaying(false);
@@ -223,8 +233,7 @@ export function AudioCard({
         <p className="text-[14px] font-light italic text-gray-500 dark:text-gray-400 mt-0.5">{subtitle}</p>
       </div>
 
-      {/* Audio element — src passed directly as prop, no imperative manipulation */}
-      <audio ref={audioRef} src={src} preload="metadata" />
+      <audio ref={audioRef} src={resolvedSrc} preload="metadata" />
     </div>
   );
 }
