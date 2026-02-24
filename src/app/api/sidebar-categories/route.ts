@@ -10,7 +10,7 @@ export async function GET() {
 
     const nextauthUrl = process.env.NEXTAUTH_URL || "";
     const vignettesTable =
-      nextauthUrl.startsWith("http://localhost") || nextauthUrl.startsWith("http://staging")
+      nextauthUrl.startsWith("http://localhost") || nextauthUrl.startsWith("https://staging")
         ? "vignettes_staging"
         : "vignettes";
 
