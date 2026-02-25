@@ -477,7 +477,7 @@ export function VignetteDetailView({
                     </Suspense>
                   </div>
                   {finalContent && (
-                    <div className="flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity self-end">
+                    <div className="flex items-center gap-1 self-end">
                       <Button
                         variant="ghost"
                         size="icon"
