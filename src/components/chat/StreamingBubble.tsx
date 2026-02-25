@@ -4,10 +4,11 @@ import { lazy, Suspense } from "react";
 import { AIAvatar } from "./AIAvatar";
 import { TypingIndicator } from "@/components/TypingIndicator";
 import {
-  CATEGORY_DISPLAY_NAMES,
   MarketplaceData,
   RealEstateData,
 } from "@/types/chat";
+import { useI18n } from "@/contexts/i18n-context";
+import { getCategoryDisplayNames } from "@/lib/translations";
 import { VignetteData } from "@/types/vignettes";
 import { ClothesSearchData } from "@/components/ClothesSearchCard";
 
@@ -60,6 +61,8 @@ export function StreamingBubble({
   handleVignetteClick,
   handleBackToCategory,
 }: StreamingBubbleProps) {
+  const { language } = useI18n();
+  const categoryNames = getCategoryDisplayNames(language);
   const hasContent =
     streamingMessage ||
     streamingMarketplaceData ||
@@ -82,7 +85,7 @@ export function StreamingBubble({
               className="text-base"
               categoryName={
                 streamingVignetteCategory
-                  ? CATEGORY_DISPLAY_NAMES[streamingVignetteCategory]
+                  ? categoryNames[streamingVignetteCategory]
                   : undefined
               }
               onCategoryClick={

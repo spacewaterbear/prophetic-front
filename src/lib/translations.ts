@@ -94,6 +94,21 @@ export const translations = {
             edit: "Modifier",
             save: "Enregistrer",
         },
+        categoryNames: {
+            ART: "Marché de l'art",
+            ART_TRADING_VALUE: "Art Trading Value",
+            BIJOUX: "Bijoux Précieux",
+            CARDS_US: "Cartes Sportives",
+            CARS: "Voitures de Collections",
+            CASH_FLOW_LEASING: "Cash-Flow Leasing",
+            IMMO_LUXE: "Immobilier de Prestige",
+            MONTRES_LUXE: "Montres Iconiques",
+            SACS: "Sacs de Luxe",
+            SNEAKERS: "Sneakers",
+            WHISKY: "Whisky Rares",
+            WINE: "Vins Patrimoniaux",
+            MARCHE_SPOT: "Marché Spot",
+        },
     },
     en: {
         registrationPending: {
@@ -181,6 +196,21 @@ export const translations = {
             edit: "Edit",
             save: "Save",
         },
+        categoryNames: {
+            ART: "Art Market",
+            ART_TRADING_VALUE: "Art Trading Value",
+            BIJOUX: "Precious Jewelry",
+            CARDS_US: "Sports Cards",
+            CARS: "Collectible Cars",
+            CASH_FLOW_LEASING: "Cash-Flow Leasing",
+            IMMO_LUXE: "Luxury Real Estate",
+            MONTRES_LUXE: "Iconic Watches",
+            SACS: "Luxury Bags",
+            SNEAKERS: "Sneakers",
+            WHISKY: "Rare Whisky",
+            WINE: "Heritage Wines",
+            MARCHE_SPOT: "Spot Market",
+        },
     },
     es: {
         registrationPending: {
@@ -258,6 +288,21 @@ export const translations = {
             delete: "Eliminar",
             edit: "Editar",
             save: "Guardar",
+        },
+        categoryNames: {
+            ART: "Mercado del Arte",
+            ART_TRADING_VALUE: "Art Trading Value",
+            BIJOUX: "Joyería Preciosa",
+            CARDS_US: "Tarjetas Deportivas",
+            CARS: "Coches de Colección",
+            CASH_FLOW_LEASING: "Cash-Flow Leasing",
+            IMMO_LUXE: "Inmuebles de Lujo",
+            MONTRES_LUXE: "Relojes Icónicos",
+            SACS: "Bolsos de Lujo",
+            SNEAKERS: "Sneakers",
+            WHISKY: "Whisky Raro",
+            WINE: "Vinos Patrimoniales",
+            MARCHE_SPOT: "Mercado Spot",
         },
     },
     de: {
@@ -337,6 +382,21 @@ export const translations = {
             edit: "Bearbeiten",
             save: "Speichern",
         },
+        categoryNames: {
+            ART: "Kunstmarkt",
+            ART_TRADING_VALUE: "Art Trading Value",
+            BIJOUX: "Edler Schmuck",
+            CARDS_US: "Sportkarten",
+            CARS: "Sammlerautos",
+            CASH_FLOW_LEASING: "Cash-Flow Leasing",
+            IMMO_LUXE: "Luxusimmobilien",
+            MONTRES_LUXE: "Ikonische Uhren",
+            SACS: "Luxustaschen",
+            SNEAKERS: "Sneakers",
+            WHISKY: "Seltener Whisky",
+            WINE: "Erbweine",
+            MARCHE_SPOT: "Spotmarkt",
+        },
     },
     it: {
         registrationPending: {
@@ -414,6 +474,21 @@ export const translations = {
             delete: "Elimina",
             edit: "Modifica",
             save: "Salva",
+        },
+        categoryNames: {
+            ART: "Mercato dell'Arte",
+            ART_TRADING_VALUE: "Art Trading Value",
+            BIJOUX: "Gioielli Preziosi",
+            CARDS_US: "Carte Sportive",
+            CARS: "Auto da Collezione",
+            CASH_FLOW_LEASING: "Cash-Flow Leasing",
+            IMMO_LUXE: "Immobili di Lusso",
+            MONTRES_LUXE: "Orologi Iconici",
+            SACS: "Borse di Lusso",
+            SNEAKERS: "Sneakers",
+            WHISKY: "Whisky Rari",
+            WINE: "Vini Patrimoniali",
+            MARCHE_SPOT: "Mercato Spot",
         },
     },
     pt: {
@@ -493,6 +568,21 @@ export const translations = {
             edit: "Editar",
             save: "Salvar",
         },
+        categoryNames: {
+            ART: "Mercado de Arte",
+            ART_TRADING_VALUE: "Art Trading Value",
+            BIJOUX: "Joias Preciosas",
+            CARDS_US: "Cartas Esportivas",
+            CARS: "Carros Colecionáveis",
+            CASH_FLOW_LEASING: "Cash-Flow Leasing",
+            IMMO_LUXE: "Imóveis de Luxo",
+            MONTRES_LUXE: "Relógios Icônicos",
+            SACS: "Bolsas de Luxo",
+            SNEAKERS: "Sneakers",
+            WHISKY: "Whisky Raro",
+            WINE: "Vinhos Patrimoniais",
+            MARCHE_SPOT: "Mercado Spot",
+        },
     },
     nl: {
         registrationPending: {
@@ -570,6 +660,21 @@ export const translations = {
             delete: "Verwijderen",
             edit: "Bewerken",
             save: "Opslaan",
+        },
+        categoryNames: {
+            ART: "Kunstmarkt",
+            ART_TRADING_VALUE: "Art Trading Value",
+            BIJOUX: "Sieraden",
+            CARDS_US: "Sportkaarten",
+            CARS: "Verzamelautos",
+            CASH_FLOW_LEASING: "Cash-Flow Leasing",
+            IMMO_LUXE: "Luxe Vastgoed",
+            MONTRES_LUXE: "Iconische Horloges",
+            SACS: "Luxe Tassen",
+            SNEAKERS: "Sneakers",
+            WHISKY: "Zeldzame Whisky",
+            WINE: "Erfgoedwijnen",
+            MARCHE_SPOT: "Spotmarkt",
         },
     },
     ja: {
@@ -649,6 +754,21 @@ export const translations = {
             edit: "編集",
             save: "保存",
         },
+        categoryNames: {
+            ART: "アート市場",
+            ART_TRADING_VALUE: "Art Trading Value",
+            BIJOUX: "貴重な宝飾品",
+            CARDS_US: "スポーツカード",
+            CARS: "コレクタブルカー",
+            CASH_FLOW_LEASING: "Cash-Flow Leasing",
+            IMMO_LUXE: "高級不動産",
+            MONTRES_LUXE: "象徴的な時計",
+            SACS: "高級バッグ",
+            SNEAKERS: "スニーカー",
+            WHISKY: "希少ウイスキー",
+            WINE: "銘醸ワイン",
+            MARCHE_SPOT: "スポット市場",
+        },
     },
     zh: {
         registrationPending: {
@@ -727,6 +847,21 @@ export const translations = {
             edit: "编辑",
             save: "保存",
         },
+        categoryNames: {
+            ART: "艺术市场",
+            ART_TRADING_VALUE: "Art Trading Value",
+            BIJOUX: "珍贵珠宝",
+            CARDS_US: "体育卡",
+            CARS: "收藏车",
+            CASH_FLOW_LEASING: "Cash-Flow Leasing",
+            IMMO_LUXE: "豪华房地产",
+            MONTRES_LUXE: "标志性腕表",
+            SACS: "奢侈手袋",
+            SNEAKERS: "运动鞋",
+            WHISKY: "稀有威士忌",
+            WINE: "传承葡萄酒",
+            MARCHE_SPOT: "现货市场",
+        },
     },
 } as const;
 
@@ -763,4 +898,8 @@ export function getTranslation(
     }
 
     return typeof value === "string" ? value : key;
+}
+
+export function getCategoryDisplayNames(language: Language): Record<string, string> {
+    return translations[language].categoryNames as Record<string, string>;
 }

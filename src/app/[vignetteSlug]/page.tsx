@@ -9,7 +9,7 @@ import { ChatInput } from "@/components/chat-input";
 import { ChatHeader } from "@/components/chat/ChatHeader";
 import { AIAvatar } from "@/components/chat/AIAvatar";
 import { AgentType, getAvailableAgents } from "@/types/agents";
-import { CATEGORY_DISPLAY_NAMES } from "@/types/chat";
+import { getCategoryDisplayNames } from "@/lib/translations";
 import { DEFAULT_NON_ADMIN_MODEL } from "@/lib/models";
 import Image from "next/image";
 
@@ -30,7 +30,8 @@ export default function VignettePage() {
   const router = useRouter();
   const { theme, resolvedTheme } = useTheme();
   const isDark = theme === "dark" || resolvedTheme === "dark";
-  const { t } = useI18n();
+  const { t, language } = useI18n();
+  const categoryNames = getCategoryDisplayNames(language);
 
   const [mounted, setMounted] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState<AgentType>("discover");
@@ -258,7 +259,7 @@ export default function VignettePage() {
 
   const displayContent = finalContent || streamingMessage;
   const categoryName = vignetteCategory
-    ? CATEGORY_DISPLAY_NAMES[vignetteCategory]
+    ? categoryNames[vignetteCategory]
     : undefined;
 
   if (status === "loading") {

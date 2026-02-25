@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SelectionContextMenu } from "@/components/SelectionContextMenu";
 import { FeedbackModal } from "@/components/FeedbackModal";
-import { CATEGORY_DISPLAY_NAMES } from "@/types/chat";
+import { getCategoryDisplayNames } from "@/lib/translations";
 
 const STORAGE = "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons";
 
@@ -74,9 +74,9 @@ const ART_CATEGORY_ICONS: Record<string, { light: string; dark: string }> = {
   MARCHE_SPOT: { light: `${STORAGE}/stars_n.svg`, dark: `${STORAGE}/stars_b.svg` },
 };
 
-function getCategoryLabel(category: string): string {
+function getCategoryLabel(category: string, categoryNames: Record<string, string>): string {
   return (
-    CATEGORY_DISPLAY_NAMES[category] ??
+    categoryNames[category] ??
     category
       .split("_")
       .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
@@ -100,7 +100,8 @@ function ChatLayoutInner({
   const { data: session } = useSession();
   const router = useRouter();
   const pathname = usePathname();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
+  const categoryNames = getCategoryDisplayNames(language);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const { sidebarOpen, setSidebarOpen, isMobile } = useSidebar();
   const [consultationsExpanded, setConsultationsExpanded] = useState(false);
@@ -355,7 +356,7 @@ function ChatLayoutInner({
             {IS_ART_SPECIALITY
               ? artCategories.map((category) => {
                   const icons = ART_CATEGORY_ICONS[category];
-                  const label = getCategoryLabel(category);
+                  const label = getCategoryLabel(category, categoryNames);
                   return (
                     <button
                       key={category}
@@ -378,7 +379,7 @@ function ChatLayoutInner({
                 })
               : mainCategories.map((category) => {
                   const icons = MAIN_CATEGORY_ICONS[category];
-                  const label = getCategoryLabel(category);
+                  const label = getCategoryLabel(category, categoryNames);
                   return (
                     <button
                       key={category}

@@ -5,7 +5,9 @@ import { Check, Copy, FileDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { AIAvatar } from "./AIAvatar";
-import { Message, CATEGORY_DISPLAY_NAMES } from "@/types/chat";
+import { Message } from "@/types/chat";
+import { useI18n } from "@/contexts/i18n-context";
+import { getCategoryDisplayNames } from "@/lib/translations";
 import { VignetteData } from "@/types/vignettes";
 import {
   convertMarkdownTablesToStyledHtml,
@@ -58,6 +60,8 @@ export const MessageItem = memo(
     onVignetteClick,
     handleBackToCategory,
   }: MessageItemProps) => {
+    const { language } = useI18n();
+    const categoryNames = getCategoryDisplayNames(language);
     const [copied, setCopied] = useState(false);
     const [pdfLoading, setPdfLoading] = useState(false);
 
@@ -316,7 +320,7 @@ export const MessageItem = memo(
                       className="text-base"
                       categoryName={
                         message.vignetteCategory
-                          ? CATEGORY_DISPLAY_NAMES[message.vignetteCategory]
+                          ? categoryNames[message.vignetteCategory]
                           : undefined
                       }
                       onCategoryClick={

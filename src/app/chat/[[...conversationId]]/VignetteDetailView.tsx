@@ -8,7 +8,8 @@ import { AIAvatar } from "@/components/chat/AIAvatar";
 import { Button } from "@/components/ui/button";
 import { ChatInput } from "@/components/chat-input";
 import { AgentType, UserStatus } from "@/types/agents";
-import { CATEGORY_DISPLAY_NAMES } from "@/types/chat";
+import { useI18n } from "@/contexts/i18n-context";
+import { getCategoryDisplayNames } from "@/lib/translations";
 import {
   convertMarkdownTablesToStyledHtml,
   convertAsciiTablesToHtml,
@@ -45,6 +46,8 @@ export function VignetteDetailView({
   userStatus,
 }: VignetteDetailViewProps) {
   const router = useRouter();
+  const { language } = useI18n();
+  const categoryNames = getCategoryDisplayNames(language);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [streamingMessage, setStreamingMessage] = useState("");
@@ -445,7 +448,7 @@ export function VignetteDetailView({
 
   const displayContent = finalContent || streamingMessage;
   const categoryName = vignetteCategory
-    ? CATEGORY_DISPLAY_NAMES[vignetteCategory]
+    ? categoryNames[vignetteCategory]
     : undefined;
 
   return (

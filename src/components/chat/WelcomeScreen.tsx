@@ -6,7 +6,8 @@ import { useI18n } from "@/contexts/i18n-context";
 import { ChatInput } from "@/components/chat-input";
 import { MessageItem } from "./MessageItem";
 import { AIAvatar } from "./AIAvatar";
-import { Message, CATEGORY_DISPLAY_NAMES } from "@/types/chat";
+import { Message } from "@/types/chat";
+import { getCategoryDisplayNames } from "@/lib/translations";
 import { VignetteData } from "@/types/vignettes";
 import { AgentType, UserStatus } from "@/types/agents";
 
@@ -71,7 +72,8 @@ export function WelcomeScreen({
   isDark,
 }: WelcomeScreenProps) {
   const welcomeContainerRef = useRef<HTMLDivElement>(null);
-  const { t } = useI18n();
+  const { t, language } = useI18n();
+  const categoryNames = getCategoryDisplayNames(language);
 
   return (
     <div
@@ -114,7 +116,7 @@ export function WelcomeScreen({
                       className="text-base"
                       categoryName={
                         streamingVignetteCategory
-                          ? CATEGORY_DISPLAY_NAMES[streamingVignetteCategory]
+                          ? categoryNames[streamingVignetteCategory]
                           : undefined
                       }
                       onCategoryClick={
