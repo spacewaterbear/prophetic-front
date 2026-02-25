@@ -12,11 +12,6 @@ interface AudioCardProps {
 }
 
 
-const FALLBACK_BARS = [
-  18, 28, 22, 40, 35, 55, 45, 60, 50, 70, 65, 80, 72, 58, 42, 68, 75, 85, 90,
-  78, 62, 88, 70, 52, 60, 45, 55, 38, 48, 32, 42, 28, 35, 22, 30,
-];
-
 
 function formatTime(seconds: number): string {
   if (!isFinite(seconds) || seconds === 0) return "00:00";
@@ -37,7 +32,6 @@ export function AudioCard({
   const [playing, setPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const waveformBars = FALLBACK_BARS;
   const [resolvedSrc, setResolvedSrc] = useState<string | undefined>(undefined);
 
   useEffect(() => {
@@ -54,8 +48,13 @@ export function AudioCard({
       .catch((e) => { console.error("[AudioCard] setup failed:", e); });
   }, [src]);
 
+  const WAVEFORM_BARS = [
+    18, 28, 22, 40, 35, 55, 45, 60, 50, 70, 65, 80, 72, 58, 42, 68, 75, 85, 90,
+    78, 62, 88, 70, 52, 60, 45, 55, 38, 48, 32, 42, 28, 35, 22, 30,
+  ];
+
   const progress = duration > 0 ? currentTime / duration : 0;
-  const activeBars = Math.round(progress * waveformBars.length);
+  const activeBars = Math.round(progress * WAVEFORM_BARS.length);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -90,12 +89,6 @@ export function AudioCard({
     }
   }
 
-  function handleBarClick(index: number) {
-    const audio = audioRef.current;
-    if (!audio || !duration) return;
-    audio.currentTime = (index / waveformBars.length) * duration;
-  }
-
   return (
     <div className="border border-gray-200/20 bg-[#e6e6e6] dark:bg-gray-800 rounded-[24px] p-3">
       {/* Player area */}
@@ -103,8 +96,50 @@ export function AudioCard({
         className="relative w-full aspect-square rounded-[24px] mb-2 overflow-hidden flex flex-col justify-between p-3"
         style={{ background: "#d6dcf5" }}
       >
-        {/* Top row: play button + label + time */}
-        <div className="flex items-center gap-3">
+        {/* Mobile: centered play button + time below */}
+        <div className="sm:hidden flex flex-col items-center gap-1.5">
+          <button
+            onClick={toggle}
+            aria-label={playing ? "Pause" : "Play"}
+            className="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center shadow-md hover:bg-gray-700 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500"
+          >
+            {playing ? (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
+                <rect x="6" y="4" width="4" height="16" rx="1" />
+                <rect x="14" y="4" width="4" height="16" rx="1" />
+              </svg>
+            ) : (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="white" style={{ marginLeft: 2 }}>
+                <path d="M6 4l14 8-14 8V4z" />
+              </svg>
+            )}
+          </button>
+          <div className="text-center leading-none">
+            <span className="text-gray-700 text-[11px] font-mono font-semibold tabular-nums">
+              {formatTime(currentTime)}
+            </span>
+            <span className="text-gray-500 text-[11px] font-mono tabular-nums">
+              {" / "}{duration > 0 ? formatTime(duration) : "--:--"}
+            </span>
+          </div>
+          <div
+            className="w-full h-[3px] rounded-full bg-gray-400/40 overflow-hidden cursor-pointer"
+            onClick={(e) => {
+              const audio = audioRef.current;
+              if (!audio || !duration) return;
+              const rect = e.currentTarget.getBoundingClientRect();
+              audio.currentTime = ((e.clientX - rect.left) / rect.width) * duration;
+            }}
+          >
+            <div
+              className="h-full rounded-full bg-gray-600 transition-all duration-100"
+              style={{ width: `${progress * 100}%` }}
+            />
+          </div>
+        </div>
+
+        {/* Desktop: original side-by-side play + label + time */}
+        <div className="hidden sm:flex items-center gap-3">
           <button
             onClick={toggle}
             aria-label={playing ? "Pause" : "Play"}
@@ -121,7 +156,6 @@ export function AudioCard({
               </svg>
             )}
           </button>
-
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between gap-1">
               <span className="font-semibold text-gray-800 text-sm truncate">{label}</span>
@@ -146,12 +180,17 @@ export function AudioCard({
           </div>
         </div>
 
-        {/* Waveform */}
-        <div className="flex items-end gap-[2px] h-[45%] w-full overflow-hidden">
-          {waveformBars.map((h, i) => (
+
+        {/* Waveform — desktop only */}
+        <div className="hidden sm:flex items-end gap-[2px] h-[45%] w-full overflow-hidden">
+          {WAVEFORM_BARS.map((h, i) => (
             <button
               key={i}
-              onClick={() => handleBarClick(i)}
+              onClick={() => {
+                const audio = audioRef.current;
+                if (!audio || !duration) return;
+                audio.currentTime = (i / WAVEFORM_BARS.length) * duration;
+              }}
               aria-label={`Seek to position ${i}`}
               className="flex-1 rounded-sm transition-colors focus:outline-none"
               style={{
