@@ -100,7 +100,7 @@ export function AudioCard({
     <div className="border border-gray-200/20 bg-[#e6e6e6] dark:bg-gray-800 rounded-[24px] p-3">
       {/* Player area */}
       <div
-        className="relative w-full aspect-square sm:aspect-[2/1] rounded-[24px] mb-2 overflow-hidden flex flex-col justify-between p-3 sm:p-4"
+        className="relative w-full aspect-square rounded-[24px] mb-2 overflow-hidden flex flex-col justify-between p-3"
         style={{ background: "#d6dcf5" }}
       >
         {/* Top row: play button + label + time */}
@@ -147,7 +147,7 @@ export function AudioCard({
         </div>
 
         {/* Waveform */}
-        <div className="flex items-end gap-[2px] sm:gap-[3px] h-[45%] w-full overflow-hidden">
+        <div className="flex items-end gap-[2px] h-[45%] w-full overflow-hidden">
           {waveformBars.map((h, i) => (
             <button
               key={i}
@@ -176,9 +176,9 @@ export function AudioCard({
       </div>
 
       {/* Text */}
-      <div className="flex flex-col px-1 text-center">
-        <h3 className="text-[16px] font-bold text-gray-900 dark:text-white leading-tight">{title}</h3>
-        <p className="text-[14px] font-light italic text-gray-500 dark:text-gray-400 mt-0.5">{subtitle}</p>
+      <div className="flex flex-col px-1 text-center h-[62px] justify-center">
+        <h3 className="text-[16px] font-bold text-gray-900 dark:text-white leading-tight line-clamp-2">{title}</h3>
+        <p className="text-[14px] font-light italic text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-1">{subtitle}</p>
       </div>
 
       <audio ref={audioRef} src={resolvedSrc} preload="metadata" />

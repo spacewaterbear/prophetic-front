@@ -78,9 +78,9 @@ const PdfCard = ({ item }: { item: VignetteData }) => {
                     </div>
                 )}
             </div>
-            <div className="flex flex-col px-1 text-center">
-                <h3 className="text-[16px] font-bold text-gray-900 dark:text-white leading-tight">{item.brand_name}</h3>
-                <p className="text-[14px] font-light italic text-gray-500 dark:text-gray-400 mt-0.5">{item.subtitle}</p>
+            <div className="flex flex-col px-1 text-center h-[62px] justify-center">
+                <h3 className="text-[16px] font-bold text-gray-900 dark:text-white leading-tight line-clamp-2">{item.brand_name}</h3>
+                <p className="text-[14px] font-light italic text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-1">{item.subtitle}</p>
             </div>
         </div>
     );
@@ -149,11 +149,11 @@ const VignetteItem = ({ item, onVignetteClick }: { item: VignetteData; onVignett
                 </div>
 
                 {/* Text Content */}
-                <div className="flex flex-col px-1 text-center">
-                    <h3 className="text-[16px] font-bold text-gray-900 dark:text-white leading-tight">
+                <div className="flex flex-col px-1 text-center h-[62px] justify-center">
+                    <h3 className="text-[16px] font-bold text-gray-900 dark:text-white leading-tight line-clamp-2">
                         {item.brand_name}
                     </h3>
-                    <p className="text-[14px] font-light italic text-gray-500 dark:text-gray-400 mt-0.5">
+                    <p className="text-[14px] font-light italic text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-1">
                         {item.subtitle}
                     </p>
                 </div>
