@@ -82,7 +82,7 @@ export default function ChatPage() {
     const handleDeepSearch = (e: CustomEvent<{ text?: string }>) => {
       const text = e.detail?.text;
       if (text) {
-        handleSend(`Deep search about: "${text}"`);
+        handleSend(t("contextMenu.deepSearchPrompt").replace("{name}", text));
       }
     };
 
@@ -111,7 +111,7 @@ export default function ChatPage() {
         handleChatButton as EventListener,
       );
     };
-  }, [handleSend]);
+  }, [handleSend, t]);
 
   useEffect(() => {
     setMounted(true);
@@ -122,6 +122,14 @@ export default function ChatPage() {
     ) {
       setSelectedAgent(savedAgent as AgentType);
     }
+
+    // Artist deep-search triggered from the artists directory
+    const pendingArtist = sessionStorage.getItem("pendingDeepSearch");
+    if (pendingArtist) {
+      sessionStorage.removeItem("pendingDeepSearch");
+      handleSend(t("contextMenu.deepSearchPrompt").replace("{name}", pendingArtist));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Fetch username from profiles table

@@ -82,6 +82,7 @@ export const translations = {
         // Context Menu
         contextMenu: {
             deepSearch: "Faire une recherche approfondie",
+            deepSearchPrompt: "Recherche approfondie sur : \"{name}\"",
         },
         // Common
         common: {
@@ -141,6 +142,7 @@ export const translations = {
         },
         contextMenu: {
             deepSearch: "Make a deep search about it",
+            deepSearchPrompt: "Deep search about: \"{name}\"",
         },
         nav: {
             newChat: "New Chat",
@@ -243,6 +245,7 @@ export const translations = {
         },
         contextMenu: {
             deepSearch: "Hacer una búsqueda profunda",
+            deepSearchPrompt: "Búsqueda profunda sobre: \"{name}\"",
         },
         nav: {
             newChat: "Nuevo Chat",
@@ -336,6 +339,7 @@ export const translations = {
         },
         contextMenu: {
             deepSearch: "Eine Tiefensuche durchführen",
+            deepSearchPrompt: "Tiefensuche über: \"{name}\"",
         },
         nav: {
             newChat: "Neuer Chat",
@@ -429,6 +433,7 @@ export const translations = {
         },
         contextMenu: {
             deepSearch: "Effettuare una ricerca approfondita",
+            deepSearchPrompt: "Ricerca approfondita su: \"{name}\"",
         },
         nav: {
             newChat: "Nuova Chat",
@@ -522,6 +527,7 @@ export const translations = {
         },
         contextMenu: {
             deepSearch: "Fazer uma pesquisa aprofundada",
+            deepSearchPrompt: "Pesquisa aprofundada sobre: \"{name}\"",
         },
         nav: {
             newChat: "Novo Chat",
@@ -615,6 +621,7 @@ export const translations = {
         },
         contextMenu: {
             deepSearch: "Een diepgaande zoekopdracht uitvoeren",
+            deepSearchPrompt: "Diepgaande zoekopdracht over: \"{name}\"",
         },
         nav: {
             newChat: "Nieuwe Chat",
@@ -708,6 +715,7 @@ export const translations = {
         },
         contextMenu: {
             deepSearch: "詳細検索を行う",
+            deepSearchPrompt: "\"{name}\"の詳細検索",
         },
         nav: {
             newChat: "新しいチャット",
@@ -801,6 +809,7 @@ export const translations = {
         },
         contextMenu: {
             deepSearch: "进行深度搜索",
+            deepSearchPrompt: "关于\"{name}\"的深度搜索",
         },
         nav: {
             newChat: "新聊天",
