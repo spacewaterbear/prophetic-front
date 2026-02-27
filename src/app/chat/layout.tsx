@@ -34,7 +34,6 @@ const IS_ART_SPECIALITY = process.env.NEXT_PUBLIC_SPECIALITY === "art";
 const IS_MAIN_SPECIALITY = process.env.NEXT_PUBLIC_SPECIALITY === "main" || !process.env.NEXT_PUBLIC_SPECIALITY;
 
 const MAIN_CATEGORY_ORDER = [
-  "ART",
   "WINE",
   "SACS",
   "IMMO_LUXE",
@@ -44,6 +43,7 @@ const MAIN_CATEGORY_ORDER = [
   "WHISKY",
   "BIJOUX",
   "CARDS_US",
+  "ART_CONTEMPORAIN",
   "ART_TRADING_VALUE",
   "CASH_FLOW_LEASING",
   "MARCHE_SPOT",
