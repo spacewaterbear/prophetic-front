@@ -99,7 +99,7 @@ export async function POST(
     const { id } = await params;
     const conversationId = parseInt(id);
     const body = await request.json();
-    const { content, agent_type, attachments, flash_cards, flash_card_question, flash_card_type } = body;
+    const { content, agent_type, attachments, flash_cards, flash_card_question, flash_card_type, uuid_product, product_category } = body;
 
     if (!content) {
       return new Response(JSON.stringify({ error: "Content is required" }), {
@@ -212,7 +212,9 @@ export async function POST(
             tiers_level: tiersLevel, // DISCOVER, INTELLIGENCE, or ORACLE in uppercase
             attachments: attachments || [], // Include file attachments
             flash_cards: flash_cards || undefined, // Include flashcard type if provided
-            flash_card_type: flash_card_type || undefined // Include flashcard type (flash_invest or ranking) if provided
+            flash_card_type: flash_card_type || undefined, // Include flashcard type (flash_invest or ranking) if provided
+            uuid_product: uuid_product || null, // Product UUID from abcdaire table
+            product_category: product_category || null // Product category from abcdaire table
           };
 
           console.log(`[Prophetic API] Request to langchain_agent/query:`, JSON.stringify(requestBody, null, 2));

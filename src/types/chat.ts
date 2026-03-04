@@ -80,6 +80,8 @@ export interface PendingMessage {
   flashCards?: string;
   flashCardType?: "flash_invest" | "ranking" | "portfolio" | "PORTFOLIO";
   scrollToTop?: boolean;
+  uuidProduct?: string;
+  productCategory?: string;
 }
 
 export interface PendingVignetteStream {

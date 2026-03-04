@@ -129,6 +129,19 @@ export default function ChatPage() {
       sessionStorage.removeItem("pendingDeepSearch");
       handleSend(t("contextMenu.deepSearchPrompt").replace("{name}", pendingArtist));
     }
+
+    // Product deep-search triggered from the products directory
+    const pendingProductRaw = sessionStorage.getItem("pendingProductSearch");
+    if (pendingProductRaw) {
+      sessionStorage.removeItem("pendingProductSearch");
+      try {
+        const { id, name, sub_category, category } = JSON.parse(pendingProductRaw) as { id: string; name: string; sub_category?: string | null; category: string };
+        const fullName = [sub_category, name].filter(Boolean).join(" ");
+        handleSend(t("contextMenu.deepSearchPrompt").replace("{name}", fullName), undefined, undefined, true, id, category);
+      } catch {
+        // ignore malformed data
+      }
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

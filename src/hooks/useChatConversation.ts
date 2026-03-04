@@ -330,6 +330,8 @@ export function useChatConversation({
       flashCards?: string,
       flashCardType?: "flash_invest" | "ranking" | "portfolio" | "PORTFOLIO",
       scrollToTop: boolean = true,
+      uuidProduct?: string,
+      productCategory?: string,
     ) => {
       setIsLoading(true);
       setStreamingMessage("");
@@ -366,6 +368,8 @@ export function useChatConversation({
               content: userInput,
               ...(flashCards ? { flash_cards: flashCards } : {}),
               flash_card_type: flashCardType,
+              ...(uuidProduct ? { uuid_product: uuidProduct } : {}),
+              ...(productCategory ? { product_category: productCategory } : {}),
             }),
           },
         );
@@ -543,6 +547,8 @@ export function useChatConversation({
             pendingMessage.flashCards,
             pendingMessage.flashCardType,
             pendingMessage.scrollToTop,
+            pendingMessage.uuidProduct,
+            pendingMessage.productCategory,
           );
         } catch (e) {
           console.error(e);
@@ -724,6 +730,8 @@ export function useChatConversation({
     flashCards?: string,
     flashCardType?: "flash_invest" | "ranking" | "portfolio" | "PORTFOLIO",
     scrollToTop: boolean = true,
+    uuidProduct?: string,
+    productCategory?: string,
   ) => {
     const userInput = messageToSend || input;
     if (!userInput.trim() || isLoading) return;
@@ -736,6 +744,8 @@ export function useChatConversation({
         flashCards,
         flashCardType,
         scrollToTop,
+        uuidProduct,
+        productCategory,
       );
       return;
     }
@@ -777,6 +787,8 @@ export function useChatConversation({
           flashCards,
           flashCardType,
           scrollToTop,
+          uuidProduct,
+          productCategory,
         }),
       );
       refreshConversations();
