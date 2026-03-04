@@ -10,6 +10,8 @@ const SEARCH_LIMIT = 48;
 
 interface ArtistRow {
   artist_name: string;
+  primary_country: string | null;
+  country_iso_code: string | null;
 }
 
 // ── Per-letter section ────────────────────────────────────────────────────────
@@ -27,7 +29,7 @@ function LetterSection({
   isScrollTarget: boolean;
   onScrollReady: (letter: string) => void;
 }) {
-  const [artists, setArtists] = useState<string[]>([]);
+  const [artists, setArtists] = useState<ArtistRow[]>([]);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -45,13 +47,15 @@ function LetterSection({
         );
         if (!res.ok) throw new Error("fetch error");
         const data = await res.json();
-        const names: string[] = (data.artists || []).map(
-          (a: ArtistRow) => a.artist_name
-        );
-        setArtists((prev) => (append ? [...prev, ...names] : names));
+        const rows: ArtistRow[] = (data.artists || []).map((a: ArtistRow) => ({
+          artist_name: a.artist_name,
+          primary_country: a.primary_country ?? null,
+          country_iso_code: a.country_iso_code ?? null,
+        }));
+        setArtists((prev) => (append ? [...prev, ...rows] : rows));
         setHasMore(data.hasMore ?? false);
         setPage(p);
-        if (!append && names.length === 0) setIsEmpty(true);
+        if (!append && rows.length === 0) setIsEmpty(true);
       } catch (err) {
         console.error(`[LetterSection ${letter}]`, err);
       } finally {
@@ -106,14 +110,19 @@ function LetterSection({
         </div>
       ) : isEmpty ? null : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-4 gap-y-1 mb-3 pl-11">
-          {artists.map((name, i) => (
+          {artists.map((artist, i) => (
             <button
-              key={`${name}-${i}`}
-              title={name}
-              onClick={() => onArtistClick(name)}
-              className="text-left text-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:underline underline-offset-2 truncate py-0.5 transition-colors"
+              key={`${artist.artist_name}-${i}`}
+              title={artist.artist_name}
+              onClick={() => onArtistClick(artist.artist_name)}
+              className="text-left text-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:underline underline-offset-2 py-0.5 transition-colors flex items-baseline gap-1.5 min-w-0"
             >
-              {name}
+              <span className="truncate">{artist.artist_name}</span>
+              {artist.primary_country && (
+                <span className="shrink-0 text-[10px] text-gray-400 dark:text-gray-500 font-normal no-underline">
+                  {artist.primary_country}
+                </span>
+              )}
             </button>
           ))}
         </div>
@@ -146,7 +155,7 @@ function SearchResults({
   query: string;
   onArtistClick: (name: string) => void;
 }) {
-  const [artists, setArtists] = useState<string[]>([]);
+  const [artists, setArtists] = useState<ArtistRow[]>([]);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [hasMore, setHasMore] = useState(false);
@@ -165,10 +174,12 @@ function SearchResults({
       const res = await fetch(`/api/artists?${qs}`);
       if (!res.ok) throw new Error("fetch error");
       const data = await res.json();
-      const names: string[] = (data.artists || []).map(
-        (a: ArtistRow) => a.artist_name
-      );
-      setArtists((prev) => (append ? [...prev, ...names] : names));
+      const rows: ArtistRow[] = (data.artists || []).map((a: ArtistRow) => ({
+        artist_name: a.artist_name,
+        primary_country: a.primary_country ?? null,
+        country_iso_code: a.country_iso_code ?? null,
+      }));
+      setArtists((prev) => (append ? [...prev, ...rows] : rows));
       setTotal(data.total ?? 0);
       setHasMore(data.hasMore ?? false);
       setPage(p);
@@ -211,14 +222,19 @@ function SearchResults({
       ) : (
         <>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-4 gap-y-1 mb-6">
-            {artists.map((name, i) => (
+            {artists.map((artist, i) => (
               <button
-                key={`${name}-${i}`}
-                title={name}
-                onClick={() => onArtistClick(name)}
-                className="text-left text-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:underline underline-offset-2 truncate py-0.5 transition-colors"
+                key={`${artist.artist_name}-${i}`}
+                title={artist.artist_name}
+                onClick={() => onArtistClick(artist.artist_name)}
+                className="text-left text-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:underline underline-offset-2 py-0.5 transition-colors flex items-baseline gap-1.5 min-w-0"
               >
-                {name}
+                <span className="truncate">{artist.artist_name}</span>
+                {artist.primary_country && (
+                  <span className="shrink-0 text-[10px] text-gray-400 dark:text-gray-500 font-normal no-underline">
+                    {artist.primary_country}
+                  </span>
+                )}
               </button>
             ))}
           </div>
