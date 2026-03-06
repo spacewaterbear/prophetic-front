@@ -214,7 +214,7 @@ export async function POST(
             flash_cards: flash_cards || undefined, // Include flashcard type if provided
             flash_card_type: flash_card_type || undefined, // Include flashcard type (flash_invest or ranking) if provided
             uuid_product: uuid_product || null, // Product UUID from abcdaire table
-            product_category: product_category || null // Product category from abcdaire table
+            product_category: product_category === "MONTRES_LUXE" ? "MONTRES" : (product_category || null) // Product category from abcdaire table
           };
 
           console.log(`[Prophetic API] Request to langchain_agent/query:`, JSON.stringify(requestBody, null, 2));

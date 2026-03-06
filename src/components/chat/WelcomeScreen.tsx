@@ -2,6 +2,7 @@
 
 import { lazy, Suspense, useRef } from "react";
 import Image from "next/image";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useI18n } from "@/contexts/i18n-context";
 import { ChatInput } from "@/components/chat-input";
 import { MessageItem } from "./MessageItem";
@@ -74,6 +75,63 @@ export function WelcomeScreen({
   const welcomeContainerRef = useRef<HTMLDivElement>(null);
   const { t, language } = useI18n();
   const categoryNames = getCategoryDisplayNames(language);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const currentCategory = searchParams.get("category");
+
+  const categoryNavTabs: Record<string, { label: string; onClick: (() => void) | undefined }[]> = {
+    WINE: [
+      { label: "Stratégie cave", onClick: undefined },
+      { label: "Dynamiques vigne", onClick: undefined },
+      { label: "Domaines viticoles", onClick: () => router.push("/chat/products?category=WINE") },
+    ],
+    SACS: [
+      { label: "Portfolio cuir", onClick: undefined },
+      { label: "Leasing + Exit", onClick: undefined },
+      { label: "Pieces de luxe", onClick: () => router.push("/chat/products?category=SACS") },
+    ],
+    IMMO_LUXE: [
+      { label: "Observatoire foncier", onClick: undefined },
+      { label: "Flux & Capital", onClick: undefined },
+      { label: "Adresses d'exception", onClick: () => router.push("/chat/products?category=IMMO_LUXE") },
+    ],
+    MONTRES_LUXE: [
+      { label: "Portfolio horloger", onClick: undefined },
+      { label: "Côte cadran", onClick: undefined },
+      { label: "Maisons horlogeres", onClick: () => router.push("/chat/products?category=MONTRES_LUXE") },
+    ],
+    CARS: [
+      { label: "Garage patrimonial", onClick: undefined },
+      { label: "Vigie concours", onClick: undefined },
+      { label: "Ecuries légendaires", onClick: () => router.push("/chat/products?category=CARS") },
+    ],
+    SNEAKERS: [
+      { label: "Griffes patrimoine", onClick: undefined },
+      { label: "Pouls créateurs", onClick: undefined },
+      { label: "Modèles iconiques", onClick: () => router.push("/chat/products?category=SNEAKERS") },
+    ],
+    WHISKY: [
+      { label: "Coffre distilleries", onClick: undefined },
+      { label: "Baromètre malts", onClick: undefined },
+      { label: "Distilleries prestigieuses", onClick: () => router.push("/chat/products?category=WHISKY") },
+    ],
+    BIJOUX: [
+      { label: "Écrin patrimonial", onClick: undefined },
+      { label: "Prisme pierres", onClick: undefined },
+      { label: "Maison Joaillieres", onClick: () => router.push("/chat/products?category=BIJOUX") },
+    ],
+    CARDS_US: [
+      { label: "Séries cultes", onClick: undefined },
+      { label: "Prisme tirages", onClick: undefined },
+      { label: "Univers Collectibles", onClick: () => router.push("/chat/products?category=CARDS_US") },
+    ],
+    ART_CONTEMPORAIN: [
+      { label: "Murs patrimoine", onClick: undefined },
+      { label: "Arbitrage oeuvres", onClick: undefined },
+      { label: "Créations d'exception", onClick: () => router.push("/chat/artists") },
+    ],
+  };
+  const navTabs = currentCategory ? categoryNavTabs[currentCategory] : undefined;
 
   return (
     <div
@@ -133,6 +191,23 @@ export function WelcomeScreen({
           </div>
         ) : vignettes.length > 0 ? (
           <div className="w-full relative">
+            {navTabs && (
+              <div className="flex items-center justify-center gap-6 mb-6">
+                {navTabs.map((tab) => (
+                  <button
+                    key={tab.label}
+                    onClick={tab.onClick}
+                    className={`text-sm font-medium transition-colors ${
+                      tab.onClick
+                        ? "text-[#352ee8] hover:text-[#2520c0]"
+                        : "text-gray-400 dark:text-gray-500 cursor-default"
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+            )}
             <Suspense
               fallback={
                 <div className="text-base text-gray-400">

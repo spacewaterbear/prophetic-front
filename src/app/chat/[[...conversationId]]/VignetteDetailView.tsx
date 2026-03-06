@@ -451,8 +451,81 @@ export function VignetteDetailView({
     ? categoryNames[vignetteCategory]
     : undefined;
 
+  const categoryNavTabs: Record<string, { label: string; onClick: (() => void) | undefined }[]> = {
+    WINE: [
+      { label: "Stratégie cave", onClick: undefined },
+      { label: "Dynamiques vigne", onClick: undefined },
+      { label: "Domaines viticoles", onClick: () => router.push("/chat/products?category=WINE") },
+    ],
+    SACS: [
+      { label: "Portfolio cuir", onClick: undefined },
+      { label: "Leasing + Exit", onClick: undefined },
+      { label: "Pieces de luxe", onClick: () => router.push("/chat/products?category=SACS") },
+    ],
+    IMMO_LUXE: [
+      { label: "Observatoire foncier", onClick: undefined },
+      { label: "Flux & Capital", onClick: undefined },
+      { label: "Adresses d'exception", onClick: () => router.push("/chat/products?category=IMMO_LUXE") },
+    ],
+    MONTRES_LUXE: [
+      { label: "Portfolio horloger", onClick: undefined },
+      { label: "Côte cadran", onClick: undefined },
+      { label: "Maisons horlogeres", onClick: () => router.push("/chat/products?category=MONTRES_LUXE") },
+    ],
+    CARS: [
+      { label: "Garage patrimonial", onClick: undefined },
+      { label: "Vigie concours", onClick: undefined },
+      { label: "Ecuries légendaires", onClick: () => router.push("/chat/products?category=CARS") },
+    ],
+    SNEAKERS: [
+      { label: "Griffes patrimoine", onClick: undefined },
+      { label: "Pouls créateurs", onClick: undefined },
+      { label: "Modèles iconiques", onClick: () => router.push("/chat/products?category=SNEAKERS") },
+    ],
+    WHISKY: [
+      { label: "Coffre distilleries", onClick: undefined },
+      { label: "Baromètre malts", onClick: undefined },
+      { label: "Distilleries prestigieuses", onClick: () => router.push("/chat/products?category=WHISKY") },
+    ],
+    BIJOUX: [
+      { label: "Écrin patrimonial", onClick: undefined },
+      { label: "Prisme pierres", onClick: undefined },
+      { label: "Maison Joaillieres", onClick: () => router.push("/chat/products?category=BIJOUX") },
+    ],
+    CARDS_US: [
+      { label: "Séries cultes", onClick: undefined },
+      { label: "Prisme tirages", onClick: undefined },
+      { label: "Univers Collectibles", onClick: () => router.push("/chat/products?category=CARDS_US") },
+    ],
+    ART_CONTEMPORAIN: [
+      { label: "Murs patrimoine", onClick: undefined },
+      { label: "Arbitrage oeuvres", onClick: undefined },
+      { label: "Créations d'exception", onClick: () => router.push("/chat/artists") },
+    ],
+  };
+  const navTabs = vignetteCategory ? categoryNavTabs[vignetteCategory] : undefined;
+
   return (
     <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
+      {/* Category nav tabs */}
+      {navTabs && (
+        <div className="flex-shrink-0 flex items-center justify-center gap-6 px-6 py-3 border-b border-gray-200 dark:border-gray-800">
+          {navTabs.map((tab) => (
+            <button
+              key={tab.label}
+              onClick={tab.onClick}
+              className={`text-sm font-medium pb-0.5 transition-colors ${
+                tab.onClick
+                  ? "text-[#352ee8] hover:text-[#2520c0]"
+                  : "text-gray-400 dark:text-gray-500 cursor-default"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Scrollable content */}
       <div className="flex-1 min-h-0 overflow-y-auto px-6">
         <div className="w-full max-w-4xl flex flex-col items-center py-10 mx-auto">

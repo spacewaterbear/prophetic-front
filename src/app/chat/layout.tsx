@@ -14,7 +14,6 @@ import {
   ChevronRight,
   MessageCircleHeart,
   Palette,
-  Package,
 } from "lucide-react";
 import { useI18n } from "@/contexts/i18n-context";
 import { useSidebar, SidebarProvider } from "@/contexts/sidebar-context";
@@ -354,21 +353,6 @@ function ChatLayoutInner({
               )}
             </div>
 
-            {/* Chercher par produit */}
-            <button
-              onClick={() => {
-                router.push("/chat/products");
-                if (isMobile) setSidebarOpen(false);
-              }}
-              className={`w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2 ${
-                pathname === "/chat/products" || pathname?.startsWith("/chat/products")
-                  ? "bg-gray-600/30 dark:bg-white/10 font-medium"
-                  : ""
-              }`}
-            >
-              <Package className="h-5 w-5 flex-shrink-0" />
-              <span>Chercher par produit</span>
-            </button>
 
             {/* Artists Directory — art speciality only */}
             {IS_ART_SPECIALITY && <button

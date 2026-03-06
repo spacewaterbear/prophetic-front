@@ -265,6 +265,7 @@ function ProductsPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialCategory = searchParams.get("category") || "WINE";
+  const lockedCategory = searchParams.get("category") !== null;
 
   const [category, setCategory] = useState(initialCategory);
   const [categoryOpen, setCategoryOpen] = useState(false);
@@ -352,7 +353,7 @@ function ProductsPageInner() {
 
         <div className="flex items-center gap-3 mb-4 flex-wrap">
           {/* Category selector */}
-          <div ref={dropdownRef} className="relative">
+          {!lockedCategory && <div ref={dropdownRef} className="relative">
             <button
               onClick={() => setCategoryOpen((v) => !v)}
               className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm focus:outline-none hover:border-gray-400 dark:hover:border-gray-600 transition-colors"
@@ -385,7 +386,7 @@ function ProductsPageInner() {
                 })}
               </div>
             )}
-          </div>
+          </div>}
 
           {/* Search */}
           <div className="relative flex-1 max-w-sm">
