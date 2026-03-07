@@ -83,47 +83,47 @@ export function WelcomeScreen({
     WINE: [
       { label: "Stratégie cave", onClick: undefined },
       { label: "Dynamiques vigne", onClick: undefined },
-      { label: "Domaines viticoles", onClick: () => router.push("/chat/products?category=WINE") },
+      { label: "Domaines viticoles", onClick: () => router.push("/chat/products?category=WINE&label=Domaines+viticoles") },
     ],
     SACS: [
       { label: "Portfolio cuir", onClick: undefined },
       { label: "Leasing + Exit", onClick: undefined },
-      { label: "Pieces de luxe", onClick: () => router.push("/chat/products?category=SACS") },
+      { label: "Pieces de luxe", onClick: () => router.push("/chat/products?category=SACS&label=Pieces+de+luxe") },
     ],
     IMMO_LUXE: [
       { label: "Observatoire foncier", onClick: undefined },
       { label: "Flux & Capital", onClick: undefined },
-      { label: "Adresses d'exception", onClick: () => router.push("/chat/products?category=IMMO_LUXE") },
+      { label: "Adresses d'exception", onClick: () => router.push("/chat/products?category=IMMO_LUXE&label=Adresses+d%27exception") },
     ],
     MONTRES_LUXE: [
       { label: "Portfolio horloger", onClick: undefined },
       { label: "Côte cadran", onClick: undefined },
-      { label: "Maisons horlogeres", onClick: () => router.push("/chat/products?category=MONTRES_LUXE") },
+      { label: "Maisons horlogeres", onClick: () => router.push("/chat/products?category=MONTRES_LUXE&label=Maisons+horlogeres") },
     ],
     CARS: [
       { label: "Garage patrimonial", onClick: undefined },
       { label: "Vigie concours", onClick: undefined },
-      { label: "Ecuries légendaires", onClick: () => router.push("/chat/products?category=CARS") },
+      { label: "Ecuries légendaires", onClick: () => router.push("/chat/products?category=CARS&label=Ecuries+l%C3%A9gendaires") },
     ],
     SNEAKERS: [
       { label: "Griffes patrimoine", onClick: undefined },
       { label: "Pouls créateurs", onClick: undefined },
-      { label: "Modèles iconiques", onClick: () => router.push("/chat/products?category=SNEAKERS") },
+      { label: "Modèles iconiques", onClick: () => router.push("/chat/products?category=SNEAKERS&label=Mod%C3%A8les+iconiques") },
     ],
     WHISKY: [
       { label: "Coffre distilleries", onClick: undefined },
       { label: "Baromètre malts", onClick: undefined },
-      { label: "Distilleries prestigieuses", onClick: () => router.push("/chat/products?category=WHISKY") },
+      { label: "Distilleries prestigieuses", onClick: () => router.push("/chat/products?category=WHISKY&label=Distilleries+prestigieuses") },
     ],
     BIJOUX: [
       { label: "Écrin patrimonial", onClick: undefined },
       { label: "Prisme pierres", onClick: undefined },
-      { label: "Maison Joaillieres", onClick: () => router.push("/chat/products?category=BIJOUX") },
+      { label: "Maison Joaillieres", onClick: () => router.push("/chat/products?category=BIJOUX&label=Maison+Joaillieres") },
     ],
     CARDS_US: [
       { label: "Séries cultes", onClick: undefined },
       { label: "Prisme tirages", onClick: undefined },
-      { label: "Univers Collectibles", onClick: () => router.push("/chat/products?category=CARDS_US") },
+      { label: "Univers Collectibles", onClick: () => router.push("/chat/products?category=CARDS_US&label=Univers+Collectibles") },
     ],
     ART_CONTEMPORAIN: [
       { label: "Murs patrimoine", onClick: undefined },

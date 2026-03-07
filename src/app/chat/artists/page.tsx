@@ -314,7 +314,7 @@ export default function ArtistsPage() {
       {/* ── Header ── */}
       <div className="flex-shrink-0 pl-14 pr-6 md:px-6 pt-5 pb-3 border-b border-gray-200 dark:border-gray-800">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-          Artists
+          Créations d&apos;exception
         </h1>
 
         {/* Search */}
