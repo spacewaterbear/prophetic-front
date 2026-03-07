@@ -36,6 +36,7 @@ function LetterSection({
   onItemClick,
   isScrollTarget,
   onScrollReady,
+  onLoaded,
 }: {
   letter: string;
   category: string;
@@ -43,6 +44,7 @@ function LetterSection({
   onItemClick: (item: ProductRow) => void;
   isScrollTarget: boolean;
   onScrollReady: (letter: string) => void;
+  onLoaded: (letter: string, hasItems: boolean) => void;
 }) {
   const [items, setItems] = useState<ProductRow[]>([]);
   const [page, setPage] = useState(0);
@@ -72,8 +74,10 @@ function LetterSection({
         setHasMore(data.hasMore ?? false);
         setPage(p);
         if (!append && rows.length === 0) setIsEmpty(true);
+        if (!append) onLoaded(letter, rows.length > 0);
       } catch (err) {
         console.error(`[LetterSection ${letter}]`, err);
+        if (!append) onLoaded(letter, false);
       } finally {
         setLoading(false);
         setInitiated(true);
@@ -106,6 +110,8 @@ function LetterSection({
     });
     return () => cancelAnimationFrame(r1);
   }, [isScrollTarget, initiated, letter, onScrollReady]);
+
+  if (initiated && isEmpty) return null;
 
   return (
     <section id={`letter-${letter}`} className="scroll-mt-4">
@@ -277,6 +283,13 @@ function ProductsPageInner() {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const [scrollTarget, setScrollTarget] = useState<string | null>(null);
+  const [emptyLetters, setEmptyLetters] = useState<Set<string>>(new Set());
+
+  const handleLetterLoaded = useCallback((letter: string, hasItems: boolean) => {
+    if (!hasItems) {
+      setEmptyLetters((prev) => new Set([...prev, letter]));
+    }
+  }, []);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -334,6 +347,7 @@ function ProductsPageInner() {
     setCategoryOpen(false);
     clearSearch();
     setScrollTarget(null);
+    setEmptyLetters(new Set());
   };
 
   const isSearching = debouncedSearch.length > 0;
@@ -414,7 +428,7 @@ function ProductsPageInner() {
         {/* A–Z jump links */}
         {!isSearching && (
           <div className="flex flex-wrap gap-0.5">
-            {LETTERS.map((l) => (
+            {LETTERS.filter((l) => !emptyLetters.has(l)).map((l) => (
               <button
                 key={l}
                 onClick={() => scrollToLetter(l)}
@@ -446,6 +460,7 @@ function ProductsPageInner() {
               onItemClick={handleItemClick}
               isScrollTarget={scrollTarget === l}
               onScrollReady={handleScrollReady}
+              onLoaded={handleLetterLoaded}
             />
           ))
         )}
