@@ -62,6 +62,7 @@ export function useChatConversation({
   );
   const pendingMessageProcessedRef = useRef(false);
   const lastProcessedConversationIdRef = useRef<number | null>(null);
+  const scrollToTopIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const refreshConversations = useCallback(() => {
     window.dispatchEvent(new Event("refreshConversations"));
@@ -456,6 +457,9 @@ export function useChatConversation({
       if (conversationId !== lastProcessedConversationIdRef.current) {
         pendingMessageProcessedRef.current = false;
         lastProcessedConversationIdRef.current = conversationId;
+        setShouldScrollToTop(false);
+        setShouldAutoScroll(false);
+        setLastUserMessageId(null);
       }
 
       if (pendingMessageProcessedRef.current) {
@@ -678,24 +682,38 @@ export function useChatConversation({
         `[data-message-id="${lastUserMessageId}"]`,
       ) as HTMLElement;
       if (element) {
-        container.scrollTo({
-          top: element.offsetTop,
-          behavior: "smooth",
-        });
-        const interval = setInterval(() => {
-          if (container && element)
-            container.scrollTo({
-              top: element.offsetTop,
-              behavior: "smooth",
-            });
+        if (scrollToTopIntervalRef.current) {
+          clearInterval(scrollToTopIntervalRef.current);
+          scrollToTopIntervalRef.current = null;
+        }
+        const getScrollTarget = () =>
+          container.scrollTop +
+          (element.getBoundingClientRect().top -
+            container.getBoundingClientRect().top);
+        container.scrollTo({ top: getScrollTarget(), behavior: "smooth" });
+        scrollToTopIntervalRef.current = setInterval(() => {
+          container.scrollTo({ top: getScrollTarget(), behavior: "smooth" });
         }, 400);
-        setTimeout(() => {
-          clearInterval(interval);
+        const timeout = setTimeout(() => {
+          if (scrollToTopIntervalRef.current) {
+            clearInterval(scrollToTopIntervalRef.current);
+            scrollToTopIntervalRef.current = null;
+          }
           setShouldScrollToTop(false);
         }, 2000);
+        return () => {
+          clearTimeout(timeout);
+          if (scrollToTopIntervalRef.current) {
+            clearInterval(scrollToTopIntervalRef.current);
+            scrollToTopIntervalRef.current = null;
+          }
+        };
       }
     } else if (shouldAutoScroll && !hasVignetteData && !isScrollDisabled) {
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      const container = messagesContainerRef.current;
+      if (container) {
+        container.scrollTo({ top: container.scrollHeight, behavior: "smooth" });
+      }
     }
   }, [
     messages,
