@@ -60,7 +60,7 @@ export const MessageItem = memo(
     onVignetteClick,
     handleBackToCategory,
   }: MessageItemProps) => {
-    const { language } = useI18n();
+    const { language, t } = useI18n();
     const categoryNames = getCategoryDisplayNames(language);
     const [copied, setCopied] = useState(false);
     const [pdfLoading, setPdfLoading] = useState(false);
@@ -69,11 +69,11 @@ export const MessageItem = memo(
       try {
         await navigator.clipboard.writeText(message.content);
         setCopied(true);
-        toast.success("Copied to clipboard");
+        toast.success(t("chat.copiedToClipboard"));
         setTimeout(() => setCopied(false), 2000);
       } catch (error) {
         console.error("Failed to copy:", error);
-        toast.error("Failed to copy to clipboard");
+        toast.error(t("chat.failedToCopy"));
       }
     };
 

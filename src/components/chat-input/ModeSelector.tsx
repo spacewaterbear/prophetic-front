@@ -4,6 +4,7 @@ import Image from "next/image";
 import { ChevronDown } from "lucide-react";
 import { ModeCard } from "./CategoryButton";
 import { AgentType } from "@/types/agents";
+import { useI18n } from "@/contexts/i18n-context";
 
 interface ModeSelectorProps {
   selectedAgent: AgentType;
@@ -26,6 +27,7 @@ export function ModeSelector({
   onMouseLeave,
   mounted,
 }: ModeSelectorProps) {
+  const { t } = useI18n();
   return (
     <div className="static sm:relative flex-shrink-0">
       <button
@@ -68,8 +70,8 @@ export function ModeSelector({
         <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl sm:rounded-3xl p-5 w-full sm:w-[420px] shadow-2xl border-t border-gray-200 sm:border dark:border-transparent max-h-[80vh] overflow-y-auto">
           <ModeCard
             title="DISCOVER"
-            price="Free"
-            description="Explore assets. Spot trends"
+            price={t("agents.discoverPrice")}
+            description={t("agents.discoverDesc")}
             isActive={selectedAgent === "discover"}
             isAvailable={true}
             onClick={() => onAgentClick("discover")}
@@ -77,7 +79,7 @@ export function ModeSelector({
           <ModeCard
             title="INTELLIGENCE"
             price="$29.99 / month"
-            description="Predict value. Invest smarter"
+            description={t("agents.intelligenceDesc")}
             isActive={selectedAgent === "intelligence"}
             isAvailable={availableAgents.includes("intelligence")}
             onClick={() => onAgentClick("intelligence")}
@@ -85,7 +87,7 @@ export function ModeSelector({
           <ModeCard
             title="ORACLE"
             price="$149.99 / month"
-            description="Lead the market. Multiply wealth"
+            description={t("agents.oracleDesc")}
             isActive={selectedAgent === "oracle"}
             isAvailable={availableAgents.includes("oracle")}
             onClick={() => onAgentClick("oracle")}

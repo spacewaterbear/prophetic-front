@@ -292,7 +292,7 @@ function ChatLayoutInner({
                   height={20}
                   className="flex-shrink-0 hidden dark:block"
                 />
-                <span className="flex-1">Conversations</span>
+                <span className="flex-1">{t("nav.conversations")}</span>
                 {consultationsExpanded ? (
                   <ChevronDown className="h-4 w-4" />
                 ) : (
@@ -367,7 +367,7 @@ function ChatLayoutInner({
               }`}
             >
               <Palette className="h-5 w-5 flex-shrink-0" />
-              <span>Artists</span>
+              <span>{t("nav.artists")}</span>
             </button>}
 
             {/* Investment Categories */}

@@ -81,54 +81,54 @@ export function WelcomeScreen({
 
   const categoryNavTabs: Record<string, { label: string; onClick: (() => void) | undefined }[]> = {
     WINE: [
-      { label: "Stratégie cave", onClick: undefined },
-      { label: "Dynamiques vigne", onClick: undefined },
-      { label: "Domaines viticoles", onClick: () => router.push("/chat/products?category=WINE&label=Domaines+viticoles") },
+      { label: t("categoryNav.WINE_0"), onClick: undefined },
+      { label: t("categoryNav.WINE_1"), onClick: undefined },
+      { label: t("categoryNav.WINE_2"), onClick: () => router.push("/chat/products?category=WINE&label=Domaines+viticoles") },
     ],
     SACS: [
-      { label: "Portfolio cuir", onClick: undefined },
-      { label: "Leasing + Exit", onClick: undefined },
-      { label: "Pieces de luxe", onClick: () => router.push("/chat/products?category=SACS&label=Pieces+de+luxe") },
+      { label: t("categoryNav.SACS_0"), onClick: undefined },
+      { label: t("categoryNav.SACS_1"), onClick: undefined },
+      { label: t("categoryNav.SACS_2"), onClick: () => router.push("/chat/products?category=SACS&label=Pieces+de+luxe") },
     ],
     IMMO_LUXE: [
-      { label: "Observatoire foncier", onClick: undefined },
-      { label: "Flux & Capital", onClick: undefined },
-      { label: "Adresses d'exception", onClick: () => router.push("/chat/products?category=IMMO_LUXE&label=Adresses+d%27exception") },
+      { label: t("categoryNav.IMMO_LUXE_0"), onClick: undefined },
+      { label: t("categoryNav.IMMO_LUXE_1"), onClick: undefined },
+      { label: t("categoryNav.IMMO_LUXE_2"), onClick: () => router.push("/chat/products?category=IMMO_LUXE&label=Adresses+d%27exception") },
     ],
     MONTRES_LUXE: [
-      { label: "Portfolio horloger", onClick: undefined },
-      { label: "Côte cadran", onClick: undefined },
-      { label: "Maisons horlogeres", onClick: () => router.push("/chat/products?category=MONTRES_LUXE&label=Maisons+horlogeres") },
+      { label: t("categoryNav.MONTRES_LUXE_0"), onClick: undefined },
+      { label: t("categoryNav.MONTRES_LUXE_1"), onClick: undefined },
+      { label: t("categoryNav.MONTRES_LUXE_2"), onClick: () => router.push("/chat/products?category=MONTRES_LUXE&label=Maisons+horlogeres") },
     ],
     CARS: [
-      { label: "Garage patrimonial", onClick: undefined },
-      { label: "Vigie concours", onClick: undefined },
-      { label: "Ecuries légendaires", onClick: () => router.push("/chat/products?category=CARS&label=Ecuries+l%C3%A9gendaires") },
+      { label: t("categoryNav.CARS_0"), onClick: undefined },
+      { label: t("categoryNav.CARS_1"), onClick: undefined },
+      { label: t("categoryNav.CARS_2"), onClick: () => router.push("/chat/products?category=CARS&label=Ecuries+l%C3%A9gendaires") },
     ],
     SNEAKERS: [
-      { label: "Griffes patrimoine", onClick: undefined },
-      { label: "Pouls créateurs", onClick: undefined },
-      { label: "Modèles iconiques", onClick: () => router.push("/chat/products?category=SNEAKERS&label=Mod%C3%A8les+iconiques") },
+      { label: t("categoryNav.SNEAKERS_0"), onClick: undefined },
+      { label: t("categoryNav.SNEAKERS_1"), onClick: undefined },
+      { label: t("categoryNav.SNEAKERS_2"), onClick: () => router.push("/chat/products?category=SNEAKERS&label=Mod%C3%A8les+iconiques") },
     ],
     WHISKY: [
-      { label: "Coffre distilleries", onClick: undefined },
-      { label: "Baromètre malts", onClick: undefined },
-      { label: "Distilleries prestigieuses", onClick: () => router.push("/chat/products?category=WHISKY&label=Distilleries+prestigieuses") },
+      { label: t("categoryNav.WHISKY_0"), onClick: undefined },
+      { label: t("categoryNav.WHISKY_1"), onClick: undefined },
+      { label: t("categoryNav.WHISKY_2"), onClick: () => router.push("/chat/products?category=WHISKY&label=Distilleries+prestigieuses") },
     ],
     BIJOUX: [
-      { label: "Écrin patrimonial", onClick: undefined },
-      { label: "Prisme pierres", onClick: undefined },
-      { label: "Maison Joaillieres", onClick: () => router.push("/chat/products?category=BIJOUX&label=Maison+Joaillieres") },
+      { label: t("categoryNav.BIJOUX_0"), onClick: undefined },
+      { label: t("categoryNav.BIJOUX_1"), onClick: undefined },
+      { label: t("categoryNav.BIJOUX_2"), onClick: () => router.push("/chat/products?category=BIJOUX&label=Maison+Joaillieres") },
     ],
     CARDS_US: [
-      { label: "Séries cultes", onClick: undefined },
-      { label: "Prisme tirages", onClick: undefined },
-      { label: "Univers Collectibles", onClick: () => router.push("/chat/products?category=CARDS_US&label=Univers+Collectibles") },
+      { label: t("categoryNav.CARDS_US_0"), onClick: undefined },
+      { label: t("categoryNav.CARDS_US_1"), onClick: undefined },
+      { label: t("categoryNav.CARDS_US_2"), onClick: () => router.push("/chat/products?category=CARDS_US&label=Univers+Collectibles") },
     ],
     ART_CONTEMPORAIN: [
-      { label: "Murs patrimoine", onClick: undefined },
-      { label: "Arbitrage oeuvres", onClick: undefined },
-      { label: "Créations d'exception", onClick: () => router.push("/chat/artists") },
+      { label: t("categoryNav.ART_CONTEMPORAIN_0"), onClick: undefined },
+      { label: t("categoryNav.ART_CONTEMPORAIN_1"), onClick: undefined },
+      { label: t("categoryNav.ART_CONTEMPORAIN_2"), onClick: () => router.push("/chat/artists") },
     ],
   };
   const navTabs = currentCategory ? categoryNavTabs[currentCategory] : undefined;
@@ -166,7 +166,7 @@ export function WelcomeScreen({
                 <div className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-3 sm:px-4 py-4 sm:py-5 rounded-2xl overflow-hidden bg-[rgb(249,248,244)] dark:bg-[rgb(1,1,0)] text-gray-900 dark:text-white">
                   <Suspense
                     fallback={
-                      <div className="text-base text-gray-400">Loading...</div>
+                      <div className="text-base text-gray-400">{t("chat.loading")}</div>
                     }
                   >
                     <Markdown
@@ -211,7 +211,7 @@ export function WelcomeScreen({
             <Suspense
               fallback={
                 <div className="text-base text-gray-400">
-                  Loading vignettes...
+                  {t("chat.loadingVignettes")}
                 </div>
               }
             >

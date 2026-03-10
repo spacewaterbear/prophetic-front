@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { CategoryButton } from "./CategoryButton";
+import { useI18n } from "@/contexts/i18n-context";
 
 interface FlashcardMenuProps {
   type: "flashcard" | "ranking";
@@ -18,23 +19,24 @@ interface FlashcardMenuProps {
   isDark: boolean;
 }
 
-const ALL_CATEGORIES = [
-  { label: "Contemporary Art", isArt: true },
-  { label: "Prestigious Wines", isArt: false },
-  { label: "Luxury Bags", isArt: false },
-  { label: "Precious Jewelry", isArt: false },
-  { label: "Luxury Watch", isArt: false },
-  { label: "Collectible Cars", isArt: false },
-  { label: "Limited Sneakers", isArt: false },
-  { label: "Rare Whiskey", isArt: false },
-  { label: "Real Estate", isArt: false },
-  { label: "US sports cards", isArt: false },
+// key = FLASHCARD_MAPPING lookup key, translationKey = i18n key for display label
+const ALL_CATEGORIES: { key: string; translationKey: string; isArt: boolean }[] = [
+  { key: "Contemporary Art", translationKey: "flashcardCategories.contemporaryArt", isArt: true },
+  { key: "Prestigious Wines", translationKey: "flashcardCategories.prestigiousWines", isArt: false },
+  { key: "Luxury Bags", translationKey: "flashcardCategories.luxuryBags", isArt: false },
+  { key: "Precious Jewelry", translationKey: "flashcardCategories.preciousJewelry", isArt: false },
+  { key: "Luxury Watch", translationKey: "flashcardCategories.luxuryWatch", isArt: false },
+  { key: "Collectible Cars", translationKey: "flashcardCategories.collectibleCars", isArt: false },
+  { key: "Limited Sneakers", translationKey: "flashcardCategories.limitedSneakers", isArt: false },
+  { key: "Rare Whiskey", translationKey: "flashcardCategories.rareWhiskey", isArt: false },
+  { key: "Real Estate", translationKey: "flashcardCategories.realEstate", isArt: false },
+  { key: "US sports cards", translationKey: "flashcardCategories.usSportsCards", isArt: false },
 ];
 
 const isArtSpeciality = process.env.NEXT_PUBLIC_SPECIALITY === "art";
-const CATEGORIES = (
-  isArtSpeciality ? ALL_CATEGORIES.filter((c) => c.isArt) : ALL_CATEGORIES
-).map((c) => c.label);
+const CATEGORIES = isArtSpeciality
+  ? ALL_CATEGORIES.filter((c) => c.isArt)
+  : ALL_CATEGORIES;
 
 export function FlashcardMenu({
   type,
@@ -47,12 +49,13 @@ export function FlashcardMenu({
   mounted,
   isDark,
 }: FlashcardMenuProps) {
+  const { t } = useI18n();
   const isRanking = type === "ranking";
   const flashCardType = isRanking ? "ranking" : "flash_invest";
-  const title = isRanking ? "Compare Rankings" : "Learn Flashcards";
+  const title = isRanking ? t("hub.compareRankings") : t("hub.learnFlashcards");
   const subtitle = isRanking
-    ? "Discover market leaders"
-    : "Diversify your portfolio";
+    ? t("hub.rankingsSubtitle")
+    : t("hub.flashcardsSubtitle");
 
   const iconSrc = isRanking
     ? mounted && isDark
@@ -109,11 +112,11 @@ export function FlashcardMenu({
           <div className="grid grid-cols-2 gap-2 mb-4">
             {CATEGORIES.map((cat) => (
               <CategoryButton
-                key={cat}
-                isActive={selectedCategory === cat}
-                onClick={() => onCategorySelect(cat, flashCardType)}
+                key={cat.key}
+                isActive={selectedCategory === cat.key}
+                onClick={() => onCategorySelect(cat.key, flashCardType)}
               >
-                {cat}
+                {t(cat.translationKey)}
               </CategoryButton>
             ))}
           </div>

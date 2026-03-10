@@ -11,25 +11,23 @@ import {
   ORACLE_PORTFOLIO_TIERS,
 } from "@/lib/constants/portfolio-tiers";
 
-const ALL_MOBILE_CATEGORIES = [
-  { label: "Contemp. Art", isArt: true },
-  { label: "Luxury Bags", isArt: false },
-  { label: "Prestigious Wines", isArt: false },
-  { label: "Precious Jewelry", isArt: false },
-  { label: "Luxury Watch", isArt: false },
-  { label: "Collectible Cars", isArt: false },
-  { label: "Limited Sneakers", isArt: false },
-  { label: "Rare Whiskey", isArt: false },
-  { label: "Real Estate", isArt: false },
-  { label: "US sports cards", isArt: false },
+const ALL_MOBILE_CATEGORIES: { key: string; translationKey: string; isArt: boolean }[] = [
+  { key: "Contemp. Art", translationKey: "flashcardCategories.contempArt", isArt: true },
+  { key: "Luxury Bags", translationKey: "flashcardCategories.luxuryBags", isArt: false },
+  { key: "Prestigious Wines", translationKey: "flashcardCategories.prestigiousWines", isArt: false },
+  { key: "Precious Jewelry", translationKey: "flashcardCategories.preciousJewelry", isArt: false },
+  { key: "Luxury Watch", translationKey: "flashcardCategories.luxuryWatch", isArt: false },
+  { key: "Collectible Cars", translationKey: "flashcardCategories.collectibleCars", isArt: false },
+  { key: "Limited Sneakers", translationKey: "flashcardCategories.limitedSneakers", isArt: false },
+  { key: "Rare Whiskey", translationKey: "flashcardCategories.rareWhiskey", isArt: false },
+  { key: "Real Estate", translationKey: "flashcardCategories.realEstate", isArt: false },
+  { key: "US sports cards", translationKey: "flashcardCategories.usSportsCards", isArt: false },
 ];
 
 const isArtSpeciality = process.env.NEXT_PUBLIC_SPECIALITY === "art";
-const MOBILE_CATEGORIES = (
-  isArtSpeciality
-    ? ALL_MOBILE_CATEGORIES.filter((c) => c.isArt)
-    : ALL_MOBILE_CATEGORIES
-).map((c) => c.label);
+const MOBILE_CATEGORIES = isArtSpeciality
+  ? ALL_MOBILE_CATEGORIES.filter((c) => c.isArt)
+  : ALL_MOBILE_CATEGORIES;
 
 interface MobileBottomSheetsProps {
   // Mode selector
@@ -109,8 +107,8 @@ export function MobileBottomSheets({
         <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl p-5 w-full shadow-2xl border-t border-gray-200 dark:border-transparent max-h-[70vh] overflow-y-auto">
           <ModeCard
             title="DISCOVER"
-            price="Free"
-            description="Explore assets. Spot trends"
+            price={t("agents.discoverPrice")}
+            description={t("agents.discoverDesc")}
             isActive={selectedAgent === "discover"}
             isAvailable={true}
             onClick={() => {
@@ -122,7 +120,7 @@ export function MobileBottomSheets({
           <ModeCard
             title="INTELLIGENCE"
             price="$29.99 / month"
-            description="Predict value. Invest smarter"
+            description={t("agents.intelligenceDesc")}
             isActive={selectedAgent === "intelligence"}
             isAvailable={availableAgents.includes("intelligence")}
             onClick={() => {
@@ -134,7 +132,7 @@ export function MobileBottomSheets({
           <ModeCard
             title="ORACLE"
             price="$149.99 / month"
-            description="Lead the market. Multiply wealth"
+            description={t("agents.oracleDesc")}
             isActive={selectedAgent === "oracle"}
             isAvailable={availableAgents.includes("oracle")}
             onClick={() => {
@@ -162,10 +160,10 @@ export function MobileBottomSheets({
             <>
               <div className="mb-4">
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">
-                  Discovery Hub
+                  {t("hub.title")}
                 </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400 italic">
-                  Learn, compare, track
+                  {t("hub.subtitle")}
                 </p>
               </div>
               <div className="grid grid-cols-1 gap-3">
@@ -185,7 +183,7 @@ export function MobileBottomSheets({
                       height={24}
                       className="w-6 h-6"
                     />
-                    <span>Learn Flashcards</span>
+                    <span>{t("hub.learnFlashcards")}</span>
                   </div>
                 </button>
                 <button
@@ -204,7 +202,7 @@ export function MobileBottomSheets({
                       height={24}
                       className="w-6 h-6"
                     />
-                    <span>Compare Rankings</span>
+                    <span>{t("hub.compareRankings")}</span>
                   </div>
                 </button>
                 <button
@@ -223,7 +221,7 @@ export function MobileBottomSheets({
                       height={24}
                       className="w-6 h-6"
                     />
-                    <span>Track Portfolio</span>
+                    <span>{t("hub.trackPortfolio")}</span>
                   </div>
                 </button>
                 <button
@@ -232,7 +230,7 @@ export function MobileBottomSheets({
                 >
                   <div className="flex items-center gap-3">
                     <Paperclip className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-                    <span>Upload file</span>
+                    <span>{t("hub.uploadFile")}</span>
                   </div>
                   <span className="text-[10px] font-bold uppercase tracking-wider bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-2 py-1 rounded-md">
                     {t("chat.comingSoon")}
@@ -248,27 +246,27 @@ export function MobileBottomSheets({
                   onClick={() => onMobileMenuLevelChange("main")}
                   className="text-sm text-gray-600 dark:text-gray-400 mb-2 hover:text-gray-900 dark:hover:text-white"
                 >
-                  ← Back
+                  {t("hub.back")}
                 </button>
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">
-                  Learn Flashcards
+                  {t("hub.learnFlashcards")}
                 </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400 italic">
-                  Diversify your portfolio
+                  {t("hub.flashcardsSubtitle")}
                 </p>
               </div>
               <div className="grid grid-cols-2 gap-2">
                 {MOBILE_CATEGORIES.map((cat) => (
                   <CategoryButton
-                    key={cat}
-                    isActive={selectedCategory === cat}
+                    key={cat.key}
+                    isActive={selectedCategory === cat.key}
                     onClick={() => {
-                      onFlashcardClick(cat, "flash_invest");
+                      onFlashcardClick(cat.key, "flash_invest");
                       onCloseFileUpload();
                       onMobileMenuLevelChange("main");
                     }}
                   >
-                    {cat}
+                    {t(cat.translationKey)}
                   </CategoryButton>
                 ))}
               </div>
@@ -281,27 +279,27 @@ export function MobileBottomSheets({
                   onClick={() => onMobileMenuLevelChange("main")}
                   className="text-sm text-gray-600 dark:text-gray-400 mb-2 hover:text-gray-900 dark:hover:text-white"
                 >
-                  ← Back
+                  {t("hub.back")}
                 </button>
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">
-                  Compare Rankings
+                  {t("hub.compareRankings")}
                 </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400 italic">
-                  Discover market leaders
+                  {t("hub.rankingsSubtitle")}
                 </p>
               </div>
               <div className="grid grid-cols-2 gap-2">
                 {MOBILE_CATEGORIES.map((cat) => (
                   <CategoryButton
-                    key={cat}
-                    isActive={selectedCategory === cat}
+                    key={cat.key}
+                    isActive={selectedCategory === cat.key}
                     onClick={() => {
-                      onFlashcardClick(cat, "ranking");
+                      onFlashcardClick(cat.key, "ranking");
                       onCloseFileUpload();
                       onMobileMenuLevelChange("main");
                     }}
                   >
-                    {cat}
+                    {t(cat.translationKey)}
                   </CategoryButton>
                 ))}
               </div>
@@ -314,13 +312,13 @@ export function MobileBottomSheets({
                   onClick={() => onMobileMenuLevelChange("main")}
                   className="text-sm text-gray-600 dark:text-gray-400 mb-2 hover:text-gray-900 dark:hover:text-white"
                 >
-                  ← Back
+                  {t("hub.back")}
                 </button>
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">
-                  Portfolio Strategies
+                  {t("hub.portfolioTitle")}
                 </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400 italic">
-                  Select your investment tier
+                  {t("hub.portfolioSubtitle")}
                 </p>
               </div>
               <div className="grid grid-cols-2 gap-2">
@@ -353,20 +351,20 @@ export function MobileBottomSheets({
         <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl p-6 w-full shadow-2xl border-t border-gray-200 dark:border-transparent max-h-[70vh] overflow-y-auto">
           <div className="mb-4">
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">
-              Learn Flashcards
+              {t("hub.learnFlashcards")}
             </h3>
             <p className="text-sm text-gray-600 dark:text-gray-400 italic">
-              Diversify your portfolio
+              {t("hub.flashcardsSubtitle")}
             </p>
           </div>
           <div className="grid grid-cols-2 gap-2 mb-4">
             {MOBILE_CATEGORIES.map((cat) => (
               <CategoryButton
-                key={cat}
-                isActive={selectedCategory === cat}
-                onClick={() => onFlashcardClick(cat, "flash_invest")}
+                key={cat.key}
+                isActive={selectedCategory === cat.key}
+                onClick={() => onFlashcardClick(cat.key, "flash_invest")}
               >
-                {cat}
+                {t(cat.translationKey)}
               </CategoryButton>
             ))}
           </div>
@@ -384,10 +382,10 @@ export function MobileBottomSheets({
         <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl p-6 w-full shadow-2xl border-t border-gray-200 dark:border-transparent">
           <div className="mb-6">
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">
-              Settings
+              {t("settings.title")}
             </h3>
             <p className="text-sm text-gray-600 dark:text-gray-400 italic">
-              Customize your experience
+              {t("settings.subtitle")}
             </p>
           </div>
           <div className="space-y-4">
@@ -412,7 +410,7 @@ export function MobileBottomSheets({
                     </sup>
                   </div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">
-                    Les opportunités avant le marché
+                    {t("settings.marketScoutDesc")}
                   </div>
                 </div>
               </div>
@@ -444,7 +442,7 @@ export function MobileBottomSheets({
                     </sup>
                   </div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">
-                    Le buzz social en signal d&apos;investissement
+                    {t("settings.communityRadarDesc")}
                   </div>
                 </div>
               </div>
@@ -470,20 +468,20 @@ export function MobileBottomSheets({
         <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl p-6 w-full shadow-2xl border-t border-gray-200 dark:border-transparent max-h-[70vh] overflow-y-auto">
           <div className="mb-4">
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">
-              Compare Rankings
+              {t("hub.compareRankings")}
             </h3>
             <p className="text-sm text-gray-600 dark:text-gray-400 italic">
-              Discover market leaders
+              {t("hub.rankingsSubtitle")}
             </p>
           </div>
           <div className="grid grid-cols-2 gap-2 mb-4">
             {MOBILE_CATEGORIES.map((cat) => (
               <CategoryButton
-                key={cat}
-                isActive={selectedCategory === cat}
-                onClick={() => onFlashcardClick(cat, "ranking")}
+                key={cat.key}
+                isActive={selectedCategory === cat.key}
+                onClick={() => onFlashcardClick(cat.key, "ranking")}
               >
-                {cat}
+                {t(cat.translationKey)}
               </CategoryButton>
             ))}
           </div>

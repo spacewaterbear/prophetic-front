@@ -63,10 +63,10 @@ export function SettingsMenu({
         <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-3xl p-5 w-[420px] shadow-2xl border dark:border-transparent">
           <div className="mb-4">
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">
-              Settings
+              {t("settings.title")}
             </h3>
             <p className="text-sm text-gray-600 dark:text-gray-400 italic">
-              Customize your experience
+              {t("settings.subtitle")}
             </p>
           </div>
 
@@ -93,7 +93,7 @@ export function SettingsMenu({
                     </sup>
                   </div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">
-                    Les opportunités avant le marché
+                    {t("settings.marketScoutDesc")}
                   </div>
                 </div>
               </div>
@@ -127,7 +127,7 @@ export function SettingsMenu({
                     </sup>
                   </div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">
-                    Le buzz social en signal d&apos;investissement
+                    {t("settings.communityRadarDesc")}
                   </div>
                 </div>
               </div>

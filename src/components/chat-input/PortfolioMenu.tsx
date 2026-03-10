@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { CategoryButton } from "./CategoryButton";
 import { AgentType } from "@/types/agents";
+import { useI18n } from "@/contexts/i18n-context";
 import {
   DISCOVER_PORTFOLIO_TIERS,
   INTELLIGENCE_PORTFOLIO_TIERS,
@@ -30,6 +31,7 @@ export function PortfolioMenu({
   mounted,
   isDark,
 }: PortfolioMenuProps) {
+  const { t } = useI18n();
   const tiers =
     selectedAgent === "oracle"
       ? ORACLE_PORTFOLIO_TIERS
@@ -77,10 +79,10 @@ export function PortfolioMenu({
         <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-3xl p-5 w-[420px] shadow-2xl border dark:border-transparent">
           <div className="mb-4">
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">
-              Portfolio Strategies
+              {t("hub.portfolioTitle")}
             </h3>
             <p className="text-sm text-gray-600 dark:text-gray-400 italic">
-              Select your investment tier
+              {t("hub.portfolioSubtitle")}
             </p>
           </div>
 
