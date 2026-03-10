@@ -95,6 +95,10 @@ export const translations = {
             edit: "Modifier",
             save: "Enregistrer",
         },
+        cards: {
+            investmentAvailability: "Disponibilité à l'investissement",
+            technicalNote: "Note technique : Des écarts marginaux peuvent subsister entre l'affichage temps réel et la disponibilité notifiée dans l'Insight. Nos équipes travaillent actuellement à l'optimisation de la synchronisation pour une précision absolue",
+        },
         categoryNames: {
             ART: "Marché de l'art",
             ART_TRADING_VALUE: "Art Trading Value",
@@ -198,6 +202,10 @@ export const translations = {
             edit: "Edit",
             save: "Save",
         },
+        cards: {
+            investmentAvailability: "Investment Availability",
+            technicalNote: "Technical note: Minor discrepancies may exist between real-time display and availability notified in the Insight. Our teams are currently working on optimizing synchronization for absolute accuracy",
+        },
         categoryNames: {
             ART: "Art Market",
             ART_TRADING_VALUE: "Art Trading Value",
@@ -291,6 +299,10 @@ export const translations = {
             delete: "Eliminar",
             edit: "Editar",
             save: "Guardar",
+        },
+        cards: {
+            investmentAvailability: "Disponibilidad de inversión",
+            technicalNote: "Nota técnica: Pueden existir discrepancias menores entre la visualización en tiempo real y la disponibilidad notificada en el Insight. Nuestros equipos están trabajando actualmente en la optimización de la sincronización para una precisión absoluta",
         },
         categoryNames: {
             ART: "Mercado del Arte",
@@ -386,6 +398,10 @@ export const translations = {
             edit: "Bearbeiten",
             save: "Speichern",
         },
+        cards: {
+            investmentAvailability: "Investitionsverfügbarkeit",
+            technicalNote: "Technischer Hinweis: Geringfügige Abweichungen können zwischen der Echtzeit-Anzeige und der im Insight gemeldeten Verfügbarkeit bestehen. Unsere Teams arbeiten derzeit an der Optimierung der Synchronisierung für absolute Genauigkeit",
+        },
         categoryNames: {
             ART: "Kunstmarkt",
             ART_TRADING_VALUE: "Art Trading Value",
@@ -479,6 +495,10 @@ export const translations = {
             delete: "Elimina",
             edit: "Modifica",
             save: "Salva",
+        },
+        cards: {
+            investmentAvailability: "Disponibilità all'investimento",
+            technicalNote: "Nota tecnica: Possono esistere lievi discrepanze tra la visualizzazione in tempo reale e la disponibilità notificata nell'Insight. I nostri team stanno attualmente lavorando all'ottimizzazione della sincronizzazione per una precisione assoluta",
         },
         categoryNames: {
             ART: "Mercato dell'Arte",
@@ -574,6 +594,10 @@ export const translations = {
             edit: "Editar",
             save: "Salvar",
         },
+        cards: {
+            investmentAvailability: "Disponibilidade de investimento",
+            technicalNote: "Nota técnica: Podem existir pequenas discrepâncias entre a exibição em tempo real e a disponibilidade notificada no Insight. Nossas equipes estão atualmente trabalhando na otimização da sincronização para precisão absoluta",
+        },
         categoryNames: {
             ART: "Mercado de Arte",
             ART_TRADING_VALUE: "Art Trading Value",
@@ -667,6 +691,10 @@ export const translations = {
             delete: "Verwijderen",
             edit: "Bewerken",
             save: "Opslaan",
+        },
+        cards: {
+            investmentAvailability: "Investeringsbeschikbaarheid",
+            technicalNote: "Technische noot: Er kunnen kleine afwijkingen bestaan tussen de realtime weergave en de beschikbaarheid die in het Insight wordt gemeld. Onze teams werken momenteel aan de optimalisatie van de synchronisatie voor absolute nauwkeurigheid",
         },
         categoryNames: {
             ART: "Kunstmarkt",
@@ -762,6 +790,10 @@ export const translations = {
             edit: "編集",
             save: "保存",
         },
+        cards: {
+            investmentAvailability: "投資可用性",
+            technicalNote: "技術的注記：リアルタイム表示とInsightで通知された可用性の間に若干の差異が生じる場合があります。当社チームは現在、絶対的な精度のための同期の最適化に取り組んでいます",
+        },
         categoryNames: {
             ART: "アート市場",
             ART_TRADING_VALUE: "Art Trading Value",
@@ -855,6 +887,10 @@ export const translations = {
             delete: "删除",
             edit: "编辑",
             save: "保存",
+        },
+        cards: {
+            investmentAvailability: "投资可用性",
+            technicalNote: "技术说明：实时显示与Insight中通知的可用性之间可能存在细微差异。我们的团队目前正在优化同步以实现绝对精准",
         },
         categoryNames: {
             ART: "艺术市场",

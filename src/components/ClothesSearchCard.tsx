@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { ShoppingBag } from "lucide-react";
 import { memo, useState } from "react";
+import { useI18n } from "@/contexts/i18n-context";
 
 interface ClothesListing {
     marketplace: string;
@@ -50,9 +51,10 @@ const formatPrice = (price: number | null): string => {
  * ClothesSearchCard - VignetteGridCard-inspired design
  */
 export const ClothesSearchCard = memo(({ data }: ClothesSearchCardProps) => {
+    const { t } = useI18n();
     const { listings } = data;
-    const title = data.title || "Disponibilité à l'investissement";
-    const subtitle = data.subtitle || "Note technique : Des écarts marginaux peuvent subsister entre l'affichage temps réel et la disponibilité notifiée dans l'Insight. Nos équipes travaillent actuellement à l'optimisation de la synchronisation pour une précision absolue";
+    const title = data.title || t("cards.investmentAvailability");
+    const subtitle = data.subtitle || t("cards.technicalNote");
 
     // Filter valid listings (must have image)
     const validListings = listings.filter(listing => listing.image_url);

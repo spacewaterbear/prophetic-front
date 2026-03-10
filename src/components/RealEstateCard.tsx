@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Home, XCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { memo, useState } from "react";
+import { useI18n } from "@/contexts/i18n-context";
 
 // Interfaces based on the user provided JSON structure
 export interface RealEstateProperty {
@@ -104,9 +105,10 @@ PropertyCard.displayName = "PropertyCard";
  * RealEstateCard - Bold modern luxury real estate component
  */
 export const RealEstateCard = memo(({ data }: RealEstateCardProps) => {
+    const { t } = useI18n();
     const { found, marketplace, location, properties = [], error_message } = data;
-    const title = data.title || "Disponibilité à l'investissement";
-    const subtitle = data.subtitle || "Note technique : Des écarts marginaux peuvent subsister entre l'affichage temps réel et la disponibilité notifiée dans l'Insight. Nos équipes travaillent actuellement à l'optimisation de la synchronisation pour une précision absolue";
+    const title = data.title || t("cards.investmentAvailability");
+    const subtitle = data.subtitle || t("cards.technicalNote");
 
     if (!found || error_message) {
         return null;
