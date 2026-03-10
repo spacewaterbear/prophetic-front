@@ -178,6 +178,19 @@ src/
 - **Biome**: Formatter (spaces, double quotes). A11y rules disabled. noUnusedVariables disabled
 - **JSX runtime**: `same-runtime/dist` (configured in tsconfig.json — do not change)
 
+## Internationalization (i18n) — MANDATORY RULE
+
+**Every user-facing string must use the i18n system. Never hardcode text in any language.**
+
+- All translations live in `src/lib/translations.ts` — 9 languages: `fr`, `en`, `es`, `de`, `it`, `pt`, `nl`, `ja`, `zh`
+- Use `useI18n()` from `@/contexts/i18n-context` in every client component that renders text
+- Access strings via `const { t } = useI18n()` then `t("section.key")`
+- When adding new text: add the key to **all 9 languages** in `translations.ts`, then use `t("key")` in the component
+- The `getTranslation()` function uses dot-notation (e.g. `t("hub.title")`, `t("categoryNav.WINE_0")`)
+- If a string is used as an internal lookup key (e.g. `FLASHCARD_MAPPING`), keep the English key for the handler but display `t("flashcardCategories.xxx")` to the user
+- Brand/product names (`DISCOVER`, `INTELLIGENCE`, `ORACLE`, `Prophetic Orchestra`) and universal prices (`$29.99 / month`) do not need translation
+- Exceptions: `console.error/log`, code comments, `aria-label` on icon-only buttons, URL slugs
+
 ## Conventions
 
 - **Imports**: Use `@/` path alias. Barrel exports for `chat-input/`
