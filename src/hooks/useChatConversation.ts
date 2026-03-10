@@ -414,12 +414,15 @@ export function useChatConversation({
                     /* keep as-is */
                   }
                 }
+                setShouldScrollToTop(false);
                 setStreamingMarketplaceData(marketplacePayload);
               } else if (data.type === "real_estate_data") {
+                setShouldScrollToTop(false);
                 setStreamingRealEstateData(data.data);
               } else if (data.type === "vignette_data") {
                 setStreamingVignetteData(data.data);
               } else if (data.type === "clothes_data" && data.data?.listings) {
+                setShouldScrollToTop(false);
                 setStreamingClothesSearchData(data.data);
               } else if (
                 data.type === "done" ||
