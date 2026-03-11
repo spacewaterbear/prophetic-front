@@ -1,6 +1,6 @@
 "use client";
 
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useState, useEffect, useRef } from "react";
 import { AIAvatar } from "./AIAvatar";
 import { TypingIndicator } from "@/components/TypingIndicator";
 import {
@@ -49,6 +49,63 @@ interface StreamingBubbleProps {
   handleBackToCategory: (category: string) => void;
 }
 
+const CHAR_INTERVAL_MS = 10; // ~100 chars/sec
+
+function useTypewriter(source: string): string {
+  const [displayed, setDisplayed] = useState("");
+  const pendingRef = useRef("");
+  const processedRef = useRef(0);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    if (!source) {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+      // flush any remaining pending chars immediately when stream ends
+      if (pendingRef.current.length > 0) {
+        setDisplayed((prev) => prev + pendingRef.current);
+        pendingRef.current = "";
+      }
+      processedRef.current = 0;
+      return;
+    }
+
+    const newChars = source.slice(processedRef.current);
+    if (newChars.length > 0) {
+      pendingRef.current += newChars;
+      processedRef.current = source.length;
+    }
+
+    if (!timerRef.current) {
+      timerRef.current = setInterval(() => {
+        if (pendingRef.current.length === 0) {
+          clearInterval(timerRef.current!);
+          timerRef.current = null;
+          return;
+        }
+        const char = pendingRef.current[0];
+        pendingRef.current = pendingRef.current.slice(1);
+        setDisplayed((prev) => prev + char);
+      }, CHAR_INTERVAL_MS);
+    }
+  }, [source]);
+
+  // reset displayed text when source resets to empty
+  useEffect(() => {
+    if (!source) setDisplayed("");
+  }, [source]);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, []);
+
+  return displayed;
+}
+
 export function StreamingBubble({
   streamingMessage,
   streamingMarketplaceData,
@@ -62,8 +119,10 @@ export function StreamingBubble({
   handleBackToCategory,
 }: StreamingBubbleProps) {
   const { language } = useI18n();
+  const displayedMessage = useTypewriter(streamingMessage);
   const categoryNames = getCategoryDisplayNames(language);
   const hasContent =
+    displayedMessage ||
     streamingMessage ||
     streamingMarketplaceData ||
     streamingRealEstateData ||
@@ -76,12 +135,12 @@ export function StreamingBubble({
     <div className="flex gap-2 sm:gap-4 items-start justify-start">
       <AIAvatar />
       <div className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-3 sm:px-4 py-4 sm:py-5 rounded-2xl overflow-hidden bg-[rgb(249,248,244)] dark:bg-[rgb(1,1,0)] text-gray-900 dark:text-white">
-        {streamingMessage && (
+        {displayedMessage && (
           <Suspense
             fallback={<div className="text-base text-gray-400">Loading...</div>}
           >
             <Markdown
-              content={streamingMessage}
+              content={displayedMessage}
               className="text-base"
               categoryName={
                 streamingVignetteCategory
@@ -97,7 +156,7 @@ export function StreamingBubble({
           </Suspense>
         )}
         {streamingMarketplaceData && (
-          <div className={streamingMessage ? "mt-4" : ""}>
+          <div className={displayedMessage ? "mt-4" : ""}>
             <Suspense
               fallback={
                 <div className="text-base text-gray-400">
@@ -112,7 +171,7 @@ export function StreamingBubble({
         {streamingRealEstateData && (
           <div
             className={
-              streamingMessage || streamingMarketplaceData ? "mt-4" : ""
+              displayedMessage || streamingMarketplaceData ? "mt-4" : ""
             }
           >
             <Suspense
@@ -129,7 +188,7 @@ export function StreamingBubble({
         {streamingVignetteData && (
           <div
             className={
-              streamingMessage ||
+              displayedMessage ||
               streamingMarketplaceData ||
               streamingRealEstateData
                 ? "mt-4"
@@ -153,7 +212,7 @@ export function StreamingBubble({
         {streamingClothesSearchData && (
           <div
             className={
-              streamingMessage ||
+              displayedMessage ||
               streamingMarketplaceData ||
               streamingRealEstateData ||
               streamingVignetteData
@@ -177,7 +236,7 @@ export function StreamingBubble({
             <TypingIndicator />
           </div>
         )}
-        {isLoading && !streamingMessage && <TypingIndicator />}
+        {isLoading && !displayedMessage && <TypingIndicator />}
       </div>
     </div>
   );
