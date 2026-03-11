@@ -82,6 +82,7 @@ export interface PendingMessage {
   scrollToTop?: boolean;
   uuidProduct?: string;
   productCategory?: string;
+  agentType?: string;
 }
 
 export interface PendingVignetteStream {

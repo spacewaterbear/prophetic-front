@@ -76,7 +76,7 @@ export default function ChatPage() {
     handleFlashcardClick,
     handleScroll,
     clearMessages,
-  } = useChatConversation({ conversationId, selectedModel });
+  } = useChatConversation({ conversationId, selectedModel, selectedAgent });
 
   useEffect(() => {
     const handleDeepSearch = (e: CustomEvent<{ text?: string }>) => {

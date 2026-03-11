@@ -15,6 +15,7 @@ export type { Message };
 interface UseChatConversationProps {
   conversationId: number | null;
   selectedModel?: string;
+  selectedAgent?: string;
 }
 
 const PENDING_MESSAGE_KEY = "pendingChatMessage";
@@ -26,6 +27,7 @@ const PENDING_VIGNETTE_STREAM_KEY = "pendingVignetteStream";
 export function useChatConversation({
   conversationId,
   selectedModel = "anthropic/claude-3.7-sonnet",
+  selectedAgent = "discover",
 }: UseChatConversationProps) {
   const router = useRouter();
   const [messages, setMessages] = useState<Message[]>([]);
@@ -333,6 +335,7 @@ export function useChatConversation({
       scrollToTop: boolean = true,
       uuidProduct?: string,
       productCategory?: string,
+      agentType?: string,
     ) => {
       setIsLoading(true);
       setStreamingMessage("");
@@ -367,6 +370,7 @@ export function useChatConversation({
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               content: userInput,
+              agent_type: agentType || selectedAgent,
               ...(flashCards ? { flash_cards: flashCards } : {}),
               flash_card_type: flashCardType,
               ...(uuidProduct ? { uuid_product: uuidProduct } : {}),
@@ -451,7 +455,7 @@ export function useChatConversation({
         setIsLoading(false);
       }
     },
-    [loadConversation],
+    [loadConversation, selectedAgent],
   );
 
   // Main useEffect for pending logic and initialization
@@ -556,6 +560,7 @@ export function useChatConversation({
             pendingMessage.scrollToTop,
             pendingMessage.uuidProduct,
             pendingMessage.productCategory,
+            pendingMessage.agentType,
           );
         } catch (e) {
           console.error(e);
@@ -767,6 +772,7 @@ export function useChatConversation({
         scrollToTop,
         uuidProduct,
         productCategory,
+        selectedAgent,
       );
       return;
     }
@@ -810,6 +816,7 @@ export function useChatConversation({
           scrollToTop,
           uuidProduct,
           productCategory,
+          agentType: selectedAgent,
         }),
       );
       refreshConversations();
