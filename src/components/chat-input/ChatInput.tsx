@@ -169,7 +169,7 @@ export function ChatInput({
     const textarea = ref.current;
     if (!textarea) return;
 
-    const LINE_HEIGHT = 24;
+    const LINE_HEIGHT = 40;
     const MAX_ROWS = 7;
 
     textarea.style.height = "auto";
@@ -192,7 +192,7 @@ export function ChatInput({
 
   return (
     <div
-      className={`relative flex flex-col w-full max-w-3xl mx-auto bg-white dark:bg-[#1e1f20] rounded-[24px] p-4 shadow-sm transition-colors ${className}`}
+      className={`relative flex flex-col w-full max-w-3xl mx-auto bg-white dark:bg-[#1e1f20] rounded-[24px] p-4 shadow-[0_2px_6px_2px_rgba(0,0,0,0.10),0_1px_2px_0px_rgba(0,0,0,0.08)] dark:shadow-[0_2px_6px_2px_rgba(0,0,0,0.30),0_1px_2px_0px_rgba(0,0,0,0.25)] transition-colors ${className}`}
       onClick={() => ref.current?.focus()}
     >
       {/* Info icon */}
@@ -268,15 +268,15 @@ export function ChatInput({
       />
 
       {/* Textarea */}
-      <div className="w-full mb-2">
+      <div className="w-full mb-2 pr-8">
         <textarea
           ref={ref}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={t("chat.placeholder")}
-          className="w-full bg-transparent border-none focus:outline-none focus:ring-0 resize-none placeholder:text-gray-500 text-gray-900 dark:text-white text-base leading-6 overflow-y-auto max-h-[168px] discret-scrollbar"
-          style={{ minHeight: "24px" }}
+          className="w-full bg-transparent border-none focus:outline-none focus:ring-0 resize-none placeholder:text-gray-500 text-gray-900 dark:text-white text-xs sm:text-base leading-7 overflow-y-auto max-h-[196px] discret-scrollbar"
+          style={{ minHeight: "28px" }}
           rows={1}
         />
       </div>

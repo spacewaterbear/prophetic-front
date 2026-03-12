@@ -32,7 +32,7 @@ export function ModeSelector({
       <button
         type="button"
         data-dashlane-ignore="true"
-        className="flex items-center gap-2 rounded-full px-3 py-2 border border-gray-300 dark:border-gray-600 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer"
+        className="flex items-center gap-2 rounded-full px-3 py-2 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer"
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -61,6 +61,14 @@ export function ModeSelector({
       >
         <div className="bg-white dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl sm:rounded-3xl p-5 w-full sm:w-[420px] shadow-2xl border-t border-gray-200 sm:border dark:border-transparent max-h-[80vh] overflow-y-auto">
           <ModeCard
+            title="FLASH"
+            price={t("agents.flashPrice")}
+            description={t("agents.flashDesc")}
+            isActive={selectedAgent === "flash"}
+            isAvailable={availableAgents.includes("flash")}
+            onClick={() => onAgentClick("flash")}
+          />
+          <ModeCard
             title="DISCOVER"
             price={t("agents.discoverPrice")}
             description={t("agents.discoverDesc")}
@@ -83,14 +91,6 @@ export function ModeSelector({
             isActive={selectedAgent === "oracle"}
             isAvailable={availableAgents.includes("oracle")}
             onClick={() => onAgentClick("oracle")}
-          />
-          <ModeCard
-            title="FLASH"
-            price={t("agents.flashPrice")}
-            description={t("agents.flashDesc")}
-            isActive={selectedAgent === "flash"}
-            isAvailable={availableAgents.includes("flash")}
-            onClick={() => onAgentClick("flash")}
           />
         </div>
       </div>

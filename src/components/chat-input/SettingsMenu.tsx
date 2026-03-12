@@ -25,7 +25,7 @@ export function SettingsMenu({
   return (
     <div className="static sm:relative flex-shrink-0">
       <button
-        className="flex items-center gap-2 text-gray-900 dark:text-gray-100 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-full px-3 py-2 border border-gray-300 dark:border-gray-600 transition-colors"
+        className="flex items-center gap-2 text-gray-900 dark:text-gray-100 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-full px-3 py-2 transition-colors"
         aria-label="Settings"
         onClick={(e) => {
           e.preventDefault();
@@ -46,7 +46,7 @@ export function SettingsMenu({
           height={20}
           className="w-5 h-5"
         />
-        <span className="text-sm font-medium whitespace-nowrap">{t("agents.orchestration")}</span>
+        <span className="hidden sm:inline text-sm font-medium whitespace-nowrap">{t("agents.orchestration")}</span>
       </button>
 
       {/* Desktop Dropdown */}
