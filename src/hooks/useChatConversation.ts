@@ -710,6 +710,8 @@ export function useChatConversation({
             clearInterval(scrollToTopIntervalRef.current!);
             scrollToTopIntervalRef.current = null;
             setShouldScrollToTop(false);
+            disableAutoScrollRef.current = false;
+            setShouldAutoScroll(true);
             return;
           }
           container.scrollTo({ top: t, behavior: "smooth" });
@@ -720,6 +722,8 @@ export function useChatConversation({
             scrollToTopIntervalRef.current = null;
           }
           setShouldScrollToTop(false);
+          disableAutoScrollRef.current = false;
+          setShouldAutoScroll(true);
         }, 2000);
         return () => {
           clearTimeout(timeout);

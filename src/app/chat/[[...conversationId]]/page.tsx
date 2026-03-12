@@ -47,7 +47,15 @@ export default function ChatPage() {
   const [selectedModel, setSelectedModel] = useState<string>(
     DEFAULT_NON_ADMIN_MODEL,
   );
-  const [selectedAgent, setSelectedAgent] = useState<AgentType>("flash");
+  const [selectedAgent, setSelectedAgent] = useState<AgentType>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("selectedAgent");
+      if (saved && ["discover", "flash", "intelligence", "oracle"].includes(saved)) {
+        return saved as AgentType;
+      }
+    }
+    return "flash";
+  });
   const [profileUsername, setProfileUsername] = useState<string | null>(null);
   const { setSidebarOpen } = useSidebar();
 
@@ -115,13 +123,6 @@ export default function ChatPage() {
 
   useEffect(() => {
     setMounted(true);
-    const savedAgent = localStorage.getItem("selectedAgent");
-    if (
-      savedAgent &&
-      ["discover", "flash", "intelligence", "oracle"].includes(savedAgent)
-    ) {
-      setSelectedAgent(savedAgent as AgentType);
-    }
 
     // Artist deep-search triggered from the artists directory
     const pendingArtist = sessionStorage.getItem("pendingDeepSearch");
