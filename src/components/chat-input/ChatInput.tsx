@@ -111,8 +111,7 @@ export function ChatInput({
         category,
         selectedAgent,
       );
-      setIsChronoOpen(false);
-      setIsRankingOpen(false);
+      setIsDropdownOpen(false);
     }
   };
 
@@ -125,7 +124,7 @@ export function ChatInput({
         tierName,
         selectedAgent,
       );
-      setIsPortfolioOpen(false);
+      setIsDropdownOpen(false);
     }
   };
 
