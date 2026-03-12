@@ -31,13 +31,13 @@ export function ChatHeader({
               className={`font-[family-name:var(--font-spectral)] tracking-wide text-gray-900 dark:text-white ${isWelcomeScreen ? "text-lg sm:text-2xl" : "text-base sm:text-2xl"}`}
             >
               {process.env.NEXT_PUBLIC_SPECIALITY === "art" ? (
-                <><span className="font-bold">Art</span><span className="font-normal"> Orchestra</span></>
+                <span className="font-bold">Art Orchestra</span>
               ) : (
                 <span className="font-semibold">Prophetic Orchestra</span>
               )}
             </span>
             <sup className="text-[10px] font-[family-name:var(--font-inter)] font-medium leading-none mt-1" style={{ color: "#372ee9" }}>
-              experimental
+              beta
             </sup>
           </Link>
         </div>

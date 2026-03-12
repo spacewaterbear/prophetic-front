@@ -234,28 +234,28 @@ export function WelcomeScreen({
           </div>
         ) : (
           <>
-            {/* Logo */}
-            <div className="w-[170px] h-[170px] flex items-center justify-center">
-              <Image
-                src={
-                  mounted && isDark
-                    ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/flavicon_new_dark.svg"
-                    : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/flavicon_new.svg"
-                }
-                alt="Prophetic Orchestra"
-                width={300}
-                height={300}
-                className="w-full h-full object-contain"
-              />
+            {/* Logo + Greeting */}
+            <div className="flex items-center gap-4 mb-3 pb-[30px]">
+              <div className="w-[85px] h-[85px] flex items-center justify-center flex-shrink-0">
+                <Image
+                  src={
+                    mounted && isDark
+                      ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/flavicon_new_dark.svg"
+                      : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/flavicon_new.svg"
+                  }
+                  alt="Prophetic Orchestra"
+                  width={300}
+                  height={300}
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <h1 className="text-3xl sm:text-4xl font-medium text-gray-900 dark:text-white">
+                {t("chat.greeting").replace(
+                  "{name}",
+                  profileUsername || userName || "",
+                )}
+              </h1>
             </div>
-
-            {/* Greeting */}
-            <h1 className="text-3xl sm:text-4xl font-medium text-gray-900 dark:text-white mb-3 pb-[30px]">
-              {t("chat.greeting").replace(
-                "{name}",
-                profileUsername || userName || "",
-              )}
-            </h1>
 
             {/* Chat Input */}
             <ChatInput
@@ -271,6 +271,11 @@ export function WelcomeScreen({
             />
           </>
         )}
+      </div>
+      <div className="sticky bottom-0 w-full pb-2 flex justify-center bg-[rgb(249,248,244)] dark:bg-[rgb(1,1,0)]">
+        <p className="text-[10px] text-gray-400 dark:text-gray-600 text-center">
+          {t("chat.disclaimer")}
+        </p>
       </div>
     </div>
   );

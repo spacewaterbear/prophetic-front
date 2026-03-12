@@ -1,10 +1,10 @@
 "use client";
 
 export const CARD_BUTTON_STYLES =
-  "p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] text-gray-900 dark:text-white text-sm font-semibold rounded-2xl hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer border border-gray-400/60 dark:border-gray-600/60";
+  "p-4 bg-white dark:bg-[#1e1f20] text-gray-900 dark:text-white text-sm font-semibold rounded-2xl hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer border border-gray-400/60 dark:border-gray-600/60";
 
 const MODE_CARD_BASE_STYLES =
-  "mb-4 p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-2xl hover:shadow-lg hover:scale-[1.02] transition-all duration-200 border border-gray-400/60 dark:border-gray-600/60";
+  "mb-4 p-4 bg-white dark:bg-[#1e1f20] rounded-2xl hover:shadow-lg hover:scale-[1.02] transition-all duration-200 border border-gray-400/60 dark:border-gray-600/60";
 
 interface CategoryButtonProps {
   children: React.ReactNode;
@@ -22,7 +22,7 @@ export const CategoryButton: React.FC<CategoryButtonProps> = ({
   const activeStyles = isActive ? "ring-2 ring-blue-500" : "";
 
   const buttonStyles = isDisabled
-    ? "p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] text-gray-900 dark:text-white text-sm font-semibold rounded-2xl border border-gray-400/60 dark:border-gray-600/60 opacity-50 cursor-not-allowed"
+    ? "p-4 bg-white dark:bg-[#1e1f20] text-gray-900 dark:text-white text-sm font-semibold rounded-2xl border border-gray-400/60 dark:border-gray-600/60 opacity-50 cursor-not-allowed"
     : `${CARD_BUTTON_STYLES}`;
 
   const handleClick = () => {

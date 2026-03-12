@@ -59,7 +59,7 @@ export function ModeSelector({
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
       >
-        <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl sm:rounded-3xl p-5 w-full sm:w-[420px] shadow-2xl border-t border-gray-200 sm:border dark:border-transparent max-h-[80vh] overflow-y-auto">
+        <div className="bg-white dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl sm:rounded-3xl p-5 w-full sm:w-[420px] shadow-2xl border-t border-gray-200 sm:border dark:border-transparent max-h-[80vh] overflow-y-auto">
           <ModeCard
             title="DISCOVER"
             price={t("agents.discoverPrice")}
@@ -86,7 +86,7 @@ export function ModeSelector({
           />
           <ModeCard
             title="FLASH"
-            price="$9.99 / month"
+            price={t("agents.flashPrice")}
             description={t("agents.flashDesc")}
             isActive={selectedAgent === "flash"}
             isAvailable={availableAgents.includes("flash")}

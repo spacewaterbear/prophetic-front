@@ -61,7 +61,7 @@ export function SettingsMenu({
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
       >
-        <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-3xl p-5 w-[420px] shadow-2xl border dark:border-transparent">
+        <div className="bg-white dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-3xl p-5 w-[420px] shadow-2xl border dark:border-transparent">
           <div className="mb-4">
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">
               {t("settings.title")}
@@ -73,7 +73,7 @@ export function SettingsMenu({
 
           <div className="space-y-4">
             {/* Market Scout Toggle */}
-            <div className="flex items-center justify-between p-4 bg-[#e8dfd5] dark:bg-[#1e1f20] rounded-2xl">
+            <div className="flex items-center justify-between p-4 bg-gray-100 dark:bg-[#1e1f20] rounded-2xl">
               <div className="flex items-center gap-3">
                 <Image
                   src={
@@ -107,7 +107,7 @@ export function SettingsMenu({
             </div>
 
             {/* Community Radar Toggle */}
-            <div className="flex items-center justify-between p-4 bg-[#e8dfd5] dark:bg-[#1e1f20] rounded-2xl">
+            <div className="flex items-center justify-between p-4 bg-gray-100 dark:bg-[#1e1f20] rounded-2xl">
               <div className="flex items-center gap-3">
                 <Image
                   src={

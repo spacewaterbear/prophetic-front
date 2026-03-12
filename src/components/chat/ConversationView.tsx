@@ -10,6 +10,7 @@ import { Message, MarketplaceData, RealEstateData } from "@/types/chat";
 import { VignetteData } from "@/types/vignettes";
 import { ClothesSearchData } from "@/components/ClothesSearchCard";
 import { AgentType, UserStatus } from "@/types/agents";
+import { useI18n } from "@/contexts/i18n-context";
 
 interface ConversationViewProps {
   messages: Message[];
@@ -68,6 +69,7 @@ export function ConversationView({
   selectedAgent,
   onAgentChange,
 }: ConversationViewProps) {
+  const { t } = useI18n();
   return (
     <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
       {/* Messages */}
@@ -136,6 +138,11 @@ export function ConversationView({
           onAgentChange={onAgentChange}
           className="max-w-3xl"
         />
+      </div>
+      <div className="flex-shrink-0 w-full pb-2 bg-[rgb(249,248,244)] dark:bg-black flex justify-center">
+        <p className="text-[10px] text-gray-400 dark:text-gray-600 text-center">
+          {t("chat.disclaimer")}
+        </p>
       </div>
     </div>
   );

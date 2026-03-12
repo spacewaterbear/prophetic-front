@@ -47,7 +47,7 @@ export default function ChatPage() {
   const [selectedModel, setSelectedModel] = useState<string>(
     DEFAULT_NON_ADMIN_MODEL,
   );
-  const [selectedAgent, setSelectedAgent] = useState<AgentType>("discover");
+  const [selectedAgent, setSelectedAgent] = useState<AgentType>("flash");
   const [profileUsername, setProfileUsername] = useState<string | null>(null);
   const { setSidebarOpen } = useSidebar();
 
@@ -118,7 +118,7 @@ export default function ChatPage() {
     const savedAgent = localStorage.getItem("selectedAgent");
     if (
       savedAgent &&
-      ["discover", "intelligence", "oracle"].includes(savedAgent)
+      ["discover", "flash", "intelligence", "oracle"].includes(savedAgent)
     ) {
       setSelectedAgent(savedAgent as AgentType);
     }
@@ -190,8 +190,8 @@ export default function ChatPage() {
       const userStatus = (session.user as { status?: string })?.status;
       const available = getAvailableAgents(userStatus);
       if (!available.includes(selectedAgent)) {
-        setSelectedAgent("discover");
-        localStorage.setItem("selectedAgent", "discover");
+        setSelectedAgent("flash");
+        localStorage.setItem("selectedAgent", "flash");
       }
     }
   }, [session, selectedAgent]);

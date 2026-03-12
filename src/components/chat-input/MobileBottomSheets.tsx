@@ -133,7 +133,7 @@ export function MobileBottomSheets({
           />
           <ModeCard
             title="FLASH"
-            price="$9.99 / month"
+            price={t("agents.flashPrice")}
             description={t("agents.flashDesc")}
             isActive={selectedAgent === "flash"}
             isAvailable={availableAgents.includes("flash")}

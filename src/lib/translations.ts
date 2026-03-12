@@ -56,6 +56,7 @@ export const translations = {
             loadingVignettes: "Chargement des vignettes...",
             copiedToClipboard: "Copié dans le presse-papiers",
             failedToCopy: "Échec de la copie",
+            disclaimer: "Contenus informatifs, non constitutifs d'un conseil en investissement.",
         },
         // Login Page
         login: {
@@ -102,6 +103,7 @@ export const translations = {
         },
         agents: {
             discoverPrice: "Gratuit",
+            flashPrice: "Gratuit",
             discoverDesc: "Explorez les actifs. Repérez les tendances",
             intelligenceDesc: "Prédisez la valeur. Investissez mieux",
             oracleDesc: "Pilotez le marché. Multipliez votre patrimoine",
@@ -247,6 +249,7 @@ export const translations = {
             loadingVignettes: "Loading vignettes...",
             copiedToClipboard: "Copied to clipboard",
             failedToCopy: "Failed to copy to clipboard",
+            disclaimer: "Informational content, not constituting investment advice.",
         },
         login: {
             welcome: "Welcome",
@@ -286,6 +289,7 @@ export const translations = {
         },
         agents: {
             discoverPrice: "Free",
+            flashPrice: "Free",
             discoverDesc: "Explore assets. Spot trends",
             intelligenceDesc: "Predict value. Invest smarter",
             oracleDesc: "Lead the market. Multiply wealth",
@@ -430,6 +434,7 @@ export const translations = {
             loadingVignettes: "Cargando viñetas...",
             copiedToClipboard: "Copiado al portapapeles",
             failedToCopy: "Error al copiar",
+            disclaimer: "Contenido informativo, no constitutivo de asesoramiento de inversión.",
         },
         login: {
             welcome: "Bienvenido",
@@ -461,6 +466,7 @@ export const translations = {
         },
         agents: {
             discoverPrice: "Gratis",
+            flashPrice: "Gratis",
             discoverDesc: "Explora activos. Detecta tendencias",
             intelligenceDesc: "Predice el valor. Invierte mejor",
             oracleDesc: "Lidera el mercado. Multiplica tu patrimonio",
@@ -605,6 +611,7 @@ export const translations = {
             loadingVignettes: "Vignetten werden geladen...",
             copiedToClipboard: "In die Zwischenablage kopiert",
             failedToCopy: "Kopieren fehlgeschlagen",
+            disclaimer: "Informative Inhalte, keine Anlageberatung.",
         },
         login: {
             welcome: "Willkommen",
@@ -636,6 +643,7 @@ export const translations = {
         },
         agents: {
             discoverPrice: "Kostenlos",
+            flashPrice: "Kostenlos",
             discoverDesc: "Erkunden Sie Vermögenswerte. Trends erkennen",
             intelligenceDesc: "Wert vorhersagen. Klüger investieren",
             oracleDesc: "Den Markt führen. Vermögen multiplizieren",
@@ -780,6 +788,7 @@ export const translations = {
             loadingVignettes: "Caricamento vignette...",
             copiedToClipboard: "Copiato negli appunti",
             failedToCopy: "Impossibile copiare",
+            disclaimer: "Contenuto informativo, non costituente consulenza in materia di investimenti.",
         },
         login: {
             welcome: "Benvenuto",
@@ -811,6 +820,7 @@ export const translations = {
         },
         agents: {
             discoverPrice: "Gratuito",
+            flashPrice: "Gratuito",
             discoverDesc: "Esplora gli asset. Individua le tendenze",
             intelligenceDesc: "Prevedi il valore. Investi meglio",
             oracleDesc: "Guida il mercato. Moltiplica il patrimonio",
@@ -955,6 +965,7 @@ export const translations = {
             loadingVignettes: "Carregando vinhetas...",
             copiedToClipboard: "Copiado para a área de transferência",
             failedToCopy: "Falha ao copiar",
+            disclaimer: "Conteúdo informativo, não constituindo aconselhamento de investimento.",
         },
         login: {
             welcome: "Bem-vindo",
@@ -986,6 +997,7 @@ export const translations = {
         },
         agents: {
             discoverPrice: "Grátis",
+            flashPrice: "Grátis",
             discoverDesc: "Explore ativos. Identifique tendências",
             intelligenceDesc: "Preveja valor. Invista melhor",
             oracleDesc: "Lidere o mercado. Multiplique o patrimônio",
@@ -1130,6 +1142,7 @@ export const translations = {
             loadingVignettes: "Vignetten laden...",
             copiedToClipboard: "Gekopieerd naar klembord",
             failedToCopy: "Kopiëren mislukt",
+            disclaimer: "Informatieve inhoud, geen beleggingsadvies.",
         },
         login: {
             welcome: "Welkom",
@@ -1161,6 +1174,7 @@ export const translations = {
         },
         agents: {
             discoverPrice: "Gratis",
+            flashPrice: "Gratis",
             discoverDesc: "Verken activa. Spot trends",
             intelligenceDesc: "Voorspel waarde. Investeer slimmer",
             oracleDesc: "Leid de markt. Vermenigvuldig vermogen",
@@ -1305,6 +1319,7 @@ export const translations = {
             loadingVignettes: "ビネットを読み込み中...",
             copiedToClipboard: "クリップボードにコピーしました",
             failedToCopy: "コピーに失敗しました",
+            disclaimer: "情報提供を目的としたコンテンツであり、投資アドバイスを構成するものではありません。",
         },
         login: {
             welcome: "ようこそ",
@@ -1336,6 +1351,7 @@ export const translations = {
         },
         agents: {
             discoverPrice: "無料",
+            flashPrice: "無料",
             discoverDesc: "資産を探索。トレンドを発見",
             intelligenceDesc: "価値を予測。賢く投資",
             oracleDesc: "市場をリード。富を倍増",
@@ -1480,6 +1496,7 @@ export const translations = {
             loadingVignettes: "正在加载内容...",
             copiedToClipboard: "已复制到剪贴板",
             failedToCopy: "复制失败",
+            disclaimer: "仅供参考，不构成投资建议。",
         },
         login: {
             welcome: "欢迎",
@@ -1511,6 +1528,7 @@ export const translations = {
         },
         agents: {
             discoverPrice: "免费",
+            flashPrice: "免费",
             discoverDesc: "探索资产。发现趋势",
             intelligenceDesc: "预测价值。更明智地投资",
             oracleDesc: "引领市场。倍增财富",

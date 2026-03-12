@@ -34,6 +34,7 @@ const IS_ART_SPECIALITY = process.env.NEXT_PUBLIC_SPECIALITY === "art";
 const IS_MAIN_SPECIALITY = process.env.NEXT_PUBLIC_SPECIALITY === "main" || !process.env.NEXT_PUBLIC_SPECIALITY;
 
 const MAIN_CATEGORY_ORDER = [
+  "MARCHE_SPOT",
   "WINE",
   "SACS",
   "IMMO_LUXE",
@@ -46,7 +47,6 @@ const MAIN_CATEGORY_ORDER = [
   "ART_CONTEMPORAIN",
   "ART_TRADING_VALUE",
   "CASH_FLOW_LEASING",
-  "MARCHE_SPOT",
 ];
 
 // Icons for known categories in main mode
@@ -258,7 +258,7 @@ function ChatLayoutInner({
 
       {/* Sidebar */}
       <aside
-        className={`${sidebarOpen ? "w-64" : "w-0"} transition-all duration-300 bg-[rgb(230,220,210)] dark:bg-[#1e1f20] text-gray-900 dark:text-white flex flex-col overflow-hidden fixed md:relative h-full z-50 md:z-auto`}
+        className={`${sidebarOpen ? "w-64" : "w-0"} transition-all duration-300 bg-[#f0eee6] dark:bg-[#1e1f20] text-gray-900 dark:text-white flex flex-col overflow-hidden fixed md:relative h-full z-50 md:z-auto`}
       >
         <div className="h-[52px] sm:h-[60px] px-4 border-b border-gray-400 dark:border-gray-800 flex items-center">
           <Button

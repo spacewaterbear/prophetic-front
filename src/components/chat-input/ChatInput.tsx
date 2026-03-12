@@ -193,7 +193,7 @@ export function ChatInput({
 
   return (
     <div
-      className={`relative flex flex-col w-full max-w-3xl mx-auto bg-[#f0e7dd] dark:bg-[#1e1f20] rounded-[24px] p-4 shadow-sm transition-colors ${className}`}
+      className={`relative flex flex-col w-full max-w-3xl mx-auto bg-white dark:bg-[#1e1f20] rounded-[24px] p-4 shadow-sm transition-colors ${className}`}
       onClick={() => ref.current?.focus()}
     >
       {/* Info icon */}
