@@ -694,13 +694,25 @@ export function useChatConversation({
           clearInterval(scrollToTopIntervalRef.current);
           scrollToTopIntervalRef.current = null;
         }
-        const getScrollTarget = () =>
-          container.scrollTop +
-          (element.getBoundingClientRect().top -
-            container.getBoundingClientRect().top);
-        container.scrollTo({ top: getScrollTarget(), behavior: "smooth" });
+        const getScrollTarget = () => {
+          if (!element.isConnected) return null;
+          return (
+            container.scrollTop +
+            (element.getBoundingClientRect().top -
+              container.getBoundingClientRect().top)
+          );
+        };
+        const target = getScrollTarget();
+        if (target !== null) container.scrollTo({ top: target, behavior: "smooth" });
         scrollToTopIntervalRef.current = setInterval(() => {
-          container.scrollTo({ top: getScrollTarget(), behavior: "smooth" });
+          const t = getScrollTarget();
+          if (t === null) {
+            clearInterval(scrollToTopIntervalRef.current!);
+            scrollToTopIntervalRef.current = null;
+            setShouldScrollToTop(false);
+            return;
+          }
+          container.scrollTo({ top: t, behavior: "smooth" });
         }, 400);
         const timeout = setTimeout(() => {
           if (scrollToTopIntervalRef.current) {
