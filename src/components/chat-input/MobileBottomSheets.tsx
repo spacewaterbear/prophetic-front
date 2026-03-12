@@ -49,15 +49,9 @@ interface MobileBottomSheetsProps {
     flashCardType: "flash_invest" | "ranking",
   ) => void;
   onPortfolioClick: (tierName: string, subCategory: string) => void;
-  // Chrono
-  isChronoOpen: boolean;
-  onCloseChono: () => void;
   // Settings
   isSettingsOpen: boolean;
   onCloseSettings: () => void;
-  // Ranking
-  isRankingOpen: boolean;
-  onCloseRanking: () => void;
   // Common
   mounted: boolean;
   isDark: boolean;
@@ -76,12 +70,8 @@ export function MobileBottomSheets({
   selectedCategory,
   onFlashcardClick,
   onPortfolioClick,
-  isChronoOpen,
-  onCloseChono,
   isSettingsOpen,
   onCloseSettings,
-  isRankingOpen,
-  onCloseRanking,
   mounted,
   isDark,
 }: MobileBottomSheetsProps) {
@@ -340,37 +330,6 @@ export function MobileBottomSheets({
         </div>
       </div>
 
-      {/* Chrono Bottom Sheet */}
-      <div
-        className={`sm:hidden fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 ${isChronoOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
-        onClick={onCloseChono}
-      />
-      <div
-        className={`sm:hidden fixed inset-x-0 bottom-0 z-50 transition-transform duration-300 ease-out ${isChronoOpen ? "translate-y-0" : "translate-y-full"}`}
-      >
-        <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl p-6 w-full shadow-2xl border-t border-gray-200 dark:border-transparent max-h-[70vh] overflow-y-auto">
-          <div className="mb-4">
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">
-              {t("hub.learnFlashcards")}
-            </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 italic">
-              {t("hub.flashcardsSubtitle")}
-            </p>
-          </div>
-          <div className="grid grid-cols-2 gap-2 mb-4">
-            {MOBILE_CATEGORIES.map((cat) => (
-              <CategoryButton
-                key={cat.key}
-                isActive={selectedCategory === cat.key}
-                onClick={() => onFlashcardClick(cat.key, "flash_invest")}
-              >
-                {t(cat.translationKey)}
-              </CategoryButton>
-            ))}
-          </div>
-        </div>
-      </div>
-
       {/* Settings Bottom Sheet */}
       <div
         className={`sm:hidden fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 ${isSettingsOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
@@ -457,36 +416,6 @@ export function MobileBottomSheets({
         </div>
       </div>
 
-      {/* Ranking Bottom Sheet */}
-      <div
-        className={`sm:hidden fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 ${isRankingOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
-        onClick={onCloseRanking}
-      />
-      <div
-        className={`sm:hidden fixed inset-x-0 bottom-0 z-50 transition-transform duration-300 ease-out ${isRankingOpen ? "translate-y-0" : "translate-y-full"}`}
-      >
-        <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl p-6 w-full shadow-2xl border-t border-gray-200 dark:border-transparent max-h-[70vh] overflow-y-auto">
-          <div className="mb-4">
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">
-              {t("hub.compareRankings")}
-            </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 italic">
-              {t("hub.rankingsSubtitle")}
-            </p>
-          </div>
-          <div className="grid grid-cols-2 gap-2 mb-4">
-            {MOBILE_CATEGORIES.map((cat) => (
-              <CategoryButton
-                key={cat.key}
-                isActive={selectedCategory === cat.key}
-                onClick={() => onFlashcardClick(cat.key, "ranking")}
-              >
-                {t(cat.translationKey)}
-              </CategoryButton>
-            ))}
-          </div>
-        </div>
-      </div>
     </>
   );
 }

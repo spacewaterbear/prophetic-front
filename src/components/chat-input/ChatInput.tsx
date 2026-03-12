@@ -13,8 +13,6 @@ import { useFileUpload } from "@/hooks/useFileUpload";
 import { FLASHCARD_MAPPING } from "@/lib/constants/flashcards";
 import { getAvailableAgents, AgentType, UserStatus } from "@/types/agents";
 import { ModeSelector } from "./ModeSelector";
-import { FlashcardMenu } from "./FlashcardMenu";
-import { PortfolioMenu } from "./PortfolioMenu";
 import { SettingsMenu } from "./SettingsMenu";
 import { MobileBottomSheets } from "./MobileBottomSheets";
 
@@ -70,10 +68,7 @@ export function ChatInput({
   // Dropdown states
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isFileUploadOpen, setIsFileUploadOpen] = useState(false);
-  const [isChronoOpen, setIsChronoOpen] = useState(false);
-  const [isRankingOpen, setIsRankingOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isPortfolioOpen, setIsPortfolioOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [mobileMenuLevel, setMobileMenuLevel] = useState<
     "main" | "flashcards" | "ranking" | "portfolio"
@@ -93,10 +88,7 @@ export function ChatInput({
   const closeAllDropdowns = () => {
     setIsDropdownOpen(false);
     setIsFileUploadOpen(false);
-    setIsChronoOpen(false);
-    setIsRankingOpen(false);
     setIsSettingsOpen(false);
-    setIsPortfolioOpen(false);
   };
 
   const handleAgentClick = (agent: AgentType) => {
@@ -159,18 +151,6 @@ export function ChatInput({
   const modeSelectorHover = makeHoverHandlers(
     () => setIsDropdownOpen(true),
     () => setIsDropdownOpen(false),
-  );
-  const chronoHover = makeHoverHandlers(
-    () => setIsChronoOpen(true),
-    () => setIsChronoOpen(false),
-  );
-  const rankingHover = makeHoverHandlers(
-    () => setIsRankingOpen(true),
-    () => setIsRankingOpen(false),
-  );
-  const portfolioHover = makeHoverHandlers(
-    () => setIsPortfolioOpen(true),
-    () => setIsPortfolioOpen(false),
   );
   const settingsHover = makeHoverHandlers(
     () => setIsSettingsOpen(true),
@@ -375,67 +355,6 @@ export function ChatInput({
             mounted={mounted}
           />
 
-          {/* Flashcard Menu */}
-          {!isArtSpeciality && (
-            <FlashcardMenu
-              type="flashcard"
-              isOpen={isChronoOpen}
-              onToggle={() => {
-                setIsChronoOpen(!isChronoOpen);
-                setIsDropdownOpen(false);
-                setIsFileUploadOpen(false);
-              }}
-              onMouseEnter={chronoHover.onMouseEnter}
-              onMouseLeave={chronoHover.onMouseLeave}
-              selectedCategory={selectedCategory}
-              onCategorySelect={handleFlashcardSelect}
-              mounted={mounted}
-              isDark={isDark}
-            />
-          )}
-
-          {/* Ranking Menu */}
-          {!isArtSpeciality && (
-            <FlashcardMenu
-              type="ranking"
-              isOpen={isRankingOpen}
-              onToggle={() => {
-                setIsRankingOpen(!isRankingOpen);
-                setIsDropdownOpen(false);
-                setIsFileUploadOpen(false);
-                setIsChronoOpen(false);
-                setIsSettingsOpen(false);
-              }}
-              onMouseEnter={rankingHover.onMouseEnter}
-              onMouseLeave={rankingHover.onMouseLeave}
-              selectedCategory={selectedCategory}
-              onCategorySelect={handleFlashcardSelect}
-              mounted={mounted}
-              isDark={isDark}
-            />
-          )}
-
-          {/* Portfolio Menu */}
-          {!isArtSpeciality && (
-            <PortfolioMenu
-              selectedAgent={selectedAgent}
-              isOpen={isPortfolioOpen}
-              onToggle={() => {
-                setIsPortfolioOpen(!isPortfolioOpen);
-                setIsDropdownOpen(false);
-                setIsFileUploadOpen(false);
-                setIsChronoOpen(false);
-                setIsRankingOpen(false);
-                setIsSettingsOpen(false);
-              }}
-              onMouseEnter={portfolioHover.onMouseEnter}
-              onMouseLeave={portfolioHover.onMouseLeave}
-              onPortfolioClick={handlePortfolioClick}
-              mounted={mounted}
-              isDark={isDark}
-            />
-          )}
-
           {/* Settings Menu */}
           <SettingsMenu
             isOpen={isSettingsOpen}
@@ -488,12 +407,8 @@ export function ChatInput({
             selectedCategory={selectedCategory}
             onFlashcardClick={handleFlashcardSelect}
             onPortfolioClick={handlePortfolioClick}
-            isChronoOpen={isChronoOpen}
-            onCloseChono={() => setIsChronoOpen(false)}
             isSettingsOpen={isSettingsOpen}
             onCloseSettings={() => setIsSettingsOpen(false)}
-            isRankingOpen={isRankingOpen}
-            onCloseRanking={() => setIsRankingOpen(false)}
             mounted={mounted}
             isDark={isDark}
           />,
