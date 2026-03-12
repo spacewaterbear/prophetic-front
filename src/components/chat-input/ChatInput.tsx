@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, Send, Paperclip, Info } from "lucide-react";
+import { Plus, ArrowUp, Paperclip, Info } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import { useI18n } from "@/contexts/i18n-context";
@@ -285,11 +285,11 @@ export function ChatInput({
       {/* Toolbar */}
       <div className="flex justify-between items-center w-full">
         {/* Leading Actions */}
-        <div className="flex items-center gap-0.5">
+        <div className="flex items-center gap-2">
           {/* File Upload Button */}
           <div className="relative flex-shrink-0">
             <button
-              className="flex items-center justify-center text-gray-900 dark:text-gray-100 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-full p-2.5 transition-colors"
+              className="flex items-center justify-center text-gray-900 dark:text-gray-100 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-full p-2 transition-colors"
               aria-label="Add file"
               onClick={(e) => {
                 e.preventDefault();
@@ -340,7 +340,24 @@ export function ChatInput({
             </div>
           </div>
 
-          {/* Mode Selector */}
+          {/* Settings Menu (Orchestration) */}
+          <SettingsMenu
+            isOpen={isSettingsOpen}
+            onToggle={() => {
+              setIsSettingsOpen(!isSettingsOpen);
+              setIsDropdownOpen(false);
+              setIsFileUploadOpen(false);
+            }}
+            onMouseEnter={settingsHover.onMouseEnter}
+            onMouseLeave={settingsHover.onMouseLeave}
+            mounted={mounted}
+            isDark={isDark}
+          />
+        </div>
+
+        {/* Trailing Actions */}
+        <div className="flex items-center gap-2">
+          {/* Mode Selector (Flash) */}
           <ModeSelector
             selectedAgent={selectedAgent}
             availableAgents={availableAgents}
@@ -355,39 +372,17 @@ export function ChatInput({
             mounted={mounted}
           />
 
-          {/* Settings Menu */}
-          <SettingsMenu
-            isOpen={isSettingsOpen}
-            onToggle={() => {
-              setIsSettingsOpen(!isSettingsOpen);
-              setIsDropdownOpen(false);
-              setIsFileUploadOpen(false);
-              setIsChronoOpen(false);
-              setIsRankingOpen(false);
+          {/* Send Button */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleSend();
             }}
-            onMouseEnter={settingsHover.onMouseEnter}
-            onMouseLeave={settingsHover.onMouseLeave}
-            mounted={mounted}
-            isDark={isDark}
-          />
-        </div>
-
-        {/* Trailing Actions */}
-        <div className="flex items-center gap-2">
-          {input.trim() ? (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleSend();
-              }}
-              disabled={isLoading}
-              className="flex items-center justify-center p-2.5 rounded-full text-gray-900 dark:text-white hover:bg-gray-200/50 dark:hover:bg-gray-700/50 transition-colors"
-            >
-              <Send className="h-5 w-5 transform rotate-45 ml-0.5" />
-            </button>
-          ) : (
-            <div className="w-10 h-10"></div>
-          )}
+            disabled={isLoading || !input.trim()}
+            className="flex items-center justify-center w-9 h-9 rounded-full bg-[#352ee8] hover:bg-[#2920c7] disabled:bg-gray-300 dark:disabled:bg-gray-600 text-white transition-colors flex-shrink-0"
+          >
+            <ArrowUp className="h-5 w-5" />
+          </button>
         </div>
       </div>
 

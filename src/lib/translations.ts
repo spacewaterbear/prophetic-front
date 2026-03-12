@@ -105,6 +105,8 @@ export const translations = {
             discoverDesc: "Explorez les actifs. Repérez les tendances",
             intelligenceDesc: "Prédisez la valeur. Investissez mieux",
             oracleDesc: "Pilotez le marché. Multipliez votre patrimoine",
+            flashDesc: "Signaux rapides. Opportunités immédiates",
+            orchestration: "Orchestration",
         },
         hub: {
             title: "Hub de découverte",
@@ -287,6 +289,8 @@ export const translations = {
             discoverDesc: "Explore assets. Spot trends",
             intelligenceDesc: "Predict value. Invest smarter",
             oracleDesc: "Lead the market. Multiply wealth",
+            flashDesc: "Fast signals. Immediate opportunities",
+            orchestration: "Orchestration",
         },
         hub: {
             title: "Discovery Hub",
@@ -460,6 +464,8 @@ export const translations = {
             discoverDesc: "Explora activos. Detecta tendencias",
             intelligenceDesc: "Predice el valor. Invierte mejor",
             oracleDesc: "Lidera el mercado. Multiplica tu patrimonio",
+            flashDesc: "Señales rápidas. Oportunidades inmediatas",
+            orchestration: "Orchestration",
         },
         hub: {
             title: "Centro de descubrimiento",
@@ -633,6 +639,8 @@ export const translations = {
             discoverDesc: "Erkunden Sie Vermögenswerte. Trends erkennen",
             intelligenceDesc: "Wert vorhersagen. Klüger investieren",
             oracleDesc: "Den Markt führen. Vermögen multiplizieren",
+            flashDesc: "Schnelle Signale. Sofortige Chancen",
+            orchestration: "Orchestration",
         },
         hub: {
             title: "Entdeckungs-Hub",
@@ -806,6 +814,8 @@ export const translations = {
             discoverDesc: "Esplora gli asset. Individua le tendenze",
             intelligenceDesc: "Prevedi il valore. Investi meglio",
             oracleDesc: "Guida il mercato. Moltiplica il patrimonio",
+            flashDesc: "Segnali veloci. Opportunità immediate",
+            orchestration: "Orchestration",
         },
         hub: {
             title: "Hub di scoperta",
@@ -979,6 +989,8 @@ export const translations = {
             discoverDesc: "Explore ativos. Identifique tendências",
             intelligenceDesc: "Preveja valor. Invista melhor",
             oracleDesc: "Lidere o mercado. Multiplique o patrimônio",
+            flashDesc: "Sinais rápidos. Oportunidades imediatas",
+            orchestration: "Orchestration",
         },
         hub: {
             title: "Hub de descoberta",
@@ -1152,6 +1164,8 @@ export const translations = {
             discoverDesc: "Verken activa. Spot trends",
             intelligenceDesc: "Voorspel waarde. Investeer slimmer",
             oracleDesc: "Leid de markt. Vermenigvuldig vermogen",
+            flashDesc: "Snelle signalen. Directe kansen",
+            orchestration: "Orchestration",
         },
         hub: {
             title: "Ontdekkingshub",
@@ -1325,6 +1339,8 @@ export const translations = {
             discoverDesc: "資産を探索。トレンドを発見",
             intelligenceDesc: "価値を予測。賢く投資",
             oracleDesc: "市場をリード。富を倍増",
+            flashDesc: "素早いシグナル。即時の機会",
+            orchestration: "Orchestration",
         },
         hub: {
             title: "ディスカバリーハブ",
@@ -1498,6 +1514,8 @@ export const translations = {
             discoverDesc: "探索资产。发现趋势",
             intelligenceDesc: "预测价值。更明智地投资",
             oracleDesc: "引领市场。倍增财富",
+            flashDesc: "快速信号。即时机会",
+            orchestration: "Orchestration",
         },
         hub: {
             title: "发现中心",

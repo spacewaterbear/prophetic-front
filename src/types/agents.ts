@@ -7,20 +7,20 @@ export type UserStatus =
   | "intelligence"
   | "oracle";
 
-export type AgentType = "discover" | "intelligence" | "oracle";
+export type AgentType = "discover" | "intelligence" | "oracle" | "flash";
 
 export function getAvailableAgents(status: string | undefined): AgentType[] {
   const normalizedStatus = status === "free" ? "discover" : status;
 
   switch (normalizedStatus) {
     case "discover":
-      return ["discover"];
+      return ["discover", "flash"];
     case "intelligence":
-      return ["discover", "intelligence"];
+      return ["discover", "flash", "intelligence"];
     case "oracle":
     case "admini":
-      return ["discover", "intelligence", "oracle"];
+      return ["discover", "flash", "intelligence", "oracle"];
     default:
-      return ["discover"];
+      return ["discover", "flash"];
   }
 }

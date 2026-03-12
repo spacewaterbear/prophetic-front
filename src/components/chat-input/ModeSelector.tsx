@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { ChevronDown } from "lucide-react";
 import { ModeCard } from "./CategoryButton";
 import { AgentType } from "@/types/agents";
@@ -33,7 +32,7 @@ export function ModeSelector({
       <button
         type="button"
         data-dashlane-ignore="true"
-        className="flex items-center gap-2 bg-[#352ee8] hover:bg-[#2920c7] rounded-full px-3 py-2 transition-colors cursor-pointer max-w-[200px] sm:max-w-none"
+        className="flex items-center gap-2 rounded-full px-3 py-2 border border-gray-300 dark:border-gray-600 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer"
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -42,24 +41,17 @@ export function ModeSelector({
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
       >
-        <Image
-          src="https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/flavicon_white.svg"
-          alt="Prophetic"
-          width={20}
-          height={20}
-          className="w-5 h-5"
-        />
-        <span className="text-white font-medium text-sm capitalize truncate whitespace-nowrap">
+        <span className="text-gray-900 dark:text-white font-medium text-sm capitalize truncate whitespace-nowrap">
           {selectedAgent}
         </span>
-        <ChevronDown className="h-4 w-4 text-white" />
+        <ChevronDown className="h-4 w-4 text-gray-900 dark:text-white" />
       </button>
 
       {/* Desktop Dropdown */}
       <div
         className={`
           hidden sm:block
-          absolute left-0 bottom-full mb-2
+          absolute right-0 bottom-full mb-2
           transition-all duration-300 ease-out
           z-10
           ${isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}
@@ -91,6 +83,14 @@ export function ModeSelector({
             isActive={selectedAgent === "oracle"}
             isAvailable={availableAgents.includes("oracle")}
             onClick={() => onAgentClick("oracle")}
+          />
+          <ModeCard
+            title="FLASH"
+            price="$9.99 / month"
+            description={t("agents.flashDesc")}
+            isActive={selectedAgent === "flash"}
+            isAvailable={availableAgents.includes("flash")}
+            onClick={() => onAgentClick("flash")}
           />
         </div>
       </div>

@@ -131,6 +131,18 @@ export function MobileBottomSheets({
             }}
             isMobile={true}
           />
+          <ModeCard
+            title="FLASH"
+            price="$9.99 / month"
+            description={t("agents.flashDesc")}
+            isActive={selectedAgent === "flash"}
+            isAvailable={availableAgents.includes("flash")}
+            onClick={() => {
+              onAgentClick("flash");
+              setTimeout(onCloseDropdown, 150);
+            }}
+            isMobile={true}
+          />
         </div>
       </div>
 
