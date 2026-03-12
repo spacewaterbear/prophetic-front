@@ -313,9 +313,9 @@ export function ChatInput({
               onMouseEnter={fileUploadHover.onMouseEnter}
               onMouseLeave={fileUploadHover.onMouseLeave}
             >
-              <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-3xl p-5 w-[320px] shadow-2xl border dark:border-transparent">
+              <div className="bg-white dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-3xl p-5 w-[320px] shadow-2xl border dark:border-transparent">
                 <button
-                  className="w-full flex items-center justify-between p-4 bg-[#e8dfd5] dark:bg-[#1e1f20] rounded-2xl opacity-50 cursor-not-allowed group transition-all duration-200"
+                  className="w-full flex items-center justify-between p-4 bg-white dark:bg-[#1e1f20] rounded-2xl opacity-50 cursor-not-allowed group transition-all duration-200"
                   disabled
                 >
                   <div className="flex items-center gap-3">
