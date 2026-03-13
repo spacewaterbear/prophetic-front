@@ -94,7 +94,7 @@ export function MobileBottomSheets({
       <div
         className={`sm:hidden fixed inset-x-0 bottom-0 z-50 transition-transform duration-300 ease-out ${isDropdownOpen ? "translate-y-0" : "translate-y-full"}`}
       >
-        <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl p-5 w-full shadow-2xl border-t border-gray-200 dark:border-transparent max-h-[70vh] overflow-y-auto">
+        <div className="bg-white dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl p-5 w-full shadow-2xl border-t border-gray-200 dark:border-transparent max-h-[70vh] overflow-y-auto">
           <ModeCard
             title="DISCOVER"
             price={t("agents.discoverPrice")}
@@ -157,7 +157,7 @@ export function MobileBottomSheets({
       <div
         className={`sm:hidden fixed inset-x-0 bottom-0 z-50 transition-transform duration-300 ease-out ${isFileUploadOpen ? "translate-y-0" : "translate-y-full"}`}
       >
-        <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl p-6 w-full shadow-2xl border-t border-gray-200 dark:border-transparent max-h-[70vh] overflow-y-auto">
+        <div className="bg-white dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl p-6 w-full shadow-2xl border-t border-gray-200 dark:border-transparent max-h-[70vh] overflow-y-auto">
           {mobileMenuLevel === "main" && (
             <>
               <div className="mb-4">
@@ -227,7 +227,7 @@ export function MobileBottomSheets({
                   </div>
                 </button>
                 <button
-                  className="w-full flex items-center justify-between p-4 bg-[#f0e7dd] dark:bg-[#1e1f20] text-gray-900 dark:text-white text-sm font-semibold rounded-2xl border border-gray-400/60 dark:border-gray-600/60 opacity-50 cursor-not-allowed"
+                  className="w-full flex items-center justify-between p-4 bg-white dark:bg-[#1e1f20] text-gray-900 dark:text-white text-sm font-semibold rounded-2xl border border-gray-400/60 dark:border-gray-600/60 opacity-50 cursor-not-allowed"
                   disabled
                 >
                   <div className="flex items-center gap-3">
@@ -350,7 +350,7 @@ export function MobileBottomSheets({
       <div
         className={`sm:hidden fixed inset-x-0 bottom-0 z-50 transition-transform duration-300 ease-out ${isSettingsOpen ? "translate-y-0" : "translate-y-full"}`}
       >
-        <div className="bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl p-6 w-full shadow-2xl border-t border-gray-200 dark:border-transparent">
+        <div className="bg-white dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl p-6 w-full shadow-2xl border-t border-gray-200 dark:border-transparent">
           <div className="mb-6">
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">
               {t("settings.title")}
@@ -360,7 +360,7 @@ export function MobileBottomSheets({
             </p>
           </div>
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-[#e8dfd5] dark:bg-[#1e1f20] rounded-2xl">
+            <div className="flex items-center justify-between p-4 bg-white dark:bg-[#1e1f20] rounded-2xl">
               <div className="flex items-center gap-3">
                 <Image
                   src={
@@ -392,7 +392,7 @@ export function MobileBottomSheets({
                 <span className="inline-block h-6 w-6 transform rounded-full bg-white translate-x-1" />
               </button>
             </div>
-            <div className="flex items-center justify-between p-4 bg-[#e8dfd5] dark:bg-[#1e1f20] rounded-2xl">
+            <div className="flex items-center justify-between p-4 bg-white dark:bg-[#1e1f20] rounded-2xl">
               <div className="flex items-center gap-3">
                 <Image
                   src={
