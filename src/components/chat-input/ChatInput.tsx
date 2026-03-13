@@ -275,7 +275,7 @@ export function ChatInput({
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={t("chat.placeholder")}
-          className="w-full bg-transparent border-none focus:outline-none focus:ring-0 resize-none placeholder:text-gray-500 text-gray-900 dark:text-white text-xs sm:text-base leading-7 overflow-y-auto max-h-[196px] discret-scrollbar"
+          className="w-full bg-transparent border-none focus:outline-none focus:ring-0 resize-none placeholder:text-gray-400 text-gray-900 dark:text-white text-[11px] sm:text-base leading-7 overflow-y-auto max-h-[196px] discret-scrollbar"
           style={{ minHeight: "28px" }}
           rows={1}
         />
@@ -378,9 +378,9 @@ export function ChatInput({
               handleSend();
             }}
             disabled={isLoading || !input.trim()}
-            className="flex items-center justify-center w-9 h-9 rounded-full bg-[#352ee8] hover:bg-[#2920c7] disabled:bg-gray-300 dark:disabled:bg-gray-600 text-white transition-colors flex-shrink-0"
+            className="flex items-center justify-center w-7 h-7 rounded-full bg-[#352ee8] hover:bg-[#2920c7] disabled:bg-gray-300 dark:disabled:bg-gray-600 text-white transition-colors flex-shrink-0"
           >
-            <ArrowUp className="h-5 w-5" />
+            <ArrowUp className="h-4 w-4" />
           </button>
         </div>
       </div>
