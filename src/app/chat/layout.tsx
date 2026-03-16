@@ -27,7 +27,7 @@ import {
 import { SelectionContextMenu } from "@/components/SelectionContextMenu";
 import { FeedbackModal } from "@/components/FeedbackModal";
 import { getCategoryDisplayNames } from "@/lib/translations";
-import { ICON_CONVERSATIONS_DARK, ICON_CONVERSATIONS_LIGHT, ICONS_BASE_URL } from "@/lib/constants/logos";
+import { ICON_CONVERSATIONS_DARK, ICON_CONVERSATIONS_LIGHT, ICONS_BASE_URL, FAVICON_LIGHT, FAVICON_DARK } from "@/lib/constants/logos";
 
 const STORAGE = ICONS_BASE_URL;
 
@@ -261,9 +261,21 @@ function ChatLayoutInner({
       <aside
         className={`${sidebarOpen ? "w-64" : "w-0"} transition-all duration-300 bg-[#f0eee6] dark:bg-[#1e1f20] text-gray-900 dark:text-white flex flex-col overflow-hidden fixed md:relative h-full z-50 md:z-auto`}
       >
-        <div className="h-[52px] sm:h-[60px] px-4 border-b border-gray-400 dark:border-gray-800 flex items-center">
+        {/* Logo */}
+        <div className="px-4 pt-5 pb-4 flex items-start gap-2">
+          <Image src={FAVICON_LIGHT} alt="Logo" width={22} height={22} className="flex-shrink-0 mt-0.5 block dark:hidden" />
+          <Image src={FAVICON_DARK} alt="Logo" width={22} height={22} className="flex-shrink-0 mt-0.5 hidden dark:block" />
+          <div className="flex items-start gap-1 leading-none">
+            <span className="font-[family-name:var(--font-spectral)] font-semibold text-gray-900 dark:text-white text-[15px] leading-tight">
+              {process.env.NEXT_PUBLIC_SPECIALITY === "art" ? "Art Orchestra" : "Prophetic Orchestra"}
+            </span>
+            <sup className="text-[9px] font-medium leading-none mt-0.5" style={{ color: "#372ee9" }}>beta</sup>
+          </div>
+        </div>
+
+        <div className="px-4 pb-4">
           <Button
-            className="w-full bg-gray-800 hover:bg-gray-700 text-white border border-gray-600 rounded-lg dark:bg-white/10 dark:hover:bg-white/20 dark:border-white/20"
+            className="w-full bg-gray-900 hover:bg-gray-800 text-white rounded-xl border-0 font-normal dark:bg-white/10 dark:hover:bg-white/20"
             onClick={createNewConversation}
           >
             <Plus className="h-4 w-4 mr-2" />
@@ -271,13 +283,13 @@ function ChatLayoutInner({
           </Button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4">
-          <div className="space-y-2">
+        <div className="flex-1 overflow-y-auto">
+          <div>
             {/* Consultations Section - Contains conversation history */}
             <div>
               <button
                 onClick={() => setConsultationsExpanded(!consultationsExpanded)}
-                className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2"
+                className="w-full text-left px-3 py-2.5 border-b border-gray-300/70 dark:border-gray-700/70 hover:bg-gray-600/10 dark:hover:bg-white/5 text-sm transition-colors flex items-center gap-2"
               >
                 <Image
                   src={ICON_CONVERSATIONS_LIGHT}
@@ -361,64 +373,30 @@ function ChatLayoutInner({
                 router.push("/chat/artists");
                 if (isMobile) setSidebarOpen(false);
               }}
-              className={`w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2 ${
-                pathname === "/chat/artists"
-                  ? "bg-gray-600/30 dark:bg-white/10 font-medium"
-                  : ""
+              className={`w-full text-left px-3 py-2.5 border-b border-gray-300/70 dark:border-gray-700/70 hover:bg-gray-600/10 dark:hover:bg-white/5 text-sm transition-colors flex items-center gap-2 ${
+                pathname === "/chat/artists" ? "font-medium" : ""
               }`}
             >
-              <Palette className="h-5 w-5 flex-shrink-0" />
+              <Palette className="h-4 w-4 flex-shrink-0" />
               <span>{t("nav.artists")}</span>
             </button>}
 
             {/* Investment Categories */}
-            {IS_ART_SPECIALITY
-              ? artCategories.map((category) => {
-                  const icons = ART_CATEGORY_ICONS[category];
-                  const label = getCategoryLabel(category, categoryNames);
-                  return (
-                    <button
-                      key={category}
-                      onClick={() => {
-                        router.push(`/chat?category=${category}`, { scroll: false });
-                        if (isMobile) setSidebarOpen(false);
-                      }}
-                      className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2"
-                      style={{ lineHeight: "15px" }}
-                    >
-                      {icons && (
-                        <>
-                          <Image src={icons.light} alt={label} width={22} height={22} className="flex-shrink-0 block dark:hidden" />
-                          <Image src={icons.dark} alt={label} width={22} height={22} className="flex-shrink-0 hidden dark:block" />
-                        </>
-                      )}
-                      <span>{label}</span>
-                    </button>
-                  );
-                })
-              : mainCategories.map((category) => {
-                  const icons = MAIN_CATEGORY_ICONS[category];
-                  const label = getCategoryLabel(category, categoryNames);
-                  return (
-                    <button
-                      key={category}
-                      onClick={() => {
-                        router.push(`/chat?category=${category}`, { scroll: false });
-                        if (isMobile) setSidebarOpen(false);
-                      }}
-                      className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2"
-                      style={{ lineHeight: "15px" }}
-                    >
-                      {icons && (
-                        <>
-                          <Image src={icons.light} alt={label} width={22} height={22} className="flex-shrink-0 block dark:hidden" />
-                          <Image src={icons.dark} alt={label} width={22} height={22} className="flex-shrink-0 hidden dark:block" />
-                        </>
-                      )}
-                      <span>{label}</span>
-                    </button>
-                  );
-                })
+            {(IS_ART_SPECIALITY ? artCategories : mainCategories).map((category) => {
+                const label = getCategoryLabel(category, categoryNames);
+                return (
+                  <button
+                    key={category}
+                    onClick={() => {
+                      router.push(`/chat?category=${category}`, { scroll: false });
+                      if (isMobile) setSidebarOpen(false);
+                    }}
+                    className="w-full text-left px-3 py-2.5 text-sm border-b border-gray-300/70 dark:border-gray-700/70 hover:bg-gray-600/10 dark:hover:bg-white/5 transition-colors"
+                  >
+                    {label}
+                  </button>
+                );
+              })
             }
           </div>
         </div>
