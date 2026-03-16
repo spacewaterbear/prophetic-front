@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
+import { FAVICON_DARK, FAVICON_LIGHT } from "@/lib/constants/logos";
 // Note: checkout/portal links use <a> (not Link) to force full navigation for HTTP redirects
 
 const PLANS = [
@@ -84,14 +85,14 @@ export default async function PricingPage() {
         <div className="text-center mb-12">
           <div className="w-16 h-16 mx-auto mb-6 rounded-full overflow-hidden">
             <Image
-              src="https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/flavicon_new.svg"
+              src={FAVICON_LIGHT}
               alt="Prophetic Orchestra"
               width={64}
               height={64}
               className="w-full h-full object-cover dark:hidden"
             />
             <Image
-              src="https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/flavicon_new_dark.svg"
+              src={FAVICON_DARK}
               alt="Prophetic Orchestra"
               width={64}
               height={64}

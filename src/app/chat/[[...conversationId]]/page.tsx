@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
+import { LOGO_DARK, LOGO_LIGHT } from "@/lib/constants/logos";
 import { useSidebar } from "@/contexts/sidebar-context";
 import { DEFAULT_NON_ADMIN_MODEL } from "@/lib/models";
 import { VignetteData } from "@/types/vignettes";
@@ -303,8 +304,8 @@ export default function ChatPage() {
             <Image
               src={
                 mounted && isDark
-                  ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/logo_white.svg"
-                  : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/logo_black.svg"
+                  ? LOGO_DARK
+                  : LOGO_LIGHT
               }
               alt="Prophetic Orchestra"
               width={256}

@@ -9,6 +9,7 @@ import {
   INTELLIGENCE_PORTFOLIO_TIERS,
   ORACLE_PORTFOLIO_TIERS,
 } from "@/lib/constants/portfolio-tiers";
+import { ICON_PORTFOLIO_DARK, ICON_PORTFOLIO_LIGHT } from "@/lib/constants/logos";
 
 interface PortfolioMenuProps {
   selectedAgent: AgentType;
@@ -55,8 +56,8 @@ export function PortfolioMenu({
         <Image
           src={
             mounted && isDark
-              ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/portfolio_b.svg"
-              : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/portfolio.svg"
+              ? ICON_PORTFOLIO_DARK
+              : ICON_PORTFOLIO_LIGHT
           }
           alt="Portfolio"
           width={24}

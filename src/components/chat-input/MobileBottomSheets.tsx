@@ -10,6 +10,18 @@ import {
   INTELLIGENCE_PORTFOLIO_TIERS,
   ORACLE_PORTFOLIO_TIERS,
 } from "@/lib/constants/portfolio-tiers";
+import {
+  ICON_CHRONO_DARK,
+  ICON_CHRONO_LIGHT,
+  ICON_PORTFOLIO_DARK,
+  ICON_PORTFOLIO_LIGHT,
+  ICON_RADAR_DARK,
+  ICON_RADAR_LIGHT,
+  ICON_RANKING_DARK,
+  ICON_RANKING_LIGHT,
+  ICON_SCOUT_DARK,
+  ICON_SCOUT_LIGHT,
+} from "@/lib/constants/logos";
 
 const ALL_MOBILE_CATEGORIES: { key: string; translationKey: string; isArt: boolean }[] = [
   { key: "Contemp. Art", translationKey: "flashcardCategories.contempArt", isArt: true },
@@ -177,8 +189,8 @@ export function MobileBottomSheets({
                     <Image
                       src={
                         mounted && isDark
-                          ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/chrono_b.svg"
-                          : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/chrono.svg"
+                          ? ICON_CHRONO_DARK
+                          : ICON_CHRONO_LIGHT
                       }
                       alt="Flashcards"
                       width={24}
@@ -196,8 +208,8 @@ export function MobileBottomSheets({
                     <Image
                       src={
                         mounted && isDark
-                          ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/ranking_b.svg"
-                          : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/ranking.svg"
+                          ? ICON_RANKING_DARK
+                          : ICON_RANKING_LIGHT
                       }
                       alt="Rankings"
                       width={24}
@@ -215,8 +227,8 @@ export function MobileBottomSheets({
                     <Image
                       src={
                         mounted && isDark
-                          ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/portfolio_b.svg"
-                          : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/portfolio.svg"
+                          ? ICON_PORTFOLIO_DARK
+                          : ICON_PORTFOLIO_LIGHT
                       }
                       alt="Portfolio"
                       width={24}
@@ -365,8 +377,8 @@ export function MobileBottomSheets({
                 <Image
                   src={
                     mounted && isDark
-                      ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons/scout_b.svg"
-                      : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons/scout_n.svg"
+                      ? ICON_SCOUT_DARK
+                      : ICON_SCOUT_LIGHT
                   }
                   alt="Market Scout"
                   width={24}
@@ -397,8 +409,8 @@ export function MobileBottomSheets({
                 <Image
                   src={
                     mounted && isDark
-                      ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons/radar_b.svg"
-                      : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons/radar_n.svg"
+                      ? ICON_RADAR_DARK
+                      : ICON_RADAR_LIGHT
                   }
                   alt="Community Radar"
                   width={24}

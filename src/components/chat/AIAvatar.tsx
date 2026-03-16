@@ -3,6 +3,7 @@
 import { memo, useEffect, useState } from "react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
+import { LOGO_DARK, LOGO_LIGHT } from "@/lib/constants/logos";
 
 export const AIAvatar = memo(() => {
   const { theme, resolvedTheme } = useTheme();
@@ -18,8 +19,8 @@ export const AIAvatar = memo(() => {
       <Image
         src={
           mounted && isDark
-            ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/logo_white.svg"
-            : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/logo_black.svg"
+            ? LOGO_DARK
+            : LOGO_LIGHT
         }
         alt="Prophetic Orchestra"
         width={40}

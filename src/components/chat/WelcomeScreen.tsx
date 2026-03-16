@@ -4,6 +4,7 @@ import { lazy, Suspense, useRef } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useI18n } from "@/contexts/i18n-context";
+import { LOGO_DARK, LOGO_LIGHT } from "@/lib/constants/logos";
 import { ChatInput } from "@/components/chat-input";
 import { MessageItem } from "./MessageItem";
 import { AIAvatar } from "./AIAvatar";
@@ -240,8 +241,8 @@ export function WelcomeScreen({
                 <Image
                   src={
                     mounted && isDark
-                      ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/logo_white.svg"
-                      : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/logo_black.svg"
+                      ? LOGO_DARK
+                      : LOGO_LIGHT
                   }
                   alt="Prophetic Orchestra"
                   width={150}

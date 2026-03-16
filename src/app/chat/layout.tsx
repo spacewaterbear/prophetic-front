@@ -27,8 +27,9 @@ import {
 import { SelectionContextMenu } from "@/components/SelectionContextMenu";
 import { FeedbackModal } from "@/components/FeedbackModal";
 import { getCategoryDisplayNames } from "@/lib/translations";
+import { ICON_CONVERSATIONS_DARK, ICON_CONVERSATIONS_LIGHT, ICONS_BASE_URL } from "@/lib/constants/logos";
 
-const STORAGE = "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons";
+const STORAGE = ICONS_BASE_URL;
 
 const IS_ART_SPECIALITY = process.env.NEXT_PUBLIC_SPECIALITY === "art";
 const IS_MAIN_SPECIALITY = process.env.NEXT_PUBLIC_SPECIALITY === "main" || !process.env.NEXT_PUBLIC_SPECIALITY;
@@ -279,14 +280,14 @@ function ChatLayoutInner({
                 className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-600/30 dark:hover:bg-white/10 text-sm transition-all flex items-center gap-2"
               >
                 <Image
-                  src="https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons/consultations_n.svg"
+                  src={ICON_CONVERSATIONS_LIGHT}
                   alt="Conversations"
                   width={20}
                   height={20}
                   className="flex-shrink-0 block dark:hidden"
                 />
                 <Image
-                  src="https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons/consultations_b.svg"
+                  src={ICON_CONVERSATIONS_DARK}
                   alt="Conversations"
                   width={20}
                   height={20}

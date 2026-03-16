@@ -3,6 +3,12 @@
 import Image from "next/image";
 import { CategoryButton } from "./CategoryButton";
 import { useI18n } from "@/contexts/i18n-context";
+import {
+  ICON_CHRONO_DARK,
+  ICON_CHRONO_LIGHT,
+  ICON_RANKING_DARK,
+  ICON_RANKING_LIGHT,
+} from "@/lib/constants/logos";
 
 interface FlashcardMenuProps {
   type: "flashcard" | "ranking";
@@ -59,11 +65,11 @@ export function FlashcardMenu({
 
   const iconSrc = isRanking
     ? mounted && isDark
-      ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/ranking_b.svg"
-      : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/ranking.svg"
+      ? ICON_RANKING_DARK
+      : ICON_RANKING_LIGHT
     : mounted && isDark
-      ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/chrono_b.svg"
-      : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/chrono.svg";
+      ? ICON_CHRONO_DARK
+      : ICON_CHRONO_LIGHT;
 
   return (
     <div className="hidden sm:block static sm:relative flex-shrink-0">

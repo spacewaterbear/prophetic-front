@@ -10,6 +10,7 @@ import { useI18n } from "@/contexts/i18n-context";
 import { useState, useEffect } from "react";
 import { Mail, ArrowRight, CheckCircle, AlertCircle, Loader2, User } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { LOGO_DARK, LOGO_LIGHT } from "@/lib/constants/logos";
 
 type MagicLinkStatus = "idle" | "sending" | "sent" | "error";
 type RegistrationStep = "none" | "collecting_info";
@@ -261,8 +262,8 @@ export default function LoginPage() {
                 <Image
                   src={
                     isDark
-                      ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/flavicon_new_dark.svg"
-                      : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/flavicon_new.svg"
+                      ? LOGO_DARK
+                      : LOGO_LIGHT
                   }
                   alt="Prophetic Orchestra"
                   width={96}
@@ -369,30 +370,13 @@ export default function LoginPage() {
         <Card className="p-8 sm:p-10 bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl border-gray-300 dark:border-gray-700 shadow-2xl">
           {/* Logo and Branding */}
           <div className="text-center mb-8">
-            {/* Icon Logo */}
-            <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden flex items-center justify-center">
-              <Image
-                src={
-                  isDark
-                    ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/flavicon_new_dark.svg"
-                    : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/flavicon_new.svg"
-                }
-                alt="Prophetic Orchestra"
-                width={96}
-                height={96}
-                className="w-full h-full object-cover"
-                suppressHydrationWarning
-                priority
-              />
-            </div>
-
             {/* Text Logo */}
             <div className="w-48 h-12 mx-auto mb-4">
               <Image
                 src={
                   isDark
-                    ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/logo_white.svg"
-                    : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/logo_black.svg"
+                    ? LOGO_DARK
+                    : LOGO_LIGHT
                 }
                 alt="Prophetic Orchestra"
                 width={192}

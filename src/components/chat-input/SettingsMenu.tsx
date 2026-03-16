@@ -2,6 +2,14 @@
 
 import Image from "next/image";
 import { useI18n } from "@/contexts/i18n-context";
+import {
+  ICON_RADAR_DARK,
+  ICON_RADAR_LIGHT,
+  ICON_SCOUT_DARK,
+  ICON_SCOUT_LIGHT,
+  ICON_SETTINGS_DARK,
+  ICON_SETTINGS_LIGHT,
+} from "@/lib/constants/logos";
 
 interface SettingsMenuProps {
   isOpen: boolean;
@@ -38,8 +46,8 @@ export function SettingsMenu({
         <Image
           src={
             mounted && isDark
-              ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons/settings_b.svg"
-              : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons/settings_n.svg"
+              ? ICON_SETTINGS_DARK
+              : ICON_SETTINGS_LIGHT
           }
           alt="Settings"
           width={28}
@@ -78,8 +86,8 @@ export function SettingsMenu({
                 <Image
                   src={
                     mounted && isDark
-                      ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons/scout_b.svg"
-                      : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons/scout_n.svg"
+                      ? ICON_SCOUT_DARK
+                      : ICON_SCOUT_LIGHT
                   }
                   alt="Market Scout"
                   width={24}
@@ -112,8 +120,8 @@ export function SettingsMenu({
                 <Image
                   src={
                     mounted && isDark
-                      ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons/radar_b.svg"
-                      : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/icons/radar_n.svg"
+                      ? ICON_RADAR_DARK
+                      : ICON_RADAR_LIGHT
                   }
                   alt="Community Radar"
                   width={24}

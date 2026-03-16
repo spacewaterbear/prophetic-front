@@ -5,6 +5,7 @@ import ClientBody from "./ClientBody";
 import Script from "next/script";
 import { Providers } from "./providers";
 import { Toaster } from "sonner";
+import { FAVICON_DARK, FAVICON_LIGHT } from "@/lib/constants/logos";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,11 +34,11 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/flavicon_new.svg",
+        url: FAVICON_LIGHT,
         media: "(prefers-color-scheme: light)",
       },
       {
-        url: "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/flavicon_new_dark.svg",
+        url: FAVICON_DARK,
         media: "(prefers-color-scheme: dark)",
       }
     ],

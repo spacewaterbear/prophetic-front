@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useI18n } from "@/contexts/i18n-context";
+import { LOGO_DARK, LOGO_LIGHT } from "@/lib/constants/logos";
 
 /**
  * Root page - Redirects to appropriate route based on authentication status
@@ -47,8 +48,8 @@ export default function Home() {
             <Image
               src={
                 isDark
-                  ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/logo_white.svg"
-                  : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/logo_black.svg"
+                  ? LOGO_DARK
+                  : LOGO_LIGHT
               }
               alt="Prophetic Orchestra"
               width={256}

@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { LogOut } from "lucide-react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
+import { LOGO_DARK, LOGO_LIGHT } from "@/lib/constants/logos";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { MessageItem } from "@/components/chat/MessageItem";
 import { Message } from "@/types/chat";
@@ -182,8 +183,8 @@ export default function TestVisiPage() {
           <Image
             src={
               mounted && isDark
-                ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/logo_white.svg"
-                : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/logo_black.svg"
+                ? LOGO_DARK
+                : LOGO_LIGHT
             }
             alt="Prophetic Orchestra"
             width={180}

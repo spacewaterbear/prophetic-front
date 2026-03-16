@@ -8,6 +8,7 @@ import { ShieldX, ExternalLink } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useI18n } from "@/contexts/i18n-context";
+import { LOGO_DARK, LOGO_LIGHT } from "@/lib/constants/logos";
 
 export default function RestrictedAccessPage() {
   const { theme, resolvedTheme } = useTheme();
@@ -41,10 +42,7 @@ export default function RestrictedAccessPage() {
             {/* Icon Logo */}
             <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden flex items-center justify-center">
               <Image
-                src={isDark
-                  ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/flavicon_new_dark.svg"
-                  : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/flavicon_new.svg"
-                }
+                src={isDark ? LOGO_DARK : LOGO_LIGHT}
                 alt="Prophetic Orchestra"
                 width={96}
                 height={96}
