@@ -27,7 +27,7 @@ import {
 import { SelectionContextMenu } from "@/components/SelectionContextMenu";
 import { FeedbackModal } from "@/components/FeedbackModal";
 import { getCategoryDisplayNames } from "@/lib/translations";
-import { ICON_CONVERSATIONS_DARK, ICON_CONVERSATIONS_LIGHT, ICONS_BASE_URL, FAVICON_LIGHT, FAVICON_DARK } from "@/lib/constants/logos";
+import { ICON_CONVERSATIONS_DARK, ICON_CONVERSATIONS_LIGHT, ICONS_BASE_URL, LOGO_LIGHT, LOGO_DARK } from "@/lib/constants/logos";
 
 const STORAGE = ICONS_BASE_URL;
 
@@ -262,14 +262,14 @@ function ChatLayoutInner({
         className={`${sidebarOpen ? "w-64" : "w-0"} transition-all duration-300 bg-[#f0eee6] dark:bg-[#1e1f20] text-gray-900 dark:text-white flex flex-col overflow-hidden fixed md:relative h-full z-50 md:z-auto`}
       >
         {/* Logo */}
-        <div className="px-4 pt-5 pb-4 flex items-start gap-2">
-          <Image src={FAVICON_LIGHT} alt="Logo" width={22} height={22} className="flex-shrink-0 mt-0.5 block dark:hidden" />
-          <Image src={FAVICON_DARK} alt="Logo" width={22} height={22} className="flex-shrink-0 mt-0.5 hidden dark:block" />
+        <div className="h-[56px] px-4 pt-3 mb-4 border-b border-gray-400 dark:border-gray-800 flex items-start gap-2">
+          <Image src={LOGO_LIGHT} alt="Logo" width={22} height={22} className="flex-shrink-0 block dark:hidden" />
+          <Image src={LOGO_DARK} alt="Logo" width={22} height={22} className="flex-shrink-0 hidden dark:block" />
           <div className="flex items-start gap-1 leading-none">
-            <span className="font-[family-name:var(--font-spectral)] font-semibold text-gray-900 dark:text-white text-[15px] leading-tight">
+            <span className="font-[family-name:var(--font-spectral)] font-semibold text-gray-900 dark:text-white text-lg leading-tight">
               {process.env.NEXT_PUBLIC_SPECIALITY === "art" ? "Art Orchestra" : "Prophetic Orchestra"}
             </span>
-            <sup className="text-[9px] font-medium leading-none mt-0.5" style={{ color: "#372ee9" }}>beta</sup>
+            <span className="text-[10px] font-medium self-start leading-none" style={{ color: "#372ee9" }}>beta</span>
           </div>
         </div>
 

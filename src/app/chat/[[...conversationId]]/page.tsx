@@ -14,7 +14,9 @@ import { supabase } from "@/lib/supabase/client";
 import Image from "next/image";
 import { useI18n } from "@/contexts/i18n-context";
 
-import { ChatHeader } from "@/components/chat/ChatHeader";
+import { ModelSelector } from "@/components/ModelSelector";
+import { ShareButton } from "@/components/ShareButton";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { WelcomeScreen } from "@/components/chat/WelcomeScreen";
 import { ConversationView } from "@/components/chat/ConversationView";
 import { VignetteDetailView } from "./VignetteDetailView";
@@ -339,14 +341,20 @@ export default function ChatPage() {
 
   return (
     <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
-      <ChatHeader
-        isWelcomeScreen={isWelcomeScreen}
-        isAdmin={isAdminUser(session)}
-        selectedModel={selectedModel}
-        onModelChange={handleModelChange}
-        isLoading={isLoading}
-        conversationId={conversationId}
-      />
+      <div className="h-[56px] mb-4 flex-shrink-0 border-b border-gray-400 dark:border-gray-800" />
+      <div className="absolute top-2 right-3 z-20 flex items-center gap-1">
+        {!isWelcomeScreen && isAdminUser(session) && (
+          <ModelSelector
+            selectedModel={selectedModel}
+            onModelChange={handleModelChange}
+            disabled={isLoading}
+          />
+        )}
+        {!isWelcomeScreen && (
+          <ShareButton conversationId={conversationId} disabled={isLoading} />
+        )}
+        <ThemeToggle />
+      </div>
 
       {vignetteSlug && !conversationId ? (
         <VignetteDetailView

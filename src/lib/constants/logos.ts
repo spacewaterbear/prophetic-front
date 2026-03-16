@@ -4,10 +4,6 @@ const BASE = "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/
 export const LOGO_LIGHT = `${BASE}/logo/logo_black.svg`;
 export const LOGO_DARK = `${BASE}/logo/logo_white.svg`;
 
-/** Favicon — swap these two URLs to change the favicon across the entire app */
-export const FAVICON_LIGHT = `${BASE}/logo/flavicon_new.svg`;
-export const FAVICON_DARK = `${BASE}/logo/flavicon_new_dark.svg`;
-
 /** UI icons (theme-aware) */
 export const ICON_PORTFOLIO_LIGHT = `${BASE}/portfolio.svg`;
 export const ICON_PORTFOLIO_DARK = `${BASE}/portfolio_b.svg`;

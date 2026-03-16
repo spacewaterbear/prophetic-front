@@ -7,8 +7,8 @@ import { useTheme } from "next-themes";
 import { useI18n } from "@/contexts/i18n-context";
 import { LOGO_DARK, LOGO_LIGHT } from "@/lib/constants/logos";
 import { ChatInput } from "@/components/chat-input";
-import { ChatHeader } from "@/components/chat/ChatHeader";
 import { AIAvatar } from "@/components/chat/AIAvatar";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { AgentType, getAvailableAgents } from "@/types/agents";
 import { getCategoryDisplayNames } from "@/lib/translations";
 import { DEFAULT_NON_ADMIN_MODEL } from "@/lib/models";
@@ -294,14 +294,10 @@ export default function VignettePage() {
 
   return (
     <>
-      <ChatHeader
-        isWelcomeScreen={true}
-        isAdmin={false}
-        selectedModel={selectedModel}
-        onModelChange={() => {}}
-        isLoading={isLoading}
-        conversationId={null}
-      />
+      <div className="h-[56px] mb-4 flex-shrink-0 border-b border-gray-400 dark:border-gray-800" />
+      <div className="absolute top-2 right-3 z-20">
+        <ThemeToggle />
+      </div>
 
       <div className="relative flex-1 bg-[rgb(249,248,244)] dark:bg-[rgb(1,1,0)] px-6 overflow-y-auto">
         <div className="w-full max-w-4xl flex flex-col items-center py-10 mx-auto">

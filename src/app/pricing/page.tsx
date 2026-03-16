@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
-import { FAVICON_DARK, FAVICON_LIGHT } from "@/lib/constants/logos";
+import { LOGO_DARK, LOGO_LIGHT } from "@/lib/constants/logos";
 // Note: checkout/portal links use <a> (not Link) to force full navigation for HTTP redirects
 
 const PLANS = [
@@ -85,14 +85,14 @@ export default async function PricingPage() {
         <div className="text-center mb-12">
           <div className="w-16 h-16 mx-auto mb-6 rounded-full overflow-hidden">
             <Image
-              src={FAVICON_LIGHT}
+              src={LOGO_LIGHT}
               alt="Prophetic Orchestra"
               width={64}
               height={64}
               className="w-full h-full object-cover dark:hidden"
             />
             <Image
-              src={FAVICON_DARK}
+              src={LOGO_DARK}
               alt="Prophetic Orchestra"
               width={64}
               height={64}

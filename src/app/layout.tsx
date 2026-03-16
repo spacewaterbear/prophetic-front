@@ -5,7 +5,7 @@ import ClientBody from "./ClientBody";
 import Script from "next/script";
 import { Providers } from "./providers";
 import { Toaster } from "sonner";
-import { FAVICON_DARK, FAVICON_LIGHT } from "@/lib/constants/logos";
+import { LOGO_DARK, LOGO_LIGHT } from "@/lib/constants/logos";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,11 +34,11 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: FAVICON_LIGHT,
+        url: LOGO_LIGHT,
         media: "(prefers-color-scheme: light)",
       },
       {
-        url: FAVICON_DARK,
+        url: LOGO_DARK,
         media: "(prefers-color-scheme: dark)",
       }
     ],
