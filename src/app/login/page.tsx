@@ -391,8 +391,8 @@ export default function LoginPage() {
               <Image
                 src={
                   isDark
-                    ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo_text_blanc.svg"
-                    : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo_text.svg"
+                    ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/logo_white.svg"
+                    : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/logo_black.svg"
                 }
                 alt="Prophetic Orchestra"
                 width={192}

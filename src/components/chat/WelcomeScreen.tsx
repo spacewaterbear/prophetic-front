@@ -236,16 +236,16 @@ export function WelcomeScreen({
           <>
             {/* Logo + Greeting */}
             <div className="flex items-center gap-4 mb-3 pb-[30px]">
-              <div className="w-[85px] h-[85px] flex items-center justify-center flex-shrink-0">
+              <div className="w-[42px] h-[42px] flex items-center justify-center flex-shrink-0">
                 <Image
                   src={
                     mounted && isDark
-                      ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/flavicon_new_dark.svg"
-                      : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/flavicon_new.svg"
+                      ? "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/logo_white.svg"
+                      : "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/logo/logo_black.svg"
                   }
                   alt="Prophetic Orchestra"
-                  width={300}
-                  height={300}
+                  width={150}
+                  height={150}
                   className="w-full h-full object-contain"
                 />
               </div>
