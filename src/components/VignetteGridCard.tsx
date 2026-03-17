@@ -1,6 +1,5 @@
-import Image from "next/image";
 import { memo, useState } from "react";
-import { ImageOff, Download, FileText } from "lucide-react";
+import { Download } from "lucide-react";
 import { VignetteData } from "@/types/vignettes";
 import { AudioCard } from "@/components/AudioCard";
 
@@ -11,7 +10,6 @@ interface VignetteGridCardProps {
 
 const PdfCard = ({ item }: { item: VignetteData }) => {
     const [downloading, setDownloading] = useState(false);
-    const [imageError, setImageError] = useState(false);
 
     async function handleDownload(e: React.MouseEvent) {
         e.stopPropagation();
@@ -35,50 +33,25 @@ const PdfCard = ({ item }: { item: VignetteData }) => {
     }
 
     return (
-        <div className="border border-gray-200/20 bg-[#e6e6e6] dark:bg-gray-800 rounded-[24px] p-3">
-            <div className="relative w-full aspect-square rounded-[24px] mb-2 overflow-hidden group/pdf">
-                {/* Image */}
-                {!imageError ? (
-                    <Image
-                        src={item.public_url}
-                        alt={item.brand_name}
-                        fill
-                        className="object-cover transition-[filter] duration-300 group-hover/pdf:blur-sm"
-                        sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 20vw"
-                        onError={() => setImageError(true)}
-                    />
-                ) : (
-                    <div className="flex items-center justify-center h-full bg-gray-200 dark:bg-gray-700 transition-[filter] duration-300 group-hover/pdf:blur-sm">
-                        <FileText className="w-12 h-12 text-gray-400" strokeWidth={1.5} />
-                    </div>
-                )}
-
-                {/* Hover overlay with download button */}
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/pdf:opacity-100 transition-opacity duration-300">
-                    <button
-                        onClick={handleDownload}
-                        disabled={downloading}
-                        aria-label="Download PDF"
-                        className="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-900 text-white text-sm font-medium hover:bg-gray-700 transition-colors disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 shadow-lg"
-                    >
-                        <Download className="w-4 h-4" />
-                        {downloading ? "…" : "Télécharger"}
-                    </button>
-                </div>
-
-                {/* Score badge */}
+        <div className="group/pdf border border-gray-200/20 bg-[#e6e6e6] dark:bg-gray-800 rounded-[24px] p-4 flex flex-col gap-2">
+            <div className="flex items-center justify-between">
                 {item.score != null && item.trend != null && (
-                    <div className="absolute bottom-3 right-3 flex items-center gap-1 z-10">
-                        <div className="bg-white rounded-full px-3 py-1.5 shadow-md flex items-center gap-1">
-                            <span className="text-sm font-semibold text-gray-900">{item.score}</span>
-                            <span className={`text-base ${item.trend === "up" ? "text-green-500" : "text-red-500"}`}>
-                                {item.trend === "up" ? "▲" : "▼"}
-                            </span>
-                        </div>
+                    <div className={`flex items-center gap-1 text-sm font-semibold ${item.trend === "up" ? "text-green-500" : "text-red-400"}`}>
+                        <span>{item.score}</span>
+                        <span>{item.trend === "up" ? "▲" : "▼"}</span>
                     </div>
                 )}
+                <button
+                    onClick={handleDownload}
+                    disabled={downloading}
+                    aria-label="Download PDF"
+                    className="ml-auto flex items-center gap-1.5 px-3 py-1 rounded-full bg-gray-900/10 dark:bg-white/10 text-gray-700 dark:text-gray-300 text-xs font-medium hover:bg-gray-900/20 dark:hover:bg-white/20 transition-colors disabled:opacity-50"
+                >
+                    <Download className="w-3 h-3" />
+                    {downloading ? "…" : "PDF"}
+                </button>
             </div>
-            <div className="flex flex-col px-1 text-center h-[62px] justify-center">
+            <div className="flex flex-col text-center">
                 <h3 className="text-[16px] font-bold text-gray-900 dark:text-white leading-tight line-clamp-2">{item.brand_name}</h3>
                 <p className="text-[14px] font-light italic text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-1">{item.subtitle}</p>
             </div>
@@ -87,8 +60,6 @@ const PdfCard = ({ item }: { item: VignetteData }) => {
 };
 
 const VignetteItem = ({ item, onVignetteClick }: { item: VignetteData; onVignetteClick?: (v: VignetteData) => void }) => {
-    const [imageError, setImageError] = useState(false);
-
     if (item.media_type === "pdf") {
         return <PdfCard item={item} />;
     }
@@ -107,57 +78,45 @@ const VignetteItem = ({ item, onVignetteClick }: { item: VignetteData; onVignett
         );
     }
 
+    const isUp = item.trend === "up";
+
     return (
         <div
-            className={`group ${onVignetteClick ? "cursor-pointer" : ""}`}
-            onClick={() => {
-                console.log('[VignetteGridCard] Vignette clicked:', item.brand_name);
-                onVignetteClick?.(item);
-            }}
+            className={`${onVignetteClick ? "cursor-pointer" : ""} relative border border-gray-200/20 bg-[#e6e6e6] dark:bg-gray-800 rounded-[24px] overflow-hidden flex flex-col min-h-[110px]`}
+            onClick={() => onVignetteClick?.(item)}
         >
-            <div className="border border-gray-200/20 bg-[#e6e6e6] dark:bg-gray-800 rounded-[24px] p-3">
-                {/* Image Container */}
-                <div className="relative w-full aspect-square rounded-[24px] mb-2 overflow-hidden">
-                    {!imageError ? (
-                        <Image
-                            src={item.public_url}
-                            alt={item.brand_name}
-                            fill
-                            className="object-cover"
-                            sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 20vw"
-                            onError={() => setImageError(true)}
-                        />
-                    ) : (
-                        <div className="flex items-center justify-center h-full bg-gray-200 dark:bg-gray-700">
-                            <ImageOff className="w-12 h-12 text-gray-400 dark:text-gray-500" />
-                        </div>
-                    )}
-
-                    {/* Score Badge with Trend */}
+            <div className="p-4 flex flex-col flex-1 relative">
+                {/* Large faded score watermark */}
+                {item.score != null && (
+                    <span className="absolute right-3 bottom-3 text-[64px] font-black text-black/[0.06] dark:text-white/[0.07] leading-none select-none pointer-events-none">
+                        {item.score}
+                    </span>
+                )}
+                {/* Brand name */}
+                <h3 className="text-[15px] font-bold text-gray-900 dark:text-white leading-tight line-clamp-2 relative">
+                    {item.brand_name}
+                </h3>
+                {/* Score + subtitle */}
+                <div className="flex items-center gap-2 mt-auto pt-3">
                     {item.score != null && item.trend != null && (
-                        <div className="absolute bottom-3 right-3 flex items-center gap-1">
-                            <div className="bg-white rounded-full px-3 py-1.5 shadow-md flex items-center gap-1">
-                                <span className="text-sm font-semibold text-gray-900">
-                                    {item.score}
-                                </span>
-                                <span className={`text-base ${item.trend === 'up' ? 'text-green-500' : 'text-red-500'}`}>
-                                    {item.trend === 'up' ? '▲' : '▼'}
-                                </span>
-                            </div>
-                        </div>
+                        <span className={`text-xs font-bold shrink-0 ${isUp ? "text-green-500" : "text-red-400"}`}>
+                            {item.score} {isUp ? "▲" : "▼"}
+                        </span>
                     )}
-                </div>
-
-                {/* Text Content */}
-                <div className="flex flex-col px-1 text-center h-[62px] justify-center">
-                    <h3 className="text-[16px] font-bold text-gray-900 dark:text-white leading-tight line-clamp-2">
-                        {item.brand_name}
-                    </h3>
-                    <p className="text-[14px] font-light italic text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-1">
+                    <p className="text-[12px] font-light italic text-gray-500 dark:text-gray-400 line-clamp-1">
                         {item.subtitle}
                     </p>
                 </div>
             </div>
+            {/* Score progress bar */}
+            {item.score != null && (
+                <div className="h-[3px] w-full bg-gray-200/60 dark:bg-gray-700">
+                    <div
+                        className={`h-full ${isUp ? "bg-green-500" : "bg-red-400"}`}
+                        style={{ width: `${item.score}%` }}
+                    />
+                </div>
+            )}
         </div>
     );
 };
