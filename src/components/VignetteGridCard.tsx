@@ -96,6 +96,12 @@ const VignetteItem = ({ item, onVignetteClick }: { item: VignetteData; onVignett
                 <h3 className="text-[15px] font-bold text-gray-900 dark:text-white leading-tight line-clamp-2 relative">
                     {item.brand_name}
                 </h3>
+                {/* Country */}
+                {item.primary_country && (
+                    <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5 leading-tight">
+                        {item.primary_country}
+                    </p>
+                )}
                 {/* Score + subtitle */}
                 <div className="flex items-center gap-2 mt-auto pt-3">
                     {item.score != null && item.trend != null && (

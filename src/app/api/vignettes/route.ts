@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
 
 // In-memory cache for vignettes data
 const vignetteCache = new Map<string, { data: unknown; timestamp: number }>();
@@ -65,6 +66,39 @@ export async function GET(request: NextRequest) {
         }
 
         const data = await response.json();
+
+        // Enrich with primary_country from Supabase vignettes_staging
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+        const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+        if (supabaseUrl && supabaseKey) {
+            try {
+                const supabase = createClient(supabaseUrl, supabaseKey, {
+                    auth: { autoRefreshToken: false, persistSession: false },
+                });
+                const { data: stagingRows } = await supabase
+                    .from("vignettes_staging")
+                    .select("brand_name, primary_country")
+                    .eq("category", category.toUpperCase())
+                    .not("primary_country", "is", null);
+
+                if (stagingRows && stagingRows.length > 0) {
+                    const countryMap = new Map(
+                        stagingRows.map((r: { brand_name: string; primary_country: string }) => [r.brand_name, r.primary_country])
+                    );
+                    const vignettes = Array.isArray(data) ? data : data.vignettes;
+                    if (Array.isArray(vignettes)) {
+                        for (const v of vignettes) {
+                            if (countryMap.has(v.brand_name)) {
+                                v.primary_country = countryMap.get(v.brand_name);
+                            }
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error("[Vignettes API] Failed to enrich with countries:", err);
+            }
+        }
+
         vignetteCache.set(cacheKey, { data, timestamp: Date.now() });
         return NextResponse.json(data);
     } catch (error) {

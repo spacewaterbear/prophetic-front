@@ -25,6 +25,7 @@ export interface VignetteData {
   media_type?: "audio" | "image" | "pdf";
   audio_url?: string;
   pdf_url?: string;
+  primary_country?: string | null;
 }
 
 export interface VignetteResponse {
