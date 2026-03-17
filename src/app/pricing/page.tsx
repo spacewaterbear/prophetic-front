@@ -12,7 +12,7 @@ const PLANS = [
     price: "Free",
     priceDetail: "1,000 credits included",
     description: "Explore luxury investment opportunities guided by AI. Start free, no commitment.",
-    productId: process.env.POLAR_DISCOVER_ID!,
+    priceId: null,
     credits: [
       "10 credits = 20 Discover insights",
       "200 credits = 5 Intelligence insights",
@@ -31,7 +31,7 @@ const PLANS = [
     price: "€29.99",
     priceDetail: "per month",
     description: "Advanced analysis and portfolio insights for serious collectors.",
-    productId: process.env.POLAR_INTELLIGENCE_ID!,
+    priceId: process.env.STRIPE_INTELLIGENCE_PRICE_ID!,
     features: [
       "Unlimited Intelligence insights",
       "Prophetic Score™ + Momentum",
@@ -48,7 +48,7 @@ const PLANS = [
     price: "€149.99",
     priceDetail: "per month",
     description: "Complete advisory suite for UHNWI and professional luxury asset managers.",
-    productId: process.env.POLAR_ORACLE_ID!,
+    priceId: process.env.STRIPE_ORACLE_PRICE_ID!,
     features: [
       "Unlimited Oracle insights",
       "Advanced Prophetic Score™ + Momentum",
@@ -110,10 +110,11 @@ export default async function PricingPage() {
         {/* Plan cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
           {PLANS.map((plan) => {
-            const checkoutUrl =
-              `/api/polar/checkout?products=${plan.productId}` +
-              (userId ? `&customerExternalId=${userId}` : "") +
-              (userEmail ? `&customerEmail=${encodeURIComponent(userEmail)}` : "");
+            const checkoutUrl = plan.priceId
+              ? `/api/stripe/checkout?priceId=${plan.priceId}` +
+                (userId ? `&userId=${userId}` : "") +
+                (userEmail ? `&email=${encodeURIComponent(userEmail)}` : "")
+              : "/chat";
 
             return (
               <Card
@@ -228,7 +229,7 @@ export default async function PricingPage() {
         <div className="text-center space-y-2">
           {isAuthorized && (
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              <a href="/api/polar/portal" className="text-gray-900 dark:text-white font-medium underline hover:opacity-75">
+              <a href="/api/stripe/portal" className="text-gray-900 dark:text-white font-medium underline hover:opacity-75">
                 Manage existing subscription
               </a>
             </p>

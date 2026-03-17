@@ -4,6 +4,7 @@ import { ChevronDown } from "lucide-react";
 import { ModeCard } from "./CategoryButton";
 import { AgentType } from "@/types/agents";
 import { useI18n } from "@/contexts/i18n-context";
+import { useStripePrices } from "@/contexts/stripe-prices-context";
 
 interface ModeSelectorProps {
   selectedAgent: AgentType;
@@ -27,6 +28,7 @@ export function ModeSelector({
   mounted,
 }: ModeSelectorProps) {
   const { t } = useI18n();
+  const stripePrices = useStripePrices();
   return (
     <div className="static sm:relative flex-shrink-0">
       <button
@@ -78,7 +80,7 @@ export function ModeSelector({
           />
           <ModeCard
             title="INTELLIGENCE"
-            price="$29.99 / month"
+            price={stripePrices.intelligence ?? ""}
             description={t("agents.intelligenceDesc")}
             isActive={selectedAgent === "intelligence"}
             isAvailable={availableAgents.includes("intelligence")}
@@ -86,7 +88,7 @@ export function ModeSelector({
           />
           <ModeCard
             title="ORACLE"
-            price="$149.99 / month"
+            price={stripePrices.oracle ?? ""}
             description={t("agents.oracleDesc")}
             isActive={selectedAgent === "oracle"}
             isAvailable={availableAgents.includes("oracle")}
