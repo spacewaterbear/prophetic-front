@@ -18,6 +18,7 @@ import {
 import { useI18n } from "@/contexts/i18n-context";
 import { useSidebar, SidebarProvider } from "@/contexts/sidebar-context";
 import Image from "next/image";
+import Link from "next/link";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -262,7 +263,7 @@ function ChatLayoutInner({
         className={`${sidebarOpen ? "w-64" : "w-0"} transition-all duration-300 bg-[#f0eee6] dark:bg-[#1e1f20] text-gray-900 dark:text-white flex flex-col overflow-hidden fixed md:relative h-full z-50 md:z-auto`}
       >
         {/* Logo */}
-        <div className="h-[56px] px-4 pt-3 mb-4 border-b border-gray-400 dark:border-gray-800 flex items-start gap-2">
+        <Link href="/chat" className="h-[56px] px-4 pt-3 mb-4 border-b border-gray-400 dark:border-gray-800 flex items-start gap-2">
           <Image src={LOGO_LIGHT} alt="Logo" width={22} height={22} className="flex-shrink-0 block dark:hidden" />
           <Image src={LOGO_DARK} alt="Logo" width={22} height={22} className="flex-shrink-0 hidden dark:block" />
           <div className="flex items-start gap-1 leading-none">
@@ -271,7 +272,7 @@ function ChatLayoutInner({
             </span>
             <span className="text-[10px] font-medium self-start leading-none" style={{ color: "#372ee9" }}>beta</span>
           </div>
-        </div>
+        </Link>
 
         <div className="px-4 pb-4">
           <Button
