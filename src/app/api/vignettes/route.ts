@@ -99,6 +99,18 @@ export async function GET(request: NextRequest) {
             }
         }
 
+        // Override with hardcoded items for CASH_FLOW_LEASING
+        if (category.toUpperCase() === "CASH_FLOW_LEASING") {
+            const hardcodedItems = [
+                { category: "CASH_FLOW_LEASING", brand_name: "Vestiaire Collective", subtitle: "2 millions de produits", public_url: "vestiaire-collective.md", nb_insights: 0 },
+                { category: "CASH_FLOW_LEASING", brand_name: "Farfetch", subtitle: "100 000 de produits", public_url: "farfetch.md", nb_insights: 0 },
+                { category: "CASH_FLOW_LEASING", brand_name: "Rebag", subtitle: "30 000 de produits", public_url: "rebag.md", nb_insights: 0 },
+            ];
+            const mergedData = Array.isArray(data) ? hardcodedItems : { ...data, vignettes: hardcodedItems };
+            vignetteCache.set(cacheKey, { data: mergedData, timestamp: Date.now() });
+            return NextResponse.json(mergedData);
+        }
+
         vignetteCache.set(cacheKey, { data, timestamp: Date.now() });
         return NextResponse.json(data);
     } catch (error) {
