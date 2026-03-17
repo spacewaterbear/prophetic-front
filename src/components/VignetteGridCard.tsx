@@ -100,7 +100,7 @@ const VignetteItem = ({ item, onVignetteClick }: { item: VignetteData; onVignett
                 <div className="flex items-center gap-2 mt-auto pt-3">
                     {item.score != null && item.trend != null && (
                         <span className={`text-xs font-bold shrink-0 ${isUp ? "text-green-500" : "text-red-400"}`}>
-                            {item.score} {isUp ? "▲" : "▼"}
+                            {isUp ? "▲" : "▼"}
                         </span>
                     )}
                     <p className="text-[12px] font-light italic text-gray-500 dark:text-gray-400 line-clamp-1">
