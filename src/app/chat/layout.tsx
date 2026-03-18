@@ -278,10 +278,10 @@ function ChatLayoutInner({
 
         <div className="px-4 pb-4">
           <Button
-            className="w-full bg-gray-900 hover:bg-gray-800 text-white rounded-xl border-0 font-normal dark:bg-white/10 dark:hover:bg-white/20"
+            className="w-full bg-gray-800 hover:bg-gray-700 text-white rounded-full border-0 font-normal py-6 text-base dark:bg-white/10 dark:hover:bg-white/20"
             onClick={createNewConversation}
           >
-            <Plus className="h-4 w-4 mr-2" />
+            <Plus className="h-5 w-5 mr-2" />
             {t("nav.newChat")}
           </Button>
         </div>
