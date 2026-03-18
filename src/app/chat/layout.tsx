@@ -37,8 +37,9 @@ const IS_MAIN_SPECIALITY = process.env.NEXT_PUBLIC_SPECIALITY === "main" || !pro
 
 const MAIN_CATEGORY_ORDER = [
   "MARCHE_SPOT",
+  "CASH_FLOW_LEASING",
+  "ART_CONTEMPORAIN",
   "WINE",
-  "SACS",
   "IMMO_LUXE",
   "MONTRES_LUXE",
   "CARS",
@@ -46,9 +47,8 @@ const MAIN_CATEGORY_ORDER = [
   "WHISKY",
   "BIJOUX",
   "CARDS_US",
-  "ART_CONTEMPORAIN",
+  "SACS",
   "ART_TRADING_VALUE",
-  "CASH_FLOW_LEASING",
 ];
 
 // Icons for known categories in main mode
