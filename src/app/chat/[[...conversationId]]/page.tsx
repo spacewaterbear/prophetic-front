@@ -39,7 +39,7 @@ export default function ChatPage() {
   const searchParams = useSearchParams();
   const { theme, resolvedTheme } = useTheme();
   const isDark = theme === "dark" || resolvedTheme === "dark";
-  const { t } = useI18n();
+  const { t, language } = useI18n();
 
   const conversationIdParam = params.conversationId as string[] | undefined;
   const conversationId = conversationIdParam?.[0]
@@ -223,7 +223,7 @@ export default function ChatPage() {
         setVignetteError(null);
 
         try {
-          const url = `/api/vignettes?category=${category}`;
+          const url = `/api/vignettes?category=${category}&lang=${language}`;
           const response = await fetch(url);
 
           if (!response.ok) {
