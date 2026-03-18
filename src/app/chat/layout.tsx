@@ -59,6 +59,7 @@ const MAIN_CATEGORY_ICONS: Record<string, { light: string; dark: string }> = {
 };
 
 const ART_CATEGORY_ORDER = [
+  "MARCHE_SPOT",
   "ART",
   "CLASSIQUES",
   "MODERNES",
@@ -68,6 +69,7 @@ const ART_CATEGORY_ORDER = [
   "FIGURATIF",
   "STREET_ART",
   "EMERGENTS",
+  "ART_TRADING_VALUE",
 ];
 
 // Icons for known categories in art mode
@@ -368,6 +370,23 @@ function ChatLayoutInner({
             </div>
 
 
+            {/* Marché Spot — art speciality only, before Artistes */}
+            {IS_ART_SPECIALITY && artCategories.slice(0, 1).map((category) => {
+              const label = getCategoryLabel(category, categoryNames);
+              return (
+                <button
+                  key={category}
+                  onClick={() => {
+                    router.push(`/chat?category=${category}`, { scroll: false });
+                    if (isMobile) setSidebarOpen(false);
+                  }}
+                  className="w-full text-left px-3 py-2.5 text-sm hover:bg-gray-600/10 dark:hover:bg-white/5 transition-colors"
+                >
+                  {label}
+                </button>
+              );
+            })}
+
             {/* Artists Directory — art speciality only */}
             {IS_ART_SPECIALITY && <button
               onClick={() => {
@@ -383,7 +402,7 @@ function ChatLayoutInner({
             </button>}
 
             {/* Investment Categories */}
-            {(IS_ART_SPECIALITY ? artCategories : mainCategories).map((category) => {
+            {(IS_ART_SPECIALITY ? artCategories.slice(1) : mainCategories).map((category) => {
                 const label = getCategoryLabel(category, categoryNames);
                 return (
                   <button

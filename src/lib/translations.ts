@@ -192,6 +192,9 @@ export const translations = {
             WHISKY: "Whisky Rares",
             WINE: "Vins Patrimoniaux",
             MARCHE_SPOT: "Marché Spot",
+            "POST-WAR": "Après-guerre",
+            CLASSIQUES: "Classique",
+            MODERNES: "Moderne",
         },
     },
     en: {
@@ -378,6 +381,9 @@ export const translations = {
             WHISKY: "Rare Whisky",
             WINE: "Heritage Wines",
             MARCHE_SPOT: "Spot Market",
+            "POST-WAR": "Post-War",
+            CLASSIQUES: "Classic",
+            MODERNES: "Modern",
         },
     },
     es: {
@@ -556,6 +562,9 @@ export const translations = {
             WHISKY: "Whisky Raro",
             WINE: "Vinos Patrimoniales",
             MARCHE_SPOT: "Mercado Spot",
+            "POST-WAR": "Posguerras",
+            CLASSIQUES: "Clásico",
+            MODERNES: "Moderno",
         },
     },
     de: {
@@ -734,6 +743,9 @@ export const translations = {
             WHISKY: "Seltener Whisky",
             WINE: "Erbweine",
             MARCHE_SPOT: "Spotmarkt",
+            "POST-WAR": "Nachkriegszeit",
+            CLASSIQUES: "Klassisch",
+            MODERNES: "Modern",
         },
     },
     it: {
@@ -912,6 +924,9 @@ export const translations = {
             WHISKY: "Whisky Rari",
             WINE: "Vini Patrimoniali",
             MARCHE_SPOT: "Mercato Spot",
+            "POST-WAR": "Dopoguerra",
+            CLASSIQUES: "Classico",
+            MODERNES: "Moderno",
         },
     },
     pt: {
@@ -1090,6 +1105,9 @@ export const translations = {
             WHISKY: "Whisky Raro",
             WINE: "Vinhos Patrimoniais",
             MARCHE_SPOT: "Mercado Spot",
+            "POST-WAR": "Pós-guerra",
+            CLASSIQUES: "Clássico",
+            MODERNES: "Moderno",
         },
     },
     nl: {
@@ -1268,6 +1286,9 @@ export const translations = {
             WHISKY: "Zeldzame Whisky",
             WINE: "Erfgoedwijnen",
             MARCHE_SPOT: "Spotmarkt",
+            "POST-WAR": "Naoorlogse kunst",
+            CLASSIQUES: "Klassiek",
+            MODERNES: "Modern",
         },
     },
     ja: {
@@ -1446,6 +1467,9 @@ export const translations = {
             WHISKY: "希少ウイスキー",
             WINE: "銘醸ワイン",
             MARCHE_SPOT: "スポット市場",
+            "POST-WAR": "戦後アート",
+            CLASSIQUES: "クラシック",
+            MODERNES: "モダン",
         },
     },
     zh: {
@@ -1624,6 +1648,9 @@ export const translations = {
             WHISKY: "稀有威士忌",
             WINE: "传承葡萄酒",
             MARCHE_SPOT: "现货市场",
+            "POST-WAR": "战后艺术",
+            CLASSIQUES: "古典",
+            MODERNES: "现代",
         },
     },
 } as const;
