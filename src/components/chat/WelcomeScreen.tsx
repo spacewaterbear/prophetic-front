@@ -134,22 +134,20 @@ export function WelcomeScreen({
   };
   const navTabs = currentCategory ? categoryNavTabs[currentCategory] : undefined;
 
+  const isWelcomeState =
+    vignettes.length === 0 &&
+    messages.length === 0 &&
+    !streamingMessage &&
+    !vignetteLoading &&
+    !vignetteError;
+
   return (
     <div
       ref={welcomeContainerRef}
-      className="relative flex-1 bg-[rgb(249,248,244)] dark:bg-[rgb(1,1,0)] px-6 overflow-y-auto"
+      className={`relative flex-1 bg-[rgb(249,248,244)] dark:bg-[rgb(1,1,0)] px-6 flex flex-col ${isWelcomeState ? "overflow-hidden" : "overflow-y-auto"}`}
     >
-      <div className="min-h-full flex flex-col">
       <div
-        className={`w-full max-w-4xl flex flex-col items-center py-10 mx-auto flex-1 ${
-          vignettes.length === 0 &&
-          messages.length === 0 &&
-          !streamingMessage &&
-          !vignetteLoading &&
-          !vignetteError
-            ? "justify-center"
-            : ""
-        }`}
+        className={`w-full max-w-4xl flex flex-col items-center py-10 mx-auto flex-1 ${isWelcomeState ? "justify-center" : ""}`}
       >
         {messages.length > 0 || streamingMessage ? (
           <div className="w-full max-w-5xl space-y-6">
@@ -274,11 +272,10 @@ export function WelcomeScreen({
           </>
         )}
       </div>
-      <div className="sticky bottom-0 w-full pb-2 flex justify-center bg-[rgb(249,248,244)] dark:bg-[rgb(1,1,0)]">
+      <div className="w-full pb-2 flex justify-center">
         <p className="text-[10px] text-gray-400 dark:text-gray-600 text-center">
           {t("chat.disclaimer")}
         </p>
-      </div>
       </div>
     </div>
   );
