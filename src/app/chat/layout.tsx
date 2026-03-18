@@ -374,7 +374,7 @@ function ChatLayoutInner({
                 router.push("/chat/artists");
                 if (isMobile) setSidebarOpen(false);
               }}
-              className={`w-full text-left px-3 py-2.5 border-b border-gray-300/70 dark:border-gray-700/70 hover:bg-gray-600/10 dark:hover:bg-white/5 text-sm transition-colors flex items-center gap-2 ${
+              className={`w-full text-left px-3 py-2.5 hover:bg-gray-600/10 dark:hover:bg-white/5 text-sm transition-colors flex items-center gap-2 ${
                 pathname === "/chat/artists" ? "font-medium" : ""
               }`}
             >
