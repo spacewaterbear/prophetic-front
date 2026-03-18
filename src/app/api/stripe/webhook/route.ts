@@ -15,11 +15,14 @@ const STATUS_COLUMN =
 
 async function updateUserStatus(userId: string, status: string) {
   const supabase = createAdminClient();
-  await supabase
+  const { error } = await supabase
     .from("profiles")
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .update({ [STATUS_COLUMN]: status as any })
     .eq("id", userId);
+  if (error) {
+    console.error("[Stripe Webhook] Supabase update failed:", error);
+  }
 }
 
 async function getUserIdFromSubscription(
