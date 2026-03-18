@@ -275,6 +275,8 @@ export default function ChatPage() {
   const handleVignetteClick = (vignette: VignetteData) => {
     const imageName = getImageNameFromUrl(vignette.public_url);
 
+    if (!imageName) return;
+
     const isMobileView = window.innerWidth < 768;
     if (isMobileView) {
       setSidebarOpen(false);
