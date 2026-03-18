@@ -28,7 +28,7 @@ import {
 import { SelectionContextMenu } from "@/components/SelectionContextMenu";
 import { FeedbackModal } from "@/components/FeedbackModal";
 import { getCategoryDisplayNames } from "@/lib/translations";
-import { ICON_CONVERSATIONS_DARK, ICON_CONVERSATIONS_LIGHT, ICONS_BASE_URL, LOGO_LIGHT, LOGO_DARK } from "@/lib/constants/logos";
+import { ICON_CONVERSATIONS_DARK, ICON_CONVERSATIONS_LIGHT, ICONS_BASE_URL, LOGO_LIGHT, LOGO_DARK, LOGO_SMALL_LIGHT, LOGO_SMALL_DARK } from "@/lib/constants/logos";
 
 const STORAGE = ICONS_BASE_URL;
 
@@ -264,8 +264,8 @@ function ChatLayoutInner({
       >
         {/* Logo */}
         <Link href="/chat" className="h-[56px] px-4 pt-3 mb-4 border-b border-gray-400 dark:border-gray-800 flex items-start gap-2">
-          <Image src={LOGO_LIGHT} alt="Logo" width={22} height={22} className="flex-shrink-0 block dark:hidden" />
-          <Image src={LOGO_DARK} alt="Logo" width={22} height={22} className="flex-shrink-0 hidden dark:block" />
+          <Image src={LOGO_SMALL_LIGHT} alt="Logo" width={22} height={22} className="flex-shrink-0 block dark:hidden" />
+          <Image src={LOGO_SMALL_DARK} alt="Logo" width={22} height={22} className="flex-shrink-0 hidden dark:block" />
           <div className="flex items-start gap-1 leading-none">
             <span className="font-[family-name:var(--font-spectral)] font-semibold text-gray-900 dark:text-white text-lg leading-tight">
               {process.env.NEXT_PUBLIC_SPECIALITY === "art" ? "Art Orchestra" : "Prophetic Orchestra"}
