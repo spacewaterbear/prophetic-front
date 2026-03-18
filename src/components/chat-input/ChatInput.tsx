@@ -200,7 +200,7 @@ export function ChatInput({
         <div className="flex items-center justify-center w-6 h-6 rounded-full text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-pointer transition-colors">
           <Info className="w-4 h-4" />
         </div>
-        <div className="absolute right-0 top-full mt-2 w-[320px] bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-2xl p-4 shadow-2xl border dark:border-transparent opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 ease-out">
+        <div className="absolute right-0 bottom-full mb-2 w-[320px] bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-2xl p-4 shadow-2xl border dark:border-transparent opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 ease-out">
           <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
             Exemples de questions
           </p>
