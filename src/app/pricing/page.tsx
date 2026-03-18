@@ -4,67 +4,93 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
 import { LOGO_DARK, LOGO_LIGHT } from "@/lib/constants/logos";
+import Stripe from "stripe";
 // Note: checkout/portal links use <a> (not Link) to force full navigation for HTTP redirects
 
-const PLANS = [
-  {
-    name: "Discover",
-    price: "Free",
-    priceDetail: "1,000 credits included",
-    description: "Explore luxury investment opportunities guided by AI. Start free, no commitment.",
-    priceId: null,
-    credits: [
-      "10 credits = 20 Discover insights",
-      "200 credits = 5 Intelligence insights",
-      "700 credits = 1 Oracle insight",
-    ],
-    features: [
-      "Access to Discover agent",
-      "Luxury asset market overviews",
-      "Investment category vignettes",
-      "10 asset categories covered",
-    ],
-    cta: "Try Prophetic Orchestra",
-  },
-  {
-    name: "Intelligence",
-    price: "€29.99",
-    priceDetail: "per month",
-    description: "Advanced analysis and portfolio insights for serious collectors.",
-    priceId: process.env.STRIPE_INTELLIGENCE_PRICE_ID!,
-    features: [
-      "Unlimited Intelligence insights",
-      "Prophetic Score™ + Momentum",
-      "Multi-segment portfolio",
-      "Rarity & demand indicators",
-      "Marketplace mapping",
-      "Exit strategy",
-    ],
-    highlighted: true,
-    cta: "Subscribe to Intelligence",
-  },
-  {
-    name: "Oracle",
-    price: "€149.99",
-    priceDetail: "per month",
-    description: "Complete advisory suite for UHNWI and professional luxury asset managers.",
-    priceId: process.env.STRIPE_ORACLE_PRICE_ID!,
-    features: [
-      "Unlimited Oracle insights",
-      "Advanced Prophetic Score™ + Momentum",
-      "ROI projections (12/24/36/60 months)",
-      "Exit Timing™ alerts",
-      "Dual performance (Leasing + Exit)",
-      "Estate & succession strategy",
-      "Integrated tax optimization",
-      "UHNWI custom allocation",
-    ],
-    cta: "Subscribe to Oracle",
-  },
-];
+function formatStripePrice(price: Stripe.Price): string {
+  if (!price.unit_amount || !price.currency) return "—";
+  const amount = price.unit_amount / 100;
+  const symbol =
+    price.currency === "eur" ? "€" : price.currency === "usd" ? "$" : price.currency.toUpperCase();
+  return `${symbol}${amount.toFixed(2)}`;
+}
+
+async function fetchStripePrices(): Promise<{ intelligence: string; oracle: string }> {
+  try {
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+    const [intelligence, oracle] = await Promise.all([
+      stripe.prices.retrieve(process.env.STRIPE_INTELLIGENCE_PRICE_ID!),
+      stripe.prices.retrieve(process.env.STRIPE_ORACLE_PRICE_ID!),
+    ]);
+    return {
+      intelligence: formatStripePrice(intelligence),
+      oracle: formatStripePrice(oracle),
+    };
+  } catch {
+    return { intelligence: "€29.99", oracle: "€149.99" };
+  }
+}
 
 export default async function PricingPage() {
   const session = await auth();
+  const stripePrices = await fetchStripePrices();
+
+  const PLANS = [
+    {
+      name: "Discover",
+      price: "Free",
+      priceDetail: "1,000 credits included",
+      description: "Explore luxury investment opportunities guided by AI. Start free, no commitment.",
+      priceId: null,
+      credits: [
+        "10 credits = 20 Discover insights",
+        "200 credits = 5 Intelligence insights",
+        "700 credits = 1 Oracle insight",
+      ],
+      features: [
+        "Access to Discover agent",
+        "Luxury asset market overviews",
+        "Investment category vignettes",
+        "10 asset categories covered",
+      ],
+      cta: "Try Prophetic Orchestra",
+    },
+    {
+      name: "Intelligence",
+      price: stripePrices.intelligence,
+      priceDetail: "per month",
+      description: "Advanced analysis and portfolio insights for serious collectors.",
+      priceId: process.env.STRIPE_INTELLIGENCE_PRICE_ID!,
+      features: [
+        "Unlimited Intelligence insights",
+        "Prophetic Score™ + Momentum",
+        "Multi-segment portfolio",
+        "Rarity & demand indicators",
+        "Marketplace mapping",
+        "Exit strategy",
+      ],
+      highlighted: true,
+      cta: "Subscribe to Intelligence",
+    },
+    {
+      name: "Oracle",
+      price: stripePrices.oracle,
+      priceDetail: "per month",
+      description: "Complete advisory suite for UHNWI and professional luxury asset managers.",
+      priceId: process.env.STRIPE_ORACLE_PRICE_ID!,
+      features: [
+        "Unlimited Oracle insights",
+        "Advanced Prophetic Score™ + Momentum",
+        "ROI projections (12/24/36/60 months)",
+        "Exit Timing™ alerts",
+        "Dual performance (Leasing + Exit)",
+        "Estate & succession strategy",
+        "Integrated tax optimization",
+        "UHNWI custom allocation",
+      ],
+      cta: "Subscribe to Oracle",
+    },
+  ];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const userStatus = (session?.user as any)?.status as string | undefined;
   const isAuthorized = userStatus && userStatus !== "unauthorized";
