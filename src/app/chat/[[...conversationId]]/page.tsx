@@ -343,7 +343,7 @@ export default function ChatPage() {
 
   return (
     <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
-      <div className="h-[56px] mb-4 flex-shrink-0 border-b border-gray-400 dark:border-gray-800" />
+      <div className="h-[56px] mb-4 flex-shrink-0" />
       <div className="absolute top-2 right-3 z-20 flex items-center gap-1">
         {!isWelcomeScreen && isAdminUser(session) && (
           <ModelSelector

@@ -263,7 +263,7 @@ function ChatLayoutInner({
         className={`${sidebarOpen ? "w-64" : "w-0"} transition-all duration-300 bg-[#f0eee6] dark:bg-[#1e1f20] text-gray-900 dark:text-white flex flex-col overflow-hidden fixed md:relative h-full z-50 md:z-auto`}
       >
         {/* Logo */}
-        <Link href="/chat" className="h-[56px] px-4 pt-3 mb-4 border-b border-gray-400 dark:border-gray-800 flex items-start gap-2">
+        <Link href="/chat" className="h-[56px] px-4 pt-3 flex items-start gap-2">
           <Image src={LOGO_SMALL_LIGHT} alt="Logo" width={22} height={22} className="flex-shrink-0 block dark:hidden" />
           <Image src={LOGO_SMALL_DARK} alt="Logo" width={22} height={22} className="flex-shrink-0 hidden dark:block" />
           <div className="flex items-start gap-1 leading-none">
@@ -290,7 +290,7 @@ function ChatLayoutInner({
             <div>
               <button
                 onClick={() => setConsultationsExpanded(!consultationsExpanded)}
-                className="w-full text-left px-3 py-2.5 border-b border-gray-300/70 dark:border-gray-700/70 hover:bg-gray-600/10 dark:hover:bg-white/5 text-sm transition-colors flex items-center gap-2"
+                className="w-full text-left px-3 py-2.5 hover:bg-gray-600/10 dark:hover:bg-white/5 text-sm transition-colors flex items-center gap-2"
               >
                 <Image
                   src={ICON_CONVERSATIONS_LIGHT}
@@ -392,7 +392,7 @@ function ChatLayoutInner({
                       router.push(`/chat?category=${category}`, { scroll: false });
                       if (isMobile) setSidebarOpen(false);
                     }}
-                    className="w-full text-left px-3 py-2.5 text-sm border-b border-gray-300/70 dark:border-gray-700/70 hover:bg-gray-600/10 dark:hover:bg-white/5 transition-colors"
+                    className="w-full text-left px-3 py-2.5 text-sm hover:bg-gray-600/10 dark:hover:bg-white/5 transition-colors"
                   >
                     {label}
                   </button>
