@@ -156,8 +156,9 @@ export function VignetteDetailView({
                 questionsContent += parsed.content || "";
                 setStreamingMessage(documentContent + "\n\n" + questionsContent);
               } else if (parsed.type === "done") {
-                const content = questionsContent
-                  ? `${documentContent}\n\n${questionsContent}`
+                const allQuestions = questionsContent || parsed.questions || "";
+                const content = allQuestions
+                  ? `${documentContent}\n\n${allQuestions}`
                   : documentContent;
                 setFinalContent(content);
                 setStreamingMessage("");
@@ -169,7 +170,11 @@ export function VignetteDetailView({
         }
       } else {
         const json = await response.json();
-        const content = json.text || json.content || "";
+        const textContent = json.text || json.content || "";
+        const questionsContent = json.questions || "";
+        const content = questionsContent
+          ? `${textContent}\n\n${questionsContent}`
+          : textContent;
         if (content) setFinalContent(content);
       }
     } catch (error) {

@@ -202,8 +202,9 @@ export function useChatConversation({
                     documentContent + "\n\n" + questionsContent,
                   );
                 } else if (parsed.type === "done") {
-                  const finalContent = questionsContent
-                    ? `${documentContent}\n\n${questionsContent}`
+                  const allQuestions = questionsContent || parsed.questions || "";
+                  const finalContent = allQuestions
+                    ? `${documentContent}\n\n${allQuestions}`
                     : documentContent;
 
                   const aiMessage: Message = {
