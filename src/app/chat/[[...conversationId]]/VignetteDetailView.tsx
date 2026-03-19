@@ -32,6 +32,7 @@ interface VignetteViewParams {
 
 interface VignetteDetailViewProps {
   vignetteSlug: string;
+  vignetteUrlCategory?: string;
   selectedAgent: AgentType;
   onAgentChange: (agent: AgentType) => void;
   selectedModel: string;
@@ -40,6 +41,7 @@ interface VignetteDetailViewProps {
 
 export function VignetteDetailView({
   vignetteSlug,
+  vignetteUrlCategory = "",
   selectedAgent,
   onAgentChange,
   selectedModel,
@@ -67,7 +69,7 @@ export function VignetteDetailView({
       streamStartedRef.current = true;
       streamVignetteContent({
         imageName: vignetteSlug,
-        category: "",
+        category: vignetteUrlCategory,
         tier: selectedAgent.toUpperCase(),
       });
       return;

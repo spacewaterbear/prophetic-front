@@ -18,6 +18,7 @@ export interface VignetteData {
   brand_name: string;
   public_url: string;
   nb_insights: number;
+  id?: string;
   score?: number;
   trend?: "up" | "down";
   subtitle?: string;

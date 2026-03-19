@@ -273,9 +273,9 @@ export default function ChatPage() {
   };
 
   const handleVignetteClick = (vignette: VignetteData) => {
-    const imageName = getImageNameFromUrl(vignette.public_url);
+    const slug = vignette.id || getImageNameFromUrl(vignette.public_url).replace(/\.[^/.]+$/, "");
 
-    if (!imageName) return;
+    if (!slug) return;
 
     const isMobileView = window.innerWidth < 768;
     if (isMobileView) {
@@ -285,14 +285,13 @@ export default function ChatPage() {
     sessionStorage.setItem(
       "pendingVignetteView",
       JSON.stringify({
-        imageName,
+        imageName: slug,
         category: vignette.category,
         tier: selectedAgent.toUpperCase(),
       }),
     );
 
-    const slug = imageName.replace(/\.[^/.]+$/, "");
-    router.push(`/chat?d=${slug}`);
+    router.push(`/chat?d=${slug}&cat=${vignette.category}`);
   };
 
   const handleBackToCategory = (category: string) => {
@@ -330,6 +329,7 @@ export default function ChatPage() {
   }
 
   const vignetteSlug = searchParams.get("d");
+  const vignetteUrlCategory = searchParams.get("cat") || "";
   const isWelcomeScreen = !conversationId && !vignetteSlug;
   const userStatus = (session?.user as { status?: string })?.status as
     | "unauthorized"
@@ -362,6 +362,7 @@ export default function ChatPage() {
         <VignetteDetailView
           key={vignetteSlug}
           vignetteSlug={vignetteSlug}
+          vignetteUrlCategory={vignetteUrlCategory}
           selectedAgent={selectedAgent}
           onAgentChange={handleAgentChange}
           selectedModel={selectedModel}
