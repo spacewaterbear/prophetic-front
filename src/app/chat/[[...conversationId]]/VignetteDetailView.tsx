@@ -95,12 +95,20 @@ export function VignetteDetailView({
     setStreamingMessage("");
 
     try {
-      const queryParams: Record<string, string> = {
-        type: "independant",
-        root_folder: "VIGNETTES",
-        markdown_name: vignetteParams.imageName,
-        category: vignetteParams.category || "",
-      };
+      const isCashFlowLeasing = vignetteParams.category === "CASH_FLOW_LEASING";
+      const queryParams: Record<string, string> = isCashFlowLeasing
+        ? {
+            type: "dependant-without-sub",
+            category: "CASH_FLOW_LEASING",
+            markdown_name: vignetteParams.imageName,
+            tiers_level: vignetteParams.tier || "DISCOVER",
+          }
+        : {
+            type: "independant",
+            root_folder: "VIGNETTES",
+            markdown_name: vignetteParams.imageName,
+            category: vignetteParams.category || "",
+          };
 
       const query = new URLSearchParams(queryParams);
       const response = await fetch(`/api/markdown?${query.toString()}`);
