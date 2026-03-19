@@ -32,6 +32,7 @@ interface VignetteViewParams {
 
 interface VignetteDetailViewProps {
   vignetteSlug: string;
+  vignetteUrlCategory?: string;
   selectedAgent: AgentType;
   onAgentChange: (agent: AgentType) => void;
   selectedModel: string;
@@ -40,6 +41,7 @@ interface VignetteDetailViewProps {
 
 export function VignetteDetailView({
   vignetteSlug,
+  vignetteUrlCategory = "",
   selectedAgent,
   onAgentChange,
   selectedModel,
@@ -67,7 +69,7 @@ export function VignetteDetailView({
       streamStartedRef.current = true;
       streamVignetteContent({
         imageName: vignetteSlug,
-        category: "",
+        category: vignetteUrlCategory,
         tier: selectedAgent.toUpperCase(),
       });
       return;
@@ -93,23 +95,12 @@ export function VignetteDetailView({
     setStreamingMessage("");
 
     try {
-      let queryParams: Record<string, string>;
-
-      if (vignetteParams.category === "CASH_FLOW_LEASING") {
-        queryParams = {
-          type: "dependant-without-sub",
-          category: "CASH_FLOW_LEASING",
-          markdown_name: vignetteParams.imageName,
-          tiers_level: vignetteParams.tier || "DISCOVER",
-        };
-      } else {
-        queryParams = {
-          type: "independant",
-          root_folder: "VIGNETTES",
-          markdown_name: vignetteParams.imageName,
-          category: vignetteParams.category || "",
-        };
-      }
+      const queryParams: Record<string, string> = {
+        type: "independant",
+        root_folder: "VIGNETTES",
+        markdown_name: vignetteParams.imageName,
+        category: vignetteParams.category || "",
+      };
 
       const query = new URLSearchParams(queryParams);
       const response = await fetch(`/api/markdown?${query.toString()}`);
@@ -156,8 +147,9 @@ export function VignetteDetailView({
                 questionsContent += parsed.content || "";
                 setStreamingMessage(documentContent + "\n\n" + questionsContent);
               } else if (parsed.type === "done") {
-                const content = questionsContent
-                  ? `${documentContent}\n\n${questionsContent}`
+                const allQuestions = questionsContent || parsed.questions || "";
+                const content = allQuestions
+                  ? `${documentContent}\n\n${allQuestions}`
                   : documentContent;
                 setFinalContent(content);
                 setStreamingMessage("");
@@ -169,7 +161,11 @@ export function VignetteDetailView({
         }
       } else {
         const json = await response.json();
-        const content = json.text || json.content || "";
+        const textContent = json.text || json.content || "";
+        const questionsContent = json.questions || "";
+        const content = questionsContent
+          ? `${textContent}\n\n${questionsContent}`
+          : textContent;
         if (content) setFinalContent(content);
       }
     } catch (error) {

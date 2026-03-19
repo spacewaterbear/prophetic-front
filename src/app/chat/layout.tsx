@@ -28,7 +28,7 @@ import {
 import { SelectionContextMenu } from "@/components/SelectionContextMenu";
 import { FeedbackModal } from "@/components/FeedbackModal";
 import { getCategoryDisplayNames } from "@/lib/translations";
-import { ICON_CONVERSATIONS_DARK, ICON_CONVERSATIONS_LIGHT, ICONS_BASE_URL, LOGO_LIGHT, LOGO_DARK } from "@/lib/constants/logos";
+import { ICON_CONVERSATIONS_DARK, ICON_CONVERSATIONS_LIGHT, ICONS_BASE_URL, LOGO_LIGHT, LOGO_DARK, LOGO_SMALL_LIGHT, LOGO_SMALL_DARK } from "@/lib/constants/logos";
 
 const STORAGE = ICONS_BASE_URL;
 
@@ -37,8 +37,9 @@ const IS_MAIN_SPECIALITY = process.env.NEXT_PUBLIC_SPECIALITY === "main" || !pro
 
 const MAIN_CATEGORY_ORDER = [
   "MARCHE_SPOT",
+  "CASH_FLOW_LEASING",
+  "ART_CONTEMPORAIN",
   "WINE",
-  "SACS",
   "IMMO_LUXE",
   "MONTRES_LUXE",
   "CARS",
@@ -46,9 +47,8 @@ const MAIN_CATEGORY_ORDER = [
   "WHISKY",
   "BIJOUX",
   "CARDS_US",
-  "ART_CONTEMPORAIN",
+  "SACS",
   "ART_TRADING_VALUE",
-  "CASH_FLOW_LEASING",
 ];
 
 // Icons for known categories in main mode
@@ -59,6 +59,7 @@ const MAIN_CATEGORY_ICONS: Record<string, { light: string; dark: string }> = {
 };
 
 const ART_CATEGORY_ORDER = [
+  "MARCHE_SPOT",
   "ART",
   "CLASSIQUES",
   "MODERNES",
@@ -68,6 +69,7 @@ const ART_CATEGORY_ORDER = [
   "FIGURATIF",
   "STREET_ART",
   "EMERGENTS",
+  "ART_TRADING_VALUE",
 ];
 
 // Icons for known categories in art mode
@@ -263,9 +265,9 @@ function ChatLayoutInner({
         className={`${sidebarOpen ? "w-64" : "w-0"} transition-all duration-300 bg-[#f0eee6] dark:bg-[#1e1f20] text-gray-900 dark:text-white flex flex-col overflow-hidden fixed md:relative h-full z-50 md:z-auto`}
       >
         {/* Logo */}
-        <Link href="/chat" className="h-[56px] px-4 pt-3 mb-4 border-b border-gray-400 dark:border-gray-800 flex items-start gap-2">
-          <Image src={LOGO_LIGHT} alt="Logo" width={22} height={22} className="flex-shrink-0 block dark:hidden" />
-          <Image src={LOGO_DARK} alt="Logo" width={22} height={22} className="flex-shrink-0 hidden dark:block" />
+        <Link href="/chat" className="h-[56px] px-4 pt-3 flex items-start gap-2">
+          <Image src={LOGO_SMALL_LIGHT} alt="Logo" width={22} height={22} className="flex-shrink-0 block dark:hidden" />
+          <Image src={LOGO_SMALL_DARK} alt="Logo" width={22} height={22} className="flex-shrink-0 hidden dark:block" />
           <div className="flex items-start gap-1 leading-none">
             <span className="font-[family-name:var(--font-spectral)] font-semibold text-gray-900 dark:text-white text-lg leading-tight">
               {process.env.NEXT_PUBLIC_SPECIALITY === "art" ? "Art Orchestra" : "Prophetic Orchestra"}
@@ -276,10 +278,10 @@ function ChatLayoutInner({
 
         <div className="px-4 pb-4">
           <Button
-            className="w-full bg-gray-900 hover:bg-gray-800 text-white rounded-xl border-0 font-normal dark:bg-white/10 dark:hover:bg-white/20"
+            className="w-full bg-gray-800 hover:bg-gray-700 text-white rounded-full border-0 font-normal py-6 text-base dark:bg-white/10 dark:hover:bg-white/20"
             onClick={createNewConversation}
           >
-            <Plus className="h-4 w-4 mr-2" />
+            <Plus className="h-5 w-5 mr-2" />
             {t("nav.newChat")}
           </Button>
         </div>
@@ -290,7 +292,7 @@ function ChatLayoutInner({
             <div>
               <button
                 onClick={() => setConsultationsExpanded(!consultationsExpanded)}
-                className="w-full text-left px-3 py-2.5 border-b border-gray-300/70 dark:border-gray-700/70 hover:bg-gray-600/10 dark:hover:bg-white/5 text-sm transition-colors flex items-center gap-2"
+                className="w-full text-left px-3 py-2.5 hover:bg-gray-600/10 dark:hover:bg-white/5 text-sm transition-colors flex items-center gap-2"
               >
                 <Image
                   src={ICON_CONVERSATIONS_LIGHT}
@@ -368,13 +370,30 @@ function ChatLayoutInner({
             </div>
 
 
+            {/* Marché Spot — art speciality only, before Artistes */}
+            {IS_ART_SPECIALITY && artCategories.slice(0, 1).map((category) => {
+              const label = getCategoryLabel(category, categoryNames);
+              return (
+                <button
+                  key={category}
+                  onClick={() => {
+                    router.push(`/chat?category=${category}`, { scroll: false });
+                    if (isMobile) setSidebarOpen(false);
+                  }}
+                  className="w-full text-left px-3 py-2.5 text-sm hover:bg-gray-600/10 dark:hover:bg-white/5 transition-colors"
+                >
+                  {label}
+                </button>
+              );
+            })}
+
             {/* Artists Directory — art speciality only */}
             {IS_ART_SPECIALITY && <button
               onClick={() => {
                 router.push("/chat/artists");
                 if (isMobile) setSidebarOpen(false);
               }}
-              className={`w-full text-left px-3 py-2.5 border-b border-gray-300/70 dark:border-gray-700/70 hover:bg-gray-600/10 dark:hover:bg-white/5 text-sm transition-colors flex items-center gap-2 ${
+              className={`w-full text-left px-3 py-2.5 hover:bg-gray-600/10 dark:hover:bg-white/5 text-sm transition-colors flex items-center gap-2 ${
                 pathname === "/chat/artists" ? "font-medium" : ""
               }`}
             >
@@ -383,7 +402,7 @@ function ChatLayoutInner({
             </button>}
 
             {/* Investment Categories */}
-            {(IS_ART_SPECIALITY ? artCategories : mainCategories).map((category) => {
+            {(IS_ART_SPECIALITY ? artCategories.slice(1) : mainCategories).map((category) => {
                 const label = getCategoryLabel(category, categoryNames);
                 return (
                   <button
@@ -392,7 +411,7 @@ function ChatLayoutInner({
                       router.push(`/chat?category=${category}`, { scroll: false });
                       if (isMobile) setSidebarOpen(false);
                     }}
-                    className="w-full text-left px-3 py-2.5 text-sm border-b border-gray-300/70 dark:border-gray-700/70 hover:bg-gray-600/10 dark:hover:bg-white/5 transition-colors"
+                    className="w-full text-left px-3 py-2.5 text-sm hover:bg-gray-600/10 dark:hover:bg-white/5 transition-colors"
                   >
                     {label}
                   </button>

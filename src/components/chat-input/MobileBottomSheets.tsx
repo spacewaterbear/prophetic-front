@@ -184,63 +184,6 @@ export function MobileBottomSheets({
               </div>
               <div className="grid grid-cols-1 gap-3">
                 <button
-                  className={CARD_BUTTON_STYLES}
-                  onClick={() => onMobileMenuLevelChange("flashcards")}
-                >
-                  <div className="flex items-center gap-3">
-                    <Image
-                      src={
-                        mounted && isDark
-                          ? ICON_CHRONO_DARK
-                          : ICON_CHRONO_LIGHT
-                      }
-                      alt="Flashcards"
-                      width={24}
-                      height={24}
-                      className="w-6 h-6"
-                    />
-                    <span>{t("hub.learnFlashcards")}</span>
-                  </div>
-                </button>
-                <button
-                  className={CARD_BUTTON_STYLES}
-                  onClick={() => onMobileMenuLevelChange("ranking")}
-                >
-                  <div className="flex items-center gap-3">
-                    <Image
-                      src={
-                        mounted && isDark
-                          ? ICON_RANKING_DARK
-                          : ICON_RANKING_LIGHT
-                      }
-                      alt="Rankings"
-                      width={24}
-                      height={24}
-                      className="w-6 h-6"
-                    />
-                    <span>{t("hub.compareRankings")}</span>
-                  </div>
-                </button>
-                <button
-                  className={CARD_BUTTON_STYLES}
-                  onClick={() => onMobileMenuLevelChange("portfolio")}
-                >
-                  <div className="flex items-center gap-3">
-                    <Image
-                      src={
-                        mounted && isDark
-                          ? ICON_PORTFOLIO_DARK
-                          : ICON_PORTFOLIO_LIGHT
-                      }
-                      alt="Portfolio"
-                      width={24}
-                      height={24}
-                      className="w-6 h-6"
-                    />
-                    <span>{t("hub.trackPortfolio")}</span>
-                  </div>
-                </button>
-                <button
                   className="w-full flex items-center justify-between p-4 bg-white dark:bg-[#1e1f20] text-gray-900 dark:text-white text-sm font-semibold rounded-2xl border border-gray-400/60 dark:border-gray-600/60 opacity-50 cursor-not-allowed"
                   disabled
                 >

@@ -80,49 +80,54 @@ const VignetteItem = ({ item, onVignetteClick }: { item: VignetteData; onVignett
 
     const isUp = item.trend === "up";
 
+    const darkText = ["Rebag", "Farfetch"].includes(item.category_alias ?? "");
+    const textColor = darkText ? "text-black" : "text-white";
+
     return (
         <div
-            className={`${onVignetteClick ? "cursor-pointer" : ""} relative border border-gray-200/20 bg-[#e6e6e6] dark:bg-gray-800 rounded-[24px] overflow-hidden flex flex-col min-h-[110px]`}
+            className={`${onVignetteClick ? "cursor-pointer" : ""} relative rounded-[18px] overflow-hidden aspect-square shadow-sm`}
             onClick={() => onVignetteClick?.(item)}
         >
-            <div className="p-4 flex flex-col flex-1 relative">
-                {/* Large faded score watermark */}
-                {item.score != null && (
-                    <span className="absolute right-3 bottom-3 text-[64px] font-black text-black/[0.06] dark:text-white/[0.07] leading-none select-none pointer-events-none">
-                        {item.score}
-                    </span>
-                )}
-                {/* Brand name */}
-                <h3 className="text-[15px] font-bold text-gray-900 dark:text-white leading-tight line-clamp-2 relative">
+            {/* Full-card background image */}
+            <img
+                src={item.public_url}
+                alt={item.brand_name}
+                className="absolute inset-0 w-full h-full object-cover"
+            />
+
+            {/* Header — top-left overlay */}
+            <div className="absolute top-0 left-0 right-0 p-4">
+                <p className={`text-[15px] font-bold ${textColor} leading-tight drop-shadow-sm`}>
                     {item.brand_name}
+                </p>
+                <h3
+                    className={`text-[26px] leading-[1.1] ${textColor} mt-0.5 line-clamp-2 drop-shadow-sm`}
+                    style={{ fontFamily: "var(--font-spectral)", fontStyle: "italic", paddingTop: "4px" }}
+                >
+                    {item.category_alias}
                 </h3>
-                {/* Country */}
-                {item.primary_country && (
-                    <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5 leading-tight">
-                        {item.primary_country}
-                    </p>
-                )}
-                {/* Score + subtitle */}
-                <div className="flex items-center gap-2 mt-auto pt-3">
-                    {item.score != null && item.trend != null && (
-                        <span className={`text-xs font-bold shrink-0 ${isUp ? "text-green-500" : "text-red-400"}`}>
-                            {isUp ? "▲" : "▼"}
+            </div>
+
+            {/* Footer bar — bottom overlay */}
+            <div className="absolute bottom-0 left-0 right-0 p-3">
+                <div className="flex items-center justify-between bg-white rounded-[14px] px-3 py-2 shadow-sm">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                        {item.trend != null && (
+                            <span className="shrink-0 text-[10px] leading-none" style={{ color: isUp ? "#22c55e" : "#ef4444" }}>
+                                {isUp ? "▲" : "▼"}
+                            </span>
+                        )}
+                        <span className="text-[13px] font-medium italic text-[#9ca3af] truncate">
+                            {item.subtitle}
+                        </span>
+                    </div>
+                    {item.score != null && (
+                        <span className="shrink-0 leading-none font-black text-[#e5e5e5] text-[32px] tracking-[-0.04em]">
+                            {item.score}
                         </span>
                     )}
-                    <p className="text-[12px] font-light italic text-gray-500 dark:text-gray-400 line-clamp-1">
-                        {item.subtitle}
-                    </p>
                 </div>
             </div>
-            {/* Score progress bar */}
-            {item.score != null && (
-                <div className="h-[3px] w-full bg-gray-200/60 dark:bg-gray-700">
-                    <div
-                        className={`h-full ${isUp ? "bg-green-500" : "bg-red-400"}`}
-                        style={{ width: `${item.score}%` }}
-                    />
-                </div>
-            )}
         </div>
     );
 };
@@ -142,8 +147,8 @@ export const VignetteGridCard = memo(({ data, onVignetteClick }: VignetteGridCar
 
     return (
         <div className="w-full">
-            {/* Vignette Grid - 2x2 on all screen sizes */}
-            <div className="grid grid-cols-2 gap-4 sm:gap-6">
+            {/* Vignette Grid - 1 col on mobile, 2 cols on sm+ */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 {data.map((item, index) => (
                     <VignetteItem key={index} item={item} onVignetteClick={onVignetteClick} />
                 ))}

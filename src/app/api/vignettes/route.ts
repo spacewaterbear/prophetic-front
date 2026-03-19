@@ -18,7 +18,8 @@ export async function GET(request: NextRequest) {
         }
 
         const speciality = process.env.NEXT_PUBLIC_SPECIALITY || "main";
-        const cacheKey = `${speciality}:${category.toUpperCase()}`;
+        const lang = searchParams.get("lang") || "fr";
+        const cacheKey = `${speciality}:${category.toUpperCase()}:${lang}`;
 
         // Check cache first
         const cached = vignetteCache.get(cacheKey);
@@ -65,18 +66,6 @@ export async function GET(request: NextRequest) {
         }
 
         const data = await response.json();
-
-        // Override with hardcoded items for CASH_FLOW_LEASING
-        if (category.toUpperCase() === "CASH_FLOW_LEASING") {
-            const hardcodedItems = [
-                { category: "CASH_FLOW_LEASING", brand_name: "Vestiaire Collective", subtitle: "2 millions de produits", public_url: "vestiare_collective_leasing.md", nb_insights: 0 },
-                { category: "CASH_FLOW_LEASING", brand_name: "Farfetch", subtitle: "100 000 de produits", public_url: "farfetech_leasing.md", nb_insights: 0 },
-                { category: "CASH_FLOW_LEASING", brand_name: "Rebag", subtitle: "30 000 de produits", public_url: "rebag_leasing.md", nb_insights: 0 },
-            ];
-            const mergedData = Array.isArray(data) ? hardcodedItems : { ...data, vignettes: hardcodedItems };
-            vignetteCache.set(cacheKey, { data: mergedData, timestamp: Date.now() });
-            return NextResponse.json(mergedData);
-        }
 
         vignetteCache.set(cacheKey, { data, timestamp: Date.now() });
         return NextResponse.json(data);

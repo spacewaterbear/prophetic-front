@@ -202,8 +202,9 @@ export function useChatConversation({
                     documentContent + "\n\n" + questionsContent,
                   );
                 } else if (parsed.type === "done") {
-                  const finalContent = questionsContent
-                    ? `${documentContent}\n\n${questionsContent}`
+                  const allQuestions = questionsContent || parsed.questions || "";
+                  const finalContent = allQuestions
+                    ? `${documentContent}\n\n${allQuestions}`
                     : documentContent;
 
                   const aiMessage: Message = {
@@ -256,7 +257,11 @@ export function useChatConversation({
           }
         } else {
           const jsonResponse = await response.json();
-          const content = jsonResponse.text || jsonResponse.content || "";
+          const textContent = jsonResponse.text || jsonResponse.content || "";
+          const questionsContent = jsonResponse.questions || "";
+          const content = questionsContent
+            ? `${textContent}\n\n${questionsContent}`
+            : textContent;
 
           if (content) {
             const aiMessage: Message = {

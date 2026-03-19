@@ -3,7 +3,7 @@
 import { memo, useEffect, useState } from "react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
-import { LOGO_DARK, LOGO_LIGHT } from "@/lib/constants/logos";
+import { LOGO_SMALL_DARK, LOGO_SMALL_LIGHT } from "@/lib/constants/logos";
 
 export const AIAvatar = memo(() => {
   const { theme, resolvedTheme } = useTheme();
@@ -15,17 +15,17 @@ export const AIAvatar = memo(() => {
   }, []);
 
   return (
-    <div className="hidden sm:flex w-8 h-8 sm:w-10 sm:h-10 mt-1 rounded-full items-center justify-center flex-shrink-0 overflow-hidden">
+    <div className="hidden sm:flex w-6 h-6 sm:w-7 sm:h-7 mt-1 items-center justify-center flex-shrink-0">
       <Image
         src={
           mounted && isDark
-            ? LOGO_DARK
-            : LOGO_LIGHT
+            ? LOGO_SMALL_DARK
+            : LOGO_SMALL_LIGHT
         }
         alt="Prophetic Orchestra"
-        width={40}
-        height={40}
-        className="w-full h-full object-cover"
+        width={28}
+        height={28}
+        className="w-full h-full object-contain"
         priority
       />
     </div>

@@ -39,7 +39,7 @@ export default function ChatPage() {
   const searchParams = useSearchParams();
   const { theme, resolvedTheme } = useTheme();
   const isDark = theme === "dark" || resolvedTheme === "dark";
-  const { t } = useI18n();
+  const { t, language } = useI18n();
 
   const conversationIdParam = params.conversationId as string[] | undefined;
   const conversationId = conversationIdParam?.[0]
@@ -223,7 +223,7 @@ export default function ChatPage() {
         setVignetteError(null);
 
         try {
-          const url = `/api/vignettes?category=${category}`;
+          const url = `/api/vignettes?category=${category}&lang=${language}`;
           const response = await fetch(url);
 
           if (!response.ok) {
@@ -273,9 +273,9 @@ export default function ChatPage() {
   };
 
   const handleVignetteClick = (vignette: VignetteData) => {
-    const imageName = getImageNameFromUrl(vignette.public_url);
+    const slug = vignette.id || getImageNameFromUrl(vignette.public_url).replace(/\.[^/.]+$/, "");
 
-    if (!imageName) return;
+    if (!slug) return;
 
     const isMobileView = window.innerWidth < 768;
     if (isMobileView) {
@@ -285,14 +285,13 @@ export default function ChatPage() {
     sessionStorage.setItem(
       "pendingVignetteView",
       JSON.stringify({
-        imageName,
+        imageName: slug,
         category: vignette.category,
         tier: selectedAgent.toUpperCase(),
       }),
     );
 
-    const slug = imageName.replace(/\.[^/.]+$/, "");
-    router.push(`/chat?d=${slug}`);
+    router.push(`/chat?d=${slug}&cat=${vignette.category}`);
   };
 
   const handleBackToCategory = (category: string) => {
@@ -330,6 +329,7 @@ export default function ChatPage() {
   }
 
   const vignetteSlug = searchParams.get("d");
+  const vignetteUrlCategory = searchParams.get("cat") || "";
   const isWelcomeScreen = !conversationId && !vignetteSlug;
   const userStatus = (session?.user as { status?: string })?.status as
     | "unauthorized"
@@ -343,7 +343,7 @@ export default function ChatPage() {
 
   return (
     <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
-      <div className="h-[56px] mb-4 flex-shrink-0 border-b border-gray-400 dark:border-gray-800" />
+      <div className="h-[56px] mb-4 flex-shrink-0" />
       <div className="absolute top-2 right-3 z-20 flex items-center gap-1">
         {!isWelcomeScreen && isAdminUser(session) && (
           <ModelSelector
@@ -362,6 +362,7 @@ export default function ChatPage() {
         <VignetteDetailView
           key={vignetteSlug}
           vignetteSlug={vignetteSlug}
+          vignetteUrlCategory={vignetteUrlCategory}
           selectedAgent={selectedAgent}
           onAgentChange={handleAgentChange}
           selectedModel={selectedModel}

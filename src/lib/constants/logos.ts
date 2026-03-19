@@ -1,8 +1,11 @@
 const BASE = "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo";
 
 /** Main brand logo — swap these two URLs to change the logo across the entire app */
-export const LOGO_LIGHT = `${BASE}/logo/logo_black.svg`;
-export const LOGO_DARK = `${BASE}/logo/logo_white.svg`;
+export const LOGO_LIGHT = `${BASE}/logo/logo_home_blue.svg`;
+export const LOGO_DARK = `${BASE}/logo/logo_home_white.svg`;
+
+export const LOGO_SMALL_LIGHT = `${BASE}/logo/small_logo_black.svg`;
+export const LOGO_SMALL_DARK = `${BASE}/logo/small_logo_white.svg`;
 
 /** UI icons (theme-aware) */
 export const ICON_PORTFOLIO_LIGHT = `${BASE}/portfolio.svg`;
