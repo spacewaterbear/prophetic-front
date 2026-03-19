@@ -2,8 +2,6 @@ import Stripe from "stripe";
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-
 const PRICE_STATUS_MAP: Record<string, string> = {
   [process.env.STRIPE_FLASH_PRICE_ID!]: "flash",
   [process.env.STRIPE_DISCOVER_PRICE_ID!]: "discover",
@@ -15,6 +13,7 @@ const STATUS_COLUMN =
   process.env.NEXT_PUBLIC_SPECIALITY === "art" ? "art_status" : "status";
 
 export async function GET(req: NextRequest) {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
   const origin = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
   const { searchParams } = new URL(req.url);
   const sessionId = searchParams.get("session_id");

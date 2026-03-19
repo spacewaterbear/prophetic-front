@@ -3,8 +3,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-
 const ALLOWED_PRICE_IDS = new Set([
   process.env.STRIPE_DISCOVER_PRICE_ID,
   process.env.STRIPE_FLASH_PRICE_ID,
@@ -43,6 +41,7 @@ async function updateProfileStatus(userId: string, status: string) {
 }
 
 export async function GET(req: NextRequest) {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
   const session = await auth();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

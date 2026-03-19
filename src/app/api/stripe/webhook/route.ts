@@ -2,8 +2,6 @@ import Stripe from "stripe";
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-
 const PRICE_STATUS_MAP: Record<string, string> = {
   [process.env.STRIPE_DISCOVER_PRICE_ID!]: "discover",
   [process.env.STRIPE_FLASH_PRICE_ID!]: "flash",
@@ -27,6 +25,7 @@ async function updateUserStatus(userId: string, status: string) {
 }
 
 async function getUserIdFromSubscription(
+  stripe: Stripe,
   subscription: Stripe.Subscription,
 ): Promise<string | null> {
   if (subscription.metadata?.userId) return subscription.metadata.userId;
@@ -40,6 +39,7 @@ async function getUserIdFromSubscription(
 }
 
 export async function POST(req: NextRequest) {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
   const body = await req.text();
   const sig = req.headers.get("stripe-signature");
 
@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
         )
           break;
 
-        const userId = await getUserIdFromSubscription(subscription);
+        const userId = await getUserIdFromSubscription(stripe, subscription);
         if (!userId) break;
 
         const priceId = subscription.items.data[0]?.price.id;
@@ -116,7 +116,7 @@ export async function POST(req: NextRequest) {
         )
           break;
 
-        const userId = await getUserIdFromSubscription(subscription);
+        const userId = await getUserIdFromSubscription(stripe, subscription);
         if (!userId) break;
 
         const priceId = subscription.items.data[0]?.price.id;
@@ -129,7 +129,7 @@ export async function POST(req: NextRequest) {
 
       case "customer.subscription.deleted": {
         const subscription = event.data.object as Stripe.Subscription;
-        const userId = await getUserIdFromSubscription(subscription);
+        const userId = await getUserIdFromSubscription(stripe, subscription);
         if (!userId) break;
 
         const pendingPriceId = subscription.metadata?.pending_price_id;

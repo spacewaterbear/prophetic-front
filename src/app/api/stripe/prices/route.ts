@@ -1,8 +1,6 @@
 import Stripe from "stripe";
 import { NextResponse } from "next/server";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-
 function formatPrice(price: Stripe.Price): string {
   if (!price.unit_amount || !price.currency) return "";
   const amount = price.unit_amount / 100;
@@ -13,6 +11,7 @@ function formatPrice(price: Stripe.Price): string {
 }
 
 export async function GET() {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
   try {
     const [intelligence, oracle] = await Promise.all([
       stripe.prices.retrieve(process.env.STRIPE_INTELLIGENCE_PRICE_ID!),
