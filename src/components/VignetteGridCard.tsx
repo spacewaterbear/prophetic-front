@@ -147,8 +147,8 @@ export const VignetteGridCard = memo(({ data, onVignetteClick }: VignetteGridCar
 
     return (
         <div className="w-full">
-            {/* Vignette Grid - 2x2 on all screen sizes */}
-            <div className="grid grid-cols-2 gap-4 sm:gap-6">
+            {/* Vignette Grid - 1 col on mobile, 2 cols on sm+ */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 {data.map((item, index) => (
                     <VignetteItem key={index} item={item} onVignetteClick={onVignetteClick} />
                 ))}
