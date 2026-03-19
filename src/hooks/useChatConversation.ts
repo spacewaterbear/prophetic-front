@@ -256,7 +256,11 @@ export function useChatConversation({
           }
         } else {
           const jsonResponse = await response.json();
-          const content = jsonResponse.text || jsonResponse.content || "";
+          const textContent = jsonResponse.text || jsonResponse.content || "";
+          const questionsContent = jsonResponse.questions || "";
+          const content = questionsContent
+            ? `${textContent}\n\n${questionsContent}`
+            : textContent;
 
           if (content) {
             const aiMessage: Message = {
