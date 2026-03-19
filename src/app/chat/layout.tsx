@@ -14,6 +14,7 @@ import {
   ChevronRight,
   MessageCircleHeart,
   Palette,
+  ArrowUpCircle,
 } from "lucide-react";
 import { useI18n } from "@/contexts/i18n-context";
 import { useSidebar, SidebarProvider } from "@/contexts/sidebar-context";
@@ -429,6 +430,23 @@ function ChatLayoutInner({
             <MessageCircleHeart className="h-4 w-4 flex-shrink-0" />
             <span>{t("nav.feedback")}</span>
           </button>
+          <div className="mt-2 flex flex-col gap-1.5 px-1">
+            <span className="text-xs text-gray-500 dark:text-gray-400">
+              {t("nav.currentPlan")}:{" "}
+              <span className="font-semibold text-gray-700 dark:text-gray-200 capitalize">
+                {session?.user?.status && session.user.status !== "unauthorized"
+                  ? session.user.status
+                  : "free"}
+              </span>
+            </span>
+            <Link
+              href="/pricing"
+              className="flex items-center justify-center gap-1 text-xs font-medium px-2 py-1.5 rounded-md bg-[#372ee9] hover:bg-[#2a22c7] text-white transition-colors"
+            >
+              <ArrowUpCircle className="h-3 w-3" />
+              {t("nav.upgrade")}
+            </Link>
+          </div>
         </div>
 
         <div className="px-4 pb-4">

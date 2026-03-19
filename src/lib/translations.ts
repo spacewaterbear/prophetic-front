@@ -41,6 +41,8 @@ export const translations = {
             feedback: "Feed-back",
             conversations: "Conversations",
             artists: "Artistes",
+            currentPlan: "Plan actuel",
+            upgrade: "Améliorer",
         },
         // Chat Interface
         chat: {
@@ -296,6 +298,8 @@ export const translations = {
             feedback: "Feedback",
             conversations: "Conversations",
             artists: "Artists",
+            currentPlan: "Current plan",
+            upgrade: "Upgrade",
         },
         chat: {
             greeting: "Hello, {name}",
@@ -543,6 +547,8 @@ export const translations = {
             feedback: "Feedback",
             conversations: "Conversaciones",
             artists: "Artistas",
+            currentPlan: "Plan actual",
+            upgrade: "Actualizar",
         },
         chat: {
             greeting: "Hola",
@@ -782,6 +788,8 @@ export const translations = {
             feedback: "Feedback",
             conversations: "Gespräche",
             artists: "Künstler",
+            currentPlan: "Aktueller Plan",
+            upgrade: "Upgraden",
         },
         chat: {
             greeting: "Hallo",
@@ -1021,6 +1029,8 @@ export const translations = {
             feedback: "Feedback",
             conversations: "Conversazioni",
             artists: "Artisti",
+            currentPlan: "Piano attuale",
+            upgrade: "Aggiorna",
         },
         chat: {
             greeting: "Ciao",
@@ -1260,6 +1270,8 @@ export const translations = {
             feedback: "Feedback",
             conversations: "Conversas",
             artists: "Artistas",
+            currentPlan: "Plano atual",
+            upgrade: "Atualizar",
         },
         chat: {
             greeting: "Olá",
@@ -1499,6 +1511,8 @@ export const translations = {
             feedback: "Feedback",
             conversations: "Gesprekken",
             artists: "Artiesten",
+            currentPlan: "Huidig plan",
+            upgrade: "Upgraden",
         },
         chat: {
             greeting: "Hallo",
@@ -1738,6 +1752,8 @@ export const translations = {
             feedback: "Feedback",
             conversations: "会話",
             artists: "アーティスト",
+            currentPlan: "現在のプラン",
+            upgrade: "アップグレード",
         },
         chat: {
             greeting: "こんにちは",
@@ -1977,6 +1993,8 @@ export const translations = {
             feedback: "Feedback",
             conversations: "对话",
             artists: "艺术家",
+            currentPlan: "当前计划",
+            upgrade: "升级",
         },
         chat: {
             greeting: "你好",
