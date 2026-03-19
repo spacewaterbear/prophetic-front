@@ -80,6 +80,41 @@ const VignetteItem = ({ item, onVignetteClick }: { item: VignetteData; onVignett
 
     const isUp = item.trend === "up";
 
+    const isArt = process.env.NEXT_PUBLIC_SPECIALITY === "art";
+
+    if (isArt) {
+        return (
+            <div
+                className={`group ${onVignetteClick ? "cursor-pointer" : ""}`}
+                onClick={() => onVignetteClick?.(item)}
+            >
+                <div className="border border-gray-200/20 bg-[#e6e6e6] dark:bg-gray-800 rounded-[24px] p-3">
+                    <div className="relative w-full aspect-square rounded-[24px] mb-2 overflow-hidden">
+                        <img
+                            src={item.public_url}
+                            alt={item.brand_name}
+                            className="absolute inset-0 w-full h-full object-cover"
+                        />
+                        {item.score != null && item.trend != null && (
+                            <div className="absolute bottom-3 right-3 flex items-center gap-1">
+                                <div className="bg-white rounded-full px-3 py-1.5 shadow-md flex items-center gap-1">
+                                    <span className="text-sm font-semibold text-gray-900">{item.score}</span>
+                                    <span className={`text-base ${isUp ? "text-green-500" : "text-red-500"}`}>
+                                        {isUp ? "▲" : "▼"}
+                                    </span>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                    <div className="flex flex-col px-1 text-center h-[62px] justify-center">
+                        <h3 className="text-[16px] font-bold text-gray-900 dark:text-white leading-tight line-clamp-2">{item.brand_name}</h3>
+                        <p className="text-[14px] font-light italic text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-1">{item.subtitle}</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     const darkText = ["Rebag", "Farfetch"].includes(item.category_alias ?? "");
     const textColor = darkText ? "text-black" : "text-white";
 
