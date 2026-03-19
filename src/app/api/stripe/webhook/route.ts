@@ -6,6 +6,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 const PRICE_STATUS_MAP: Record<string, string> = {
   [process.env.STRIPE_DISCOVER_PRICE_ID!]: "discover",
+  [process.env.STRIPE_FLASH_PRICE_ID!]: "flash",
   [process.env.STRIPE_INTELLIGENCE_PRICE_ID!]: "intelligence",
   [process.env.STRIPE_ORACLE_PRICE_ID!]: "oracle",
 };
@@ -81,8 +82,34 @@ export async function POST(req: NextRequest) {
         break;
       }
 
+      case "customer.subscription.created":
       case "customer.subscription.updated": {
         const subscription = event.data.object as Stripe.Subscription;
+        if (
+          subscription.status !== "active" &&
+          subscription.status !== "trialing"
+        )
+          break;
+
+        const userId = await getUserIdFromSubscription(subscription);
+        if (!userId) break;
+
+        const priceId = subscription.items.data[0]?.price.id;
+        const newStatus = PRICE_STATUS_MAP[priceId];
+        if (!newStatus) break;
+
+        await updateUserStatus(userId, newStatus);
+        break;
+      }
+
+      case "invoice.payment_succeeded": {
+        const invoice = event.data.object as Stripe.Invoice;
+        const subRef = invoice.parent?.subscription_details?.subscription;
+        const subscriptionId =
+          typeof subRef === "string" ? subRef : subRef?.id;
+        if (!subscriptionId) break;
+
+        const subscription = await stripe.subscriptions.retrieve(subscriptionId);
         if (
           subscription.status !== "active" &&
           subscription.status !== "trialing"
@@ -105,7 +132,28 @@ export async function POST(req: NextRequest) {
         const userId = await getUserIdFromSubscription(subscription);
         if (!userId) break;
 
-        await updateUserStatus(userId, "unauthorized");
+        const pendingPriceId = subscription.metadata?.pending_price_id;
+
+        if (pendingPriceId && PRICE_STATUS_MAP[pendingPriceId]) {
+          // Downgrade was scheduled: create new subscription for the lower plan.
+          // customer.subscription.created will fire and update the user's status.
+          const customer = await stripe.customers.retrieve(
+            subscription.customer as string,
+          ) as Stripe.Customer;
+          const defaultPaymentMethod =
+            (subscription.default_payment_method as string) ||
+            (customer.invoice_settings?.default_payment_method as string) ||
+            undefined;
+
+          await stripe.subscriptions.create({
+            customer: subscription.customer as string,
+            items: [{ price: pendingPriceId }],
+            ...(defaultPaymentMethod ? { default_payment_method: defaultPaymentMethod } : {}),
+            metadata: { userId },
+          });
+        } else {
+          await updateUserStatus(userId, "free");
+        }
         break;
       }
     }

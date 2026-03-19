@@ -89,38 +89,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   secret: process.env.AUTH_SECRET,
   trustHost: true,
   useSecureCookies: process.env.NODE_ENV === "production",
-  cookies: {
-    pkceCodeVerifier: {
-      name: `${process.env.NODE_ENV === "production" ? "__Secure-" : ""}authjs.pkce.code_verifier`,
-      options: {
-        httpOnly: true,
-        sameSite: "lax",
-        path: "/",
-        secure: process.env.NODE_ENV === "production",
-        maxAge: 60 * 15, // 15 minutes
-      },
-    },
-    state: {
-      name: `${process.env.NODE_ENV === "production" ? "__Secure-" : ""}authjs.state`,
-      options: {
-        httpOnly: true,
-        sameSite: "lax",
-        path: "/",
-        secure: process.env.NODE_ENV === "production",
-        maxAge: 60 * 15, // 15 minutes
-      },
-    },
-    nonce: {
-      name: `${process.env.NODE_ENV === "production" ? "__Secure-" : ""}authjs.nonce`,
-      options: {
-        httpOnly: true,
-        sameSite: "lax",
-        path: "/",
-        secure: process.env.NODE_ENV === "production",
-        maxAge: 60 * 15, // 15 minutes
-      },
-    },
-  },
   callbacks: {
     async jwt({ token, account, profile, user }) {
       // Handle magic link authentication (credentials provider)

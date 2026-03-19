@@ -47,6 +47,7 @@ export default function ChatPage() {
     : null;
 
   const [mounted, setMounted] = useState(false);
+  const [subscriptionBanner, setSubscriptionBanner] = useState<"upgraded" | "downgraded" | "new" | null>(null);
   const [selectedModel, setSelectedModel] = useState<string>(
     DEFAULT_NON_ADMIN_MODEL,
   );
@@ -126,6 +127,13 @@ export default function ChatPage() {
 
   useEffect(() => {
     setMounted(true);
+
+    const upgraded = searchParams.get("upgraded");
+    const downgraded = searchParams.get("downgraded");
+    const checkout = searchParams.get("checkout");
+    if (upgraded === "true") setSubscriptionBanner("upgraded");
+    else if (downgraded === "true") setSubscriptionBanner("downgraded");
+    else if (checkout === "success") setSubscriptionBanner("new");
 
     // Artist deep-search triggered from the artists directory
     const pendingArtist = sessionStorage.getItem("pendingDeepSearch");
@@ -344,6 +352,36 @@ export default function ChatPage() {
   return (
     <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
       <div className="h-[56px] mb-4 flex-shrink-0" />
+
+      {subscriptionBanner && (
+        <div
+          className={`mx-4 mb-3 flex-shrink-0 flex items-start justify-between gap-3 rounded-xl px-4 py-3 text-sm shadow-sm ${
+            subscriptionBanner === "downgraded"
+              ? "bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-blue-900 dark:text-blue-100"
+              : "bg-green-50 dark:bg-green-950/40 border border-green-200 dark:border-green-800 text-green-900 dark:text-green-100"
+          }`}
+        >
+          <div>
+            <p className="font-semibold">
+              {subscriptionBanner === "upgraded" && t("subscription.upgradedTitle")}
+              {subscriptionBanner === "downgraded" && t("subscription.downgradedTitle")}
+              {subscriptionBanner === "new" && t("subscription.newTitle")}
+            </p>
+            <p className="mt-0.5 opacity-85">
+              {subscriptionBanner === "upgraded" && t("subscription.upgradedMessage")}
+              {subscriptionBanner === "downgraded" && t("subscription.downgradedMessage")}
+              {subscriptionBanner === "new" && t("subscription.newMessage")}
+            </p>
+          </div>
+          <button
+            onClick={() => setSubscriptionBanner(null)}
+            className="flex-shrink-0 opacity-60 hover:opacity-100 transition-opacity mt-0.5"
+            aria-label="close"
+          >
+            ✕
+          </button>
+        </div>
+      )}
       <div className="absolute top-2 right-3 z-20 flex items-center gap-1">
         {!isWelcomeScreen && isAdminUser(session) && (
           <ModelSelector

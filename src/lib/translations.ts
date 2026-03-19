@@ -246,6 +246,14 @@ export const translations = {
                 cta: "S'abonner à Oracle",
             },
         },
+        subscription: {
+            upgradedTitle: "Plan mis à niveau",
+            upgradedMessage: "Votre plan a été mis à niveau avec succès. La différence de prix a été débitée et votre cycle de facturation repart à aujourd'hui.",
+            downgradedTitle: "Changement de plan programmé",
+            downgradedMessage: "Votre changement de plan est confirmé. Vous bénéficiez de votre plan actuel jusqu'à la fin de cette période de facturation, puis vous passerez automatiquement au nouveau plan.",
+            newTitle: "Bienvenue !",
+            newMessage: "Votre abonnement est maintenant actif. Profitez de votre nouveau plan !",
+        },
     },
     en: {
         registrationPending: {
@@ -485,6 +493,14 @@ export const translations = {
                 cta: "Subscribe to Oracle",
             },
         },
+        subscription: {
+            upgradedTitle: "Plan upgraded",
+            upgradedMessage: "Your plan has been successfully upgraded. The prorated difference has been charged and your billing cycle starts today.",
+            downgradedTitle: "Plan change scheduled",
+            downgradedMessage: "Your plan change is confirmed. You'll keep your current plan until the end of this billing period, then automatically switch to the lower plan.",
+            newTitle: "Welcome!",
+            newMessage: "Your subscription is now active. Enjoy your new plan!",
+        },
     },
     es: {
         registrationPending: {
@@ -715,6 +731,14 @@ export const translations = {
                 feature8: "Asignación personalizada UHNWI",
                 cta: "Suscribirse a Oracle",
             },
+        },
+        subscription: {
+            upgradedTitle: "Plan actualizado",
+            upgradedMessage: "Tu plan ha sido actualizado exitosamente. Se ha cobrado la diferencia prorrateada y tu ciclo de facturación comienza hoy.",
+            downgradedTitle: "Cambio de plan programado",
+            downgradedMessage: "Tu cambio de plan está confirmado. Conservarás tu plan actual hasta el final del período de facturación y luego cambiarás automáticamente al nuevo plan.",
+            newTitle: "¡Bienvenido!",
+            newMessage: "Tu suscripción ya está activa. ¡Disfruta de tu nuevo plan!",
         },
     },
     de: {
@@ -947,6 +971,14 @@ export const translations = {
                 cta: "Oracle abonnieren",
             },
         },
+        subscription: {
+            upgradedTitle: "Plan aktualisiert",
+            upgradedMessage: "Ihr Plan wurde erfolgreich aktualisiert. Der anteilige Betrag wurde abgebucht und Ihr Abrechnungszyklus beginnt heute.",
+            downgradedTitle: "Planwechsel geplant",
+            downgradedMessage: "Ihre Planänderung ist bestätigt. Sie behalten Ihren aktuellen Plan bis zum Ende dieses Abrechnungszeitraums, danach wird automatisch auf den niedrigeren Plan umgestellt.",
+            newTitle: "Willkommen!",
+            newMessage: "Ihr Abonnement ist jetzt aktiv. Genießen Sie Ihren neuen Plan!",
+        },
     },
     it: {
         registrationPending: {
@@ -1177,6 +1209,14 @@ export const translations = {
                 feature8: "Allocazione personalizzata UHNWI",
                 cta: "Abbonati a Oracle",
             },
+        },
+        subscription: {
+            upgradedTitle: "Piano aggiornato",
+            upgradedMessage: "Il tuo piano è stato aggiornato con successo. La differenza proporzionale è stata addebitata e il ciclo di fatturazione inizia oggi.",
+            downgradedTitle: "Cambio piano programmato",
+            downgradedMessage: "Il cambio del tuo piano è confermato. Manterrai il piano attuale fino alla fine di questo periodo di fatturazione, poi passerai automaticamente al piano inferiore.",
+            newTitle: "Benvenuto!",
+            newMessage: "Il tuo abbonamento è ora attivo. Goditi il tuo nuovo piano!",
         },
     },
     pt: {
@@ -1409,6 +1449,14 @@ export const translations = {
                 cta: "Assinar Oracle",
             },
         },
+        subscription: {
+            upgradedTitle: "Plano atualizado",
+            upgradedMessage: "Seu plano foi atualizado com sucesso. A diferença proporcional foi cobrada e seu ciclo de faturamento começa hoje.",
+            downgradedTitle: "Mudança de plano agendada",
+            downgradedMessage: "A mudança do seu plano está confirmada. Você manterá o plano atual até o final deste período de cobrança e mudará automaticamente para o plano inferior.",
+            newTitle: "Bem-vindo!",
+            newMessage: "Sua assinatura está agora ativa. Aproveite o seu novo plano!",
+        },
     },
     nl: {
         registrationPending: {
@@ -1639,6 +1687,14 @@ export const translations = {
                 feature8: "UHNWI aangepaste allocatie",
                 cta: "Abonneren op Oracle",
             },
+        },
+        subscription: {
+            upgradedTitle: "Abonnement geüpgraded",
+            upgradedMessage: "Uw abonnement is succesvol geüpgraded. Het evenredige bedrag is in rekening gebracht en uw factureringscyclus begint vandaag.",
+            downgradedTitle: "Abonnementswijziging ingepland",
+            downgradedMessage: "Uw abonnementswijziging is bevestigd. U behoudt uw huidige abonnement tot het einde van deze factureringsperiode en schakelt daarna automatisch over naar het lagere abonnement.",
+            newTitle: "Welkom!",
+            newMessage: "Uw abonnement is nu actief. Geniet van uw nieuwe abonnement!",
         },
     },
     ja: {
@@ -1871,6 +1927,14 @@ export const translations = {
                 cta: "Oracleに登録",
             },
         },
+        subscription: {
+            upgradedTitle: "プランをアップグレードしました",
+            upgradedMessage: "プランが正常にアップグレードされました。日割り差額が請求され、本日より新しい請求サイクルが始まります。",
+            downgradedTitle: "プラン変更を予約しました",
+            downgradedMessage: "プラン変更が確認されました。現在の請求期間の終了まで現在のプランをご利用いただけ、その後自動的に新しいプランに切り替わります。",
+            newTitle: "ようこそ！",
+            newMessage: "ご登録のプランが有効になりました。新しいプランをお楽しみください！",
+        },
     },
     zh: {
         registrationPending: {
@@ -2101,6 +2165,14 @@ export const translations = {
                 feature8: "UHNWI定制配置",
                 cta: "订阅Oracle",
             },
+        },
+        subscription: {
+            upgradedTitle: "套餐已升级",
+            upgradedMessage: "您的套餐已成功升级。已按比例收取差价，您的计费周期从今天开始。",
+            downgradedTitle: "套餐变更已安排",
+            downgradedMessage: "您的套餐变更已确认。您将在本计费周期结束前继续享用当前套餐，之后将自动切换至较低级别套餐。",
+            newTitle: "欢迎！",
+            newMessage: "您的订阅现已激活。祝您享受新套餐！",
         },
     },
 } as const;
