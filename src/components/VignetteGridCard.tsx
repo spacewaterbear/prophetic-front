@@ -110,14 +110,14 @@ const VignetteItem = ({ item, onVignetteClick }: { item: VignetteData; onVignett
 
             {/* Footer bar — bottom overlay */}
             <div className="absolute bottom-0 left-0 right-0 p-3">
-                <div className="flex items-center justify-between bg-white rounded-[14px] px-3 py-2 shadow-sm">
+                <div className={`flex items-center justify-between bg-white rounded-[14px] px-3 shadow-sm ${item.category === "CASH_FLOW_LEASING" ? "py-4" : "py-2"}`}>
                     <div className="flex items-center gap-1.5 min-w-0">
                         {item.trend != null && (
                             <span className="shrink-0 text-[10px] leading-none" style={{ color: isUp ? "#22c55e" : "#ef4444" }}>
                                 {isUp ? "▲" : "▼"}
                             </span>
                         )}
-                        <span className="text-[13px] font-medium italic text-[#9ca3af] truncate">
+                        <span className={`text-[13px] font-medium italic text-[#9ca3af] ${item.category === "CASH_FLOW_LEASING" ? "whitespace-pre-line" : "truncate"}`}>
                             {item.subtitle}
                         </span>
                     </div>
