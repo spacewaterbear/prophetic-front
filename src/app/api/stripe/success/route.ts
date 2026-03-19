@@ -14,7 +14,7 @@ const STATUS_COLUMN =
 
 export async function GET(req: NextRequest) {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-  const origin = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const origin = process.env.NEXT_PUBLIC_APP_URL || req.nextUrl.origin;
   const { searchParams } = new URL(req.url);
   const sessionId = searchParams.get("session_id");
   const upgraded = searchParams.get("upgraded");

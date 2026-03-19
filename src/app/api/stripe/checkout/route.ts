@@ -58,9 +58,8 @@ export async function GET(req: NextRequest) {
   const email = session.user.email ?? undefined;
 
   const origin =
-    req.headers.get("origin") ||
     process.env.NEXT_PUBLIC_APP_URL ||
-    "http://localhost:3000";
+    req.nextUrl.origin;
 
   // Find or create Stripe customer
   let customerId: string | undefined;
