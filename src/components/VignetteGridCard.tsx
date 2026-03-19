@@ -97,9 +97,16 @@ const VignetteItem = ({ item, onVignetteClick }: { item: VignetteData; onVignett
 
             {/* Header — top-left overlay */}
             <div className="absolute top-0 left-0 right-0 p-4">
-                <p className={`text-[15px] font-bold ${textColor} leading-tight drop-shadow-sm`}>
-                    {item.brand_name}
-                </p>
+                <div className="flex items-center gap-1.5">
+                    <p className={`text-[15px] font-bold ${textColor} leading-tight drop-shadow-sm`}>
+                        {item.brand_name}
+                    </p>
+                    {item.primary_country && (
+                        <span className={`text-[12px] font-medium ${textColor} opacity-70 leading-tight drop-shadow-sm`}>
+                            {item.primary_country}
+                        </span>
+                    )}
+                </div>
                 <h3
                     className={`text-[26px] leading-[1.1] ${textColor} mt-0.5 line-clamp-2 drop-shadow-sm`}
                     style={{ fontFamily: "var(--font-spectral)", fontStyle: "italic", paddingTop: "4px" }}
