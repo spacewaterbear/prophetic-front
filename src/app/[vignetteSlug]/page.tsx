@@ -98,23 +98,12 @@ export default function VignettePage() {
     setStreamingMessage("");
 
     try {
-      let queryParams: Record<string, string>;
-
-      if (vignetteParams.category === "CASH_FLOW_LEASING") {
-        queryParams = {
-          type: "dependant-without-sub",
-          category: "CASH_FLOW_LEASING",
-          markdown_name: vignetteParams.imageName,
-          tiers_level: vignetteParams.tier || "DISCOVER",
-        };
-      } else {
-        queryParams = {
-          type: "independant",
-          root_folder: "VIGNETTES",
-          markdown_name: vignetteParams.imageName,
-          category: vignetteParams.category || "",
-        };
-      }
+      const queryParams: Record<string, string> = {
+        type: "independant",
+        root_folder: "VIGNETTES",
+        markdown_name: vignetteParams.imageName,
+        category: vignetteParams.category || "",
+      };
 
       const query = new URLSearchParams(queryParams);
       const response = await fetch(`/api/markdown?${query.toString()}`);

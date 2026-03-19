@@ -67,43 +67,6 @@ export async function GET(request: NextRequest) {
 
         const data = await response.json();
 
-        // Override with hardcoded items for CASH_FLOW_LEASING
-        if (category.toUpperCase() === "CASH_FLOW_LEASING") {
-            const isEn = lang === "en";
-            const hardcodedItems = [
-                {
-                    category: "CASH_FLOW_LEASING",
-                    brand_name: "Vestiaire Collective",
-                    subtitle: isEn
-                        ? "2 million active listings — Real-time pricing & liquidity signals"
-                        : "2 millions de références indexées — Données prix & liquidité en temps réel",
-                    public_url: "vestiare_collective_leasing.md",
-                    nb_insights: 0,
-                },
-                {
-                    category: "CASH_FLOW_LEASING",
-                    brand_name: "Farfetch",
-                    subtitle: isEn
-                        ? "100,000 premium references — Primary & secondary market benchmarking"
-                        : "100 000 références premium — Benchmark prix marché primaire/secondaire",
-                    public_url: "farfetech_leasing.md",
-                    nb_insights: 0,
-                },
-                {
-                    category: "CASH_FLOW_LEASING",
-                    brand_name: "Rebag",
-                    subtitle: isEn
-                        ? "30,000 luxury goods — Specialist valuation indicator"
-                        : "30 000 références maroquinerie — Indicateur de valorisation spécialisé",
-                    public_url: "rebag_leasing.md",
-                    nb_insights: 0,
-                },
-            ];
-            const mergedData = Array.isArray(data) ? hardcodedItems : { ...data, vignettes: hardcodedItems };
-            vignetteCache.set(cacheKey, { data: mergedData, timestamp: Date.now() });
-            return NextResponse.json(mergedData);
-        }
-
         vignetteCache.set(cacheKey, { data, timestamp: Date.now() });
         return NextResponse.json(data);
     } catch (error) {
