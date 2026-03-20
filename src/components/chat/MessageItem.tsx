@@ -250,7 +250,14 @@ export const MessageItem = memo(
             margin: [15, 15, 15, 15],
             filename,
             image: { type: "jpeg", quality: 0.95 },
-            html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
+            html2canvas: {
+              scale: 2,
+              useCORS: true,
+              backgroundColor: "#ffffff",
+              onclone: (document: Document) => {
+                document.documentElement.classList.remove("dark");
+              },
+            },
             jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
             pagebreak: { mode: ["avoid-all", "css", "legacy"] },
           })

@@ -335,11 +335,12 @@ export function VignetteDetailView({
 
       const tableTagStyles: Record<string, string> = {
         table:
-          "width:100%;border-collapse:collapse;margin:16px 0;border:1px solid #e4e4e7;",
+          "width:100%;border-collapse:collapse;margin:16px 0;border:1px solid #e4e4e7;background:#ffffff;",
         thead: "background:#f9f7f4;",
-        th: "padding:10px 14px;text-align:left;font-size:11px;font-weight:600;color:#52525b;text-transform:uppercase;letter-spacing:0.05em;border-bottom:1px solid #e4e4e7;font-family:'Inter',sans-serif;",
-        td: "padding:10px 14px;font-size:13px;color:#18181b;border-bottom:1px solid #f4f4f5;font-family:'Inter',sans-serif;",
-        tr: "border-bottom:1px solid #f4f4f5;",
+        tbody: "background:#ffffff;",
+        th: "padding:10px 14px;text-align:left;font-size:11px;font-weight:600;color:#52525b;text-transform:uppercase;letter-spacing:0.05em;border-bottom:1px solid #e4e4e7;font-family:'Inter',sans-serif;background:#f9f7f4;",
+        td: "padding:10px 14px;font-size:13px;color:#18181b;border-bottom:1px solid #f4f4f5;font-family:'Inter',sans-serif;background:#ffffff;",
+        tr: "border-bottom:1px solid #f4f4f5;background:#ffffff;",
       };
       for (const [tag, style] of Object.entries(tableTagStyles)) {
         html = html.replace(
@@ -347,6 +348,10 @@ export function VignetteDetailView({
           `<${tag}$1 style="${style}">`,
         );
       }
+
+      // Strip all class attributes so dark-mode Tailwind/CSS-variable styles
+      // cannot bleed into the PDF when the app is in dark mode.
+      html = html.replace(/\s+class="[^"]*"/g, "");
 
       const now = new Date();
       const dateStr = now.toLocaleDateString("en-US", {
@@ -356,7 +361,7 @@ export function VignetteDetailView({
       });
 
       const fullHtml = `
-        <div style="font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;font-size:13px;color:#18181b;line-height:1.7;padding:20px;">
+        <div style="font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;font-size:13px;color:#18181b;line-height:1.7;padding:20px;background:#ffffff;--bg-card-surface:0 0% 100%;--bg-elevated-surface:32 43% 96%;--border-surface:214 7% 81%;--background:48 29% 97%;--foreground:240 10% 3.9%;--border:240 5.9% 90%;color-scheme:light;">
           <div style="text-align:center;margin-bottom:32px;padding-bottom:16px;border-bottom:2px solid #c4a97d;">
             <h1 style="font-family:'EB Garamond',Georgia,serif;font-size:22px;font-weight:600;margin:0 0 4px 0;color:#18181b;">Prophetic Orchestra</h1>
             <p style="font-family:'Inter',sans-serif;font-size:12px;color:#888;margin:0;">Report &mdash; ${dateStr}</p>
@@ -374,7 +379,14 @@ export function VignetteDetailView({
           margin: [15, 15, 15, 15],
           filename,
           image: { type: "jpeg", quality: 0.95 },
-          html2canvas: { scale: 2, useCORS: true },
+          html2canvas: {
+            scale: 2,
+            useCORS: true,
+            backgroundColor: "#ffffff",
+            onclone: (document: Document) => {
+              document.documentElement.classList.remove("dark");
+            },
+          },
           jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
           pagebreak: { mode: ["avoid-all", "css", "legacy"] },
         })
