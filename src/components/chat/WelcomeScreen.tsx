@@ -131,6 +131,11 @@ export function WelcomeScreen({
       { label: t("categoryNav.ART_CONTEMPORAIN_1"), onClick: undefined },
       { label: t("categoryNav.ART_CONTEMPORAIN_2"), onClick: () => router.push("/chat/artists") },
     ],
+    REVELATIONS: [
+      { label: t("categoryNav.ART_CONTEMPORAIN_0"), onClick: undefined },
+      { label: t("categoryNav.ART_CONTEMPORAIN_1"), onClick: undefined },
+      { label: t("categoryNav.ART_CONTEMPORAIN_2"), onClick: () => router.push("/chat/artists") },
+    ],
   };
   const navTabs = currentCategory ? categoryNavTabs[currentCategory] : undefined;
 
@@ -218,7 +223,7 @@ export function WelcomeScreen({
               <VignetteGridCard
                 data={vignettes}
                 onVignetteClick={handleVignetteClick}
-                forceArtLayout={currentCategory === "ART_CONTEMPORAIN"}
+                forceArtLayout={currentCategory === "ART_CONTEMPORAIN" || currentCategory === "REVELATIONS"}
               />
             </Suspense>
           </div>

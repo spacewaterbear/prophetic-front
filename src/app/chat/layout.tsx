@@ -373,12 +373,14 @@ function ChatLayoutInner({
 
             {/* Marché Spot — art speciality only, before Artistes */}
             {IS_ART_SPECIALITY && artCategories.slice(0, 1).map((category) => {
-              const label = getCategoryLabel(category, categoryNames);
+              const isRevélations = IS_ART_SPECIALITY && category === "ART_CONTEMPORAIN";
+              const label = isRevélations ? "Révélations" : getCategoryLabel(category, categoryNames);
+              const urlParam = isRevélations ? "Révélations" : category;
               return (
                 <button
                   key={category}
                   onClick={() => {
-                    router.push(`/chat?category=${category}`, { scroll: false });
+                    router.push(`/chat?category=${urlParam}`, { scroll: false });
                     if (isMobile) setSidebarOpen(false);
                   }}
                   className="w-full text-left px-3 py-2.5 text-sm hover:bg-gray-600/10 dark:hover:bg-white/5 transition-colors"
@@ -404,12 +406,14 @@ function ChatLayoutInner({
 
             {/* Investment Categories */}
             {(IS_ART_SPECIALITY ? artCategories.slice(1) : mainCategories).map((category) => {
-                const label = getCategoryLabel(category, categoryNames);
+                const isRevélations = IS_ART_SPECIALITY && category === "ART_CONTEMPORAIN";
+                const label = isRevélations ? "Révélations" : getCategoryLabel(category, categoryNames);
+                const urlParam = isRevélations ? "REVELATIONS" : category;
                 return (
                   <button
                     key={category}
                     onClick={() => {
-                      router.push(`/chat?category=${category}`, { scroll: false });
+                      router.push(`/chat?category=${urlParam}`, { scroll: false });
                       if (isMobile) setSidebarOpen(false);
                     }}
                     className="w-full text-left px-3 py-2.5 text-sm hover:bg-gray-600/10 dark:hover:bg-white/5 transition-colors"

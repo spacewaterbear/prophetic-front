@@ -231,7 +231,8 @@ export default function ChatPage() {
         setVignetteError(null);
 
         try {
-          const url = `/api/vignettes?category=${category}&lang=${language}`;
+          const apiCategory = category === "REVELATIONS" ? "ART_CONTEMPORAIN" : category;
+          const url = `/api/vignettes?category=${apiCategory}&lang=${language}`;
           const response = await fetch(url);
 
           if (!response.ok) {
@@ -303,7 +304,8 @@ export default function ChatPage() {
   };
 
   const handleBackToCategory = (category: string) => {
-    router.push(`/chat?category=${category}`);
+    const urlParam = process.env.NEXT_PUBLIC_SPECIALITY === "art" && category === "ART_CONTEMPORAIN" ? "REVELATIONS" : category;
+    router.push(`/chat?category=${urlParam}`);
   };
 
   // Loading state
