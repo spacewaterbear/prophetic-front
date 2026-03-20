@@ -6,6 +6,7 @@ import { AudioCard } from "@/components/AudioCard";
 interface VignetteGridCardProps {
     data: VignetteData[];
     onVignetteClick?: (vignette: VignetteData) => void;
+    forceArtLayout?: boolean;
 }
 
 const PdfCard = ({ item }: { item: VignetteData }) => {
@@ -59,7 +60,7 @@ const PdfCard = ({ item }: { item: VignetteData }) => {
     );
 };
 
-const VignetteItem = ({ item, onVignetteClick }: { item: VignetteData; onVignetteClick?: (v: VignetteData) => void }) => {
+const VignetteItem = ({ item, onVignetteClick, forceArtLayout }: { item: VignetteData; onVignetteClick?: (v: VignetteData) => void; forceArtLayout?: boolean }) => {
     if (item.media_type === "pdf") {
         return <PdfCard item={item} />;
     }
@@ -80,7 +81,7 @@ const VignetteItem = ({ item, onVignetteClick }: { item: VignetteData; onVignett
 
     const isUp = item.trend === "up";
 
-    const isArt = process.env.NEXT_PUBLIC_SPECIALITY === "art";
+    const isArt = process.env.NEXT_PUBLIC_SPECIALITY === "art" || forceArtLayout;
 
     if (isArt) {
         return (
@@ -182,7 +183,7 @@ const VignetteItem = ({ item, onVignetteClick }: { item: VignetteData; onVignett
  * - Subtitle: Inter size 14 Light Italic (centered) - subtitle
  * - Specific visual style: rounded-[24px], bg-[#e6e6e6]
  */
-export const VignetteGridCard = memo(({ data, onVignetteClick }: VignetteGridCardProps) => {
+export const VignetteGridCard = memo(({ data, onVignetteClick, forceArtLayout }: VignetteGridCardProps) => {
     if (!data || data.length === 0) {
         return null;
     }
@@ -192,7 +193,7 @@ export const VignetteGridCard = memo(({ data, onVignetteClick }: VignetteGridCar
             {/* Vignette Grid - 1 col on mobile, 2 cols on sm+ */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 {data.map((item, index) => (
-                    <VignetteItem key={index} item={item} onVignetteClick={onVignetteClick} />
+                    <VignetteItem key={index} item={item} onVignetteClick={onVignetteClick} forceArtLayout={forceArtLayout} />
                 ))}
             </div>
         </div>

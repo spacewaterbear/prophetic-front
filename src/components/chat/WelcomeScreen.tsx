@@ -218,6 +218,7 @@ export function WelcomeScreen({
               <VignetteGridCard
                 data={vignettes}
                 onVignetteClick={handleVignetteClick}
+                forceArtLayout={currentCategory === "ART_CONTEMPORAIN"}
               />
             </Suspense>
           </div>
