@@ -137,7 +137,19 @@ export function WelcomeScreen({
       { label: t("categoryNav.ART_CONTEMPORAIN_2"), onClick: () => router.push("/chat/artists") },
     ],
   };
-  const navTabs = currentCategory ? categoryNavTabs[currentCategory] : undefined;
+
+  const IS_ART_SPECIALITY = process.env.NEXT_PUBLIC_SPECIALITY === "art";
+  const artFallbackTabs = IS_ART_SPECIALITY
+    ? [
+        { label: t("categoryNav.ART_CONTEMPORAIN_0"), onClick: undefined },
+        { label: t("categoryNav.ART_CONTEMPORAIN_1"), onClick: undefined },
+        { label: t("categoryNav.ART_CONTEMPORAIN_2"), onClick: () => router.push("/chat/artists") },
+      ]
+    : undefined;
+
+  const navTabs = currentCategory
+    ? (categoryNavTabs[currentCategory] ?? artFallbackTabs)
+    : undefined;
 
   const isWelcomeState =
     vignettes.length === 0 &&
