@@ -14,20 +14,25 @@ export async function POST(req: NextRequest) {
 
     const adminClient = createAdminClient();
 
+    const speciality = process.env.NEXT_PUBLIC_SPECIALITY || "main";
+
     // Check if profile exists by email first
     const { data: existingProfileByEmail } = await adminClient
       .from("profiles")
-      .select("id, status, first_name, last_name")
+      .select("id, status, art_status, first_name, last_name")
       .eq("mail", email)
       .maybeSingle();
 
     if (existingProfileByEmail) {
       // Profile exists but if first_name/last_name are missing, registration is incomplete
       const registrationComplete = !!(existingProfileByEmail.first_name && existingProfileByEmail.last_name);
+      const status = speciality === "art"
+        ? (existingProfileByEmail.art_status ?? "unauthorized")
+        : existingProfileByEmail.status;
       return NextResponse.json({
         exists: true,
         profileId: existingProfileByEmail.id,
-        status: existingProfileByEmail.status,
+        status,
         registrationComplete,
       });
     }
@@ -35,16 +40,19 @@ export async function POST(req: NextRequest) {
     // Check if profile exists by user ID
     const { data: existingProfileById } = await adminClient
       .from("profiles")
-      .select("id, status, first_name, last_name")
+      .select("id, status, art_status, first_name, last_name")
       .eq("id", userId)
       .maybeSingle();
 
     if (existingProfileById) {
       const registrationComplete = !!(existingProfileById.first_name && existingProfileById.last_name);
+      const status = speciality === "art"
+        ? (existingProfileById.art_status ?? "unauthorized")
+        : existingProfileById.status;
       return NextResponse.json({
         exists: true,
         profileId: existingProfileById.id,
-        status: existingProfileById.status,
+        status,
         registrationComplete,
       });
     }
