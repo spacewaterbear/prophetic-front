@@ -105,7 +105,7 @@ export const ModeCard: React.FC<ModeCardProps> = ({
         ) : (
           <button
             className="px-4 py-1.5 bg-[#352ee8] text-white text-sm font-medium rounded-full hover:bg-[#2920c7] transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#352ee8]"
-            disabled={process.env.NEXT_PUBLIC_APP_ENV === "staging"}
+            disabled={process.env.NEXT_PUBLIC_APP_ENV !== "staging"}
             onClick={(e) => { e.stopPropagation(); window.location.href = "/pricing"; }}
           >
             Upgrade

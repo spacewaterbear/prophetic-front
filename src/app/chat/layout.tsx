@@ -443,7 +443,7 @@ function ChatLayoutInner({
                   : "free"}
               </span>
             </span>
-            {process.env.NEXT_PUBLIC_APP_ENV === "staging" ? (
+            {process.env.NEXT_PUBLIC_APP_ENV !== "staging" ? (
               <span className="flex items-center justify-center gap-1 text-xs font-medium px-2 py-1.5 rounded-md bg-[#372ee9] text-white opacity-50 cursor-not-allowed">
                 <ArrowUpCircle className="h-3 w-3" />
                 {t("nav.upgrade")}
