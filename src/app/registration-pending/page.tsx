@@ -98,7 +98,7 @@ export default function RegistrationPendingPage() {
           </div>
 
           {/* Actions */}
-          <div className="text-center space-y-4">
+          <div className="text-center space-y-4 pt-[100px]">
             <Button
               asChild
               className="w-full max-w-xs mx-auto h-12 rounded-xl font-medium bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
