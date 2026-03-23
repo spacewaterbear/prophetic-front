@@ -98,6 +98,7 @@ async function createOrUpdateMagicLinkProfile(
         .from("profiles")
         .update({
           status: "oracle",
+          art_status: "oracle",
           updated_at: new Date().toISOString(),
         })
         .eq("id", existingProfileByEmail.id);
@@ -119,6 +120,7 @@ async function createOrUpdateMagicLinkProfile(
         .update({
           mail: email,
           status: "oracle",
+          art_status: "oracle",
           updated_at: new Date().toISOString(),
         })
         .eq("id", userId);
@@ -132,6 +134,7 @@ async function createOrUpdateMagicLinkProfile(
       mail: email,
       username: email.split("@")[0] || "User",
       status: "oracle",
+      art_status: "oracle",
       updated_at: new Date().toISOString(),
     });
 

@@ -12,6 +12,7 @@ interface UpsertProfileParams {
   firstName?: string;
   lastName?: string;
   status?: UserStatus;
+  artStatus?: UserStatus;
 }
 
 /**
@@ -26,13 +27,14 @@ export async function upsertProfile(
   adminClient: SupabaseClient<Database>,
   params: UpsertProfileParams,
 ): Promise<string | null> {
-  const { id, email, username, avatarUrl, firstName, lastName, status = "oracle" } = params;
+  const { id, email, username, avatarUrl, firstName, lastName, status = "oracle", artStatus = "oracle" } = params;
 
   try {
     // Build update fields
     const updateFields: ProfileUpdate = {
       updated_at: new Date().toISOString(),
       status,
+      art_status: artStatus,
     };
     if (username !== undefined) updateFields.username = username;
     if (avatarUrl !== undefined) updateFields.avatar_url = avatarUrl;
@@ -80,6 +82,7 @@ export async function upsertProfile(
       first_name: firstName || null,
       last_name: lastName || null,
       status,
+      art_status: artStatus,
       updated_at: new Date().toISOString(),
     });
 
