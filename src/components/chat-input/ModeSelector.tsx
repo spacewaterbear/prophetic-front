@@ -79,14 +79,6 @@ export function ModeSelector({
             onClick={() => onAgentClick("discover")}
           />
           <ModeCard
-            title="INTELLIGENCE"
-            price={stripePrices.intelligence ?? ""}
-            description={t("agents.intelligenceDesc")}
-            isActive={selectedAgent === "intelligence"}
-            isAvailable={availableAgents.includes("intelligence")}
-            onClick={() => onAgentClick("intelligence")}
-          />
-          <ModeCard
             title="ORACLE"
             price={stripePrices.oracle ?? ""}
             description={t("agents.oracleDesc")}

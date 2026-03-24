@@ -122,18 +122,6 @@ export function MobileBottomSheets({
             isMobile={true}
           />
           <ModeCard
-            title="INTELLIGENCE"
-            price={stripePrices.intelligence ?? ""}
-            description={t("agents.intelligenceDesc")}
-            isActive={selectedAgent === "intelligence"}
-            isAvailable={availableAgents.includes("intelligence")}
-            onClick={() => {
-              onAgentClick("intelligence");
-              setTimeout(onCloseDropdown, 150);
-            }}
-            isMobile={true}
-          />
-          <ModeCard
             title="ORACLE"
             price={stripePrices.oracle ?? ""}
             description={t("agents.oracleDesc")}

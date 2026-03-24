@@ -14,11 +14,9 @@ interface PricingContentProps {
   hasSession: boolean;
   discoverPriceId: string;
   flashPriceId: string;
-  intelligencePriceId: string;
   oraclePriceId: string;
   discoverPrice: string;
   flashPrice: string;
-  intelligencePrice: string;
   oraclePrice: string;
 }
 
@@ -28,11 +26,9 @@ export default function PricingContent({
   hasSession,
   discoverPriceId,
   flashPriceId,
-  intelligencePriceId,
   oraclePriceId,
   discoverPrice,
   flashPrice,
-  intelligencePrice,
   oraclePrice,
 }: PricingContentProps) {
   const { t } = useI18n();
@@ -66,23 +62,6 @@ export default function PricingContent({
         t("pricing.discover.feature4"),
       ],
       cta: t("pricing.discover.cta"),
-    },
-    {
-      name: "Intelligence",
-      price: intelligencePrice,
-      priceDetail: t("pricing.perMonth"),
-      description: t("pricing.intelligence.description"),
-      priceId: intelligencePriceId,
-      features: [
-        t("pricing.intelligence.feature1"),
-        t("pricing.intelligence.feature2"),
-        t("pricing.intelligence.feature3"),
-        t("pricing.intelligence.feature4"),
-        t("pricing.intelligence.feature5"),
-        t("pricing.intelligence.feature6"),
-      ],
-      highlighted: true,
-      cta: t("pricing.intelligence.cta"),
     },
     {
       name: "Oracle",
@@ -140,7 +119,7 @@ export default function PricingContent({
         </div>
 
         {/* Plan cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-10">
           {PLANS.map((plan) => {
             const checkoutUrl = !hasSession
               ? "/login"

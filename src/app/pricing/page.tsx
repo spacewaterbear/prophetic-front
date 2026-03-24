@@ -10,23 +10,21 @@ function formatStripePrice(price: Stripe.Price): string {
   return `${symbol}${amount.toFixed(2)}`;
 }
 
-async function fetchStripePrices(): Promise<{ discover: string; flash: string; intelligence: string; oracle: string }> {
+async function fetchStripePrices(): Promise<{ discover: string; flash: string; oracle: string }> {
   try {
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-    const [discover, flash, intelligence, oracle] = await Promise.all([
+    const [discover, flash, oracle] = await Promise.all([
       stripe.prices.retrieve(process.env.STRIPE_DISCOVER_PRICE_ID!),
       stripe.prices.retrieve(process.env.STRIPE_FLASH_PRICE_ID!),
-      stripe.prices.retrieve(process.env.STRIPE_INTELLIGENCE_PRICE_ID!),
       stripe.prices.retrieve(process.env.STRIPE_ORACLE_PRICE_ID!),
     ]);
     return {
       discover: formatStripePrice(discover),
       flash: formatStripePrice(flash),
-      intelligence: formatStripePrice(intelligence),
       oracle: formatStripePrice(oracle),
     };
   } catch {
-    return { discover: "€9.99", flash: "€19.99", intelligence: "€29.99", oracle: "€149.99" };
+    return { discover: "€9.99", flash: "€19.99", oracle: "€149.99" };
   }
 }
 
@@ -44,11 +42,9 @@ export default async function PricingPage() {
       hasSession={!!session}
       discoverPriceId={process.env.STRIPE_DISCOVER_PRICE_ID ?? ""}
       flashPriceId={process.env.STRIPE_FLASH_PRICE_ID ?? ""}
-      intelligencePriceId={process.env.STRIPE_INTELLIGENCE_PRICE_ID ?? ""}
       oraclePriceId={process.env.STRIPE_ORACLE_PRICE_ID ?? ""}
       discoverPrice={stripePrices.discover}
       flashPrice={stripePrices.flash}
-      intelligencePrice={stripePrices.intelligence}
       oraclePrice={stripePrices.oracle}
     />
   );
