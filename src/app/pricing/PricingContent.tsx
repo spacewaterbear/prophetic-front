@@ -40,6 +40,7 @@ export default function PricingContent({
       priceDetail: t("pricing.perMonth"),
       description: t("pricing.flash.description"),
       priceId: flashPriceId,
+      highlighted: false,
       features: [
         t("pricing.flash.feature1"),
         t("pricing.flash.feature2"),
@@ -55,6 +56,7 @@ export default function PricingContent({
       priceDetail: t("pricing.perMonth"),
       description: t("pricing.discover.description"),
       priceId: discoverPriceId,
+      highlighted: true,
       features: [
         t("pricing.discover.feature1"),
         t("pricing.discover.feature2"),
@@ -69,6 +71,7 @@ export default function PricingContent({
       priceDetail: t("pricing.perMonth"),
       description: t("pricing.oracle.description"),
       priceId: oraclePriceId,
+      highlighted: false,
       features: [
         t("pricing.oracle.feature1"),
         t("pricing.oracle.feature2"),
