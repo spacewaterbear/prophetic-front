@@ -110,11 +110,23 @@ export function MobileBottomSheets({
       >
         <div className="bg-white dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl p-5 w-full shadow-2xl border-t border-gray-200 dark:border-transparent max-h-[70vh] overflow-y-auto">
           <ModeCard
+            title="FLASH"
+            price={t("agents.flashPrice")}
+            description={t("agents.flashDesc")}
+            isActive={selectedAgent === "flash"}
+            isAvailable={availableAgents.includes("flash")}
+            onClick={() => {
+              onAgentClick("flash");
+              setTimeout(onCloseDropdown, 150);
+            }}
+            isMobile={true}
+          />
+          <ModeCard
             title="DISCOVER"
             price={t("agents.discoverPrice")}
             description={t("agents.discoverDesc")}
             isActive={selectedAgent === "discover"}
-            isAvailable={true}
+            isAvailable={availableAgents.includes("discover")}
             onClick={() => {
               onAgentClick("discover");
               setTimeout(onCloseDropdown, 150);
@@ -126,21 +138,9 @@ export function MobileBottomSheets({
             price={stripePrices.oracle ?? ""}
             description={t("agents.oracleDesc")}
             isActive={selectedAgent === "oracle"}
-            isAvailable={true}
+            isAvailable={availableAgents.includes("oracle")}
             onClick={() => {
               onAgentClick("oracle");
-              setTimeout(onCloseDropdown, 150);
-            }}
-            isMobile={true}
-          />
-          <ModeCard
-            title="FLASH"
-            price={t("agents.flashPrice")}
-            description={t("agents.flashDesc")}
-            isActive={selectedAgent === "flash"}
-            isAvailable={true}
-            onClick={() => {
-              onAgentClick("flash");
               setTimeout(onCloseDropdown, 150);
             }}
             isMobile={true}

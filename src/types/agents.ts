@@ -1,6 +1,7 @@
 export type UserStatus =
   | "unauthorized"
   | "free"
+  | "flash"
   | "paid"
   | "admini"
   | "discover"
@@ -10,17 +11,18 @@ export type UserStatus =
 export type AgentType = "discover" | "intelligence" | "oracle" | "flash";
 
 export function getAvailableAgents(status: string | undefined): AgentType[] {
-  const normalizedStatus = status === "free" ? "discover" : status;
-
-  switch (normalizedStatus) {
+  switch (status) {
+    case "flash":
+    case "free":
+      return ["flash"];
     case "discover":
-      return ["discover", "flash"];
+      return ["flash", "discover"];
     case "intelligence":
-      return ["discover", "flash", "intelligence"];
+      return ["flash", "discover", "intelligence"];
     case "oracle":
     case "admini":
-      return ["discover", "flash", "intelligence", "oracle"];
+      return ["flash", "discover", "intelligence", "oracle"];
     default:
-      return ["discover", "flash"];
+      return ["flash"];
   }
 }
