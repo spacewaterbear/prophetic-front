@@ -262,7 +262,9 @@ export default function ArtistsPage() {
   const router = useRouter();
   const { data: session } = useSession();
   const { t } = useI18n();
-  const isFreeUser = (session?.user as { status?: string })?.status === "free";
+  const userStatus = (session?.user as { status?: string })?.status;
+  const isFreeUser = userStatus === "free";
+  const canClickItems = userStatus === "oracle" || userStatus === "discover" || userStatus === "admini";
   const { creditsExhausted } = useCredits(session?.user?.id, isFreeUser);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -363,7 +365,7 @@ export default function ArtistsPage() {
 
       {/* ── Scroll area ── */}
       <div className="relative flex-1 min-h-0">
-        <div ref={scrollRef} className={`h-full overflow-y-auto px-6 py-6 ${creditsExhausted ? "opacity-40 pointer-events-none select-none" : ""}`}>
+        <div ref={scrollRef} className={`h-full overflow-y-auto px-6 py-6 ${creditsExhausted || !canClickItems ? "opacity-40 pointer-events-none select-none" : ""}`}>
           {isSearching ? (
             <SearchResults
               query={debouncedSearch}
@@ -382,6 +384,17 @@ export default function ArtistsPage() {
             ))
           )}
         </div>
+        {!canClickItems && !creditsExhausted && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 pointer-events-auto backdrop-blur-sm bg-[rgb(249,248,244)]/60 dark:bg-[rgb(1,1,0)]/60">
+            <div className="flex flex-col items-center gap-3 bg-white dark:bg-[#1e1f20] border border-gray-200 dark:border-gray-700 rounded-2xl px-8 py-6 shadow-xl max-w-xs mx-4">
+              <p className="text-sm font-semibold text-gray-900 dark:text-white text-center">{t("credits.planRequiredTitle")}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 text-center">{t("credits.planRequiredMessage")}</p>
+              <a href="/pricing" className="inline-flex items-center gap-1.5 text-xs font-medium px-4 py-2 rounded-full bg-[#372ee9] hover:bg-[#2a22c7] text-white transition-colors">
+                {t("credits.choosePlan")}
+              </a>
+            </div>
+          </div>
+        )}
         {creditsExhausted && (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 pointer-events-auto backdrop-blur-sm bg-[rgb(249,248,244)]/60 dark:bg-[rgb(1,1,0)]/60">
             <div className="flex flex-col items-center gap-3 bg-white dark:bg-[#1e1f20] border border-gray-200 dark:border-gray-700 rounded-2xl px-8 py-6 shadow-xl max-w-xs mx-4">

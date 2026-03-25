@@ -20,8 +20,7 @@ const PRODUCT_STATUS_MAP: Record<string, string> = {
   [process.env.POLAR_ORACLE_ID!]: "oracle",
 };
 
-// "status" for main app, "art_status" for art speciality
-const STATUS_COLUMN = process.env.NEXT_PUBLIC_SPECIALITY === "art" ? "art_status" : "status";
+const STATUS_COLUMN = "status";
 
 export const POST = Webhooks({
   webhookSecret: process.env.POLAR_WEBHOOK_SECRET!,

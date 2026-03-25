@@ -50,6 +50,8 @@ export const translations = {
             exhaustedMessage: "Vos crédits gratuits sont épuisés. Choisissez un plan payant pour continuer à utiliser Prophetic Orchestra.",
             choosePlan: "Choisir un plan",
             earlyAccess: "Accès anticipé",
+            planRequiredTitle: "Fonctionnalité réservée",
+            planRequiredMessage: "Cette fonctionnalité est disponible avec les plans DISCOVER ou ORACLE.",
         },
         // Chat Interface
         chat: {
@@ -314,6 +316,8 @@ export const translations = {
             exhaustedMessage: "Your free credits are exhausted. Choose a paid plan to continue using Prophetic Orchestra.",
             choosePlan: "Choose a plan",
             earlyAccess: "Early access",
+            planRequiredTitle: "Feature restricted",
+            planRequiredMessage: "This feature is available with DISCOVER or ORACLE plans.",
         },
         chat: {
             greeting: "Hello, {name}",
@@ -570,6 +574,8 @@ export const translations = {
             exhaustedMessage: "Tus créditos gratuitos se han agotado. Elige un plan de pago para seguir usando Prophetic Orchestra.",
             choosePlan: "Elegir un plan",
             earlyAccess: "Acceso anticipado",
+            planRequiredTitle: "Función restringida",
+            planRequiredMessage: "Esta función está disponible con los planes DISCOVER o ORACLE.",
         },
         chat: {
             greeting: "Hola",
@@ -818,6 +824,8 @@ export const translations = {
             exhaustedMessage: "Ihre kostenlosen Credits sind aufgebraucht. Wählen Sie einen kostenpflichtigen Plan, um Prophetic Orchestra weiterhin zu nutzen.",
             choosePlan: "Plan wählen",
             earlyAccess: "Früher Zugang",
+            planRequiredTitle: "Funktion eingeschränkt",
+            planRequiredMessage: "Diese Funktion ist mit den DISCOVER- oder ORACLE-Plänen verfügbar.",
         },
         chat: {
             greeting: "Hallo",
@@ -1066,6 +1074,8 @@ export const translations = {
             exhaustedMessage: "I tuoi crediti gratuiti sono esauriti. Scegli un piano a pagamento per continuare a usare Prophetic Orchestra.",
             choosePlan: "Scegli un piano",
             earlyAccess: "Accesso anticipato",
+            planRequiredTitle: "Funzione limitata",
+            planRequiredMessage: "Questa funzione è disponibile con i piani DISCOVER o ORACLE.",
         },
         chat: {
             greeting: "Ciao",
@@ -1314,6 +1324,8 @@ export const translations = {
             exhaustedMessage: "Seus créditos gratuitos foram esgotados. Escolha um plano pago para continuar usando o Prophetic Orchestra.",
             choosePlan: "Escolher um plano",
             earlyAccess: "Acesso antecipado",
+            planRequiredTitle: "Recurso restrito",
+            planRequiredMessage: "Este recurso está disponível com os planos DISCOVER ou ORACLE.",
         },
         chat: {
             greeting: "Olá",
@@ -1562,6 +1574,8 @@ export const translations = {
             exhaustedMessage: "Uw gratis credits zijn op. Kies een betaald plan om Prophetic Orchestra te blijven gebruiken.",
             choosePlan: "Kies een plan",
             earlyAccess: "Vroege toegang",
+            planRequiredTitle: "Functie beperkt",
+            planRequiredMessage: "Deze functie is beschikbaar met de DISCOVER- of ORACLE-plannen.",
         },
         chat: {
             greeting: "Hallo",
@@ -1810,6 +1824,8 @@ export const translations = {
             exhaustedMessage: "無料クレジットを使い切りました。Prophetic Orchestraを引き続きご利用になるには、有料プランをお選びください。",
             choosePlan: "プランを選ぶ",
             earlyAccess: "早期アクセス",
+            planRequiredTitle: "機能制限",
+            planRequiredMessage: "この機能はDISCOVERまたはORACLEプランでご利用いただけます。",
         },
         chat: {
             greeting: "こんにちは",
@@ -2058,6 +2074,8 @@ export const translations = {
             exhaustedMessage: "您的免费积分已用尽。请选择付费方案以继续使用 Prophetic Orchestra。",
             choosePlan: "选择方案",
             earlyAccess: "早期访问",
+            planRequiredTitle: "功能受限",
+            planRequiredMessage: "此功能适用于 DISCOVER 或 ORACLE 计划。",
         },
         chat: {
             greeting: "你好",

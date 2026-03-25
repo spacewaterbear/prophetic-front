@@ -178,15 +178,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
           const { data: profile, error: profileError } = await supabase
             .from('profiles')
-            .select('status, art_status, is_admin')
+            .select('status, is_admin')
             .eq('id', session.user.id)
             .maybeSingle();
 
           if (profile) {
-            const speciality = process.env.NEXT_PUBLIC_SPECIALITY || 'main';
-            session.user.status = speciality === 'art'
-              ? (profile.art_status ?? 'unauthorized')
-              : profile.status;
+            session.user.status = profile.status;
             session.user.isAdmin = profile.is_admin === true;
           } else if (profileError) {
             console.error('[Auth] Error querying profile:', profileError);

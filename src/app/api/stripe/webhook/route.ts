@@ -9,8 +9,7 @@ const PRICE_STATUS_MAP: Record<string, string> = {
   [process.env.STRIPE_ORACLE_PRICE_ID!]: "oracle",
 };
 
-const STATUS_COLUMN =
-  process.env.NEXT_PUBLIC_SPECIALITY === "art" ? "art_status" : "status";
+const STATUS_COLUMN = "status";
 
 async function updateUserStatus(userId: string, status: string) {
   const supabase = createAdminClient();
