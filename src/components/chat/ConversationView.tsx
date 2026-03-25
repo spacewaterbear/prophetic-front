@@ -42,6 +42,7 @@ interface ConversationViewProps {
   userStatus?: UserStatus;
   selectedAgent: AgentType;
   onAgentChange: (agent: AgentType) => void;
+  creditsExhausted?: boolean;
 }
 
 export function ConversationView({
@@ -68,6 +69,7 @@ export function ConversationView({
   userStatus,
   selectedAgent,
   onAgentChange,
+  creditsExhausted,
 }: ConversationViewProps) {
   const { t } = useI18n();
   return (
@@ -136,6 +138,7 @@ export function ConversationView({
           userStatus={userStatus}
           selectedAgent={selectedAgent}
           onAgentChange={onAgentChange}
+          creditsExhausted={creditsExhausted}
           className="max-w-3xl"
         />
       </div>

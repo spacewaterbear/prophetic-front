@@ -67,7 +67,7 @@ export function ModeSelector({
             price={t("agents.flashPrice")}
             description={t("agents.flashDesc")}
             isActive={selectedAgent === "flash"}
-            isAvailable={availableAgents.includes("flash")}
+            isAvailable={true}
             onClick={() => onAgentClick("flash")}
           />
           <ModeCard
@@ -83,7 +83,7 @@ export function ModeSelector({
             price={stripePrices.oracle ?? ""}
             description={t("agents.oracleDesc")}
             isActive={selectedAgent === "oracle"}
-            isAvailable={availableAgents.includes("oracle")}
+            isAvailable={true}
             onClick={() => onAgentClick("oracle")}
           />
         </div>

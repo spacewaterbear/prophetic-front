@@ -30,6 +30,7 @@ interface ChatInputProps {
   conversationId?: number | null;
   attachedFiles?: AttachedFile[];
   onFilesChange?: (files: AttachedFile[]) => void;
+  creditsExhausted?: boolean;
   onFlashcardClick?: (
     flashCards: string,
     question: string,
@@ -55,6 +56,7 @@ export function ChatInput({
   conversationId,
   attachedFiles = [],
   onFilesChange,
+  creditsExhausted = false,
   onFlashcardClick,
 }: ChatInputProps) {
   const { theme, resolvedTheme } = useTheme();
@@ -92,7 +94,7 @@ export function ChatInput({
   };
 
   const handleAgentClick = (agent: AgentType) => {
-    if (availableAgents.includes(agent) && onAgentChange) {
+    if (onAgentChange) {
       onAgentChange(agent);
     }
   };
@@ -189,6 +191,29 @@ export function ChatInput({
       handleSend();
     }
   };
+
+  if (creditsExhausted) {
+    return (
+      <div
+        className={`relative flex flex-col w-full max-w-3xl mx-auto bg-white dark:bg-[#1e1f20] rounded-[24px] p-4 shadow-[0_2px_6px_2px_rgba(0,0,0,0.10),0_1px_2px_0px_rgba(0,0,0,0.08)] dark:shadow-[0_2px_6px_2px_rgba(0,0,0,0.30),0_1px_2px_0px_rgba(0,0,0,0.25)] transition-colors ${className}`}
+      >
+        <div className="flex flex-col items-center gap-3 py-2">
+          <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">
+            {t("credits.exhaustedTitle")}
+          </p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+            {t("credits.exhaustedMessage")}
+          </p>
+          <a
+            href="/pricing"
+            className="inline-flex items-center gap-1.5 text-xs font-medium px-4 py-2 rounded-full bg-[#372ee9] hover:bg-[#2a22c7] text-white transition-colors"
+          >
+            {t("credits.choosePlan")}
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div

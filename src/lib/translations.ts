@@ -44,6 +44,13 @@ export const translations = {
             currentPlan: "Plan actuel",
             upgrade: "Améliorer",
         },
+        credits: {
+            remaining: "{n} crédits",
+            exhaustedTitle: "Crédits épuisés",
+            exhaustedMessage: "Vos crédits gratuits sont épuisés. Choisissez un plan payant pour continuer à utiliser Prophetic Orchestra.",
+            choosePlan: "Choisir un plan",
+            earlyAccess: "Accès anticipé",
+        },
         // Chat Interface
         chat: {
             greeting: "Bonjour, {name}",
@@ -301,6 +308,13 @@ export const translations = {
             currentPlan: "Current plan",
             upgrade: "Upgrade",
         },
+        credits: {
+            remaining: "{n} credits",
+            exhaustedTitle: "Credits exhausted",
+            exhaustedMessage: "Your free credits are exhausted. Choose a paid plan to continue using Prophetic Orchestra.",
+            choosePlan: "Choose a plan",
+            earlyAccess: "Early access",
+        },
         chat: {
             greeting: "Hello, {name}",
             welcomeMessage: "How can I help you invest?",
@@ -550,6 +564,13 @@ export const translations = {
             currentPlan: "Plan actual",
             upgrade: "Actualizar",
         },
+        credits: {
+            remaining: "{n} créditos",
+            exhaustedTitle: "Créditos agotados",
+            exhaustedMessage: "Tus créditos gratuitos se han agotado. Elige un plan de pago para seguir usando Prophetic Orchestra.",
+            choosePlan: "Elegir un plan",
+            earlyAccess: "Acceso anticipado",
+        },
         chat: {
             greeting: "Hola",
             welcomeMessage: "¿Cómo puedo ayudarte a invertir?",
@@ -790,6 +811,13 @@ export const translations = {
             artists: "Künstler",
             currentPlan: "Aktueller Plan",
             upgrade: "Upgraden",
+        },
+        credits: {
+            remaining: "{n} Credits",
+            exhaustedTitle: "Credits aufgebraucht",
+            exhaustedMessage: "Ihre kostenlosen Credits sind aufgebraucht. Wählen Sie einen kostenpflichtigen Plan, um Prophetic Orchestra weiterhin zu nutzen.",
+            choosePlan: "Plan wählen",
+            earlyAccess: "Früher Zugang",
         },
         chat: {
             greeting: "Hallo",
@@ -1032,6 +1060,13 @@ export const translations = {
             currentPlan: "Piano attuale",
             upgrade: "Aggiorna",
         },
+        credits: {
+            remaining: "{n} crediti",
+            exhaustedTitle: "Crediti esauriti",
+            exhaustedMessage: "I tuoi crediti gratuiti sono esauriti. Scegli un piano a pagamento per continuare a usare Prophetic Orchestra.",
+            choosePlan: "Scegli un piano",
+            earlyAccess: "Accesso anticipato",
+        },
         chat: {
             greeting: "Ciao",
             welcomeMessage: "Come posso aiutarti a investire?",
@@ -1272,6 +1307,13 @@ export const translations = {
             artists: "Artistas",
             currentPlan: "Plano atual",
             upgrade: "Atualizar",
+        },
+        credits: {
+            remaining: "{n} créditos",
+            exhaustedTitle: "Créditos esgotados",
+            exhaustedMessage: "Seus créditos gratuitos foram esgotados. Escolha um plano pago para continuar usando o Prophetic Orchestra.",
+            choosePlan: "Escolher um plano",
+            earlyAccess: "Acesso antecipado",
         },
         chat: {
             greeting: "Olá",
@@ -1514,6 +1556,13 @@ export const translations = {
             currentPlan: "Huidig plan",
             upgrade: "Upgraden",
         },
+        credits: {
+            remaining: "{n} credits",
+            exhaustedTitle: "Credits uitgeput",
+            exhaustedMessage: "Uw gratis credits zijn op. Kies een betaald plan om Prophetic Orchestra te blijven gebruiken.",
+            choosePlan: "Kies een plan",
+            earlyAccess: "Vroege toegang",
+        },
         chat: {
             greeting: "Hallo",
             welcomeMessage: "Hoe kan ik u helpen investeren?",
@@ -1755,6 +1804,13 @@ export const translations = {
             currentPlan: "現在のプラン",
             upgrade: "アップグレード",
         },
+        credits: {
+            remaining: "{n} クレジット",
+            exhaustedTitle: "クレジット残高なし",
+            exhaustedMessage: "無料クレジットを使い切りました。Prophetic Orchestraを引き続きご利用になるには、有料プランをお選びください。",
+            choosePlan: "プランを選ぶ",
+            earlyAccess: "早期アクセス",
+        },
         chat: {
             greeting: "こんにちは",
             welcomeMessage: "どのように投資のお手伝いができますか？",
@@ -1995,6 +2051,13 @@ export const translations = {
             artists: "艺术家",
             currentPlan: "当前计划",
             upgrade: "升级",
+        },
+        credits: {
+            remaining: "{n} 积分",
+            exhaustedTitle: "积分已用完",
+            exhaustedMessage: "您的免费积分已用尽。请选择付费方案以继续使用 Prophetic Orchestra。",
+            choosePlan: "选择方案",
+            earlyAccess: "早期访问",
         },
         chat: {
             greeting: "你好",

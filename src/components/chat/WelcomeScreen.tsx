@@ -49,6 +49,7 @@ interface WelcomeScreenProps {
   onAgentChange: (agent: AgentType) => void;
   mounted: boolean;
   isDark: boolean;
+  creditsExhausted?: boolean;
 }
 
 export function WelcomeScreen({
@@ -72,6 +73,7 @@ export function WelcomeScreen({
   onAgentChange,
   mounted,
   isDark,
+  creditsExhausted,
 }: WelcomeScreenProps) {
   const welcomeContainerRef = useRef<HTMLDivElement>(null);
   const { t, language } = useI18n();
@@ -285,6 +287,7 @@ export function WelcomeScreen({
               userStatus={userStatus}
               selectedAgent={selectedAgent}
               onAgentChange={onAgentChange}
+              creditsExhausted={creditsExhausted}
               className="max-w-3xl"
             />
           </>

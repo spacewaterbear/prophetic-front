@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
@@ -20,6 +20,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { WelcomeScreen } from "@/components/chat/WelcomeScreen";
 import { ConversationView } from "@/components/chat/ConversationView";
 import { VignetteDetailView } from "./VignetteDetailView";
+import { useCredits } from "@/hooks/useCredits";
 
 const isAdminUser = (
   session: { user?: { status?: string } } | null,
@@ -63,6 +64,9 @@ export default function ChatPage() {
   const [profileUsername, setProfileUsername] = useState<string | null>(null);
   const { setSidebarOpen } = useSidebar();
 
+  const isFreeUser = (session?.user as { status?: string })?.status === "free";
+  const { credits, isTester, creditsExhausted, refresh: refreshCredits } = useCredits(session?.user?.id, isFreeUser);
+
   // Vignette state
   const [vignettes, setVignettes] = useState<VignetteData[]>([]);
   const [vignetteLoading, setVignetteLoading] = useState(false);
@@ -89,6 +93,14 @@ export default function ChatPage() {
     handleScroll,
     clearMessages,
   } = useChatConversation({ conversationId, selectedModel, selectedAgent });
+
+  const prevIsLoadingRef = useRef(false);
+  useEffect(() => {
+    if (prevIsLoadingRef.current && !isLoading && isFreeUser && !isTester) {
+      refreshCredits();
+    }
+    prevIsLoadingRef.current = isLoading;
+  }, [isLoading, isFreeUser, isTester, refreshCredits]);
 
   useEffect(() => {
     const handleDeepSearch = (e: CustomEvent<{ text?: string }>) => {
@@ -395,6 +407,25 @@ export default function ChatPage() {
         {!isWelcomeScreen && (
           <ShareButton conversationId={conversationId} disabled={isLoading} />
         )}
+        {isFreeUser && (
+          isTester ? (
+            <div className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium border bg-purple-50 dark:bg-purple-950/40 border-purple-300 dark:border-purple-700 text-purple-700 dark:text-purple-300">
+              <span>{t("credits.earlyAccess")}</span>
+            </div>
+          ) : credits !== null ? (
+            <div
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium border ${
+                creditsExhausted
+                  ? "bg-red-50 dark:bg-red-950/40 border-red-300 dark:border-red-700 text-red-700 dark:text-red-300"
+                  : credits <= 20
+                    ? "bg-orange-50 dark:bg-orange-950/40 border-orange-300 dark:border-orange-700 text-orange-700 dark:text-orange-300"
+                    : "bg-gray-100 dark:bg-white/10 border-gray-300 dark:border-white/20 text-gray-700 dark:text-gray-300"
+              }`}
+            >
+              <span>{t("credits.remaining").replace("{n}", String(Math.round(credits)))}</span>
+            </div>
+          ) : null
+        )}
         <ThemeToggle />
       </div>
 
@@ -430,6 +461,7 @@ export default function ChatPage() {
           onAgentChange={handleAgentChange}
           mounted={mounted}
           isDark={isDark}
+          creditsExhausted={creditsExhausted}
         />
       ) : (
         <ConversationView
@@ -456,6 +488,7 @@ export default function ChatPage() {
           userStatus={userStatus}
           selectedAgent={selectedAgent}
           onAgentChange={handleAgentChange}
+          creditsExhausted={creditsExhausted}
         />
       )}
     </div>

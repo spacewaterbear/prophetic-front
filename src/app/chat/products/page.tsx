@@ -4,6 +4,9 @@ import { useState, useEffect, useCallback, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Search, X, ChevronDown } from "lucide-react";
 import { CATEGORY_DISPLAY_NAMES } from "@/types/chat";
+import { useSession } from "next-auth/react";
+import { useCredits } from "@/hooks/useCredits";
+import { useI18n } from "@/contexts/i18n-context";
 
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 const LETTER_LIMIT = 24;
@@ -270,6 +273,10 @@ function SearchResults({
 function ProductsPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { data: session } = useSession();
+  const { t } = useI18n();
+  const isFreeUser = (session?.user as { status?: string })?.status === "free";
+  const { creditsExhausted } = useCredits(session?.user?.id, isFreeUser);
   const initialCategory = searchParams.get("category") || "WINE";
   const lockedCategory = searchParams.get("category") !== null;
   const labelOverride = searchParams.get("label");
@@ -443,26 +450,39 @@ function ProductsPageInner() {
       </div>
 
       {/* ── Scroll area ── */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto px-6 py-6">
-        {isSearching ? (
-          <SearchResults
-            query={debouncedSearch}
-            category={category}
-            onItemClick={handleItemClick}
-          />
-        ) : (
-          LETTERS.map((l, i) => (
-            <LetterSection
-              key={`${l}-${category}`}
-              letter={l}
+      <div className="relative flex-1 min-h-0">
+        <div ref={scrollRef} className={`h-full overflow-y-auto px-6 py-6 ${creditsExhausted ? "opacity-40 pointer-events-none select-none" : ""}`}>
+          {isSearching ? (
+            <SearchResults
+              query={debouncedSearch}
               category={category}
-              mountIndex={i}
               onItemClick={handleItemClick}
-              isScrollTarget={scrollTarget === l}
-              onScrollReady={handleScrollReady}
-              onLoaded={handleLetterLoaded}
             />
-          ))
+          ) : (
+            LETTERS.map((l, i) => (
+              <LetterSection
+                key={`${l}-${category}`}
+                letter={l}
+                category={category}
+                mountIndex={i}
+                onItemClick={handleItemClick}
+                isScrollTarget={scrollTarget === l}
+                onScrollReady={handleScrollReady}
+                onLoaded={handleLetterLoaded}
+              />
+            ))
+          )}
+        </div>
+        {creditsExhausted && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 pointer-events-auto backdrop-blur-sm bg-[rgb(249,248,244)]/60 dark:bg-[rgb(1,1,0)]/60">
+            <div className="flex flex-col items-center gap-3 bg-white dark:bg-[#1e1f20] border border-gray-200 dark:border-gray-700 rounded-2xl px-8 py-6 shadow-xl max-w-xs mx-4">
+              <p className="text-sm font-semibold text-gray-900 dark:text-white text-center">{t("credits.exhaustedTitle")}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 text-center">{t("credits.exhaustedMessage")}</p>
+              <a href="/pricing" className="inline-flex items-center gap-1.5 text-xs font-medium px-4 py-2 rounded-full bg-[#372ee9] hover:bg-[#2a22c7] text-white transition-colors">
+                {t("credits.choosePlan")}
+              </a>
+            </div>
+          </div>
         )}
       </div>
     </div>
