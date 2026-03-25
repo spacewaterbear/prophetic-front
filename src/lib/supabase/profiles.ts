@@ -27,14 +27,12 @@ export async function upsertProfile(
   adminClient: SupabaseClient<Database>,
   params: UpsertProfileParams,
 ): Promise<string | null> {
-  const { id, email, username, avatarUrl, firstName, lastName, status = "oracle", artStatus = "oracle" } = params;
+  const { id, email, username, avatarUrl, firstName, lastName, status = "free", artStatus = "free" } = params;
 
   try {
-    // Build update fields
+    // Build update fields — do NOT include status/art_status to preserve existing values
     const updateFields: ProfileUpdate = {
       updated_at: new Date().toISOString(),
-      status,
-      art_status: artStatus,
     };
     if (username !== undefined) updateFields.username = username;
     if (avatarUrl !== undefined) updateFields.avatar_url = avatarUrl;
@@ -73,7 +71,7 @@ export async function upsertProfile(
       return id;
     }
 
-    // Insert new profile
+    // Insert new profile with free status
     const { error } = await adminClient.from("profiles").insert({
       id,
       mail: email,

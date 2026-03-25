@@ -32,7 +32,6 @@ export async function POST(req: NextRequest) {
       username,
       firstName: firstName || undefined,
       lastName: lastName || undefined,
-      status: "oracle",
     });
 
     if (!profileId) {

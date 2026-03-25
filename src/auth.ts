@@ -159,7 +159,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             email: user.email,
             username: user.name || user.email.split("@")[0],
             avatarUrl: user.image ?? null,
-            status: "oracle",
           });
         } catch (error) {
           console.error("Error in signIn callback:", error);
