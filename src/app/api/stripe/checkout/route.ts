@@ -114,28 +114,17 @@ export async function GET(req: NextRequest) {
           metadata: { userId, pending_price_id: "" },
         });
 
-        // Check if the proration invoice requires SCA/3DS confirmation (common for EU cards)
+        // Check if the proration invoice requires payment confirmation (SCA/3DS, EU cards).
+        // In Stripe SDK v20 (API 2025-03-31.basil), payment_intent is no longer a direct
+        // field on Invoice — checking invoice.status is the correct approach.
         const latestInvoiceId = updatedSubscription.latest_invoice;
         if (latestInvoiceId) {
           const invoiceId = typeof latestInvoiceId === "string" ? latestInvoiceId : latestInvoiceId.id;
-          // Retrieve invoice without expanding payment_intent to avoid credit_note:read permission
           const invoice = await stripe.invoices.retrieve(invoiceId);
-          const paymentIntentId = typeof invoice.payment_intent === "string"
-            ? invoice.payment_intent
-            : invoice.payment_intent?.id;
-
-          if (paymentIntentId) {
-            const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
-            if (
-              paymentIntent.status === "requires_action" ||
-              paymentIntent.status === "requires_confirmation"
-            ) {
-              // Redirect to Stripe-hosted invoice so the user can complete 3DS.
-              // The webhook (invoice.payment_succeeded) will update the profile status after confirmation.
-              if (invoice.hosted_invoice_url) {
-                return NextResponse.redirect(invoice.hosted_invoice_url);
-              }
-            }
+          if (invoice.status === "open" && invoice.hosted_invoice_url) {
+            // Payment was not collected (needs 3DS or other action).
+            // Redirect to Stripe-hosted invoice; webhook (invoice.payment_succeeded) updates status.
+            return NextResponse.redirect(invoice.hosted_invoice_url);
           }
         }
 
