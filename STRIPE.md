@@ -57,6 +57,8 @@ subscription_schedule.updated — Occurs whenever a subscription schedule is upd
   │ Customer Portal   │ Write                             │
   ├───────────────────┼───────────────────────────────────┤
   │ Prices            │ Read                              │
+  ├───────────────────┼───────────────────────────────────┤ 
+  │ Payment intent    │ Read                              │
   ├───────────────────┼───────────────────────────────────┤
   │ Products          │ Read                              │
   ├───────────────────┼───────────────────────────────────┤

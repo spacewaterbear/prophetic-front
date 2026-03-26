@@ -40,6 +40,7 @@ async function updateProfileStatus(userId: string, status: string) {
 }
 
 export async function GET(req: NextRequest) {
+  try {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
   const session = await auth();
   if (!session?.user?.id) {
@@ -116,20 +117,24 @@ export async function GET(req: NextRequest) {
         // Check if the proration invoice requires SCA/3DS confirmation (common for EU cards)
         const latestInvoiceId = updatedSubscription.latest_invoice;
         if (latestInvoiceId) {
-          const invoice = await stripe.invoices.retrieve(
-            typeof latestInvoiceId === "string" ? latestInvoiceId : latestInvoiceId.id,
-            { expand: ["payment_intent"] },
-          );
-          const paymentIntent = invoice.payment_intent as Stripe.PaymentIntent | null;
-          if (
-            paymentIntent &&
-            (paymentIntent.status === "requires_action" ||
-              paymentIntent.status === "requires_confirmation")
-          ) {
-            // Redirect to Stripe-hosted invoice so the user can complete 3DS.
-            // The webhook (invoice.payment_succeeded) will update the profile status after confirmation.
-            if (invoice.hosted_invoice_url) {
-              return NextResponse.redirect(invoice.hosted_invoice_url);
+          const invoiceId = typeof latestInvoiceId === "string" ? latestInvoiceId : latestInvoiceId.id;
+          // Retrieve invoice without expanding payment_intent to avoid credit_note:read permission
+          const invoice = await stripe.invoices.retrieve(invoiceId);
+          const paymentIntentId = typeof invoice.payment_intent === "string"
+            ? invoice.payment_intent
+            : invoice.payment_intent?.id;
+
+          if (paymentIntentId) {
+            const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+            if (
+              paymentIntent.status === "requires_action" ||
+              paymentIntent.status === "requires_confirmation"
+            ) {
+              // Redirect to Stripe-hosted invoice so the user can complete 3DS.
+              // The webhook (invoice.payment_succeeded) will update the profile status after confirmation.
+              if (invoice.hosted_invoice_url) {
+                return NextResponse.redirect(invoice.hosted_invoice_url);
+              }
             }
           }
         }
@@ -167,4 +172,8 @@ export async function GET(req: NextRequest) {
   });
 
   return NextResponse.redirect(stripeSession.url!);
+  } catch (err) {
+    console.error("[Stripe Checkout] Unhandled error:", err);
+    return NextResponse.json({ error: "Internal server error", details: String(err) }, { status: 500 });
+  }
 }
