@@ -223,6 +223,13 @@ export default function PricingContent({
 
         {/* Footer */}
         <div className="text-center space-y-2">
+          {hasSession && (
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              <Link href="/chat" className="text-gray-900 dark:text-white font-medium underline hover:opacity-75">
+                ← {t("pricing.backToChat")}
+              </Link>
+            </p>
+          )}
           {isAuthorized && (
             <p className="text-sm text-gray-500 dark:text-gray-400">
               <a href="/api/stripe/portal" className="text-gray-900 dark:text-white font-medium underline hover:opacity-75">
