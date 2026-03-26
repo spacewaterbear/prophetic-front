@@ -105,14 +105,36 @@ export async function GET(req: NextRequest) {
 
       if (newOrder > currentOrder) {
         // Upgrade: immediate swap, prorate and reset billing cycle
-        await stripe.subscriptions.update(existingSubscription.id, {
+        const updatedSubscription = await stripe.subscriptions.update(existingSubscription.id, {
           items: [{ id: currentItem.id, price: priceId }],
           proration_behavior: "always_invoice",
           billing_cycle_anchor: "now",
           cancel_at_period_end: false,
           metadata: { userId, pending_price_id: "" },
         });
-        // Propagate immediately — webhook will also fire as backup
+
+        // Check if the proration invoice requires SCA/3DS confirmation (common for EU cards)
+        const latestInvoiceId = updatedSubscription.latest_invoice;
+        if (latestInvoiceId) {
+          const invoice = await stripe.invoices.retrieve(
+            typeof latestInvoiceId === "string" ? latestInvoiceId : latestInvoiceId.id,
+            { expand: ["payment_intent"] },
+          );
+          const paymentIntent = invoice.payment_intent as Stripe.PaymentIntent | null;
+          if (
+            paymentIntent &&
+            (paymentIntent.status === "requires_action" ||
+              paymentIntent.status === "requires_confirmation")
+          ) {
+            // Redirect to Stripe-hosted invoice so the user can complete 3DS.
+            // The webhook (invoice.payment_succeeded) will update the profile status after confirmation.
+            if (invoice.hosted_invoice_url) {
+              return NextResponse.redirect(invoice.hosted_invoice_url);
+            }
+          }
+        }
+
+        // Payment went through without SCA — propagate immediately (webhook fires as backup)
         const newStatus = PRICE_STATUS_MAP[priceId];
         if (newStatus) {
           await updateProfileStatus(userId, newStatus);
