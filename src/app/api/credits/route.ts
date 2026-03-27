@@ -3,7 +3,7 @@ import { auth } from "@/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 const TOTAL_FREE_CREDITS = 100;
-const COST_MULTIPLIER = 50;
+const COST_MULTIPLIER = Number(process.env.CREDITS_COST_MULTIPLIER ?? 100);
 
 export async function GET() {
   try {
