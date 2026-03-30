@@ -1,5 +1,7 @@
 import { VignetteData } from "@/types/vignettes";
 import { ClothesSearchData } from "@/components/ClothesSearchCard";
+import { JewelrySearchData } from "@/components/JewelryCard";
+import { CarsSearchData } from "@/components/CarsCard";
 
 export interface Artist {
   artist_name: string;
@@ -72,6 +74,8 @@ export interface Message {
   real_estate_data?: RealEstateData;
   vignette_data?: VignetteData[];
   clothes_search_data?: ClothesSearchData;
+  jewelry_search_data?: JewelrySearchData;
+  cars_search_data?: CarsSearchData;
   vignetteCategory?: string;
 }
 

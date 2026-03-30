@@ -170,6 +170,34 @@ export async function GET(
             return msg;
           }
         }
+
+        // If a message has jewelry_search_data in metadata, include it in the message object
+        if (metadata.jewelry_search_data) {
+          try {
+            console.log("[GET Conversation] Processing jewelry_search_data for message:", msg.id);
+            return {
+              ...msg,
+              jewelry_search_data: metadata.jewelry_search_data
+            };
+          } catch (error) {
+            console.error("[GET Conversation] Error processing jewelry_search_data for message:", msg.id, error);
+            return msg;
+          }
+        }
+
+        // If a message has cars_search_data in metadata, include it in the message object
+        if (metadata.cars_search_data) {
+          try {
+            console.log("[GET Conversation] Processing cars_search_data for message:", msg.id);
+            return {
+              ...msg,
+              cars_search_data: metadata.cars_search_data
+            };
+          } catch (error) {
+            console.error("[GET Conversation] Error processing cars_search_data for message:", msg.id, error);
+            return msg;
+          }
+        }
       }
       return msg;
     });

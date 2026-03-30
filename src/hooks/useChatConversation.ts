@@ -9,6 +9,8 @@ import {
 } from "@/types/chat";
 import { VignetteData } from "@/types/vignettes";
 import { ClothesSearchData } from "@/components/ClothesSearchCard";
+import { JewelrySearchData } from "@/components/JewelryCard";
+import { CarsSearchData } from "@/components/CarsCard";
 
 export type { Message };
 
@@ -44,6 +46,10 @@ export function useChatConversation({
   >(null);
   const [streamingClothesSearchData, setStreamingClothesSearchData] =
     useState<ClothesSearchData | null>(null);
+  const [streamingJewelrySearchData, setStreamingJewelrySearchData] =
+    useState<JewelrySearchData | null>(null);
+  const [streamingCarsSearchData, setStreamingCarsSearchData] =
+    useState<CarsSearchData | null>(null);
   const [streamingVignetteCategory, setStreamingVignetteCategory] = useState<
     string | null
   >(null);
@@ -348,6 +354,7 @@ export function useChatConversation({
       setStreamingRealEstateData(null);
       setStreamingVignetteData(null);
       setStreamingClothesSearchData(null);
+      setStreamingJewelrySearchData(null);
       setCurrentStatus("");
       setLastStreamingActivity(Date.now());
       setShowStreamingIndicator(false);
@@ -433,6 +440,12 @@ export function useChatConversation({
               } else if (data.type === "clothes_data" && data.data?.listings) {
                 setShouldScrollToTop(false);
                 setStreamingClothesSearchData(data.data);
+              } else if (data.type === "jewelry_data" && data.data?.listings) {
+                setShouldScrollToTop(false);
+                setStreamingJewelrySearchData(data.data);
+              } else if (data.type === "cars_data" && data.data?.listings) {
+                setShouldScrollToTop(false);
+                setStreamingCarsSearchData(data.data);
               } else if (
                 data.type === "done" ||
                 (data.type === "artist_info" &&
@@ -444,6 +457,8 @@ export function useChatConversation({
                 setStreamingRealEstateData(null);
                 setStreamingVignetteData(null);
                 setStreamingClothesSearchData(null);
+                setStreamingJewelrySearchData(null);
+                setStreamingCarsSearchData(null);
                 setCurrentStatus("");
               } else if (data.type === "status") {
                 setCurrentStatus(data.message);
@@ -751,6 +766,8 @@ export function useChatConversation({
     streamingRealEstateData,
     streamingVignetteData,
     streamingClothesSearchData,
+    streamingJewelrySearchData,
+    streamingCarsSearchData,
     isLoading,
     shouldAutoScroll,
     shouldScrollToTop,
@@ -933,6 +950,8 @@ export function useChatConversation({
     streamingRealEstateData,
     streamingVignetteData,
     streamingClothesSearchData,
+    streamingJewelrySearchData,
+    streamingCarsSearchData,
     streamingVignetteCategory,
     currentStatus,
     showStreamingIndicator,
@@ -964,6 +983,7 @@ export function useChatConversation({
       setStreamingRealEstateData(null);
       setStreamingVignetteData(null);
       setStreamingClothesSearchData(null);
+      setStreamingJewelrySearchData(null);
       setStreamingVignetteCategory(null);
       setCurrentStatus("");
       setShowStreamingIndicator(false);

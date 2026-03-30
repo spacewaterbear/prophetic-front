@@ -9,6 +9,8 @@ import { TypingIndicator } from "@/components/TypingIndicator";
 import { Message, MarketplaceData, RealEstateData } from "@/types/chat";
 import { VignetteData } from "@/types/vignettes";
 import { ClothesSearchData } from "@/components/ClothesSearchCard";
+import { JewelrySearchData } from "@/components/JewelryCard";
+import { CarsSearchData } from "@/components/CarsCard";
 import { AgentType, UserStatus } from "@/types/agents";
 import { useI18n } from "@/contexts/i18n-context";
 
@@ -20,6 +22,8 @@ interface ConversationViewProps {
   streamingRealEstateData: RealEstateData | null;
   streamingVignetteData: VignetteData[] | null;
   streamingClothesSearchData: ClothesSearchData | null;
+  streamingJewelrySearchData: JewelrySearchData | null;
+  streamingCarsSearchData: CarsSearchData | null;
   streamingVignetteCategory: string | null;
   currentStatus: string;
   showStreamingIndicator: boolean;
@@ -53,6 +57,8 @@ export function ConversationView({
   streamingRealEstateData,
   streamingVignetteData,
   streamingClothesSearchData,
+  streamingJewelrySearchData,
+  streamingCarsSearchData,
   streamingVignetteCategory,
   currentStatus,
   showStreamingIndicator,
@@ -96,7 +102,9 @@ export function ConversationView({
             !streamingMessage &&
             !streamingMarketplaceData &&
             !streamingVignetteData &&
-            !streamingClothesSearchData && (
+            !streamingClothesSearchData &&
+            !streamingJewelrySearchData &&
+            !streamingCarsSearchData && (
               <div className="flex gap-2 sm:gap-4 items-start justify-start">
                 <AIAvatar />
                 <div className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-3 sm:px-4 py-4 sm:py-5 rounded-2xl overflow-hidden bg-[rgb(249,248,244)] dark:bg-[rgb(1,1,0)]">
@@ -117,6 +125,8 @@ export function ConversationView({
             streamingRealEstateData={streamingRealEstateData}
             streamingVignetteData={streamingVignetteData}
             streamingClothesSearchData={streamingClothesSearchData}
+            streamingJewelrySearchData={streamingJewelrySearchData}
+            streamingCarsSearchData={streamingCarsSearchData}
             streamingVignetteCategory={streamingVignetteCategory}
             showStreamingIndicator={showStreamingIndicator}
             isLoading={isLoading}

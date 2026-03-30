@@ -262,6 +262,10 @@ export async function POST(
           let vignetteData: any = null; // Capture vignette_data separately
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           let clothesSearchData: any = null; // Capture clothes_data separately
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          let jewelrySearchData: any = null; // Capture jewelry_data separately
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          let carsSearchData: any = null; // Capture cars_data separately
 
           // Read and stream the response
           while (true) {
@@ -401,6 +405,30 @@ export async function POST(
                   continue;
                 }
 
+                // Handle jewelry_data messages
+                if (parsed.type && parsed.type === "jewelry_data") {
+                  console.log("[Prophetic API] Received jewelry_data");
+                  jewelrySearchData = parsed;
+                  const jewelryChunk = `data: ${JSON.stringify({
+                    type: "jewelry_data",
+                    data: parsed.data
+                  })}\n\n`;
+                  controller.enqueue(encoder.encode(jewelryChunk));
+                  continue;
+                }
+
+                // Handle cars_data messages
+                if (parsed.type && parsed.type === "cars_data") {
+                  console.log("[Prophetic API] Received cars_data");
+                  carsSearchData = parsed;
+                  const carsChunk = `data: ${JSON.stringify({
+                    type: "cars_data",
+                    data: parsed.data
+                  })}\n\n`;
+                  controller.enqueue(encoder.encode(carsChunk));
+                  continue;
+                }
+
                 // Handle status messages
                 if (parsed.type && parsed.type === "status") {
                   console.log("[Prophetic API] Received status:", parsed.message);
@@ -504,6 +532,30 @@ export async function POST(
                         continue;
                       }
 
+                      // Handle jewelry_data nested in content
+                      if (nestedData.type === "jewelry_data") {
+                        console.log("[Prophetic API] Received jewelry_data (from nested content)");
+                        jewelrySearchData = nestedData;
+                        const nestedJewelryChunk = `data: ${JSON.stringify({
+                          type: "jewelry_data",
+                          data: nestedData.data
+                        })}\n\n`;
+                        controller.enqueue(encoder.encode(nestedJewelryChunk));
+                        continue;
+                      }
+
+                      // Handle cars_data nested in content
+                      if (nestedData.type === "cars_data") {
+                        console.log("[Prophetic API] Received cars_data (from nested content)");
+                        carsSearchData = nestedData;
+                        const nestedCarsChunk = `data: ${JSON.stringify({
+                          type: "cars_data",
+                          data: nestedData.data
+                        })}\n\n`;
+                        controller.enqueue(encoder.encode(nestedCarsChunk));
+                        continue;
+                      }
+
                       // Handle status nested in content
                       if (nestedData.type === "status") {
                         console.log("[Prophetic API] Received status (from nested content)");
@@ -567,6 +619,26 @@ export async function POST(
                           data: standaloneData.data
                         })}\n\n`;
                         controller.enqueue(encoder.encode(standaloneClothesChunk));
+                        continue;
+                      }
+                      if (standaloneData.type === "jewelry_data") {
+                        console.log("[Prophetic API] Received jewelry_data (from standalone JSON in content)");
+                        jewelrySearchData = standaloneData;
+                        const standaloneJewelryChunk = `data: ${JSON.stringify({
+                          type: "jewelry_data",
+                          data: standaloneData.data
+                        })}\n\n`;
+                        controller.enqueue(encoder.encode(standaloneJewelryChunk));
+                        continue;
+                      }
+                      if (standaloneData.type === "cars_data") {
+                        console.log("[Prophetic API] Received cars_data (from standalone JSON in content)");
+                        carsSearchData = standaloneData;
+                        const standaloneCarsChunk = `data: ${JSON.stringify({
+                          type: "cars_data",
+                          data: standaloneData.data
+                        })}\n\n`;
+                        controller.enqueue(encoder.encode(standaloneCarsChunk));
                         continue;
                       }
                       if (standaloneData.type === "artist_info") {
@@ -658,6 +730,14 @@ export async function POST(
                 } else if (parsed.type === "clothes_data" && !clothesSearchData) {
                   clothesSearchData = parsed;
                   const chunk = `data: ${JSON.stringify({ type: "clothes_data", data: parsed.data })}\n\n`;
+                  controller.enqueue(encoder.encode(chunk));
+                } else if (parsed.type === "jewelry_data" && !jewelrySearchData) {
+                  jewelrySearchData = parsed;
+                  const chunk = `data: ${JSON.stringify({ type: "jewelry_data", data: parsed.data })}\n\n`;
+                  controller.enqueue(encoder.encode(chunk));
+                } else if (parsed.type === "cars_data" && !carsSearchData) {
+                  carsSearchData = parsed;
+                  const chunk = `data: ${JSON.stringify({ type: "cars_data", data: parsed.data })}\n\n`;
                   controller.enqueue(encoder.encode(chunk));
                 } else if (parsed.content) {
                   fullResponse += parsed.content;
@@ -776,6 +856,62 @@ export async function POST(
                 type: typeof parsedClothesData,
                 isArray: Array.isArray(parsedClothesData),
                 data: parsedClothesData
+              });
+            }
+          }
+
+          // If we captured jewelry search data, store it in metadata
+          if (jewelrySearchData && jewelrySearchData.type === "jewelry_data") {
+            let parsedJewelryData = jewelrySearchData.data;
+            if (typeof parsedJewelryData === 'string') {
+              try {
+                parsedJewelryData = JSON.parse(parsedJewelryData);
+              } catch (e) {
+                console.error('[Message Storage] Failed to parse jewelry_search_data string:', e);
+              }
+            }
+            if (parsedJewelryData && typeof parsedJewelryData === 'object' && !Array.isArray(parsedJewelryData)) {
+              if (messageMetadata) {
+                messageMetadata.jewelry_search_data = parsedJewelryData;
+              } else {
+                messageMetadata = {
+                  type: "jewelry_data",
+                  structured_data: jewelrySearchData,
+                  jewelry_search_data: parsedJewelryData
+                };
+              }
+              console.log('[Message Storage] Storing jewelry_search_data:', {
+                type: parsedJewelryData.type,
+                totalListings: parsedJewelryData.total_listings,
+                listingsCount: parsedJewelryData.listings?.length,
+              });
+            }
+          }
+
+          // If we captured cars search data, store it in metadata
+          if (carsSearchData && carsSearchData.type === "cars_data") {
+            let parsedCarsData = carsSearchData.data;
+            if (typeof parsedCarsData === 'string') {
+              try {
+                parsedCarsData = JSON.parse(parsedCarsData);
+              } catch (e) {
+                console.error('[Message Storage] Failed to parse cars_search_data string:', e);
+              }
+            }
+            if (parsedCarsData && typeof parsedCarsData === 'object' && !Array.isArray(parsedCarsData)) {
+              if (messageMetadata) {
+                messageMetadata.cars_search_data = parsedCarsData;
+              } else {
+                messageMetadata = {
+                  type: "cars_data",
+                  structured_data: carsSearchData,
+                  cars_search_data: parsedCarsData
+                };
+              }
+              console.log('[Message Storage] Storing cars_search_data:', {
+                type: parsedCarsData.type,
+                totalListings: parsedCarsData.total_listings,
+                listingsCount: parsedCarsData.listings?.length,
               });
             }
           }

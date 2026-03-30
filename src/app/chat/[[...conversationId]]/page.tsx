@@ -82,6 +82,8 @@ export default function ChatPage() {
     streamingRealEstateData,
     streamingVignetteData,
     streamingClothesSearchData,
+    streamingJewelrySearchData,
+    streamingCarsSearchData,
     streamingVignetteCategory,
     currentStatus,
     showStreamingIndicator,
@@ -472,6 +474,8 @@ export default function ChatPage() {
           streamingRealEstateData={streamingRealEstateData}
           streamingVignetteData={streamingVignetteData}
           streamingClothesSearchData={streamingClothesSearchData}
+          streamingJewelrySearchData={streamingJewelrySearchData}
+          streamingCarsSearchData={streamingCarsSearchData}
           streamingVignetteCategory={streamingVignetteCategory}
           currentStatus={currentStatus}
           showStreamingIndicator={showStreamingIndicator}

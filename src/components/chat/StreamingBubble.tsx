@@ -11,6 +11,8 @@ import { useI18n } from "@/contexts/i18n-context";
 import { getCategoryDisplayNames } from "@/lib/translations";
 import { VignetteData } from "@/types/vignettes";
 import { ClothesSearchData } from "@/components/ClothesSearchCard";
+import { JewelrySearchData } from "@/components/JewelryCard";
+import { CarsSearchData } from "@/components/CarsCard";
 
 const Markdown = lazy(() =>
   import("@/components/Markdown").then((mod) => ({ default: mod.Markdown })),
@@ -35,6 +37,16 @@ const ClothesSearchCard = lazy(() =>
     default: mod.ClothesSearchCard,
   })),
 );
+const JewelryCard = lazy(() =>
+  import("@/components/JewelryCard").then((mod) => ({
+    default: mod.JewelryCard,
+  })),
+);
+const CarsCard = lazy(() =>
+  import("@/components/CarsCard").then((mod) => ({
+    default: mod.CarsCard,
+  })),
+);
 
 interface StreamingBubbleProps {
   streamingMessage: string;
@@ -42,6 +54,8 @@ interface StreamingBubbleProps {
   streamingRealEstateData: RealEstateData | null;
   streamingVignetteData: VignetteData[] | null;
   streamingClothesSearchData: ClothesSearchData | null;
+  streamingJewelrySearchData: JewelrySearchData | null;
+  streamingCarsSearchData: CarsSearchData | null;
   streamingVignetteCategory: string | null;
   showStreamingIndicator: boolean;
   isLoading: boolean;
@@ -112,6 +126,8 @@ export function StreamingBubble({
   streamingRealEstateData,
   streamingVignetteData,
   streamingClothesSearchData,
+  streamingJewelrySearchData,
+  streamingCarsSearchData,
   streamingVignetteCategory,
   showStreamingIndicator,
   isLoading,
@@ -127,7 +143,9 @@ export function StreamingBubble({
     streamingMarketplaceData ||
     streamingRealEstateData ||
     streamingVignetteData ||
-    streamingClothesSearchData;
+    streamingClothesSearchData ||
+    streamingJewelrySearchData ||
+    streamingCarsSearchData;
 
   if (!hasContent) return null;
 
@@ -228,6 +246,53 @@ export function StreamingBubble({
               }
             >
               <ClothesSearchCard data={streamingClothesSearchData} />
+            </Suspense>
+          </div>
+        )}
+        {streamingJewelrySearchData && (
+          <div
+            className={
+              displayedMessage ||
+              streamingMarketplaceData ||
+              streamingRealEstateData ||
+              streamingVignetteData ||
+              streamingClothesSearchData
+                ? "mt-4"
+                : ""
+            }
+          >
+            <Suspense
+              fallback={
+                <div className="text-base text-gray-400">
+                  Loading jewelry...
+                </div>
+              }
+            >
+              <JewelryCard data={streamingJewelrySearchData} />
+            </Suspense>
+          </div>
+        )}
+        {streamingCarsSearchData && (
+          <div
+            className={
+              displayedMessage ||
+              streamingMarketplaceData ||
+              streamingRealEstateData ||
+              streamingVignetteData ||
+              streamingClothesSearchData ||
+              streamingJewelrySearchData
+                ? "mt-4"
+                : ""
+            }
+          >
+            <Suspense
+              fallback={
+                <div className="text-base text-gray-400">
+                  Loading cars...
+                </div>
+              }
+            >
+              <CarsCard data={streamingCarsSearchData} />
             </Suspense>
           </div>
         )}
