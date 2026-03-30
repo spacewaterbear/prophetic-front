@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let query = (supabase as any)
       .from("abcdaire")
-      .select("id, name, category, sub_category", { count: "exact" })
+      .select("id, name, category", { count: "exact" })
       .eq("category", category);
 
     if (search) {
