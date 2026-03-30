@@ -84,6 +84,7 @@ export default function ChatPage() {
     streamingClothesSearchData,
     streamingJewelrySearchData,
     streamingCarsSearchData,
+    streamingWatchesSearchData,
     streamingVignetteCategory,
     currentStatus,
     showStreamingIndicator,
@@ -161,9 +162,8 @@ export default function ChatPage() {
     if (pendingProductRaw) {
       sessionStorage.removeItem("pendingProductSearch");
       try {
-        const { id, name, sub_category, category } = JSON.parse(pendingProductRaw) as { id: string; name: string; sub_category?: string | null; category: string };
-        const fullName = [sub_category, name].filter(Boolean).join(" ");
-        handleSend(t("contextMenu.deepSearchPrompt").replace("{name}", fullName), undefined, undefined, true, id, category);
+        const { id, name, category } = JSON.parse(pendingProductRaw) as { id: string; name: string; category: string };
+        handleSend(t("contextMenu.deepSearchPrompt").replace("{name}", name), undefined, undefined, true, id, category);
       } catch {
         // ignore malformed data
       }
@@ -476,6 +476,7 @@ export default function ChatPage() {
           streamingClothesSearchData={streamingClothesSearchData}
           streamingJewelrySearchData={streamingJewelrySearchData}
           streamingCarsSearchData={streamingCarsSearchData}
+          streamingWatchesSearchData={streamingWatchesSearchData}
           streamingVignetteCategory={streamingVignetteCategory}
           currentStatus={currentStatus}
           showStreamingIndicator={showStreamingIndicator}

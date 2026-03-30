@@ -27,7 +27,6 @@ interface ProductRow {
   id: string;
   name: string;
   category: string;
-  sub_category?: string | null;
 }
 
 // ── Per-letter section ────────────────────────────────────────────────────────
@@ -71,7 +70,6 @@ function LetterSection({
           id: a.id,
           name: a.name,
           category: a.category,
-          sub_category: a.sub_category,
         }));
         setItems((prev) => (append ? [...prev, ...rows] : rows));
         setHasMore(data.hasMore ?? false);
@@ -140,11 +138,11 @@ function LetterSection({
           {items.map((item, i) => (
             <button
               key={`${item.name}-${i}`}
-              title={[item.sub_category, item.name].filter(Boolean).join(" ")}
+              title={item.name}
               onClick={() => onItemClick(item)}
               className="text-left text-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:underline underline-offset-2 py-0.5 transition-colors truncate"
             >
-              {[item.sub_category, item.name].filter(Boolean).join(" ")}
+              {item.name}
             </button>
           ))}
         </div>
@@ -198,7 +196,7 @@ function SearchResults({
       const res = await fetch(`/api/abcdaire?${qs}`);
       if (!res.ok) throw new Error("fetch error");
       const data = await res.json();
-      const rows: ProductRow[] = (data.items || []).map((a: ProductRow) => ({ id: a.id, name: a.name, category: a.category, sub_category: a.sub_category }));
+      const rows: ProductRow[] = (data.items || []).map((a: ProductRow) => ({ id: a.id, name: a.name, category: a.category }));
       setItems((prev) => (append ? [...prev, ...rows] : rows));
       setTotal(data.total ?? 0);
       setHasMore(data.hasMore ?? false);
@@ -345,7 +343,7 @@ function ProductsPageInner() {
 
   const handleItemClick = useCallback(
     (item: ProductRow) => {
-      sessionStorage.setItem("pendingProductSearch", JSON.stringify({ id: item.id, name: item.name, sub_category: item.sub_category, category: item.category }));
+      sessionStorage.setItem("pendingProductSearch", JSON.stringify({ id: item.id, name: item.name, category: item.category }));
       router.push("/chat");
     },
     [router]

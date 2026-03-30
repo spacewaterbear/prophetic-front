@@ -11,6 +11,7 @@ import { VignetteData } from "@/types/vignettes";
 import { ClothesSearchData } from "@/components/ClothesSearchCard";
 import { JewelrySearchData } from "@/components/JewelryCard";
 import { CarsSearchData } from "@/components/CarsCard";
+import { WatchesSearchData } from "@/components/WatchesCard";
 
 export type { Message };
 
@@ -50,6 +51,8 @@ export function useChatConversation({
     useState<JewelrySearchData | null>(null);
   const [streamingCarsSearchData, setStreamingCarsSearchData] =
     useState<CarsSearchData | null>(null);
+  const [streamingWatchesSearchData, setStreamingWatchesSearchData] =
+    useState<WatchesSearchData | null>(null);
   const [streamingVignetteCategory, setStreamingVignetteCategory] = useState<
     string | null
   >(null);
@@ -446,6 +449,9 @@ export function useChatConversation({
               } else if (data.type === "cars_data" && data.data?.listings) {
                 setShouldScrollToTop(false);
                 setStreamingCarsSearchData(data.data);
+              } else if (data.type === "watches_data" && data.data?.listings) {
+                setShouldScrollToTop(false);
+                setStreamingWatchesSearchData(data.data);
               } else if (
                 data.type === "done" ||
                 (data.type === "artist_info" &&
@@ -459,6 +465,7 @@ export function useChatConversation({
                 setStreamingClothesSearchData(null);
                 setStreamingJewelrySearchData(null);
                 setStreamingCarsSearchData(null);
+                setStreamingWatchesSearchData(null);
                 setCurrentStatus("");
               } else if (data.type === "status") {
                 setCurrentStatus(data.message);
@@ -768,6 +775,7 @@ export function useChatConversation({
     streamingClothesSearchData,
     streamingJewelrySearchData,
     streamingCarsSearchData,
+    streamingWatchesSearchData,
     isLoading,
     shouldAutoScroll,
     shouldScrollToTop,
@@ -952,6 +960,7 @@ export function useChatConversation({
     streamingClothesSearchData,
     streamingJewelrySearchData,
     streamingCarsSearchData,
+    streamingWatchesSearchData,
     streamingVignetteCategory,
     currentStatus,
     showStreamingIndicator,

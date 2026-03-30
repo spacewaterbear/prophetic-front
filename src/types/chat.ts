@@ -2,6 +2,7 @@ import { VignetteData } from "@/types/vignettes";
 import { ClothesSearchData } from "@/components/ClothesSearchCard";
 import { JewelrySearchData } from "@/components/JewelryCard";
 import { CarsSearchData } from "@/components/CarsCard";
+import { WatchesSearchData } from "@/components/WatchesCard";
 
 export interface Artist {
   artist_name: string;
@@ -76,6 +77,7 @@ export interface Message {
   clothes_search_data?: ClothesSearchData;
   jewelry_search_data?: JewelrySearchData;
   cars_search_data?: CarsSearchData;
+  watches_search_data?: WatchesSearchData;
   vignetteCategory?: string;
 }
 

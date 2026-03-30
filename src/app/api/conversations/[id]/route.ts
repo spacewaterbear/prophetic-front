@@ -198,6 +198,20 @@ export async function GET(
             return msg;
           }
         }
+
+        // If a message has watches_search_data in metadata, include it in the message object
+        if (metadata.watches_search_data) {
+          try {
+            console.log("[GET Conversation] Processing watches_search_data for message:", msg.id);
+            return {
+              ...msg,
+              watches_search_data: metadata.watches_search_data
+            };
+          } catch (error) {
+            console.error("[GET Conversation] Error processing watches_search_data for message:", msg.id, error);
+            return msg;
+          }
+        }
       }
       return msg;
     });

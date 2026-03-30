@@ -266,6 +266,8 @@ export async function POST(
           let jewelrySearchData: any = null; // Capture jewelry_data separately
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           let carsSearchData: any = null; // Capture cars_data separately
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          let watchesSearchData: any = null; // Capture watches_data separately
 
           // Read and stream the response
           while (true) {
@@ -429,6 +431,18 @@ export async function POST(
                   continue;
                 }
 
+                // Handle watches_data messages
+                if (parsed.type && parsed.type === "watches_data") {
+                  console.log("[Prophetic API] Received watches_data");
+                  watchesSearchData = parsed;
+                  const watchesChunk = `data: ${JSON.stringify({
+                    type: "watches_data",
+                    data: parsed.data
+                  })}\n\n`;
+                  controller.enqueue(encoder.encode(watchesChunk));
+                  continue;
+                }
+
                 // Handle status messages
                 if (parsed.type && parsed.type === "status") {
                   console.log("[Prophetic API] Received status:", parsed.message);
@@ -556,6 +570,18 @@ export async function POST(
                         continue;
                       }
 
+                      // Handle watches_data nested in content
+                      if (nestedData.type === "watches_data") {
+                        console.log("[Prophetic API] Received watches_data (from nested content)");
+                        watchesSearchData = nestedData;
+                        const nestedWatchesChunk = `data: ${JSON.stringify({
+                          type: "watches_data",
+                          data: nestedData.data
+                        })}\n\n`;
+                        controller.enqueue(encoder.encode(nestedWatchesChunk));
+                        continue;
+                      }
+
                       // Handle status nested in content
                       if (nestedData.type === "status") {
                         console.log("[Prophetic API] Received status (from nested content)");
@@ -639,6 +665,16 @@ export async function POST(
                           data: standaloneData.data
                         })}\n\n`;
                         controller.enqueue(encoder.encode(standaloneCarsChunk));
+                        continue;
+                      }
+                      if (standaloneData.type === "watches_data") {
+                        console.log("[Prophetic API] Received watches_data (from standalone JSON in content)");
+                        watchesSearchData = standaloneData;
+                        const standaloneWatchesChunk = `data: ${JSON.stringify({
+                          type: "watches_data",
+                          data: standaloneData.data
+                        })}\n\n`;
+                        controller.enqueue(encoder.encode(standaloneWatchesChunk));
                         continue;
                       }
                       if (standaloneData.type === "artist_info") {
@@ -738,6 +774,10 @@ export async function POST(
                 } else if (parsed.type === "cars_data" && !carsSearchData) {
                   carsSearchData = parsed;
                   const chunk = `data: ${JSON.stringify({ type: "cars_data", data: parsed.data })}\n\n`;
+                  controller.enqueue(encoder.encode(chunk));
+                } else if (parsed.type === "watches_data" && !watchesSearchData) {
+                  watchesSearchData = parsed;
+                  const chunk = `data: ${JSON.stringify({ type: "watches_data", data: parsed.data })}\n\n`;
                   controller.enqueue(encoder.encode(chunk));
                 } else if (parsed.content) {
                   fullResponse += parsed.content;
@@ -884,6 +924,34 @@ export async function POST(
                 type: parsedJewelryData.type,
                 totalListings: parsedJewelryData.total_listings,
                 listingsCount: parsedJewelryData.listings?.length,
+              });
+            }
+          }
+
+          // If we captured watches search data, store it in metadata
+          if (watchesSearchData && watchesSearchData.type === "watches_data") {
+            let parsedWatchesData = watchesSearchData.data;
+            if (typeof parsedWatchesData === 'string') {
+              try {
+                parsedWatchesData = JSON.parse(parsedWatchesData);
+              } catch (e) {
+                console.error('[Message Storage] Failed to parse watches_search_data string:', e);
+              }
+            }
+            if (parsedWatchesData && typeof parsedWatchesData === 'object' && !Array.isArray(parsedWatchesData)) {
+              if (messageMetadata) {
+                messageMetadata.watches_search_data = parsedWatchesData;
+              } else {
+                messageMetadata = {
+                  type: "watches_data",
+                  structured_data: watchesSearchData,
+                  watches_search_data: parsedWatchesData
+                };
+              }
+              console.log('[Message Storage] Storing watches_search_data:', {
+                type: parsedWatchesData.type,
+                totalListings: parsedWatchesData.total_listings,
+                listingsCount: parsedWatchesData.listings?.length,
               });
             }
           }

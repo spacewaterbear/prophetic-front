@@ -55,6 +55,11 @@ const CarsCard = lazy(() =>
     default: mod.CarsCard,
   })),
 );
+const WatchesCard = lazy(() =>
+  import("@/components/WatchesCard").then((mod) => ({
+    default: mod.WatchesCard,
+  })),
+);
 
 interface MessageItemProps {
   message: Message;
@@ -453,6 +458,19 @@ export const MessageItem = memo(
                       }
                     >
                       <CarsCard data={message.cars_search_data} />
+                    </Suspense>
+                  </div>
+                )}
+                {message.watches_search_data && (
+                  <div className={message.content ? "mt-4" : ""}>
+                    <Suspense
+                      fallback={
+                        <div className="text-base text-gray-400">
+                          Loading watches...
+                        </div>
+                      }
+                    >
+                      <WatchesCard data={message.watches_search_data} />
                     </Suspense>
                   </div>
                 )}
