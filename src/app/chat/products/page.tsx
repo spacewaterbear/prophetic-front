@@ -243,11 +243,11 @@ function SearchResults({
             {items.map((item, i) => (
               <button
                 key={`${item.name}-${i}`}
-                title={[item.sub_category, item.name].filter(Boolean).join(" ")}
+                title={item.name}
                 onClick={() => onItemClick(item)}
                 className="text-left text-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:underline underline-offset-2 py-0.5 transition-colors truncate"
               >
-                {[item.sub_category, item.name].filter(Boolean).join(" ")}
+                {item.name}
               </button>
             ))}
           </div>
