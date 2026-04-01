@@ -1,5 +1,5 @@
 import { memo, useState } from "react";
-import { Download } from "lucide-react";
+import { Download, ChevronDown } from "lucide-react";
 import { VignetteData } from "@/types/vignettes";
 import { AudioCard } from "@/components/AudioCard";
 
@@ -111,6 +111,96 @@ const VignetteItem = ({ item, onVignetteClick, forceArtLayout }: { item: Vignett
                         <h3 className="text-[16px] font-bold text-gray-900 dark:text-white leading-tight line-clamp-2">{item.brand_name}</h3>
                         <p className="text-[14px] font-light italic text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-1">{item.subtitle}</p>
                     </div>
+                </div>
+            </div>
+        );
+    }
+
+    const isMain = process.env.NEXT_PUBLIC_SPECIALITY === "main";
+
+    if (isMain) {
+        const TOTAL_DOTS = 12;
+        const filledDots = item.score != null ? Math.round((item.score / 100) * TOTAL_DOTS) : 0;
+
+        return (
+            <div
+                className={`${onVignetteClick ? "cursor-pointer" : ""} relative rounded-[24px] overflow-hidden shadow-sm`}
+                style={{ aspectRatio: "5/6" }}
+                onClick={() => onVignetteClick?.(item)}
+            >
+                {/* Full-card background image */}
+                <img
+                    src={item.public_url}
+                    alt={item.brand_name}
+                    className="absolute inset-0 w-full h-full object-cover"
+                />
+
+                {/* Dark info panel — bottom ~39% */}
+                <div className="absolute bottom-0 left-0 right-0 bg-[#252525] rounded-[24px] px-5 pt-5 pb-9">
+                    {/* Brand name — Inter Bold lowercase */}
+                    {item.brand_name && (
+                        <p
+                            className="text-[13px] font-bold text-white/70 leading-tight mb-1"
+                            style={{ fontFamily: "var(--font-inter)" }}
+                        >
+                            {item.brand_name}
+                        </p>
+                    )}
+
+                    {/* Category alias — Instrument Serif uppercase */}
+                    <h3
+                        className="text-white uppercase leading-[1.05] line-clamp-2 mb-3"
+                        style={{
+                            fontFamily: "var(--font-instrument-serif)",
+                            fontSize: "clamp(20px, 4.5vw, 30px)",
+                            letterSpacing: "0.01em",
+                        }}
+                    >
+                        {item.category_alias}
+                    </h3>
+
+                    {/* Score dots + number */}
+                    {item.score != null && (
+                        <div className="flex items-center gap-3 mb-3">
+                            <div className="flex gap-[5px] items-center">
+                                {Array.from({ length: TOTAL_DOTS }).map((_, i) => (
+                                    <div
+                                        key={i}
+                                        className={`w-[14px] h-[14px] rounded-full shrink-0 ${i < filledDots ? "bg-white" : "border border-white/40"}`}
+                                    />
+                                ))}
+                            </div>
+                            <span
+                                className="text-white font-black leading-none"
+                                style={{
+                                    fontFamily: "var(--font-instrument-serif)",
+                                    fontSize: "clamp(28px, 6vw, 40px)",
+                                }}
+                            >
+                                {item.score}
+                            </span>
+                        </div>
+                    )}
+
+                    {/* Trend row */}
+                    {item.trend != null && item.subtitle && (
+                        <div className="flex items-center gap-2">
+                            <span className={`text-[13px] leading-none ${isUp ? "text-green-500" : "text-red-500"}`}>
+                                {isUp ? "▲" : "▼"}
+                            </span>
+                            <span
+                                className="text-[13px] italic text-white/70 leading-none"
+                                style={{ fontFamily: "var(--font-inter)" }}
+                            >
+                                {item.subtitle}
+                            </span>
+                        </div>
+                    )}
+                </div>
+
+                {/* Chevron */}
+                <div className="absolute bottom-2.5 left-0 right-0 flex justify-center pointer-events-none">
+                    <ChevronDown className="w-4 h-4 text-white/50" />
                 </div>
             </div>
         );
