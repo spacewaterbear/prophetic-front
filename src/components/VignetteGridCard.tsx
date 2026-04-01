@@ -140,7 +140,7 @@ const VignetteItem = ({ item, onVignetteClick, forceArtLayout }: { item: Vignett
                     {/* Brand name — Inter Bold lowercase */}
                     {item.brand_name && (
                         <p
-                            className="text-[13px] font-bold text-white/70 leading-tight mb-1"
+                            className="text-[13px] font-bold text-white leading-tight mb-1"
                             style={{ fontFamily: "var(--font-inter)" }}
                         >
                             {item.brand_name}
@@ -185,7 +185,7 @@ const VignetteItem = ({ item, onVignetteClick, forceArtLayout }: { item: Vignett
                     {/* Trend row */}
                     {item.trend != null && item.subtitle && (
                         <div className="flex items-center gap-2">
-                            <span className={`text-[13px] leading-none ${isUp ? "text-green-500" : "text-red-500"}`}>
+                            <span className={`text-[17px] leading-none ${isUp ? "text-green-500" : "text-red-500"}`}>
                                 {isUp ? "▲" : "▼"}
                             </span>
                             <span
