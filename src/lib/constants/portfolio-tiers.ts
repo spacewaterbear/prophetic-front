@@ -36,3 +36,13 @@ export const ORACLE_PORTFOLIO_TIERS = [
   { label: "100M-200M PANTHEON", value: "100M-200M_PANTHEON" },
   { label: "200M-500M ABSOLU", value: "200M-500M_ABSOLU" },
 ];
+
+import type { AgentType } from "@/types/agents";
+
+export type PortfolioTier = { label: string; value: string };
+
+export function getPortfolioTiers(agent: AgentType): PortfolioTier[] {
+  if (agent === "oracle") return ORACLE_PORTFOLIO_TIERS;
+  if (agent === "intelligence") return INTELLIGENCE_PORTFOLIO_TIERS;
+  return DISCOVER_PORTFOLIO_TIERS;
+}

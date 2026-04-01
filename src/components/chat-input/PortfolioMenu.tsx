@@ -4,11 +4,7 @@ import Image from "next/image";
 import { CategoryButton } from "./CategoryButton";
 import { AgentType } from "@/types/agents";
 import { useI18n } from "@/contexts/i18n-context";
-import {
-  DISCOVER_PORTFOLIO_TIERS,
-  INTELLIGENCE_PORTFOLIO_TIERS,
-  ORACLE_PORTFOLIO_TIERS,
-} from "@/lib/constants/portfolio-tiers";
+import { getPortfolioTiers } from "@/lib/constants/portfolio-tiers";
 import { ICON_PORTFOLIO_DARK, ICON_PORTFOLIO_LIGHT } from "@/lib/constants/logos";
 
 interface PortfolioMenuProps {
@@ -33,12 +29,7 @@ export function PortfolioMenu({
   isDark,
 }: PortfolioMenuProps) {
   const { t } = useI18n();
-  const tiers =
-    selectedAgent === "oracle"
-      ? ORACLE_PORTFOLIO_TIERS
-      : selectedAgent === "intelligence"
-        ? INTELLIGENCE_PORTFOLIO_TIERS
-        : DISCOVER_PORTFOLIO_TIERS;
+  const tiers = getPortfolioTiers(selectedAgent);
 
   return (
     <div className="hidden sm:block static sm:relative flex-shrink-0">

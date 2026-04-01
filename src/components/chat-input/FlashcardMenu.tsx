@@ -25,24 +25,7 @@ interface FlashcardMenuProps {
   isDark: boolean;
 }
 
-// key = FLASHCARD_MAPPING lookup key, translationKey = i18n key for display label
-const ALL_CATEGORIES: { key: string; translationKey: string; isArt: boolean }[] = [
-  { key: "Contemporary Art", translationKey: "flashcardCategories.contemporaryArt", isArt: true },
-  { key: "Prestigious Wines", translationKey: "flashcardCategories.prestigiousWines", isArt: false },
-  { key: "Luxury Bags", translationKey: "flashcardCategories.luxuryBags", isArt: false },
-  { key: "Precious Jewelry", translationKey: "flashcardCategories.preciousJewelry", isArt: false },
-  { key: "Luxury Watch", translationKey: "flashcardCategories.luxuryWatch", isArt: false },
-  { key: "Collectible Cars", translationKey: "flashcardCategories.collectibleCars", isArt: false },
-  { key: "Limited Sneakers", translationKey: "flashcardCategories.limitedSneakers", isArt: false },
-  { key: "Rare Whiskey", translationKey: "flashcardCategories.rareWhiskey", isArt: false },
-  { key: "Real Estate", translationKey: "flashcardCategories.realEstate", isArt: false },
-  { key: "US sports cards", translationKey: "flashcardCategories.usSportsCards", isArt: false },
-];
-
-const isArtSpeciality = process.env.NEXT_PUBLIC_SPECIALITY === "art";
-const CATEGORIES = isArtSpeciality
-  ? ALL_CATEGORIES.filter((c) => c.isArt)
-  : ALL_CATEGORIES;
+import { FLASHCARD_CATEGORIES } from "@/lib/constants/categories";
 
 export function FlashcardMenu({
   type,
@@ -116,7 +99,7 @@ export function FlashcardMenu({
           </div>
 
           <div className="grid grid-cols-2 gap-2 mb-4">
-            {CATEGORIES.map((cat) => (
+            {FLASHCARD_CATEGORIES.map((cat) => (
               <CategoryButton
                 key={cat.key}
                 isActive={selectedCategory === cat.key}

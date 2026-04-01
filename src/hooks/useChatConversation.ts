@@ -12,20 +12,24 @@ import { ClothesSearchData } from "@/components/ClothesSearchCard";
 import { JewelrySearchData } from "@/components/JewelryCard";
 import { CarsSearchData } from "@/components/CarsCard";
 import { WatchesSearchData } from "@/components/WatchesCard";
+import { STORAGE_KEYS } from "@/lib/constants/storage-keys";
 
 export type { Message };
+
+export interface HandleSendOptions {
+  message?: string;
+  flashCards?: string;
+  flashCardType?: "flash_invest" | "ranking" | "portfolio" | "PORTFOLIO";
+  scrollToTop?: boolean;
+  uuidProduct?: string;
+  productCategory?: string;
+}
 
 interface UseChatConversationProps {
   conversationId: number | null;
   selectedModel?: string;
   selectedAgent?: string;
 }
-
-const PENDING_MESSAGE_KEY = "pendingChatMessage";
-const PENDING_VIGNETTE_CONTENT_KEY = "pendingVignetteContent";
-const PENDING_MARKDOWN_STREAM_KEY = "pendingMarkdownStream";
-const PENDING_SCROLL_TO_TOP_KEY = "pendingScrollToTop";
-const PENDING_VIGNETTE_STREAM_KEY = "pendingVignetteStream";
 
 export function useChatConversation({
   conversationId,
@@ -69,7 +73,7 @@ export function useChatConversation({
   const [shouldAutoScroll, setShouldAutoScroll] = useState(true);
   const disableAutoScrollRef = useRef(
     typeof window !== "undefined" &&
-      sessionStorage.getItem("disableAutoScroll") === "true",
+      sessionStorage.getItem(STORAGE_KEYS.DISABLE_AUTO_SCROLL) === "true",
   );
   const pendingMessageProcessedRef = useRef(false);
   const lastProcessedConversationIdRef = useRef<number | null>(null);
@@ -124,7 +128,7 @@ export function useChatConversation({
               options,
             };
             sessionStorage.setItem(
-              PENDING_MARKDOWN_STREAM_KEY,
+              STORAGE_KEYS.PENDING_MARKDOWN_STREAM,
               JSON.stringify(pendingStream),
             );
 
@@ -157,7 +161,7 @@ export function useChatConversation({
           setLastUserMessageId(userMsg.id);
           setShouldScrollToTop(true);
           disableAutoScrollRef.current = true;
-          sessionStorage.setItem("disableAutoScroll", "true");
+          sessionStorage.setItem(STORAGE_KEYS.DISABLE_AUTO_SCROLL, "true");
         }
       }
 
@@ -340,6 +344,19 @@ export function useChatConversation({
     [streamMarkdown],
   );
 
+  /** Resets all streaming state back to initial values. */
+  const resetStreamingState = useCallback(() => {
+    setStreamingMessage("");
+    setStreamingMarketplaceData(null);
+    setStreamingRealEstateData(null);
+    setStreamingVignetteData(null);
+    setStreamingClothesSearchData(null);
+    setStreamingJewelrySearchData(null);
+    setStreamingCarsSearchData(null);
+    setStreamingWatchesSearchData(null);
+    setCurrentStatus("");
+  }, []);
+
   const sendMessageToApi = useCallback(
     async (
       targetConversationId: number,
@@ -352,13 +369,7 @@ export function useChatConversation({
       agentType?: string,
     ) => {
       setIsLoading(true);
-      setStreamingMessage("");
-      setStreamingMarketplaceData(null);
-      setStreamingRealEstateData(null);
-      setStreamingVignetteData(null);
-      setStreamingClothesSearchData(null);
-      setStreamingJewelrySearchData(null);
-      setCurrentStatus("");
+      resetStreamingState();
       setLastStreamingActivity(Date.now());
       setShowStreamingIndicator(false);
 
@@ -374,7 +385,7 @@ export function useChatConversation({
         setLastUserMessageId(tempUserMessage.id);
         setShouldScrollToTop(true);
         disableAutoScrollRef.current = true;
-        sessionStorage.setItem("disableAutoScroll", "true");
+        sessionStorage.setItem(STORAGE_KEYS.DISABLE_AUTO_SCROLL, "true");
       }
 
       try {
@@ -401,6 +412,70 @@ export function useChatConversation({
 
         let streamContent = "";
         let sseBuffer = "";
+
+        type SseHandler = (data: Record<string, unknown>) => void | Promise<void>;
+        const sseHandlers: Record<string, SseHandler> = {
+          chunk: (data) => {
+            streamContent += data.content as string;
+            setStreamingMessage(streamContent);
+            setLastStreamingActivity(Date.now());
+            setCurrentStatus("");
+          },
+          marketplace_data: (data) => {
+            let payload = data.data;
+            if (typeof payload === "string") {
+              try { payload = JSON.parse(payload as string); } catch { /* keep as-is */ }
+            }
+            setShouldScrollToTop(false);
+            setStreamingMarketplaceData(payload as MarketplaceData);
+          },
+          real_estate_data: (data) => {
+            setShouldScrollToTop(false);
+            setStreamingRealEstateData(data.data as import("@/types/chat").RealEstateData);
+          },
+          vignette_data: (data) => {
+            setStreamingVignetteData(data.data as VignetteData[]);
+          },
+          clothes_data: (data) => {
+            if ((data.data as ClothesSearchData)?.listings) {
+              setShouldScrollToTop(false);
+              setStreamingClothesSearchData(data.data as ClothesSearchData);
+            }
+          },
+          jewelry_data: (data) => {
+            if ((data.data as JewelrySearchData)?.listings) {
+              setShouldScrollToTop(false);
+              setStreamingJewelrySearchData(data.data as JewelrySearchData);
+            }
+          },
+          cars_data: (data) => {
+            if ((data.data as CarsSearchData)?.listings) {
+              setShouldScrollToTop(false);
+              setStreamingCarsSearchData(data.data as CarsSearchData);
+            }
+          },
+          watches_data: (data) => {
+            if ((data.data as WatchesSearchData)?.listings) {
+              setShouldScrollToTop(false);
+              setStreamingWatchesSearchData(data.data as WatchesSearchData);
+            }
+          },
+          done: async () => {
+            await loadConversation(targetConversationId);
+            resetStreamingState();
+          },
+          artist_info: async (data) => {
+            if (data.userMessage || data.aiMessage) {
+              await loadConversation(targetConversationId);
+              resetStreamingState();
+            }
+          },
+          status: (data) => {
+            setCurrentStatus(data.message as string);
+            setLastStreamingActivity(Date.now());
+          },
+        };
+
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
@@ -419,58 +494,8 @@ export function useChatConversation({
 
             try {
               const data = JSON.parse(cleanedLine);
-              if (data.type === "chunk") {
-                streamContent += data.content;
-                setStreamingMessage(streamContent);
-                setLastStreamingActivity(Date.now());
-                setCurrentStatus("");
-              } else if (data.type === "marketplace_data") {
-                let marketplacePayload = data.data;
-                if (typeof marketplacePayload === "string") {
-                  try {
-                    marketplacePayload = JSON.parse(marketplacePayload);
-                  } catch {
-                    /* keep as-is */
-                  }
-                }
-                setShouldScrollToTop(false);
-                setStreamingMarketplaceData(marketplacePayload);
-              } else if (data.type === "real_estate_data") {
-                setShouldScrollToTop(false);
-                setStreamingRealEstateData(data.data);
-              } else if (data.type === "vignette_data") {
-                setStreamingVignetteData(data.data);
-              } else if (data.type === "clothes_data" && data.data?.listings) {
-                setShouldScrollToTop(false);
-                setStreamingClothesSearchData(data.data);
-              } else if (data.type === "jewelry_data" && data.data?.listings) {
-                setShouldScrollToTop(false);
-                setStreamingJewelrySearchData(data.data);
-              } else if (data.type === "cars_data" && data.data?.listings) {
-                setShouldScrollToTop(false);
-                setStreamingCarsSearchData(data.data);
-              } else if (data.type === "watches_data" && data.data?.listings) {
-                setShouldScrollToTop(false);
-                setStreamingWatchesSearchData(data.data);
-              } else if (
-                data.type === "done" ||
-                (data.type === "artist_info" &&
-                  (data.userMessage || data.aiMessage))
-              ) {
-                await loadConversation(targetConversationId);
-                setStreamingMessage("");
-                setStreamingMarketplaceData(null);
-                setStreamingRealEstateData(null);
-                setStreamingVignetteData(null);
-                setStreamingClothesSearchData(null);
-                setStreamingJewelrySearchData(null);
-                setStreamingCarsSearchData(null);
-                setStreamingWatchesSearchData(null);
-                setCurrentStatus("");
-              } else if (data.type === "status") {
-                setCurrentStatus(data.message);
-                setLastStreamingActivity(Date.now());
-              }
+              const handler = sseHandlers[data.type as string];
+              if (handler) await handler(data);
             } catch (error) {
               console.error("Error parsing SSE event:", error);
             }
@@ -482,7 +507,7 @@ export function useChatConversation({
         setIsLoading(false);
       }
     },
-    [loadConversation, selectedAgent],
+    [loadConversation, selectedAgent, resetStreamingState],
   );
 
   // Main useEffect for pending logic and initialization
@@ -502,11 +527,11 @@ export function useChatConversation({
 
       // Priority 1: Pending Vignette Stream
       const pendingVignetteStreamStr = sessionStorage.getItem(
-        PENDING_VIGNETTE_STREAM_KEY,
+        STORAGE_KEYS.PENDING_VIGNETTE_STREAM,
       );
       if (pendingVignetteStreamStr) {
         pendingMessageProcessedRef.current = true;
-        sessionStorage.removeItem(PENDING_VIGNETTE_STREAM_KEY);
+        sessionStorage.removeItem(STORAGE_KEYS.PENDING_VIGNETTE_STREAM);
         try {
           const pendingStream: PendingVignetteStream = JSON.parse(
             pendingVignetteStreamStr,
@@ -525,11 +550,11 @@ export function useChatConversation({
 
       // Priority 2: Pending Markdown Stream
       const pendingMarkdownStreamStr = sessionStorage.getItem(
-        PENDING_MARKDOWN_STREAM_KEY,
+        STORAGE_KEYS.PENDING_MARKDOWN_STREAM,
       );
       if (pendingMarkdownStreamStr) {
         pendingMessageProcessedRef.current = true;
-        sessionStorage.removeItem(PENDING_MARKDOWN_STREAM_KEY);
+        sessionStorage.removeItem(STORAGE_KEYS.PENDING_MARKDOWN_STREAM);
         try {
           const pendingStream: PendingMarkdownStream = JSON.parse(
             pendingMarkdownStreamStr,
@@ -547,17 +572,17 @@ export function useChatConversation({
       }
 
       // Priority 3: Pending User Message
-      const pendingMessageStr = sessionStorage.getItem(PENDING_MESSAGE_KEY);
+      const pendingMessageStr = sessionStorage.getItem(STORAGE_KEYS.PENDING_MESSAGE);
       if (pendingMessageStr) {
         pendingMessageProcessedRef.current = true;
-        sessionStorage.removeItem(PENDING_MESSAGE_KEY);
+        sessionStorage.removeItem(STORAGE_KEYS.PENDING_MESSAGE);
 
         // Also pre-load any vignette content that was displayed before the chat
         const pendingVignetteContentStr = sessionStorage.getItem(
-          PENDING_VIGNETTE_CONTENT_KEY,
+          STORAGE_KEYS.PENDING_VIGNETTE_CONTENT,
         );
         if (pendingVignetteContentStr) {
-          sessionStorage.removeItem(PENDING_VIGNETTE_CONTENT_KEY);
+          sessionStorage.removeItem(STORAGE_KEYS.PENDING_VIGNETTE_CONTENT);
           try {
             const parsed = JSON.parse(pendingVignetteContentStr);
             const text = parsed.text || pendingVignetteContentStr;
@@ -598,11 +623,11 @@ export function useChatConversation({
 
       // Priority 4: Pending Vignette Content
       const pendingVignetteContent = sessionStorage.getItem(
-        PENDING_VIGNETTE_CONTENT_KEY,
+        STORAGE_KEYS.PENDING_VIGNETTE_CONTENT,
       );
       if (pendingVignetteContent) {
         pendingMessageProcessedRef.current = true;
-        sessionStorage.removeItem(PENDING_VIGNETTE_CONTENT_KEY);
+        sessionStorage.removeItem(STORAGE_KEYS.PENDING_VIGNETTE_CONTENT);
 
         const saveVignetteMessages = async (
           msgs: { content: string; vignetteCategory?: string }[],
@@ -669,26 +694,26 @@ export function useChatConversation({
     }
 
     const shouldDisableScroll =
-      sessionStorage.getItem("disableAutoScroll") === "true";
+      sessionStorage.getItem(STORAGE_KEYS.DISABLE_AUTO_SCROLL) === "true";
     if (shouldDisableScroll) {
       disableAutoScrollRef.current = true;
       setTimeout(() => {
-        sessionStorage.removeItem("disableAutoScroll");
+        sessionStorage.removeItem(STORAGE_KEYS.DISABLE_AUTO_SCROLL);
         disableAutoScrollRef.current = false;
       }, 30000);
     }
 
-    if (sessionStorage.getItem(PENDING_SCROLL_TO_TOP_KEY) === "true") {
+    if (sessionStorage.getItem(STORAGE_KEYS.PENDING_SCROLL_TO_TOP) === "true") {
       setShouldScrollToTop(true);
-      sessionStorage.removeItem(PENDING_SCROLL_TO_TOP_KEY);
+      sessionStorage.removeItem(STORAGE_KEYS.PENDING_SCROLL_TO_TOP);
     }
 
-    if (sessionStorage.getItem("pendingScrollToTopVignette") === "true") {
+    if (sessionStorage.getItem(STORAGE_KEYS.PENDING_SCROLL_TO_TOP_VIGNETTE) === "true") {
       messagesContainerRef.current?.scrollTo({
         top: 0,
         behavior: "smooth",
       });
-      sessionStorage.removeItem("pendingScrollToTopVignette");
+      sessionStorage.removeItem(STORAGE_KEYS.PENDING_SCROLL_TO_TOP_VIGNETTE);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -705,7 +730,7 @@ export function useChatConversation({
       lastMessage?.vignette_data && lastMessage.vignette_data.length > 0;
     const isScrollDisabled =
       disableAutoScrollRef.current ||
-      sessionStorage.getItem("disableAutoScroll") === "true";
+      sessionStorage.getItem(STORAGE_KEYS.DISABLE_AUTO_SCROLL) === "true";
 
     if (
       shouldScrollToTop &&
@@ -797,14 +822,14 @@ export function useChatConversation({
     return () => clearInterval(interval);
   }, [isLoading, streamingMessage, lastStreamingActivity]);
 
-  const handleSend = async (
-    messageToSend?: string,
-    flashCards?: string,
-    flashCardType?: "flash_invest" | "ranking" | "portfolio" | "PORTFOLIO",
-    scrollToTop: boolean = true,
-    uuidProduct?: string,
-    productCategory?: string,
-  ) => {
+  const handleSend = async ({
+    message: messageToSend,
+    flashCards,
+    flashCardType,
+    scrollToTop = true,
+    uuidProduct,
+    productCategory,
+  }: HandleSendOptions = {}) => {
     const userInput = messageToSend || input;
     if (!userInput.trim() || isLoading) return;
     setInput("");
@@ -838,7 +863,7 @@ export function useChatConversation({
     if (scrollToTop) {
       setLastUserMessageId(messageId);
       setShouldScrollToTop(true);
-      sessionStorage.setItem(PENDING_SCROLL_TO_TOP_KEY, "true");
+      sessionStorage.setItem(STORAGE_KEYS.PENDING_SCROLL_TO_TOP, "true");
     }
 
     try {
@@ -854,7 +879,7 @@ export function useChatConversation({
       const newConversationId = data.conversation.id;
 
       sessionStorage.setItem(
-        PENDING_MESSAGE_KEY,
+        STORAGE_KEYS.PENDING_MESSAGE,
         JSON.stringify({
           content: userInput,
           flashCards,
@@ -938,7 +963,7 @@ export function useChatConversation({
       if (!response.ok) throw new Error("Failed to create conversation");
       const data = await response.json();
       sessionStorage.setItem(
-        PENDING_VIGNETTE_CONTENT_KEY,
+        STORAGE_KEYS.PENDING_VIGNETTE_CONTENT,
         JSON.stringify({ text: content }),
       );
       refreshConversations();
@@ -987,15 +1012,9 @@ export function useChatConversation({
     streamMarkdown,
     clearMessages: useCallback(() => {
       setMessages([]);
-      setStreamingMessage("");
-      setStreamingMarketplaceData(null);
-      setStreamingRealEstateData(null);
-      setStreamingVignetteData(null);
-      setStreamingClothesSearchData(null);
-      setStreamingJewelrySearchData(null);
       setStreamingVignetteCategory(null);
-      setCurrentStatus("");
       setShowStreamingIndicator(false);
-    }, []),
+      resetStreamingState();
+    }, [resetStreamingState]),
   };
 }

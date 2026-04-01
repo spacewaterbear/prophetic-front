@@ -6,11 +6,8 @@ import { useI18n } from "@/contexts/i18n-context";
 import { useStripePrices } from "@/contexts/stripe-prices-context";
 import { CategoryButton, CARD_BUTTON_STYLES, ModeCard } from "./CategoryButton";
 import { AgentType } from "@/types/agents";
-import {
-  DISCOVER_PORTFOLIO_TIERS,
-  INTELLIGENCE_PORTFOLIO_TIERS,
-  ORACLE_PORTFOLIO_TIERS,
-} from "@/lib/constants/portfolio-tiers";
+import { getPortfolioTiers } from "@/lib/constants/portfolio-tiers";
+import { FLASHCARD_CATEGORIES } from "@/lib/constants/categories";
 import {
   ICON_CHRONO_DARK,
   ICON_CHRONO_LIGHT,
@@ -24,23 +21,6 @@ import {
   ICON_SCOUT_LIGHT,
 } from "@/lib/constants/logos";
 
-const ALL_MOBILE_CATEGORIES: { key: string; translationKey: string; isArt: boolean }[] = [
-  { key: "Contemp. Art", translationKey: "flashcardCategories.contempArt", isArt: true },
-  { key: "Luxury Bags", translationKey: "flashcardCategories.luxuryBags", isArt: false },
-  { key: "Prestigious Wines", translationKey: "flashcardCategories.prestigiousWines", isArt: false },
-  { key: "Precious Jewelry", translationKey: "flashcardCategories.preciousJewelry", isArt: false },
-  { key: "Luxury Watch", translationKey: "flashcardCategories.luxuryWatch", isArt: false },
-  { key: "Collectible Cars", translationKey: "flashcardCategories.collectibleCars", isArt: false },
-  { key: "Limited Sneakers", translationKey: "flashcardCategories.limitedSneakers", isArt: false },
-  { key: "Rare Whiskey", translationKey: "flashcardCategories.rareWhiskey", isArt: false },
-  { key: "Real Estate", translationKey: "flashcardCategories.realEstate", isArt: false },
-  { key: "US sports cards", translationKey: "flashcardCategories.usSportsCards", isArt: false },
-];
-
-const isArtSpeciality = process.env.NEXT_PUBLIC_SPECIALITY === "art";
-const MOBILE_CATEGORIES = isArtSpeciality
-  ? ALL_MOBILE_CATEGORIES.filter((c) => c.isArt)
-  : ALL_MOBILE_CATEGORIES;
 
 interface MobileBottomSheetsProps {
   // Mode selector
@@ -91,12 +71,7 @@ export function MobileBottomSheets({
   const { t } = useI18n();
   const stripePrices = useStripePrices();
 
-  const tiers =
-    selectedAgent === "oracle"
-      ? ORACLE_PORTFOLIO_TIERS
-      : selectedAgent === "intelligence"
-        ? INTELLIGENCE_PORTFOLIO_TIERS
-        : DISCOVER_PORTFOLIO_TIERS;
+  const tiers = getPortfolioTiers(selectedAgent);
 
   return (
     <>
@@ -203,7 +178,7 @@ export function MobileBottomSheets({
                 </p>
               </div>
               <div className="grid grid-cols-2 gap-2">
-                {MOBILE_CATEGORIES.map((cat) => (
+                {FLASHCARD_CATEGORIES.map((cat) => (
                   <CategoryButton
                     key={cat.key}
                     isActive={selectedCategory === cat.key}
@@ -236,7 +211,7 @@ export function MobileBottomSheets({
                 </p>
               </div>
               <div className="grid grid-cols-2 gap-2">
-                {MOBILE_CATEGORIES.map((cat) => (
+                {FLASHCARD_CATEGORIES.map((cat) => (
                   <CategoryButton
                     key={cat.key}
                     isActive={selectedCategory === cat.key}

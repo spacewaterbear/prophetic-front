@@ -2,8 +2,8 @@
 
 import { Plus, ArrowUp, Paperclip, Info } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { useTheme } from "next-themes";
 import { useI18n } from "@/contexts/i18n-context";
+import { useDarkMode } from "@/hooks/useDarkMode";
 import { createPortal } from "react-dom";
 import {
   FileUploadPreview,
@@ -59,8 +59,7 @@ export function ChatInput({
   creditsExhausted = false,
   onFlashcardClick,
 }: ChatInputProps) {
-  const { theme, resolvedTheme } = useTheme();
-  const isDark = theme === "dark" || resolvedTheme === "dark";
+  const isDark = useDarkMode();
   const { t } = useI18n();
   const [mounted, setMounted] = useState(false);
   const internalRef = useRef<HTMLTextAreaElement>(null);

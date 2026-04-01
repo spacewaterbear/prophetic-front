@@ -730,3 +730,19 @@ export function convertAllocationProfilesToHtml(html: string): string {
         return match;
     });
 }
+
+
+/**
+ * Applies the full ordered pipeline of HTML conversion functions.
+ * Order matters: allocation profiles first (they contain box-drawing chars),
+ * then ASCII tables, extended rankings, simple rankings, and finally tables.
+ */
+export function applyHtmlConversions(html: string): string {
+  return [
+    convertAllocationProfilesToHtml,
+    convertAsciiTablesToHtml,
+    convertExtendedRankingsToHtml,
+    convertRankingListsToHtml,
+    convertMarkdownTablesToStyledHtml,
+  ].reduce((acc, fn) => fn(acc), html);
+}

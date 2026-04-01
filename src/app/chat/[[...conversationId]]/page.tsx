@@ -3,8 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
-import { useTheme } from "next-themes";
 import { LOGO_DARK, LOGO_LIGHT } from "@/lib/constants/logos";
+import { useDarkMode } from "@/hooks/useDarkMode";
+import { STORAGE_KEYS } from "@/lib/constants/storage-keys";
 import { useSidebar } from "@/contexts/sidebar-context";
 import { DEFAULT_NON_ADMIN_MODEL } from "@/lib/models";
 import { VignetteData } from "@/types/vignettes";
@@ -28,6 +29,30 @@ const isAdminUser = (
   return session?.user?.status === "admini";
 };
 
+const SUBSCRIPTION_BANNER_CONFIG: Record<
+  "upgraded" | "downgraded" | "new",
+  { containerClass: string; titleKey: string; messageKey: string }
+> = {
+  upgraded: {
+    containerClass:
+      "bg-green-50 dark:bg-green-950/40 border border-green-200 dark:border-green-800 text-green-900 dark:text-green-100",
+    titleKey: "subscription.upgradedTitle",
+    messageKey: "subscription.upgradedMessage",
+  },
+  downgraded: {
+    containerClass:
+      "bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-blue-900 dark:text-blue-100",
+    titleKey: "subscription.downgradedTitle",
+    messageKey: "subscription.downgradedMessage",
+  },
+  new: {
+    containerClass:
+      "bg-green-50 dark:bg-green-950/40 border border-green-200 dark:border-green-800 text-green-900 dark:text-green-100",
+    titleKey: "subscription.newTitle",
+    messageKey: "subscription.newMessage",
+  },
+};
+
 const getImageNameFromUrl = (url: string): string => {
   const parts = url.split("/");
   return parts[parts.length - 1];
@@ -38,8 +63,7 @@ export default function ChatPage() {
   const router = useRouter();
   const params = useParams();
   const searchParams = useSearchParams();
-  const { theme, resolvedTheme } = useTheme();
-  const isDark = theme === "dark" || resolvedTheme === "dark";
+  const isDark = useDarkMode();
   const { t, language } = useI18n();
 
   const conversationIdParam = params.conversationId as string[] | undefined;
@@ -109,14 +133,14 @@ export default function ChatPage() {
     const handleDeepSearch = (e: CustomEvent<{ text?: string }>) => {
       const text = e.detail?.text;
       if (text) {
-        handleSend(t("contextMenu.deepSearchPrompt").replace("{name}", text));
+        handleSend({ message: t("contextMenu.deepSearchPrompt").replace("{name}", text) });
       }
     };
 
     const handleChatButton = (e: CustomEvent<{ text?: string }>) => {
       const text = e.detail?.text;
       if (text) {
-        handleSend(text);
+        handleSend({ message: text });
       }
     };
 
@@ -151,19 +175,19 @@ export default function ChatPage() {
     else if (checkout === "success") setSubscriptionBanner("new");
 
     // Artist deep-search triggered from the artists directory
-    const pendingArtist = sessionStorage.getItem("pendingDeepSearch");
+    const pendingArtist = sessionStorage.getItem(STORAGE_KEYS.PENDING_DEEP_SEARCH);
     if (pendingArtist) {
-      sessionStorage.removeItem("pendingDeepSearch");
-      handleSend(t("contextMenu.deepSearchPrompt").replace("{name}", pendingArtist));
+      sessionStorage.removeItem(STORAGE_KEYS.PENDING_DEEP_SEARCH);
+      handleSend({ message: t("contextMenu.deepSearchPrompt").replace("{name}", pendingArtist) });
     }
 
     // Product deep-search triggered from the products directory
-    const pendingProductRaw = sessionStorage.getItem("pendingProductSearch");
+    const pendingProductRaw = sessionStorage.getItem(STORAGE_KEYS.PENDING_PRODUCT_SEARCH);
     if (pendingProductRaw) {
-      sessionStorage.removeItem("pendingProductSearch");
+      sessionStorage.removeItem(STORAGE_KEYS.PENDING_PRODUCT_SEARCH);
       try {
         const { id, name, category } = JSON.parse(pendingProductRaw) as { id: string; name: string; category: string };
-        handleSend(t("contextMenu.deepSearchPrompt").replace("{name}", name), undefined, undefined, true, id, category);
+        handleSend({ message: t("contextMenu.deepSearchPrompt").replace("{name}", name), uuidProduct: id, productCategory: category });
       } catch {
         // ignore malformed data
       }
@@ -226,7 +250,7 @@ export default function ChatPage() {
   useEffect(() => {
     const category = searchParams.get("category");
 
-    if (sessionStorage.getItem("pendingVignetteStream")) {
+    if (sessionStorage.getItem(STORAGE_KEYS.PENDING_VIGNETTE_STREAM)) {
       return;
     }
 
@@ -306,7 +330,7 @@ export default function ChatPage() {
     }
 
     sessionStorage.setItem(
-      "pendingVignetteView",
+      STORAGE_KEYS.PENDING_VIGNETTE_VIEW,
       JSON.stringify({
         imageName: slug,
         category: vignette.category,
@@ -369,35 +393,24 @@ export default function ChatPage() {
     <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
       <div className="h-[56px] mb-4 flex-shrink-0" />
 
-      {subscriptionBanner && (
-        <div
-          className={`mx-4 mb-3 flex-shrink-0 flex items-start justify-between gap-3 rounded-xl px-4 py-3 text-sm shadow-sm ${
-            subscriptionBanner === "downgraded"
-              ? "bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-blue-900 dark:text-blue-100"
-              : "bg-green-50 dark:bg-green-950/40 border border-green-200 dark:border-green-800 text-green-900 dark:text-green-100"
-          }`}
-        >
-          <div>
-            <p className="font-semibold">
-              {subscriptionBanner === "upgraded" && t("subscription.upgradedTitle")}
-              {subscriptionBanner === "downgraded" && t("subscription.downgradedTitle")}
-              {subscriptionBanner === "new" && t("subscription.newTitle")}
-            </p>
-            <p className="mt-0.5 opacity-85">
-              {subscriptionBanner === "upgraded" && t("subscription.upgradedMessage")}
-              {subscriptionBanner === "downgraded" && t("subscription.downgradedMessage")}
-              {subscriptionBanner === "new" && t("subscription.newMessage")}
-            </p>
+      {subscriptionBanner && (() => {
+        const config = SUBSCRIPTION_BANNER_CONFIG[subscriptionBanner];
+        return (
+          <div className={`mx-4 mb-3 flex-shrink-0 flex items-start justify-between gap-3 rounded-xl px-4 py-3 text-sm shadow-sm ${config.containerClass}`}>
+            <div>
+              <p className="font-semibold">{t(config.titleKey)}</p>
+              <p className="mt-0.5 opacity-85">{t(config.messageKey)}</p>
+            </div>
+            <button
+              onClick={() => setSubscriptionBanner(null)}
+              className="flex-shrink-0 opacity-60 hover:opacity-100 transition-opacity mt-0.5"
+              aria-label="close"
+            >
+              ✕
+            </button>
           </div>
-          <button
-            onClick={() => setSubscriptionBanner(null)}
-            className="flex-shrink-0 opacity-60 hover:opacity-100 transition-opacity mt-0.5"
-            aria-label="close"
-          >
-            ✕
-          </button>
-        </div>
-      )}
+        );
+      })()}
       <div className="absolute top-2 right-3 z-20 flex items-center gap-1">
         {!isWelcomeScreen && isAdminUser(session) && (
           <ModelSelector
