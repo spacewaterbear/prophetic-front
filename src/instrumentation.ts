@@ -1,12 +1,16 @@
-export async function register() {
-  const timestamp = () => new Date().toISOString();
-  const originalLog = console.log.bind(console);
-  const originalError = console.error.bind(console);
-  const originalWarn = console.warn.bind(console);
-  const originalInfo = console.info.bind(console);
+import { registerOTel, OTLPHttpJsonTraceExporter } from '@vercel/otel';
+import { diag, DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api';
 
-  console.log = (...args: unknown[]) => originalLog(`[${timestamp()}]`, ...args);
-  console.error = (...args: unknown[]) => originalError(`[${timestamp()}]`, ...args);
-  console.warn = (...args: unknown[]) => originalWarn(`[${timestamp()}]`, ...args);
-  console.info = (...args: unknown[]) => originalInfo(`[${timestamp()}]`, ...args);
+diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.ERROR);
+
+export function register() {
+  registerOTel({
+    serviceName: process.env.OTEL_SERVICE_NAME || 'nextjs-app',
+    traceExporter: new OTLPHttpJsonTraceExporter({
+      url: process.env.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT || 'https://ingest.us.signoz.cloud:443/v1/traces',
+      headers: process.env.SIGNOZ_INGESTION_KEY
+        ? { 'signoz-ingestion-key': process.env.SIGNOZ_INGESTION_KEY }
+        : undefined,
+    }),
+  });
 }
