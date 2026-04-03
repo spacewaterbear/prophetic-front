@@ -41,7 +41,6 @@ services:
       # SigNoz OpenTelemetry
       - OTEL_SERVICE_NAME=prophetic-front-${NEXT_PUBLIC_APP_ENV}-${NEXT_PUBLIC_SPECIALITY}
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=${OTEL_EXPORTER_OTLP_TRACES_ENDPOINT}
-      - SIGNOZ_INGESTION_KEY=${SIGNOZ_INGESTION_KEY}
 
     restart: unless-stopped
     networks:
