@@ -183,13 +183,15 @@ const VignetteItem = ({ item, onVignetteClick, forceArtLayout }: { item: Vignett
                     )}
 
                     {/* Trend row */}
-                    {item.trend != null && item.subtitle && (
+                    {item.subtitle && (
                         <div className="flex items-center gap-2">
-                            <span className={`text-[17px] leading-none ${isUp ? "text-green-500" : "text-red-500"}`}>
-                                {isUp ? "▲" : "▼"}
-                            </span>
+                            {item.trend != null && (
+                                <span className={`text-[17px] leading-none ${isUp ? "text-green-500" : "text-red-500"}`}>
+                                    {isUp ? "▲" : "▼"}
+                                </span>
+                            )}
                             <span
-                                className="text-[13px] italic text-white/70 leading-none"
+                                className={`text-[13px] italic text-white/70 leading-none ${item.category === "CASH_FLOW_LEASING" ? "whitespace-pre-line" : ""}`}
                                 style={{ fontFamily: "var(--font-inter)" }}
                             >
                                 {item.subtitle}
