@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSession, signOut } from "next-auth/react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   LogOut,
@@ -107,6 +107,8 @@ function ChatLayoutInner({
   const router = useRouter();
   const pathname = usePathname();
   const { t, language } = useI18n();
+  const searchParams = useSearchParams();
+  const activeCategory = searchParams.get("category");
   const categoryNames = getCategoryDisplayNames(language);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const { sidebarOpen, setSidebarOpen, isMobile } = useSidebar();
@@ -383,7 +385,11 @@ function ChatLayoutInner({
                     router.push(`/chat?category=${urlParam}`, { scroll: false });
                     if (isMobile) setSidebarOpen(false);
                   }}
-                  className="w-full text-left px-3 py-2.5 text-sm hover:bg-gray-600/10 dark:hover:bg-white/5 transition-colors"
+                  className={`w-full text-left px-3 py-2.5 text-sm transition-colors ${
+                    activeCategory === urlParam
+                      ? "bg-gray-600/20 dark:bg-white/10 font-medium text-gray-900 dark:text-white"
+                      : "hover:bg-gray-600/10 dark:hover:bg-white/5"
+                  }`}
                 >
                   {label}
                 </button>
@@ -416,7 +422,11 @@ function ChatLayoutInner({
                       router.push(`/chat?category=${urlParam}`, { scroll: false });
                       if (isMobile) setSidebarOpen(false);
                     }}
-                    className="w-full text-left px-3 py-2.5 text-sm hover:bg-gray-600/10 dark:hover:bg-white/5 transition-colors"
+                    className={`w-full text-left px-3 py-2.5 text-sm transition-colors ${
+                      activeCategory === urlParam
+                        ? "bg-gray-600/20 dark:bg-white/10 font-medium text-gray-900 dark:text-white"
+                        : "hover:bg-gray-600/10 dark:hover:bg-white/5"
+                    }`}
                   >
                     {label}
                   </button>
@@ -524,7 +534,9 @@ export default function ChatLayout({
 }) {
   return (
     <SidebarProvider>
-      <ChatLayoutInner>{children}</ChatLayoutInner>
+      <Suspense fallback={null}>
+        <ChatLayoutInner>{children}</ChatLayoutInner>
+      </Suspense>
     </SidebarProvider>
   );
 }
