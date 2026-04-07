@@ -136,11 +136,11 @@ const VignetteItem = ({ item, onVignetteClick, forceArtLayout }: { item: Vignett
                 />
 
                 {/* Dark info panel — bottom ~39% */}
-                <div className="absolute bottom-[-1px] left-0 right-0 bg-[#252525] rounded-[24px] px-5 pt-5 pb-9">
+                <div className="absolute bottom-[-1px] left-0 right-0 bg-[#252525] rounded-[24px] px-3 pt-3 pb-7">
                     {/* Category alias — Inter Bold lowercase */}
                     {item.category_alias && (
                         <p
-                            className="text-[13px] font-bold text-white leading-tight mb-1"
+                            className="text-[11px] font-bold text-white leading-tight mb-1"
                             style={{ fontFamily: "var(--font-inter)" }}
                         >
                             {item.category_alias}
@@ -149,10 +149,10 @@ const VignetteItem = ({ item, onVignetteClick, forceArtLayout }: { item: Vignett
 
                     {/* Brand name — Instrument Serif uppercase */}
                     <h3
-                        className="text-white uppercase leading-[1.05] line-clamp-2 mb-3"
+                        className="text-white uppercase leading-[1.05] line-clamp-2 mb-2"
                         style={{
                             fontFamily: "var(--font-instrument-serif)",
-                            fontSize: "clamp(16px, 4.5vw, 20px)",
+                            fontSize: "clamp(12px, 2vw, 16px)",
                             letterSpacing: "0.01em",
                         }}
                     >
@@ -161,12 +161,12 @@ const VignetteItem = ({ item, onVignetteClick, forceArtLayout }: { item: Vignett
 
                     {/* Score dots + number */}
                     {item.score != null && (
-                        <div className="flex items-center gap-3 mb-3">
-                            <div className="flex gap-[5px] items-center">
+                        <div className="flex items-center gap-2 mb-2">
+                            <div className="flex gap-[3px] items-center">
                                 {Array.from({ length: TOTAL_DOTS }).map((_, i) => (
                                     <div
                                         key={i}
-                                        className={`w-[14px] h-[14px] rounded-full shrink-0 ${i < filledDots ? "bg-white" : "border border-white/40"}`}
+                                        className={`w-[10px] h-[10px] rounded-full shrink-0 ${i < filledDots ? "bg-white" : "border border-white/40"}`}
                                     />
                                 ))}
                             </div>
@@ -174,7 +174,7 @@ const VignetteItem = ({ item, onVignetteClick, forceArtLayout }: { item: Vignett
                                 className="text-white font-black leading-none"
                                 style={{
                                     fontFamily: "var(--font-instrument-serif)",
-                                    fontSize: "clamp(28px, 6vw, 40px)",
+                                    fontSize: "clamp(18px, 3vw, 26px)",
                                 }}
                             >
                                 {item.score}
@@ -186,12 +186,12 @@ const VignetteItem = ({ item, onVignetteClick, forceArtLayout }: { item: Vignett
                     {item.subtitle && (
                         <div className="flex items-center gap-2">
                             {item.trend != null && (
-                                <span className={`text-[17px] leading-none ${isUp ? "text-green-500" : "text-red-500"}`}>
+                                <span className={`text-[13px] leading-none ${isUp ? "text-green-500" : "text-red-500"}`}>
                                     {isUp ? "▲" : "▼"}
                                 </span>
                             )}
                             <span
-                                className={`text-[13px] italic text-white/70 leading-none ${item.category === "CASH_FLOW_LEASING" ? "whitespace-pre-line" : ""}`}
+                                className={`text-[11px] italic text-white/70 leading-none ${item.category === "CASH_FLOW_LEASING" ? "whitespace-pre-line" : ""}`}
                                 style={{ fontFamily: "var(--font-inter)" }}
                             >
                                 {item.subtitle}
@@ -282,8 +282,8 @@ export const VignetteGridCard = memo(({ data, onVignetteClick, forceArtLayout }:
 
     return (
         <div className="w-full">
-            {/* Vignette Grid - 1 col on mobile, 2 cols on sm+ */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+            {/* Vignette Grid - 1 col mobile, 2 cols iPad, 3 cols desktop */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {data.map((item, index) => (
                     <VignetteItem key={index} item={item} onVignetteClick={onVignetteClick} forceArtLayout={forceArtLayout} />
                 ))}
