@@ -183,6 +183,12 @@ export function useChatConversation({
           let documentContent = "";
           let questionsContent = "";
           let buffer = "";
+          let streamingJewelryData: JewelrySearchData | null = null;
+          let streamingClothesData: ClothesSearchData | null = null;
+          let streamingCarsData: CarsSearchData | null = null;
+          let streamingWatchesData: WatchesSearchData | null = null;
+          let streamingMktData: MarketplaceData | null = null;
+          let streamingREData: import("@/types/chat").RealEstateData | null = null;
 
           while (true) {
             const { done, value } = await reader.read();
@@ -207,6 +213,29 @@ export function useChatConversation({
                 if (parsed.type === "document") {
                   documentContent = parsed.content || "";
                   setStreamingMessage(documentContent);
+                } else if (parsed.type === "markdown") {
+                  documentContent = parsed.text || "";
+                  setStreamingMessage(documentContent);
+                } else if (parsed.type === "jewelry_data") {
+                  if ((parsed.data as JewelrySearchData)?.listings) {
+                    streamingJewelryData = parsed.data as JewelrySearchData;
+                  }
+                } else if (parsed.type === "clothes_data") {
+                  if ((parsed.data as ClothesSearchData)?.listings) {
+                    streamingClothesData = parsed.data as ClothesSearchData;
+                  }
+                } else if (parsed.type === "cars_data") {
+                  if ((parsed.data as CarsSearchData)?.listings) {
+                    streamingCarsData = parsed.data as CarsSearchData;
+                  }
+                } else if (parsed.type === "watches_data") {
+                  if ((parsed.data as WatchesSearchData)?.listings) {
+                    streamingWatchesData = parsed.data as WatchesSearchData;
+                  }
+                } else if (parsed.type === "marketplace_data") {
+                  streamingMktData = parsed.data as MarketplaceData;
+                } else if (parsed.type === "real_estate_data") {
+                  streamingREData = parsed.data as import("@/types/chat").RealEstateData;
                 } else if (parsed.type === "status") {
                   setCurrentStatus(parsed.message || "");
                 } else if (parsed.type === "questions_chunk") {
@@ -226,6 +255,12 @@ export function useChatConversation({
                     sender: "ai",
                     created_at: new Date().toISOString(),
                     vignetteCategory: params.category || params.sub_category,
+                    ...(streamingJewelryData ? { jewelry_search_data: streamingJewelryData } : {}),
+                    ...(streamingClothesData ? { clothes_search_data: streamingClothesData } : {}),
+                    ...(streamingCarsData ? { cars_search_data: streamingCarsData } : {}),
+                    ...(streamingWatchesData ? { watches_search_data: streamingWatchesData } : {}),
+                    ...(streamingMktData ? { marketplace_data: streamingMktData } : {}),
+                    ...(streamingREData ? { real_estate_data: streamingREData } : {}),
                   };
 
                   const saveToDb = async (convId: number) => {
@@ -339,6 +374,7 @@ export function useChatConversation({
         root_folder: "VIGNETTES",
         markdown_name: imageName,
         category: category || "",
+        return_product: "true",
       });
     },
     [streamMarkdown],

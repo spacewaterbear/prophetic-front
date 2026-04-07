@@ -8,6 +8,13 @@ import { useI18n } from "@/contexts/i18n-context";
 import { LOGO_DARK, LOGO_LIGHT } from "@/lib/constants/logos";
 import { ChatInput } from "@/components/chat-input";
 import { AIAvatar } from "@/components/chat/AIAvatar";
+import { JewelryCard, type JewelrySearchData } from "@/components/JewelryCard";
+import { ClothesSearchCard, type ClothesSearchData } from "@/components/ClothesSearchCard";
+import { CarsCard, type CarsSearchData } from "@/components/CarsCard";
+import { WatchesCard, type WatchesSearchData } from "@/components/WatchesCard";
+import { MarketplaceCard } from "@/components/MarketplaceCard";
+import { RealEstateCard, type RealEstateData } from "@/components/RealEstateCard";
+import { type MarketplaceData } from "@/types/chat";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { AgentType, getAvailableAgents } from "@/types/agents";
 import { getCategoryDisplayNames } from "@/lib/translations";
@@ -41,6 +48,13 @@ export default function VignettePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [streamingMessage, setStreamingMessage] = useState("");
   const [finalContent, setFinalContent] = useState("");
+  const [jewelryData, setJewelryData] = useState<JewelrySearchData | null>(null);
+  const [clothesData, setClothesData] = useState<ClothesSearchData | null>(null);
+  const [carsData, setCarsData] = useState<CarsSearchData | null>(null);
+  const [watchesData, setWatchesData] = useState<WatchesSearchData | null>(null);
+  const [marketplaceData, setMarketplaceData] = useState<MarketplaceData | null>(null);
+  const [realEstateData, setRealEstateData] = useState<RealEstateData | null>(null);
+  const [statusMessage, setStatusMessage] = useState("");
   const [vignetteCategory, setVignetteCategory] = useState<
     string | undefined
   >();
@@ -103,6 +117,7 @@ export default function VignettePage() {
         root_folder: "VIGNETTES",
         markdown_name: vignetteParams.imageName,
         category: vignetteParams.category || "",
+        return_product: "true",
       };
 
       const query = new URLSearchParams(queryParams);
@@ -146,6 +161,31 @@ export default function VignettePage() {
               if (parsed.type === "document") {
                 documentContent = parsed.content || "";
                 setStreamingMessage(documentContent);
+              } else if (parsed.type === "markdown") {
+                documentContent = parsed.text || "";
+                setStreamingMessage(documentContent);
+              } else if (parsed.type === "jewelry_data") {
+                if ((parsed.data as JewelrySearchData)?.listings) {
+                  setJewelryData(parsed.data as JewelrySearchData);
+                }
+              } else if (parsed.type === "clothes_data") {
+                if ((parsed.data as ClothesSearchData)?.listings) {
+                  setClothesData(parsed.data as ClothesSearchData);
+                }
+              } else if (parsed.type === "cars_data") {
+                if ((parsed.data as CarsSearchData)?.listings) {
+                  setCarsData(parsed.data as CarsSearchData);
+                }
+              } else if (parsed.type === "watches_data") {
+                if ((parsed.data as WatchesSearchData)?.listings) {
+                  setWatchesData(parsed.data as WatchesSearchData);
+                }
+              } else if (parsed.type === "marketplace_data") {
+                setMarketplaceData(parsed.data as MarketplaceData);
+              } else if (parsed.type === "real_estate_data") {
+                setRealEstateData(parsed.data as RealEstateData);
+              } else if (parsed.type === "status") {
+                setStatusMessage(parsed.message || "");
               } else if (parsed.type === "questions_chunk") {
                 questionsContent += parsed.content || "";
                 setStreamingMessage(
@@ -157,6 +197,7 @@ export default function VignettePage() {
                   : documentContent;
                 setFinalContent(content);
                 setStreamingMessage("");
+                setStatusMessage("");
               }
             } catch (e) {
               console.error("[VignettePage] Parse error:", e);
@@ -311,6 +352,36 @@ export default function VignettePage() {
                       }
                     />
                   </Suspense>
+                  {jewelryData && (
+                    <div className="mt-4">
+                      <JewelryCard data={jewelryData} />
+                    </div>
+                  )}
+                  {clothesData && (
+                    <div className="mt-4">
+                      <ClothesSearchCard data={clothesData} />
+                    </div>
+                  )}
+                  {carsData && (
+                    <div className="mt-4">
+                      <CarsCard data={carsData} />
+                    </div>
+                  )}
+                  {watchesData && (
+                    <div className="mt-4">
+                      <WatchesCard data={watchesData} />
+                    </div>
+                  )}
+                  {marketplaceData && (
+                    <div className="mt-4">
+                      <MarketplaceCard data={marketplaceData} />
+                    </div>
+                  )}
+                  {realEstateData && (
+                    <div className="mt-4">
+                      <RealEstateCard data={realEstateData} />
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -324,6 +395,11 @@ export default function VignettePage() {
                     <span className="w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-500 animate-bounce [animation-delay:150ms]" />
                     <span className="w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-500 animate-bounce [animation-delay:300ms]" />
                   </div>
+                  {statusMessage && (
+                    <span className="text-xs text-gray-400 dark:text-gray-500 italic ml-2">
+                      {statusMessage}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
