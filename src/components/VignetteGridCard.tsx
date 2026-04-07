@@ -136,7 +136,7 @@ const VignetteItem = ({ item, onVignetteClick, forceArtLayout }: { item: Vignett
                 />
 
                 {/* Dark info panel — bottom ~39% */}
-                <div className="absolute bottom-0 left-0 right-0 bg-[#252525] rounded-[24px] px-5 pt-5 pb-9">
+                <div className="absolute bottom-[-1px] left-0 right-0 bg-[#252525] rounded-[24px] px-5 pt-5 pb-9">
                     {/* Brand name — Inter Bold lowercase */}
                     {item.brand_name && (
                         <p

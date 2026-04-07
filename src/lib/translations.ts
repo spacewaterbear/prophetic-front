@@ -56,6 +56,8 @@ export const translations = {
         // Chat Interface
         chat: {
             greeting: "Bonjour, {name}",
+            heroTitle: "Le plus grand marché. Décodé, scoré, accessible.",
+            heroSubtitle: "Chaque actif d'exception cache une opportunité. Prophetic Orchestra la révèle — scoring propriétaire, signaux d'opportunité, ROI projeté. La rigueur de la finance institutionnelle, pensée pour les actifs qui traversent les marchés.",
             welcomeMessage: "Comment puis-je vous aider à investir ?",
             welcomeSubtitle: "Comment puis-je vous aider à investir ?",
             placeholder: "Comment puis-je vous aider à investir ?",
@@ -322,6 +324,8 @@ export const translations = {
         },
         chat: {
             greeting: "Hello, {name}",
+            heroTitle: "The largest market. Decoded, scored, accessible.",
+            heroSubtitle: "Every exceptional asset hides an opportunity. Prophetic Orchestra reveals it — proprietary scoring, opportunity signals, projected ROI. The rigour of institutional finance, built for assets that outlast markets.",
             welcomeMessage: "How can I help you invest?",
             welcomeSubtitle: "How can I help you invest?",
             placeholder: "How can I help you invest?",
@@ -581,6 +585,8 @@ export const translations = {
         },
         chat: {
             greeting: "Hola",
+            heroTitle: "El mercado más grande. Decodificado, puntuado, accesible.",
+            heroSubtitle: "Cada activo excepcional esconde una oportunidad. Prophetic Orchestra la revela — puntuación propia, señales de oportunidad, ROI proyectado. El rigor de las finanzas institucionales, hecho para activos que sobreviven a los mercados.",
             welcomeMessage: "¿Cómo puedo ayudarte a invertir?",
             welcomeSubtitle: "¿Cómo puedo ayudarte a invertir?",
             placeholder: "¿Cómo puedo ayudarte a invertir?",
@@ -832,6 +838,8 @@ export const translations = {
         },
         chat: {
             greeting: "Hallo",
+            heroTitle: "Der größte Markt. Entschlüsselt, bewertet, zugänglich.",
+            heroSubtitle: "Jeder außergewöhnliche Vermögenswert verbirgt eine Chance. Prophetic Orchestra enthüllt sie — proprietäres Scoring, Chancensignale, projizierter ROI. Die Strenge institutioneller Finanzen, für Vermögenswerte, die Märkte überdauern.",
             welcomeMessage: "Wie kann ich Ihnen beim Investieren helfen?",
             welcomeSubtitle: "Wie kann ich Ihnen beim Investieren helfen?",
             placeholder: "Wie kann ich Ihnen beim Investieren helfen?",
@@ -1083,6 +1091,8 @@ export const translations = {
         },
         chat: {
             greeting: "Ciao",
+            heroTitle: "Il mercato più grande. Decodificato, valutato, accessibile.",
+            heroSubtitle: "Ogni asset eccezionale nasconde un'opportunità. Prophetic Orchestra la rivela — scoring proprietario, segnali di opportunità, ROI proiettato. Il rigore della finanza istituzionale, costruito per asset che sopravvivono ai mercati.",
             welcomeMessage: "Come posso aiutarti a investire?",
             welcomeSubtitle: "Come posso aiutarti a investire?",
             placeholder: "Come posso aiutarti a investire?",
@@ -1334,6 +1344,8 @@ export const translations = {
         },
         chat: {
             greeting: "Olá",
+            heroTitle: "O maior mercado. Decodificado, pontuado, acessível.",
+            heroSubtitle: "Cada ativo excepcional esconde uma oportunidade. Prophetic Orchestra revela-a — pontuação proprietária, sinais de oportunidade, ROI projetado. O rigor das finanças institucionais, construído para ativos que sobrevivem aos mercados.",
             welcomeMessage: "Como posso ajudá-lo a investir?",
             welcomeSubtitle: "Como posso ajudá-lo a investir?",
             placeholder: "Como posso ajudá-lo a investir?",
@@ -1585,6 +1597,8 @@ export const translations = {
         },
         chat: {
             greeting: "Hallo",
+            heroTitle: "De grootste markt. Gedecodeerd, gescoord, toegankelijk.",
+            heroSubtitle: "Elk uitzonderlijk actief verbergt een kans. Prophetic Orchestra onthult het — eigen scoring, kans signalen, geprojecteerde ROI. De strengheid van institutionele financiën, gebouwd voor activa die markten overleven.",
             welcomeMessage: "Hoe kan ik u helpen investeren?",
             welcomeSubtitle: "Hoe kan ik u helpen investeren?",
             placeholder: "Hoe kan ik u helpen investeren?",
@@ -1836,6 +1850,8 @@ export const translations = {
         },
         chat: {
             greeting: "こんにちは",
+            heroTitle: "最大の市場。解読され、スコアリングされ、アクセス可能。",
+            heroSubtitle: "すべての優れた資産には機会が潜んでいます。Prophetic Orchestraがそれを明らかにします — 独自のスコアリング、機会シグナル、予測ROI。市場を超えて続く資産のための機関金融の厳格さ。",
             welcomeMessage: "どのように投資のお手伝いができますか？",
             welcomeSubtitle: "どのように投資のお手伝いができますか？",
             placeholder: "どのように投資のお手伝いができますか？",
@@ -2087,6 +2103,8 @@ export const translations = {
         },
         chat: {
             greeting: "你好",
+            heroTitle: "最大的市场。解码、评分、触手可及。",
+            heroSubtitle: "每一个卓越的资产都隐藏着机会。Prophetic Orchestra揭示它 — 专有评分、机会信号、预测ROI。机构金融的严谨性，为超越市场的资产而生。",
             welcomeMessage: "我如何帮助您投资？",
             welcomeSubtitle: "我如何帮助您投资？",
             placeholder: "我如何帮助您投资？",

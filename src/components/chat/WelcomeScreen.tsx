@@ -254,8 +254,18 @@ export function WelcomeScreen({
           </div>
         ) : (
           <>
+            {/* Hero Text */}
+            <div className="mb-8 w-full max-w-3xl">
+              <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white leading-tight mb-4">
+                {t("chat.heroTitle")}
+              </h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                {t("chat.heroSubtitle")}
+              </p>
+            </div>
+
             {/* Logo + Greeting */}
-            <div className="flex items-center gap-4 mb-3 pb-[30px]">
+            <div className="flex items-center gap-4 mb-0 pb-[30px] w-full max-w-3xl">
               <div className="w-[42px] h-[42px] flex items-center justify-center flex-shrink-0">
                 <Image
                   src={
@@ -269,7 +279,7 @@ export function WelcomeScreen({
                   className="w-full h-full object-contain"
                 />
               </div>
-              <h1 className="text-3xl sm:text-4xl font-medium text-gray-900 dark:text-white">
+              <h1 className="text-base sm:text-xl font-medium text-gray-900 dark:text-white">
                 {t("chat.greeting").replace(
                   "{name}",
                   profileUsername || userName || "",
