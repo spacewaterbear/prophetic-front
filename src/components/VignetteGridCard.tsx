@@ -1,4 +1,5 @@
 import { memo, useState } from "react";
+import Image from "next/image";
 import { Download, ChevronDown } from "lucide-react";
 import { VignetteData } from "@/types/vignettes";
 import { AudioCard } from "@/components/AudioCard";
@@ -91,10 +92,12 @@ const VignetteItem = ({ item, onVignetteClick, forceArtLayout }: { item: Vignett
             >
                 <div className="border border-gray-200/20 bg-[#e6e6e6] dark:bg-gray-800 rounded-[24px] p-3">
                     <div className="relative w-full aspect-square rounded-[24px] mb-2 overflow-hidden">
-                        <img
+                        <Image
                             src={item.public_url}
                             alt={item.brand_name}
-                            className="absolute inset-0 w-full h-full object-cover"
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 50vw, 25vw"
                         />
                         {item.score != null && item.trend != null && (
                             <div className="absolute bottom-3 right-3 flex items-center gap-1">
@@ -129,18 +132,20 @@ const VignetteItem = ({ item, onVignetteClick, forceArtLayout }: { item: Vignett
                 onClick={() => onVignetteClick?.(item)}
             >
                 {/* Full-card background image */}
-                <img
+                <Image
                     src={item.public_url}
                     alt={item.brand_name}
-                    className="absolute inset-0 w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 50vw, 25vw"
                 />
 
                 {/* Dark info panel — bottom ~39% */}
-                <div className="absolute bottom-[-1px] left-0 right-0 bg-[#252525] rounded-[24px] px-3 pt-3 pb-7">
+                <div className="absolute bottom-[-1px] left-0 right-0 bg-[#252525] rounded-[24px] px-4 pt-4 pb-8 lg:px-3 lg:pt-3 lg:pb-7">
                     {/* Category alias — Inter Bold lowercase */}
                     {item.category_alias && (
                         <p
-                            className="text-[11px] font-bold text-white leading-tight mb-1"
+                            className="text-[13px] lg:text-[11px] font-bold text-white leading-tight mb-1"
                             style={{ fontFamily: "var(--font-inter)" }}
                         >
                             {item.category_alias}
@@ -152,7 +157,7 @@ const VignetteItem = ({ item, onVignetteClick, forceArtLayout }: { item: Vignett
                         className="text-white uppercase leading-[1.05] line-clamp-2 mb-2"
                         style={{
                             fontFamily: "var(--font-instrument-serif)",
-                            fontSize: "clamp(12px, 2vw, 16px)",
+                            fontSize: "clamp(15px, 2vw, 16px)",
                             letterSpacing: "0.01em",
                         }}
                     >
@@ -162,11 +167,11 @@ const VignetteItem = ({ item, onVignetteClick, forceArtLayout }: { item: Vignett
                     {/* Score dots + number */}
                     {item.score != null && (
                         <div className="flex items-center gap-2 mb-2">
-                            <div className="flex gap-[3px] items-center">
+                            <div className="flex gap-[4px] lg:gap-[3px] items-center">
                                 {Array.from({ length: TOTAL_DOTS }).map((_, i) => (
                                     <div
                                         key={i}
-                                        className={`w-[10px] h-[10px] rounded-full shrink-0 ${i < filledDots ? "bg-white" : "border border-white/40"}`}
+                                        className={`w-[12px] h-[12px] lg:w-[10px] lg:h-[10px] rounded-full shrink-0 ${i < filledDots ? "bg-white" : "border border-white/40"}`}
                                     />
                                 ))}
                             </div>
@@ -174,7 +179,7 @@ const VignetteItem = ({ item, onVignetteClick, forceArtLayout }: { item: Vignett
                                 className="text-white font-black leading-none"
                                 style={{
                                     fontFamily: "var(--font-instrument-serif)",
-                                    fontSize: "clamp(18px, 3vw, 26px)",
+                                    fontSize: "clamp(22px, 3vw, 26px)",
                                 }}
                             >
                                 {item.score}
@@ -186,12 +191,12 @@ const VignetteItem = ({ item, onVignetteClick, forceArtLayout }: { item: Vignett
                     {item.subtitle && (
                         <div className="flex items-center gap-2">
                             {item.trend != null && (
-                                <span className={`text-[13px] leading-none ${isUp ? "text-green-500" : "text-red-500"}`}>
+                                <span className={`text-[14px] lg:text-[13px] leading-none ${isUp ? "text-green-500" : "text-red-500"}`}>
                                     {isUp ? "▲" : "▼"}
                                 </span>
                             )}
                             <span
-                                className={`text-[11px] italic text-white/70 leading-none ${item.category === "CASH_FLOW_LEASING" ? "whitespace-pre-line" : ""}`}
+                                className={`text-[12px] lg:text-[11px] italic text-white/70 leading-none ${item.category === "CASH_FLOW_LEASING" ? "whitespace-pre-line" : ""}`}
                                 style={{ fontFamily: "var(--font-inter)" }}
                             >
                                 {item.subtitle}
@@ -217,10 +222,12 @@ const VignetteItem = ({ item, onVignetteClick, forceArtLayout }: { item: Vignett
             onClick={() => onVignetteClick?.(item)}
         >
             {/* Full-card background image */}
-            <img
+            <Image
                 src={item.public_url}
                 alt={item.brand_name}
-                className="absolute inset-0 w-full h-full object-cover"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 50vw, 25vw"
             />
 
             {/* Header — top-left overlay */}
