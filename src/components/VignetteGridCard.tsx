@@ -137,26 +137,26 @@ const VignetteItem = ({ item, onVignetteClick, forceArtLayout }: { item: Vignett
 
                 {/* Dark info panel — bottom ~39% */}
                 <div className="absolute bottom-[-1px] left-0 right-0 bg-[#252525] rounded-[24px] px-5 pt-5 pb-9">
-                    {/* Brand name — Inter Bold lowercase */}
-                    {item.brand_name && (
+                    {/* Category alias — Inter Bold lowercase */}
+                    {item.category_alias && (
                         <p
                             className="text-[13px] font-bold text-white leading-tight mb-1"
                             style={{ fontFamily: "var(--font-inter)" }}
                         >
-                            {item.brand_name}
+                            {item.category_alias}
                         </p>
                     )}
 
-                    {/* Category alias — Instrument Serif uppercase */}
+                    {/* Brand name — Instrument Serif uppercase */}
                     <h3
                         className="text-white uppercase leading-[1.05] line-clamp-2 mb-3"
                         style={{
                             fontFamily: "var(--font-instrument-serif)",
-                            fontSize: "clamp(20px, 4.5vw, 30px)",
+                            fontSize: "clamp(16px, 4.5vw, 20px)",
                             letterSpacing: "0.01em",
                         }}
                     >
-                        {item.category_alias}
+                        {item.brand_name}
                     </h3>
 
                     {/* Score dots + number */}
