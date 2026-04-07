@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    experimental: {
-        instrumentationHook: true,
-    },
     allowedDevOrigins: ["*.preview.same-app.com"],
     output: "standalone",
     images: {
