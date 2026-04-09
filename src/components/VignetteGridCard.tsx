@@ -157,7 +157,7 @@ const VignetteItem = ({ item, onVignetteClick, forceArtLayout }: { item: Vignett
                         className="text-white uppercase leading-[1.05] line-clamp-2 mb-2"
                         style={{
                             fontFamily: "var(--font-instrument-serif)",
-                            fontSize: "clamp(15px, 2vw, 16px)",
+                            fontSize: "clamp(17px, 2vw, 18px)",
                             letterSpacing: "0.01em",
                         }}
                     >
