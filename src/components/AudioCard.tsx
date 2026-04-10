@@ -56,21 +56,36 @@ export function AudioCard({
   const progress = duration > 0 ? currentTime / duration : 0;
   const activeBars = Math.round(progress * WAVEFORM_BARS.length);
 
+  // On iOS, changing src via React state does not trigger metadata loading.
+  // Calling audio.load() explicitly is required.
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio || !resolvedSrc) return;
+    audio.load();
+  }, [resolvedSrc]);
+
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
     const onTimeUpdate = () => setCurrentTime(audio.currentTime);
-    const onLoadedMetadata = () => setDuration(audio.duration);
+    // loadedmetadata is unreliable on iOS Safari — durationchange is more consistent
+    const onDurationReady = () => {
+      if (isFinite(audio.duration) && audio.duration > 0) {
+        setDuration(audio.duration);
+      }
+    };
     const onEnded = () => { setPlaying(false); setCurrentTime(0); };
 
     audio.addEventListener("timeupdate", onTimeUpdate);
-    audio.addEventListener("loadedmetadata", onLoadedMetadata);
+    audio.addEventListener("loadedmetadata", onDurationReady);
+    audio.addEventListener("durationchange", onDurationReady);
     audio.addEventListener("ended", onEnded);
 
     return () => {
       audio.removeEventListener("timeupdate", onTimeUpdate);
-      audio.removeEventListener("loadedmetadata", onLoadedMetadata);
+      audio.removeEventListener("loadedmetadata", onDurationReady);
+      audio.removeEventListener("durationchange", onDurationReady);
       audio.removeEventListener("ended", onEnded);
     };
   }, []);
@@ -82,6 +97,11 @@ export function AudioCard({
       audio.pause();
       setPlaying(false);
     } else {
+      // On iOS, if the audio hasn't started loading yet (readyState === HAVE_NOTHING),
+      // call load() before play() — must stay within the same user gesture call stack.
+      if (audio.readyState === 0) {
+        audio.load();
+      }
       audio
         .play()
         .then(() => setPlaying(true))
@@ -220,7 +240,8 @@ export function AudioCard({
         <p className="text-[14px] font-light italic text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-1">{subtitle}</p>
       </div>
 
-      <audio ref={audioRef} src={resolvedSrc} preload="metadata" />
+      {/* playsInline prevents iOS from hijacking audio into fullscreen/system player */}
+      <audio ref={audioRef} src={resolvedSrc} preload="metadata" playsInline />
     </div>
   );
 }
