@@ -181,8 +181,8 @@ export function AudioCard({
         </div>
 
 
-        {/* Waveform — desktop only */}
-        <div className="hidden sm:flex items-end gap-[2px] h-[45%] w-full overflow-hidden">
+        {/* Waveform */}
+        <div className="flex items-end gap-[2px] h-[45%] w-full overflow-hidden">
           {WAVEFORM_BARS.map((h, i) => (
             <button
               key={i}
