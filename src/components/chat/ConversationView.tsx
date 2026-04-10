@@ -135,6 +135,7 @@ export function ConversationView({
             streamingVignetteCategory={streamingVignetteCategory}
             showStreamingIndicator={showStreamingIndicator}
             isLoading={isLoading}
+            currentStatus={currentStatus}
             handleVignetteClick={handleVignetteClick}
             handleBackToCategory={handleBackToCategory}
           />

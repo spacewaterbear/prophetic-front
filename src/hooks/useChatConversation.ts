@@ -219,23 +219,29 @@ export function useChatConversation({
                 } else if (parsed.type === "jewelry_data") {
                   if ((parsed.data as JewelrySearchData)?.listings) {
                     streamingJewelryData = parsed.data as JewelrySearchData;
+                    setStreamingJewelrySearchData(streamingJewelryData);
                   }
                 } else if (parsed.type === "clothes_data") {
                   if ((parsed.data as ClothesSearchData)?.listings) {
                     streamingClothesData = parsed.data as ClothesSearchData;
+                    setStreamingClothesSearchData(streamingClothesData);
                   }
                 } else if (parsed.type === "cars_data") {
                   if ((parsed.data as CarsSearchData)?.listings) {
                     streamingCarsData = parsed.data as CarsSearchData;
+                    setStreamingCarsSearchData(streamingCarsData);
                   }
                 } else if (parsed.type === "watches_data") {
                   if ((parsed.data as WatchesSearchData)?.listings) {
                     streamingWatchesData = parsed.data as WatchesSearchData;
+                    setStreamingWatchesSearchData(streamingWatchesData);
                   }
                 } else if (parsed.type === "marketplace_data") {
                   streamingMktData = parsed.data as MarketplaceData;
+                  setStreamingMarketplaceData(streamingMktData);
                 } else if (parsed.type === "real_estate_data") {
                   streamingREData = parsed.data as import("@/types/chat").RealEstateData;
+                  setStreamingRealEstateData(streamingREData);
                 } else if (parsed.type === "status") {
                   setCurrentStatus(parsed.message || "");
                 } else if (parsed.type === "questions_chunk") {
@@ -297,6 +303,12 @@ export function useChatConversation({
                   }
                   setStreamingMessage("");
                   setCurrentStatus("");
+                  setStreamingMarketplaceData(null);
+                  setStreamingRealEstateData(null);
+                  setStreamingClothesSearchData(null);
+                  setStreamingJewelrySearchData(null);
+                  setStreamingCarsSearchData(null);
+                  setStreamingWatchesSearchData(null);
                 }
               } catch (e) {
                 console.error("[Markdown Stream] Parse error:", e);

@@ -66,6 +66,7 @@ interface StreamingBubbleProps {
   streamingVignetteCategory: string | null;
   showStreamingIndicator: boolean;
   isLoading: boolean;
+  currentStatus?: string;
   handleVignetteClick: (vignette: VignetteData) => void;
   handleBackToCategory: (category: string) => void;
 }
@@ -139,6 +140,7 @@ export function StreamingBubble({
   streamingVignetteCategory,
   showStreamingIndicator,
   isLoading,
+  currentStatus,
   handleVignetteClick,
   handleBackToCategory,
 }: StreamingBubbleProps) {
@@ -330,12 +332,16 @@ export function StreamingBubble({
             </Suspense>
           </div>
         )}
-        {showStreamingIndicator && (
-          <div className="mt-2">
+        {currentStatus && (
+          <p className="text-sm text-gray-500 dark:text-gray-400 italic mt-2">
+            {currentStatus}
+          </p>
+        )}
+        {isLoading && (
+          <div className={hasContent ? "mt-2" : ""}>
             <TypingIndicator />
           </div>
         )}
-        {isLoading && !displayedMessage && <TypingIndicator />}
       </div>
     </div>
   );

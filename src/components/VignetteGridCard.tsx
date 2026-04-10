@@ -10,7 +10,7 @@ interface VignetteGridCardProps {
     forceArtLayout?: boolean;
 }
 
-const PdfCard = ({ item }: { item: VignetteData }) => {
+const PdfDownloadButton = ({ item }: { item: VignetteData }) => {
     const [downloading, setDownloading] = useState(false);
 
     async function handleDownload(e: React.MouseEvent) {
@@ -35,6 +35,20 @@ const PdfCard = ({ item }: { item: VignetteData }) => {
     }
 
     return (
+        <button
+            onClick={handleDownload}
+            disabled={downloading}
+            aria-label="Download PDF"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-gray-900/10 dark:bg-white/10 text-gray-700 dark:text-gray-300 text-xs font-medium hover:bg-gray-900/20 dark:hover:bg-white/20 transition-colors disabled:opacity-50"
+        >
+            <Download className="w-3 h-3" />
+            {downloading ? "…" : "PDF"}
+        </button>
+    );
+};
+
+const PdfCard = ({ item }: { item: VignetteData }) => {
+    return (
         <div className="group/pdf border border-gray-200/20 bg-[#e6e6e6] dark:bg-gray-800 rounded-[24px] p-4 flex flex-col gap-2">
             <div className="flex items-center justify-between">
                 {item.score != null && item.trend != null && (
@@ -43,15 +57,9 @@ const PdfCard = ({ item }: { item: VignetteData }) => {
                         <span>{item.trend === "up" ? "▲" : "▼"}</span>
                     </div>
                 )}
-                <button
-                    onClick={handleDownload}
-                    disabled={downloading}
-                    aria-label="Download PDF"
-                    className="ml-auto flex items-center gap-1.5 px-3 py-1 rounded-full bg-gray-900/10 dark:bg-white/10 text-gray-700 dark:text-gray-300 text-xs font-medium hover:bg-gray-900/20 dark:hover:bg-white/20 transition-colors disabled:opacity-50"
-                >
-                    <Download className="w-3 h-3" />
-                    {downloading ? "…" : "PDF"}
-                </button>
+                <div className="ml-auto">
+                    <PdfDownloadButton item={item} />
+                </div>
             </div>
             <div className="flex flex-col text-center">
                 <h3 className="text-[16px] font-bold text-gray-900 dark:text-white leading-tight line-clamp-2">{item.brand_name}</h3>
@@ -62,7 +70,9 @@ const PdfCard = ({ item }: { item: VignetteData }) => {
 };
 
 const VignetteItem = ({ item, onVignetteClick, forceArtLayout }: { item: VignetteData; onVignetteClick?: (v: VignetteData) => void; forceArtLayout?: boolean }) => {
-    if (item.media_type === "pdf") {
+    const isArt = process.env.NEXT_PUBLIC_SPECIALITY === "art" || forceArtLayout;
+
+    if (item.media_type === "pdf" && !isArt) {
         return <PdfCard item={item} />;
     }
 
@@ -81,8 +91,6 @@ const VignetteItem = ({ item, onVignetteClick, forceArtLayout }: { item: Vignett
     }
 
     const isUp = item.trend === "up";
-
-    const isArt = process.env.NEXT_PUBLIC_SPECIALITY === "art" || forceArtLayout;
 
     if (isArt) {
         return (
@@ -107,6 +115,11 @@ const VignetteItem = ({ item, onVignetteClick, forceArtLayout }: { item: Vignett
                                         {isUp ? "▲" : "▼"}
                                     </span>
                                 </div>
+                            </div>
+                        )}
+                        {item.media_type === "pdf" && item.pdf_url && (
+                            <div className="absolute top-3 right-3">
+                                <PdfDownloadButton item={item} />
                             </div>
                         )}
                     </div>
