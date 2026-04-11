@@ -142,6 +142,7 @@ export function VignetteDetailView({
         let documentContent = "";
         let questionsContent = "";
         let buffer = "";
+        let finalContentSet = false;
 
         while (true) {
           const { done, value } = await reader.read();
@@ -159,7 +160,8 @@ export function VignetteDetailView({
               if (line.startsWith("data: ")) eventData += line.slice(6);
             }
 
-            if (!eventData || eventData === "[DONE]") continue;
+            if (!eventData) continue;
+            if (eventData === "[DONE]") break;
 
             try {
               const parsed = JSON.parse(eventData);
@@ -202,11 +204,21 @@ export function VignetteDetailView({
                 setFinalContent(content);
                 setStreamingMessage("");
                 setStatusMessage("");
+                finalContentSet = true;
               }
             } catch (e) {
               console.error("[VignetteDetailView] Parse error:", e);
             }
           }
+        }
+        // Fallback: if no 'done' event was received, set finalContent from streamed content
+        if (!finalContentSet && documentContent) {
+          const content = questionsContent
+            ? `${documentContent}\n\n${questionsContent}`
+            : documentContent;
+          setFinalContent(content);
+          setStreamingMessage("");
+          setStatusMessage("");
         }
       } else {
         const json = await response.json();
@@ -225,13 +237,14 @@ export function VignetteDetailView({
   };
 
   const handleCopy = async () => {
-    if (!finalContent) return;
+    const content = finalContent || streamingMessage;
+    if (!content) return;
     try {
       if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(finalContent);
+        await navigator.clipboard.writeText(content);
       } else {
         const textArea = document.createElement("textarea");
-        textArea.value = finalContent;
+        textArea.value = content;
         textArea.style.cssText =
           "position:fixed;left:-999999px;top:-999999px;opacity:0;";
         document.body.appendChild(textArea);
@@ -250,13 +263,14 @@ export function VignetteDetailView({
   };
 
   const handleExportPdf = async () => {
-    if (!finalContent) return;
+    const content = finalContent || streamingMessage;
+    if (!content) return;
     setPdfLoading(true);
     try {
       const html2pdf = (await import("html2pdf.js")).default;
       const { marked } = await import("marked");
 
-      let html = await marked(finalContent);
+      let html = await marked(content);
       html = convertAllocationProfilesToHtml(html);
       html = convertAsciiTablesToHtml(html);
       html = convertExtendedRankingsToHtml(html);
@@ -639,7 +653,7 @@ export function VignetteDetailView({
                       <RealEstateCard data={realEstateData} />
                     </div>
                   )}
-                  {finalContent && (
+                  {displayContent && (
                     <div className="flex items-center gap-1 self-end">
                       <Button
                         variant="ghost"
