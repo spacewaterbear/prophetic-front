@@ -10,11 +10,10 @@ interface VignetteGridCardProps {
     forceArtLayout?: boolean;
 }
 
-const PdfDownloadButton = ({ item }: { item: VignetteData }) => {
+const PdfCard = ({ item }: { item: VignetteData }) => {
     const [downloading, setDownloading] = useState(false);
 
-    async function handleDownload(e: React.MouseEvent) {
-        e.stopPropagation();
+    async function handleDownload() {
         if (downloading) return;
         const fileName = item.pdf_url?.split("/").pop();
         if (!fileName) return;
@@ -35,33 +34,43 @@ const PdfDownloadButton = ({ item }: { item: VignetteData }) => {
     }
 
     return (
-        <button
-            onClick={handleDownload}
-            disabled={downloading}
-            aria-label="Download PDF"
-            className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-gray-900/10 dark:bg-white/10 text-gray-700 dark:text-gray-300 text-xs font-medium hover:bg-gray-900/20 dark:hover:bg-white/20 transition-colors disabled:opacity-50"
-        >
-            <Download className="w-3 h-3" />
-            {downloading ? "…" : "PDF"}
-        </button>
-    );
-};
-
-const PdfCard = ({ item }: { item: VignetteData }) => {
-    return (
-        <div className="group/pdf border border-gray-200/20 bg-[#e6e6e6] dark:bg-gray-800 rounded-[24px] p-4 flex flex-col gap-2">
-            <div className="flex items-center justify-between">
+        <div className="group/pdf border border-gray-200/20 bg-[#e6e6e6] dark:bg-gray-800 rounded-[24px] p-3 flex flex-col gap-2">
+            <button
+                onClick={handleDownload}
+                disabled={downloading}
+                aria-label="Download PDF"
+                className="relative w-full aspect-square rounded-[20px] overflow-hidden cursor-pointer disabled:opacity-70"
+            >
+                <Image
+                    src={item.public_url}
+                    alt={item.brand_name}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 50vw, 25vw"
+                />
+                {/* Dark overlay on hover */}
+                <div className="absolute inset-0 bg-black/0 group-hover/pdf:bg-black/30 transition-colors duration-200" />
+                {/* Centered download icon — always visible, pops on hover */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="flex flex-col items-center gap-1.5 bg-white/90 group-hover/pdf:bg-white rounded-2xl px-4 py-3 shadow-lg transition-all duration-200 group-hover/pdf:scale-110">
+                        <Download className={`w-6 h-6 text-gray-800 ${downloading ? "animate-bounce" : ""}`} />
+                        <span className="text-[11px] font-semibold text-gray-700 uppercase tracking-wide">
+                            {downloading ? "…" : "PDF"}
+                        </span>
+                    </div>
+                </div>
                 {item.score != null && item.trend != null && (
-                    <div className={`flex items-center gap-1 text-sm font-semibold ${item.trend === "up" ? "text-green-500" : "text-red-400"}`}>
-                        <span>{item.score}</span>
-                        <span>{item.trend === "up" ? "▲" : "▼"}</span>
+                    <div className="absolute bottom-3 right-3 flex items-center gap-1">
+                        <div className="bg-white rounded-full px-3 py-1.5 shadow-md flex items-center gap-1">
+                            <span className="text-sm font-semibold text-gray-900">{item.score}</span>
+                            <span className={`text-base ${item.trend === "up" ? "text-green-500" : "text-red-500"}`}>
+                                {item.trend === "up" ? "▲" : "▼"}
+                            </span>
+                        </div>
                     </div>
                 )}
-                <div className="ml-auto">
-                    <PdfDownloadButton item={item} />
-                </div>
-            </div>
-            <div className="flex flex-col text-center">
+            </button>
+            <div className="flex flex-col px-1 text-center h-[62px] justify-center">
                 <h3 className="text-[16px] font-bold text-gray-900 dark:text-white leading-tight line-clamp-2">{item.brand_name}</h3>
                 <p className="text-[14px] font-light italic text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-1">{item.subtitle}</p>
             </div>
@@ -72,7 +81,7 @@ const PdfCard = ({ item }: { item: VignetteData }) => {
 const VignetteItem = ({ item, onVignetteClick, forceArtLayout }: { item: VignetteData; onVignetteClick?: (v: VignetteData) => void; forceArtLayout?: boolean }) => {
     const isArt = process.env.NEXT_PUBLIC_SPECIALITY === "art" || forceArtLayout;
 
-    if (item.media_type === "pdf" && !isArt) {
+    if (item.media_type === "pdf") {
         return <PdfCard item={item} />;
     }
 
@@ -117,11 +126,7 @@ const VignetteItem = ({ item, onVignetteClick, forceArtLayout }: { item: Vignett
                                 </div>
                             </div>
                         )}
-                        {item.media_type === "pdf" && item.pdf_url && (
-                            <div className="absolute top-3 right-3">
-                                <PdfDownloadButton item={item} />
-                            </div>
-                        )}
+
                     </div>
                     <div className="flex flex-col px-1 text-center h-[62px] justify-center">
                         <h3 className="text-[16px] font-bold text-gray-900 dark:text-white leading-tight line-clamp-2">{item.brand_name}</h3>
