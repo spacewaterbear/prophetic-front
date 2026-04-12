@@ -16,8 +16,8 @@ export async function GET(request: NextRequest) {
         const searchParams = request.nextUrl.searchParams;
         const type = searchParams.get("type");
 
-        if (!process.env.PROPHETIC_API_URL || !process.env.PROPHETIC_API_TOKEN) {
-            console.error("[Markdown Proxy] API configuration missing: PROPHETIC_API_URL or PROPHETIC_API_TOKEN");
+        if (!process.env.PROPHETIC_API_URL || !process.env.INTERNAL_API_KEY) {
+            console.error("[Markdown Proxy] API configuration missing: PROPHETIC_API_URL or INTERNAL_API_KEY");
             return NextResponse.json(
                 { error: "API configuration missing" },
                 { status: 500 }
@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
         const response = await fetch(apiUrl, {
             method: "GET",
             headers: {
-                "Authorization": `Bearer ${process.env.PROPHETIC_API_TOKEN}`,
+                "x-api-key": process.env.INTERNAL_API_KEY!,
                 "Accept": "text/event-stream",
             },
         });

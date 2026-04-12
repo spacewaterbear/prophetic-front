@@ -268,6 +268,16 @@ export const translations = {
             newTitle: "Bienvenue !",
             newMessage: "Votre abonnement est maintenant actif. Profitez de votre nouveau plan !",
         },
+        loadingMessages: [
+            "Vérification des sources...",
+            "Récupération de nouvelles sources...",
+            "Synthèse en cours...",
+            "Analyse des données...",
+            "Recoupement des informations...",
+            "Évaluation des actifs...",
+            "Calcul des projections...",
+            "Consultation des marchés...",
+        ],
     },
     en: {
         registrationPending: {
@@ -529,6 +539,16 @@ export const translations = {
             newTitle: "Welcome!",
             newMessage: "Your subscription is now active. Enjoy your new plan!",
         },
+        loadingMessages: [
+            "Verifying the sources...",
+            "Getting new sources...",
+            "Summarizing...",
+            "Analyzing data...",
+            "Cross-referencing information...",
+            "Evaluating assets...",
+            "Calculating projections...",
+            "Consulting markets...",
+        ],
     },
     es: {
         registrationPending: {
@@ -782,6 +802,16 @@ export const translations = {
             newTitle: "¡Bienvenido!",
             newMessage: "Tu suscripción ya está activa. ¡Disfruta de tu nuevo plan!",
         },
+        loadingMessages: [
+            "Verificando las fuentes...",
+            "Obteniendo nuevas fuentes...",
+            "Resumiendo...",
+            "Analizando datos...",
+            "Contrastando información...",
+            "Evaluando activos...",
+            "Calculando proyecciones...",
+            "Consultando mercados...",
+        ],
     },
     de: {
         registrationPending: {
@@ -1035,6 +1065,16 @@ export const translations = {
             newTitle: "Willkommen!",
             newMessage: "Ihr Abonnement ist jetzt aktiv. Genießen Sie Ihren neuen Plan!",
         },
+        loadingMessages: [
+            "Quellen werden überprüft...",
+            "Neue Quellen werden abgerufen...",
+            "Zusammenfassung läuft...",
+            "Daten werden analysiert...",
+            "Informationen werden abgeglichen...",
+            "Vermögenswerte werden bewertet...",
+            "Prognosen werden berechnet...",
+            "Märkte werden konsultiert...",
+        ],
     },
     it: {
         registrationPending: {
@@ -1288,6 +1328,16 @@ export const translations = {
             newTitle: "Benvenuto!",
             newMessage: "Il tuo abbonamento è ora attivo. Goditi il tuo nuovo piano!",
         },
+        loadingMessages: [
+            "Verifica delle fonti...",
+            "Recupero di nuove fonti...",
+            "Riepilogo in corso...",
+            "Analisi dei dati...",
+            "Incrocio delle informazioni...",
+            "Valutazione degli asset...",
+            "Calcolo delle proiezioni...",
+            "Consultazione dei mercati...",
+        ],
     },
     pt: {
         registrationPending: {
@@ -1541,6 +1591,16 @@ export const translations = {
             newTitle: "Bem-vindo!",
             newMessage: "Sua assinatura está agora ativa. Aproveite o seu novo plano!",
         },
+        loadingMessages: [
+            "Verificando as fontes...",
+            "Obtendo novas fontes...",
+            "Resumindo...",
+            "Analisando dados...",
+            "Cruzando informações...",
+            "Avaliando ativos...",
+            "Calculando projeções...",
+            "Consultando mercados...",
+        ],
     },
     nl: {
         registrationPending: {
@@ -1794,6 +1854,16 @@ export const translations = {
             newTitle: "Welkom!",
             newMessage: "Uw abonnement is nu actief. Geniet van uw nieuwe abonnement!",
         },
+        loadingMessages: [
+            "Bronnen verifiëren...",
+            "Nieuwe bronnen ophalen...",
+            "Samenvatten...",
+            "Gegevens analyseren...",
+            "Informatie kruisverwijzen...",
+            "Activa evalueren...",
+            "Projecties berekenen...",
+            "Markten raadplegen...",
+        ],
     },
     ja: {
         registrationPending: {
@@ -2047,6 +2117,16 @@ export const translations = {
             newTitle: "ようこそ！",
             newMessage: "ご登録のプランが有効になりました。新しいプランをお楽しみください！",
         },
+        loadingMessages: [
+            "ソースを確認中...",
+            "新しいソースを取得中...",
+            "要約中...",
+            "データを分析中...",
+            "情報を照合中...",
+            "資産を評価中...",
+            "予測を計算中...",
+            "市場を参照中...",
+        ],
     },
     zh: {
         registrationPending: {
@@ -2300,6 +2380,16 @@ export const translations = {
             newTitle: "欢迎！",
             newMessage: "您的订阅现已激活。祝您享受新套餐！",
         },
+        loadingMessages: [
+            "正在验证来源...",
+            "正在获取新来源...",
+            "正在总结...",
+            "正在分析数据...",
+            "正在交叉核对信息...",
+            "正在评估资产...",
+            "正在计算预测...",
+            "正在查询市场...",
+        ],
     },
 } as const;
 

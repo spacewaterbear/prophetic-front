@@ -112,12 +112,7 @@ export function ConversationView({
               <div className="flex gap-2 sm:gap-4 items-start justify-start">
                 <AIAvatar />
                 <div className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-3 sm:px-4 py-4 sm:py-5 rounded-2xl overflow-hidden bg-[rgb(249,248,244)] dark:bg-[rgb(1,1,0)]">
-                  <TypingIndicator />
-                  {currentStatus && (
-                    <p className="text-sm text-gray-500 dark:text-gray-400 italic mt-2">
-                      {currentStatus}
-                    </p>
-                  )}
+                  <TypingIndicator statusText={currentStatus} />
                 </div>
               </div>
             )}

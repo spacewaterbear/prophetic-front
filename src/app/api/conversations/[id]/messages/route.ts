@@ -197,9 +197,9 @@ export async function POST(
             console.error("[Prophetic API Error] PROPHETIC_API_URL environment variable is not set");
             throw new Error("Prophetic API URL is not configured");
           }
-          if (!process.env.PROPHETIC_API_TOKEN) {
-            console.error("[Prophetic API Error] PROPHETIC_API_TOKEN environment variable is not set");
-            throw new Error("Prophetic API token is not configured");
+          if (!process.env.INTERNAL_API_KEY) {
+            console.error("[Prophetic API Error] INTERNAL_API_KEY environment variable is not set");
+            throw new Error("Prophetic API key is not configured");
           }
 
           // Call Prophetic API with the selected model
@@ -219,13 +219,13 @@ export async function POST(
 
           console.log(`[Prophetic API] Request to langchain_agent/query:`, JSON.stringify(requestBody, null, 2));
           console.log(`[Prophetic API] API URL configured:`, !!process.env.PROPHETIC_API_URL);
-          console.log(`[Prophetic API] API Token configured:`, !!process.env.PROPHETIC_API_TOKEN);
+          console.log(`[Prophetic API] API Key configured:`, !!process.env.INTERNAL_API_KEY);
           console.log(`[Prophetic API] Full endpoint:`, `${process.env.PROPHETIC_API_URL}/prophetic/langchain_agent/query`);
 
           const response = await fetch(`${process.env.PROPHETIC_API_URL}/prophetic/langchain_agent/query`, {
             method: "POST",
             headers: {
-              "Authorization": `Bearer ${process.env.PROPHETIC_API_TOKEN}`,
+              "x-api-key": process.env.INTERNAL_API_KEY!,
               "Content-Type": "application/json",
               "Accept": "application/json"
             },

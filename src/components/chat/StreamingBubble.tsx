@@ -332,14 +332,9 @@ export function StreamingBubble({
             </Suspense>
           </div>
         )}
-        {currentStatus && (
-          <p className="text-sm text-gray-500 dark:text-gray-400 italic mt-2">
-            {currentStatus}
-          </p>
-        )}
         {isLoading && (
           <div className={hasContent ? "mt-2" : ""}>
-            <TypingIndicator />
+            <TypingIndicator statusText={currentStatus} />
           </div>
         )}
       </div>

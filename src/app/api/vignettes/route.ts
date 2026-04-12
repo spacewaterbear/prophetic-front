@@ -35,10 +35,10 @@ export async function GET(request: NextRequest) {
             );
         }
 
-        if (!process.env.PROPHETIC_API_TOKEN) {
-            console.error("[Vignettes API] PROPHETIC_API_TOKEN not configured");
+        if (!process.env.INTERNAL_API_KEY) {
+            console.error("[Vignettes API] INTERNAL_API_KEY not configured");
             return NextResponse.json(
-                { error: "API token not configured" },
+                { error: "API key not configured" },
                 { status: 500 }
             );
         }
@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
         const response = await fetch(apiUrl, {
             method: "GET",
             headers: {
-                "Authorization": `Bearer ${process.env.PROPHETIC_API_TOKEN}`,
+                "x-api-key": process.env.INTERNAL_API_KEY,
                 "Content-Type": "application/json",
             },
         });
