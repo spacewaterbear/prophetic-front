@@ -212,6 +212,34 @@ export async function GET(
             return msg;
           }
         }
+
+        // If a message has whisky_search_data in metadata, include it in the message object
+        if (metadata.whisky_search_data) {
+          try {
+            console.log("[GET Conversation] Processing whisky_search_data for message:", msg.id);
+            return {
+              ...msg,
+              whisky_search_data: metadata.whisky_search_data
+            };
+          } catch (error) {
+            console.error("[GET Conversation] Error processing whisky_search_data for message:", msg.id, error);
+            return msg;
+          }
+        }
+
+        // If a message has wine_search_data in metadata, include it in the message object
+        if (metadata.wine_search_data) {
+          try {
+            console.log("[GET Conversation] Processing wine_search_data for message:", msg.id);
+            return {
+              ...msg,
+              wine_search_data: metadata.wine_search_data
+            };
+          } catch (error) {
+            console.error("[GET Conversation] Error processing wine_search_data for message:", msg.id, error);
+            return msg;
+          }
+        }
       }
       return msg;
     });

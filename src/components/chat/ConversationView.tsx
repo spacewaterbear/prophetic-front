@@ -12,6 +12,8 @@ import { ClothesSearchData } from "@/components/ClothesSearchCard";
 import { JewelrySearchData } from "@/components/JewelryCard";
 import { CarsSearchData } from "@/components/CarsCard";
 import { WatchesSearchData } from "@/components/WatchesCard";
+import { WhiskySearchData } from "@/components/WhiskyCard";
+import { WineSearchData } from "@/components/WineCard";
 import { AgentType, UserStatus } from "@/types/agents";
 import { useI18n } from "@/contexts/i18n-context";
 
@@ -26,6 +28,8 @@ interface ConversationViewProps {
   streamingJewelrySearchData: JewelrySearchData | null;
   streamingCarsSearchData: CarsSearchData | null;
   streamingWatchesSearchData: WatchesSearchData | null;
+  streamingWhiskySearchData: WhiskySearchData | null;
+  streamingWineSearchData: WineSearchData | null;
   streamingVignetteCategory: string | null;
   currentStatus: string;
   showStreamingIndicator: boolean;
@@ -62,6 +66,8 @@ export function ConversationView({
   streamingJewelrySearchData,
   streamingCarsSearchData,
   streamingWatchesSearchData,
+  streamingWhiskySearchData,
+  streamingWineSearchData,
   streamingVignetteCategory,
   currentStatus,
   showStreamingIndicator,
@@ -108,7 +114,9 @@ export function ConversationView({
             !streamingClothesSearchData &&
             !streamingJewelrySearchData &&
             !streamingCarsSearchData &&
-            !streamingWatchesSearchData && (
+            !streamingWatchesSearchData &&
+            !streamingWhiskySearchData &&
+            !streamingWineSearchData && (
               <div className="flex gap-2 sm:gap-4 items-start justify-start">
                 <AIAvatar />
                 <div className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-3 sm:px-4 py-4 sm:py-5 rounded-2xl overflow-hidden bg-[rgb(249,248,244)] dark:bg-[rgb(1,1,0)]">
@@ -127,6 +135,8 @@ export function ConversationView({
             streamingJewelrySearchData={streamingJewelrySearchData}
             streamingCarsSearchData={streamingCarsSearchData}
             streamingWatchesSearchData={streamingWatchesSearchData}
+            streamingWhiskySearchData={streamingWhiskySearchData}
+            streamingWineSearchData={streamingWineSearchData}
             streamingVignetteCategory={streamingVignetteCategory}
             showStreamingIndicator={showStreamingIndicator}
             isLoading={isLoading}

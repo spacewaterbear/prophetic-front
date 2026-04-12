@@ -268,6 +268,10 @@ export async function POST(
           let carsSearchData: any = null; // Capture cars_data separately
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           let watchesSearchData: any = null; // Capture watches_data separately
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          let whiskySearchData: any = null; // Capture whisky_data separately
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          let wineSearchData: any = null; // Capture wine_data separately
 
           // Read and stream the response
           while (true) {
@@ -443,6 +447,30 @@ export async function POST(
                   continue;
                 }
 
+                // Handle whisky_data messages
+                if (parsed.type && parsed.type === "whisky_data") {
+                  console.log("[Prophetic API] Received whisky_data");
+                  whiskySearchData = parsed;
+                  const whiskyChunk = `data: ${JSON.stringify({
+                    type: "whisky_data",
+                    data: parsed.data
+                  })}\n\n`;
+                  controller.enqueue(encoder.encode(whiskyChunk));
+                  continue;
+                }
+
+                // Handle wine_data messages
+                if (parsed.type && parsed.type === "wine_data") {
+                  console.log("[Prophetic API] Received wine_data");
+                  wineSearchData = parsed;
+                  const wineChunk = `data: ${JSON.stringify({
+                    type: "wine_data",
+                    data: parsed.data
+                  })}\n\n`;
+                  controller.enqueue(encoder.encode(wineChunk));
+                  continue;
+                }
+
                 // Handle status messages
                 if (parsed.type && parsed.type === "status") {
                   console.log("[Prophetic API] Received status:", parsed.message);
@@ -582,6 +610,30 @@ export async function POST(
                         continue;
                       }
 
+                      // Handle whisky_data nested in content
+                      if (nestedData.type === "whisky_data") {
+                        console.log("[Prophetic API] Received whisky_data (from nested content)");
+                        whiskySearchData = nestedData;
+                        const nestedWhiskyChunk = `data: ${JSON.stringify({
+                          type: "whisky_data",
+                          data: nestedData.data
+                        })}\n\n`;
+                        controller.enqueue(encoder.encode(nestedWhiskyChunk));
+                        continue;
+                      }
+
+                      // Handle wine_data nested in content
+                      if (nestedData.type === "wine_data") {
+                        console.log("[Prophetic API] Received wine_data (from nested content)");
+                        wineSearchData = nestedData;
+                        const nestedWineChunk = `data: ${JSON.stringify({
+                          type: "wine_data",
+                          data: nestedData.data
+                        })}\n\n`;
+                        controller.enqueue(encoder.encode(nestedWineChunk));
+                        continue;
+                      }
+
                       // Handle status nested in content
                       if (nestedData.type === "status") {
                         console.log("[Prophetic API] Received status (from nested content)");
@@ -675,6 +727,26 @@ export async function POST(
                           data: standaloneData.data
                         })}\n\n`;
                         controller.enqueue(encoder.encode(standaloneWatchesChunk));
+                        continue;
+                      }
+                      if (standaloneData.type === "whisky_data") {
+                        console.log("[Prophetic API] Received whisky_data (from standalone JSON in content)");
+                        whiskySearchData = standaloneData;
+                        const standaloneWhiskyChunk = `data: ${JSON.stringify({
+                          type: "whisky_data",
+                          data: standaloneData.data
+                        })}\n\n`;
+                        controller.enqueue(encoder.encode(standaloneWhiskyChunk));
+                        continue;
+                      }
+                      if (standaloneData.type === "wine_data") {
+                        console.log("[Prophetic API] Received wine_data (from standalone JSON in content)");
+                        wineSearchData = standaloneData;
+                        const standaloneWineChunk = `data: ${JSON.stringify({
+                          type: "wine_data",
+                          data: standaloneData.data
+                        })}\n\n`;
+                        controller.enqueue(encoder.encode(standaloneWineChunk));
                         continue;
                       }
                       if (standaloneData.type === "artist_info") {
@@ -778,6 +850,14 @@ export async function POST(
                 } else if (parsed.type === "watches_data" && !watchesSearchData) {
                   watchesSearchData = parsed;
                   const chunk = `data: ${JSON.stringify({ type: "watches_data", data: parsed.data })}\n\n`;
+                  controller.enqueue(encoder.encode(chunk));
+                } else if (parsed.type === "whisky_data" && !whiskySearchData) {
+                  whiskySearchData = parsed;
+                  const chunk = `data: ${JSON.stringify({ type: "whisky_data", data: parsed.data })}\n\n`;
+                  controller.enqueue(encoder.encode(chunk));
+                } else if (parsed.type === "wine_data" && !wineSearchData) {
+                  wineSearchData = parsed;
+                  const chunk = `data: ${JSON.stringify({ type: "wine_data", data: parsed.data })}\n\n`;
                   controller.enqueue(encoder.encode(chunk));
                 } else if (parsed.content) {
                   fullResponse += parsed.content;
@@ -952,6 +1032,62 @@ export async function POST(
                 type: parsedWatchesData.type,
                 totalListings: parsedWatchesData.total_listings,
                 listingsCount: parsedWatchesData.listings?.length,
+              });
+            }
+          }
+
+          // If we captured whisky search data, store it in metadata
+          if (whiskySearchData && whiskySearchData.type === "whisky_data") {
+            let parsedWhiskyData = whiskySearchData.data;
+            if (typeof parsedWhiskyData === 'string') {
+              try {
+                parsedWhiskyData = JSON.parse(parsedWhiskyData);
+              } catch (e) {
+                console.error('[Message Storage] Failed to parse whisky_search_data string:', e);
+              }
+            }
+            if (parsedWhiskyData && typeof parsedWhiskyData === 'object' && !Array.isArray(parsedWhiskyData)) {
+              if (messageMetadata) {
+                messageMetadata.whisky_search_data = parsedWhiskyData;
+              } else {
+                messageMetadata = {
+                  type: "whisky_data",
+                  structured_data: whiskySearchData,
+                  whisky_search_data: parsedWhiskyData
+                };
+              }
+              console.log('[Message Storage] Storing whisky_search_data:', {
+                type: parsedWhiskyData.type,
+                totalListings: parsedWhiskyData.total_listings,
+                listingsCount: parsedWhiskyData.listings?.length,
+              });
+            }
+          }
+
+          // If we captured wine search data, store it in metadata
+          if (wineSearchData && wineSearchData.type === "wine_data") {
+            let parsedWineData = wineSearchData.data;
+            if (typeof parsedWineData === 'string') {
+              try {
+                parsedWineData = JSON.parse(parsedWineData);
+              } catch (e) {
+                console.error('[Message Storage] Failed to parse wine_search_data string:', e);
+              }
+            }
+            if (parsedWineData && typeof parsedWineData === 'object' && !Array.isArray(parsedWineData)) {
+              if (messageMetadata) {
+                messageMetadata.wine_search_data = parsedWineData;
+              } else {
+                messageMetadata = {
+                  type: "wine_data",
+                  structured_data: wineSearchData,
+                  wine_search_data: parsedWineData
+                };
+              }
+              console.log('[Message Storage] Storing wine_search_data:', {
+                type: parsedWineData.type,
+                totalListings: parsedWineData.total_listings,
+                listingsCount: parsedWineData.listings?.length,
               });
             }
           }

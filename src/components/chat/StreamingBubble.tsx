@@ -15,6 +15,7 @@ import { JewelrySearchData } from "@/components/JewelryCard";
 import { CarsSearchData } from "@/components/CarsCard";
 import { WatchesSearchData } from "@/components/WatchesCard";
 import { WhiskySearchData } from "@/components/WhiskyCard";
+import { WineSearchData } from "@/components/WineCard";
 
 const Markdown = lazy(() =>
   import("@/components/Markdown").then((mod) => ({ default: mod.Markdown })),
@@ -59,6 +60,11 @@ const WhiskyCard = lazy(() =>
     default: mod.WhiskyCard,
   })),
 );
+const WineCard = lazy(() =>
+  import("@/components/WineCard").then((mod) => ({
+    default: mod.WineCard,
+  })),
+);
 
 interface StreamingBubbleProps {
   streamingMessage: string;
@@ -70,6 +76,7 @@ interface StreamingBubbleProps {
   streamingCarsSearchData: CarsSearchData | null;
   streamingWatchesSearchData: WatchesSearchData | null;
   streamingWhiskySearchData: WhiskySearchData | null;
+  streamingWineSearchData: WineSearchData | null;
   streamingVignetteCategory: string | null;
   showStreamingIndicator: boolean;
   isLoading: boolean;
@@ -145,6 +152,7 @@ export function StreamingBubble({
   streamingCarsSearchData,
   streamingWatchesSearchData,
   streamingWhiskySearchData,
+  streamingWineSearchData,
   streamingVignetteCategory,
   showStreamingIndicator,
   isLoading,
@@ -165,7 +173,8 @@ export function StreamingBubble({
     streamingJewelrySearchData ||
     streamingCarsSearchData ||
     streamingWatchesSearchData ||
-    streamingWhiskySearchData;
+    streamingWhiskySearchData ||
+    streamingWineSearchData;
 
   if (!hasContent) return null;
 
@@ -338,6 +347,59 @@ export function StreamingBubble({
               }
             >
               <WatchesCard data={streamingWatchesSearchData} />
+            </Suspense>
+          </div>
+        )}
+        {streamingWhiskySearchData && (
+          <div
+            className={
+              displayedMessage ||
+              streamingMarketplaceData ||
+              streamingRealEstateData ||
+              streamingVignetteData ||
+              streamingClothesSearchData ||
+              streamingJewelrySearchData ||
+              streamingCarsSearchData ||
+              streamingWatchesSearchData
+                ? "mt-4"
+                : ""
+            }
+          >
+            <Suspense
+              fallback={
+                <div className="text-base text-gray-400">
+                  Loading whisky...
+                </div>
+              }
+            >
+              <WhiskyCard data={streamingWhiskySearchData} />
+            </Suspense>
+          </div>
+        )}
+        {streamingWineSearchData && (
+          <div
+            className={
+              displayedMessage ||
+              streamingMarketplaceData ||
+              streamingRealEstateData ||
+              streamingVignetteData ||
+              streamingClothesSearchData ||
+              streamingJewelrySearchData ||
+              streamingCarsSearchData ||
+              streamingWatchesSearchData ||
+              streamingWhiskySearchData
+                ? "mt-4"
+                : ""
+            }
+          >
+            <Suspense
+              fallback={
+                <div className="text-base text-gray-400">
+                  Loading wine...
+                </div>
+              }
+            >
+              <WineCard data={streamingWineSearchData} />
             </Suspense>
           </div>
         )}

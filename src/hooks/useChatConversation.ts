@@ -13,6 +13,7 @@ import { JewelrySearchData } from "@/components/JewelryCard";
 import { CarsSearchData } from "@/components/CarsCard";
 import { WatchesSearchData } from "@/components/WatchesCard";
 import { WhiskySearchData } from "@/components/WhiskyCard";
+import { WineSearchData } from "@/components/WineCard";
 import { STORAGE_KEYS } from "@/lib/constants/storage-keys";
 
 export type { Message };
@@ -60,6 +61,8 @@ export function useChatConversation({
     useState<WatchesSearchData | null>(null);
   const [streamingWhiskySearchData, setStreamingWhiskySearchData] =
     useState<WhiskySearchData | null>(null);
+  const [streamingWineSearchData, setStreamingWineSearchData] =
+    useState<WineSearchData | null>(null);
   const [streamingVignetteCategory, setStreamingVignetteCategory] = useState<
     string | null
   >(null);
@@ -191,6 +194,7 @@ export function useChatConversation({
           let streamingCarsData: CarsSearchData | null = null;
           let streamingWatchesData: WatchesSearchData | null = null;
           let streamingWhiskyData: WhiskySearchData | null = null;
+          let streamingWineData: WineSearchData | null = null;
           let streamingMktData: MarketplaceData | null = null;
           let streamingREData: import("@/types/chat").RealEstateData | null = null;
 
@@ -245,6 +249,11 @@ export function useChatConversation({
                     streamingWhiskyData = parsed.data as WhiskySearchData;
                     setStreamingWhiskySearchData(streamingWhiskyData);
                   }
+                } else if (parsed.type === "wine_data") {
+                  if ((parsed.data as WineSearchData)?.listings) {
+                    streamingWineData = parsed.data as WineSearchData;
+                    setStreamingWineSearchData(streamingWineData);
+                  }
                 } else if (parsed.type === "marketplace_data") {
                   streamingMktData = parsed.data as MarketplaceData;
                   setStreamingMarketplaceData(streamingMktData);
@@ -274,6 +283,8 @@ export function useChatConversation({
                     ...(streamingClothesData ? { clothes_search_data: streamingClothesData } : {}),
                     ...(streamingCarsData ? { cars_search_data: streamingCarsData } : {}),
                     ...(streamingWatchesData ? { watches_search_data: streamingWatchesData } : {}),
+                    ...(streamingWhiskyData ? { whisky_search_data: streamingWhiskyData } : {}),
+                    ...(streamingWineData ? { wine_search_data: streamingWineData } : {}),
                     ...(streamingMktData ? { marketplace_data: streamingMktData } : {}),
                     ...(streamingREData ? { real_estate_data: streamingREData } : {}),
                   };
@@ -319,6 +330,7 @@ export function useChatConversation({
                   setStreamingCarsSearchData(null);
                   setStreamingWatchesSearchData(null);
                   setStreamingWhiskySearchData(null);
+                  setStreamingWineSearchData(null);
                 }
               } catch (e) {
                 console.error("[Markdown Stream] Parse error:", e);
@@ -413,6 +425,7 @@ export function useChatConversation({
     setStreamingCarsSearchData(null);
     setStreamingWatchesSearchData(null);
     setStreamingWhiskySearchData(null);
+    setStreamingWineSearchData(null);
     setCurrentStatus("");
   }, []);
 
@@ -523,6 +536,12 @@ export function useChatConversation({
             if ((data.data as WhiskySearchData)?.listings) {
               setShouldScrollToTop(false);
               setStreamingWhiskySearchData(data.data as WhiskySearchData);
+            }
+          },
+          wine_data: (data) => {
+            if ((data.data as WineSearchData)?.listings) {
+              setShouldScrollToTop(false);
+              setStreamingWineSearchData(data.data as WineSearchData);
             }
           },
           done: async () => {
@@ -1053,6 +1072,7 @@ export function useChatConversation({
     streamingCarsSearchData,
     streamingWatchesSearchData,
     streamingWhiskySearchData,
+    streamingWineSearchData,
     streamingVignetteCategory,
     currentStatus,
     showStreamingIndicator,

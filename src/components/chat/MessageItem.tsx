@@ -62,6 +62,16 @@ const WatchesCard = lazy(() =>
     default: mod.WatchesCard,
   })),
 );
+const WhiskyCard = lazy(() =>
+  import("@/components/WhiskyCard").then((mod) => ({
+    default: mod.WhiskyCard,
+  })),
+);
+const WineCard = lazy(() =>
+  import("@/components/WineCard").then((mod) => ({
+    default: mod.WineCard,
+  })),
+);
 
 interface MessageItemProps {
   message: Message;
@@ -305,6 +315,20 @@ export const MessageItem = memo(
                   <div className={message.content ? "mt-4" : ""}>
                     <SuspenseCard fallbackText="Loading watches...">
                       <WatchesCard data={message.watches_search_data} />
+                    </SuspenseCard>
+                  </div>
+                )}
+                {message.whisky_search_data && (
+                  <div className={message.content ? "mt-4" : ""}>
+                    <SuspenseCard fallbackText="Loading whisky...">
+                      <WhiskyCard data={message.whisky_search_data} />
+                    </SuspenseCard>
+                  </div>
+                )}
+                {message.wine_search_data && (
+                  <div className={message.content ? "mt-4" : ""}>
+                    <SuspenseCard fallbackText="Loading wine...">
+                      <WineCard data={message.wine_search_data} />
                     </SuspenseCard>
                   </div>
                 )}
