@@ -26,7 +26,7 @@ export function TypingIndicator({ statusText }: TypingIndicatorProps) {
     };
   }, [statusText, messages.length]);
 
-  const displayText = statusText ?? messages[index];
+  const displayText = statusText || messages[index];
 
   return (
     <span className="inline-flex gap-2 items-center" role="status" aria-label="Loading response">

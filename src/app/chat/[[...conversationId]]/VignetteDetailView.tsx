@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Check, Copy, FileDown } from "lucide-react";
 import { toast } from "sonner";
 import { AIAvatar } from "@/components/chat/AIAvatar";
+import { TypingIndicator } from "@/components/TypingIndicator";
 import { Button } from "@/components/ui/button";
 import { ChatInput } from "@/components/chat-input";
 import { AgentType, UserStatus } from "@/types/agents";
@@ -651,6 +652,11 @@ export function VignetteDetailView({
                   {realEstateData && (
                     <div className="mt-4">
                       <RealEstateCard data={realEstateData} />
+                    </div>
+                  )}
+                  {isLoading && !finalContent && (
+                    <div className="mt-2">
+                      <TypingIndicator statusText={statusMessage} />
                     </div>
                   )}
                   {displayContent && (
