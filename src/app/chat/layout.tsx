@@ -263,7 +263,7 @@ function ChatLayoutInner({
 
       {/* Sidebar */}
       <aside
-        className={`${sidebarOpen ? "w-64" : "w-0"} transition-all duration-300 bg-[#f0eee6] dark:bg-[#1e1f20] text-gray-900 dark:text-white flex flex-col overflow-hidden fixed md:relative h-full z-50 md:z-auto`}
+        className={`${sidebarOpen ? "w-64" : "w-0"} md:w-64 transition-all duration-300 bg-[#f0eee6] dark:bg-[#1e1f20] text-gray-900 dark:text-white flex flex-col overflow-hidden fixed md:relative h-full z-50 md:z-auto`}
       >
         {/* Logo */}
         <Link href="/chat" className="h-[56px] px-4 pt-3 flex items-start gap-2">

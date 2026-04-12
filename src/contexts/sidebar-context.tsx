@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+"use client";
+
+import React, { createContext, useContext, useState, useLayoutEffect } from "react";
 
 interface SidebarContextType {
   sidebarOpen: boolean;
@@ -12,7 +14,7 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const isDesktop = window.innerWidth >= 768;
     setSidebarOpen(isDesktop);
     setIsMobile(!isDesktop);
