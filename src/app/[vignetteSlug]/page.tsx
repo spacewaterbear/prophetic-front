@@ -12,6 +12,7 @@ import { JewelryCard, type JewelrySearchData } from "@/components/JewelryCard";
 import { ClothesSearchCard, type ClothesSearchData } from "@/components/ClothesSearchCard";
 import { CarsCard, type CarsSearchData } from "@/components/CarsCard";
 import { WatchesCard, type WatchesSearchData } from "@/components/WatchesCard";
+import { WhiskyCard, type WhiskySearchData } from "@/components/WhiskyCard";
 import { MarketplaceCard } from "@/components/MarketplaceCard";
 import { RealEstateCard, type RealEstateData } from "@/components/RealEstateCard";
 import { type MarketplaceData } from "@/types/chat";
@@ -52,6 +53,7 @@ export default function VignettePage() {
   const [clothesData, setClothesData] = useState<ClothesSearchData | null>(null);
   const [carsData, setCarsData] = useState<CarsSearchData | null>(null);
   const [watchesData, setWatchesData] = useState<WatchesSearchData | null>(null);
+  const [whiskyData, setWhiskyData] = useState<WhiskySearchData | null>(null);
   const [marketplaceData, setMarketplaceData] = useState<MarketplaceData | null>(null);
   const [realEstateData, setRealEstateData] = useState<RealEstateData | null>(null);
   const [statusMessage, setStatusMessage] = useState("");
@@ -179,6 +181,10 @@ export default function VignettePage() {
               } else if (parsed.type === "watches_data") {
                 if ((parsed.data as WatchesSearchData)?.listings) {
                   setWatchesData(parsed.data as WatchesSearchData);
+                }
+              } else if (parsed.type === "whisky_data") {
+                if ((parsed.data as WhiskySearchData)?.listings) {
+                  setWhiskyData(parsed.data as WhiskySearchData);
                 }
               } else if (parsed.type === "marketplace_data") {
                 setMarketplaceData(parsed.data as MarketplaceData);
@@ -370,6 +376,11 @@ export default function VignettePage() {
                   {watchesData && (
                     <div className="mt-4">
                       <WatchesCard data={watchesData} />
+                    </div>
+                  )}
+                  {whiskyData && (
+                    <div className="mt-4">
+                      <WhiskyCard data={whiskyData} />
                     </div>
                   )}
                   {marketplaceData && (

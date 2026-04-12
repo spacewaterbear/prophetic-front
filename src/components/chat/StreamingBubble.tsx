@@ -14,6 +14,7 @@ import { ClothesSearchData } from "@/components/ClothesSearchCard";
 import { JewelrySearchData } from "@/components/JewelryCard";
 import { CarsSearchData } from "@/components/CarsCard";
 import { WatchesSearchData } from "@/components/WatchesCard";
+import { WhiskySearchData } from "@/components/WhiskyCard";
 
 const Markdown = lazy(() =>
   import("@/components/Markdown").then((mod) => ({ default: mod.Markdown })),
@@ -53,6 +54,11 @@ const WatchesCard = lazy(() =>
     default: mod.WatchesCard,
   })),
 );
+const WhiskyCard = lazy(() =>
+  import("@/components/WhiskyCard").then((mod) => ({
+    default: mod.WhiskyCard,
+  })),
+);
 
 interface StreamingBubbleProps {
   streamingMessage: string;
@@ -63,6 +69,7 @@ interface StreamingBubbleProps {
   streamingJewelrySearchData: JewelrySearchData | null;
   streamingCarsSearchData: CarsSearchData | null;
   streamingWatchesSearchData: WatchesSearchData | null;
+  streamingWhiskySearchData: WhiskySearchData | null;
   streamingVignetteCategory: string | null;
   showStreamingIndicator: boolean;
   isLoading: boolean;
@@ -137,6 +144,7 @@ export function StreamingBubble({
   streamingJewelrySearchData,
   streamingCarsSearchData,
   streamingWatchesSearchData,
+  streamingWhiskySearchData,
   streamingVignetteCategory,
   showStreamingIndicator,
   isLoading,
@@ -156,7 +164,8 @@ export function StreamingBubble({
     streamingClothesSearchData ||
     streamingJewelrySearchData ||
     streamingCarsSearchData ||
-    streamingWatchesSearchData;
+    streamingWatchesSearchData ||
+    streamingWhiskySearchData;
 
   if (!hasContent) return null;
 

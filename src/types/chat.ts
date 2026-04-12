@@ -3,6 +3,7 @@ import { ClothesSearchData } from "@/components/ClothesSearchCard";
 import { JewelrySearchData } from "@/components/JewelryCard";
 import { CarsSearchData } from "@/components/CarsCard";
 import { WatchesSearchData } from "@/components/WatchesCard";
+import { WhiskySearchData } from "@/components/WhiskyCard";
 
 export interface Artist {
   artist_name: string;
@@ -78,6 +79,7 @@ export interface Message {
   jewelry_search_data?: JewelrySearchData;
   cars_search_data?: CarsSearchData;
   watches_search_data?: WatchesSearchData;
+  whisky_search_data?: WhiskySearchData;
   vignetteCategory?: string;
 }
 

@@ -12,6 +12,7 @@ import { ClothesSearchData } from "@/components/ClothesSearchCard";
 import { JewelrySearchData } from "@/components/JewelryCard";
 import { CarsSearchData } from "@/components/CarsCard";
 import { WatchesSearchData } from "@/components/WatchesCard";
+import { WhiskySearchData } from "@/components/WhiskyCard";
 import { STORAGE_KEYS } from "@/lib/constants/storage-keys";
 
 export type { Message };
@@ -57,6 +58,8 @@ export function useChatConversation({
     useState<CarsSearchData | null>(null);
   const [streamingWatchesSearchData, setStreamingWatchesSearchData] =
     useState<WatchesSearchData | null>(null);
+  const [streamingWhiskySearchData, setStreamingWhiskySearchData] =
+    useState<WhiskySearchData | null>(null);
   const [streamingVignetteCategory, setStreamingVignetteCategory] = useState<
     string | null
   >(null);
@@ -187,6 +190,7 @@ export function useChatConversation({
           let streamingClothesData: ClothesSearchData | null = null;
           let streamingCarsData: CarsSearchData | null = null;
           let streamingWatchesData: WatchesSearchData | null = null;
+          let streamingWhiskyData: WhiskySearchData | null = null;
           let streamingMktData: MarketplaceData | null = null;
           let streamingREData: import("@/types/chat").RealEstateData | null = null;
 
@@ -235,6 +239,11 @@ export function useChatConversation({
                   if ((parsed.data as WatchesSearchData)?.listings) {
                     streamingWatchesData = parsed.data as WatchesSearchData;
                     setStreamingWatchesSearchData(streamingWatchesData);
+                  }
+                } else if (parsed.type === "whisky_data") {
+                  if ((parsed.data as WhiskySearchData)?.listings) {
+                    streamingWhiskyData = parsed.data as WhiskySearchData;
+                    setStreamingWhiskySearchData(streamingWhiskyData);
                   }
                 } else if (parsed.type === "marketplace_data") {
                   streamingMktData = parsed.data as MarketplaceData;
@@ -309,6 +318,7 @@ export function useChatConversation({
                   setStreamingJewelrySearchData(null);
                   setStreamingCarsSearchData(null);
                   setStreamingWatchesSearchData(null);
+                  setStreamingWhiskySearchData(null);
                 }
               } catch (e) {
                 console.error("[Markdown Stream] Parse error:", e);
@@ -402,6 +412,7 @@ export function useChatConversation({
     setStreamingJewelrySearchData(null);
     setStreamingCarsSearchData(null);
     setStreamingWatchesSearchData(null);
+    setStreamingWhiskySearchData(null);
     setCurrentStatus("");
   }, []);
 
@@ -506,6 +517,12 @@ export function useChatConversation({
             if ((data.data as WatchesSearchData)?.listings) {
               setShouldScrollToTop(false);
               setStreamingWatchesSearchData(data.data as WatchesSearchData);
+            }
+          },
+          whisky_data: (data) => {
+            if ((data.data as WhiskySearchData)?.listings) {
+              setShouldScrollToTop(false);
+              setStreamingWhiskySearchData(data.data as WhiskySearchData);
             }
           },
           done: async () => {
@@ -849,6 +866,7 @@ export function useChatConversation({
     streamingJewelrySearchData,
     streamingCarsSearchData,
     streamingWatchesSearchData,
+    streamingWhiskySearchData,
     isLoading,
     shouldAutoScroll,
     shouldScrollToTop,
@@ -1034,6 +1052,7 @@ export function useChatConversation({
     streamingJewelrySearchData,
     streamingCarsSearchData,
     streamingWatchesSearchData,
+    streamingWhiskySearchData,
     streamingVignetteCategory,
     currentStatus,
     showStreamingIndicator,
