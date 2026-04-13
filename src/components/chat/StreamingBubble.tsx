@@ -16,6 +16,7 @@ import { CarsSearchData } from "@/components/CarsCard";
 import { WatchesSearchData } from "@/components/WatchesCard";
 import { WhiskySearchData } from "@/components/WhiskyCard";
 import { WineSearchData } from "@/components/WineCard";
+import { CardsSearchData } from "@/components/SportsCardsCard";
 
 const Markdown = lazy(() =>
   import("@/components/Markdown").then((mod) => ({ default: mod.Markdown })),
@@ -65,6 +66,11 @@ const WineCard = lazy(() =>
     default: mod.WineCard,
   })),
 );
+const SportsCardsCard = lazy(() =>
+  import("@/components/SportsCardsCard").then((mod) => ({
+    default: mod.SportsCardsCard,
+  })),
+);
 
 interface StreamingBubbleProps {
   streamingMessage: string;
@@ -77,6 +83,7 @@ interface StreamingBubbleProps {
   streamingWatchesSearchData: WatchesSearchData | null;
   streamingWhiskySearchData: WhiskySearchData | null;
   streamingWineSearchData: WineSearchData | null;
+  streamingCardsSearchData: CardsSearchData | null;
   streamingVignetteCategory: string | null;
   showStreamingIndicator: boolean;
   isLoading: boolean;
@@ -153,6 +160,7 @@ export function StreamingBubble({
   streamingWatchesSearchData,
   streamingWhiskySearchData,
   streamingWineSearchData,
+  streamingCardsSearchData,
   streamingVignetteCategory,
   showStreamingIndicator,
   isLoading,
@@ -174,7 +182,8 @@ export function StreamingBubble({
     streamingCarsSearchData ||
     streamingWatchesSearchData ||
     streamingWhiskySearchData ||
-    streamingWineSearchData;
+    streamingWineSearchData ||
+    streamingCardsSearchData;
 
   if (!hasContent) return null;
 
@@ -400,6 +409,34 @@ export function StreamingBubble({
               }
             >
               <WineCard data={streamingWineSearchData} />
+            </Suspense>
+          </div>
+        )}
+        {streamingCardsSearchData && (
+          <div
+            className={
+              displayedMessage ||
+              streamingMarketplaceData ||
+              streamingRealEstateData ||
+              streamingVignetteData ||
+              streamingClothesSearchData ||
+              streamingJewelrySearchData ||
+              streamingCarsSearchData ||
+              streamingWatchesSearchData ||
+              streamingWhiskySearchData ||
+              streamingWineSearchData
+                ? "mt-4"
+                : ""
+            }
+          >
+            <Suspense
+              fallback={
+                <div className="text-base text-gray-400">
+                  Loading sports cards...
+                </div>
+              }
+            >
+              <SportsCardsCard data={streamingCardsSearchData} />
             </Suspense>
           </div>
         )}

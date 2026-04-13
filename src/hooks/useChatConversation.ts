@@ -14,6 +14,7 @@ import { CarsSearchData } from "@/components/CarsCard";
 import { WatchesSearchData } from "@/components/WatchesCard";
 import { WhiskySearchData } from "@/components/WhiskyCard";
 import { WineSearchData } from "@/components/WineCard";
+import { CardsSearchData } from "@/components/SportsCardsCard";
 import { STORAGE_KEYS } from "@/lib/constants/storage-keys";
 
 export type { Message };
@@ -63,6 +64,8 @@ export function useChatConversation({
     useState<WhiskySearchData | null>(null);
   const [streamingWineSearchData, setStreamingWineSearchData] =
     useState<WineSearchData | null>(null);
+  const [streamingCardsSearchData, setStreamingCardsSearchData] =
+    useState<CardsSearchData | null>(null);
   const [streamingVignetteCategory, setStreamingVignetteCategory] = useState<
     string | null
   >(null);
@@ -195,6 +198,7 @@ export function useChatConversation({
           let streamingWatchesData: WatchesSearchData | null = null;
           let streamingWhiskyData: WhiskySearchData | null = null;
           let streamingWineData: WineSearchData | null = null;
+          let streamingCardsData: CardsSearchData | null = null;
           let streamingMktData: MarketplaceData | null = null;
           let streamingREData: import("@/types/chat").RealEstateData | null = null;
 
@@ -254,6 +258,11 @@ export function useChatConversation({
                     streamingWineData = parsed.data as WineSearchData;
                     setStreamingWineSearchData(streamingWineData);
                   }
+                } else if (parsed.type === "cards_data") {
+                  if ((parsed.data as CardsSearchData)?.listings) {
+                    streamingCardsData = parsed.data as CardsSearchData;
+                    setStreamingCardsSearchData(streamingCardsData);
+                  }
                 } else if (parsed.type === "marketplace_data") {
                   streamingMktData = parsed.data as MarketplaceData;
                   setStreamingMarketplaceData(streamingMktData);
@@ -285,6 +294,7 @@ export function useChatConversation({
                     ...(streamingWatchesData ? { watches_search_data: streamingWatchesData } : {}),
                     ...(streamingWhiskyData ? { whisky_search_data: streamingWhiskyData } : {}),
                     ...(streamingWineData ? { wine_search_data: streamingWineData } : {}),
+                    ...(streamingCardsData ? { cards_search_data: streamingCardsData } : {}),
                     ...(streamingMktData ? { marketplace_data: streamingMktData } : {}),
                     ...(streamingREData ? { real_estate_data: streamingREData } : {}),
                   };
@@ -331,6 +341,7 @@ export function useChatConversation({
                   setStreamingWatchesSearchData(null);
                   setStreamingWhiskySearchData(null);
                   setStreamingWineSearchData(null);
+                  setStreamingCardsSearchData(null);
                 }
               } catch (e) {
                 console.error("[Markdown Stream] Parse error:", e);
@@ -426,6 +437,7 @@ export function useChatConversation({
     setStreamingWatchesSearchData(null);
     setStreamingWhiskySearchData(null);
     setStreamingWineSearchData(null);
+    setStreamingCardsSearchData(null);
     setCurrentStatus("");
   }, []);
 
@@ -542,6 +554,12 @@ export function useChatConversation({
             if ((data.data as WineSearchData)?.listings) {
               setShouldScrollToTop(false);
               setStreamingWineSearchData(data.data as WineSearchData);
+            }
+          },
+          cards_data: (data) => {
+            if ((data.data as CardsSearchData)?.listings) {
+              setShouldScrollToTop(false);
+              setStreamingCardsSearchData(data.data as CardsSearchData);
             }
           },
           done: async () => {
@@ -886,6 +904,7 @@ export function useChatConversation({
     streamingCarsSearchData,
     streamingWatchesSearchData,
     streamingWhiskySearchData,
+    streamingCardsSearchData,
     isLoading,
     shouldAutoScroll,
     shouldScrollToTop,
@@ -1073,6 +1092,7 @@ export function useChatConversation({
     streamingWatchesSearchData,
     streamingWhiskySearchData,
     streamingWineSearchData,
+    streamingCardsSearchData,
     streamingVignetteCategory,
     currentStatus,
     showStreamingIndicator,

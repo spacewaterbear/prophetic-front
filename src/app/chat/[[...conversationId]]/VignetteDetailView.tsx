@@ -24,6 +24,7 @@ import { CarsCard, type CarsSearchData } from "@/components/CarsCard";
 import { WatchesCard, type WatchesSearchData } from "@/components/WatchesCard";
 import { WhiskyCard, type WhiskySearchData } from "@/components/WhiskyCard";
 import { WineCard, type WineSearchData } from "@/components/WineCard";
+import { SportsCardsCard, type CardsSearchData } from "@/components/SportsCardsCard";
 import { MarketplaceCard } from "@/components/MarketplaceCard";
 import { RealEstateCard, type RealEstateData } from "@/components/RealEstateCard";
 import { type MarketplaceData } from "@/types/chat";
@@ -73,6 +74,7 @@ export function VignetteDetailView({
   const [watchesData, setWatchesData] = useState<WatchesSearchData | null>(null);
   const [whiskyData, setWhiskyData] = useState<WhiskySearchData | null>(null);
   const [wineData, setWineData] = useState<WineSearchData | null>(null);
+  const [cardsData, setCardsData] = useState<CardsSearchData | null>(null);
   const [marketplaceData, setMarketplaceData] = useState<MarketplaceData | null>(null);
   const [realEstateData, setRealEstateData] = useState<RealEstateData | null>(null);
   const [statusMessage, setStatusMessage] = useState("");
@@ -199,6 +201,10 @@ export function VignetteDetailView({
               } else if (parsed.type === "wine_data") {
                 if ((parsed.data as WineSearchData)?.listings) {
                   setWineData(parsed.data as WineSearchData);
+                }
+              } else if (parsed.type === "cards_data") {
+                if ((parsed.data as CardsSearchData)?.listings) {
+                  setCardsData(parsed.data as CardsSearchData);
                 }
               } else if (parsed.type === "marketplace_data") {
                 setMarketplaceData(parsed.data as MarketplaceData);
@@ -664,6 +670,11 @@ export function VignetteDetailView({
                   {wineData && (
                     <div className="mt-4">
                       <WineCard data={wineData} />
+                    </div>
+                  )}
+                  {cardsData && (
+                    <div className="mt-4">
+                      <SportsCardsCard data={cardsData} />
                     </div>
                   )}
                   {marketplaceData && (
