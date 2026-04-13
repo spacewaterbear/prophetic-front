@@ -8,7 +8,7 @@ import { useI18n } from "@/contexts/i18n-context";
 export interface RealEstateProperty {
     title: string;
     price: string;
-    price_amount: number;
+    price_amount: number | null;
     price_currency: string;
     url: string;
     image_url: string;
@@ -41,7 +41,8 @@ interface RealEstateCardProps {
 /**
  * Format price to display in K (thousands) or M (millions)
  */
-const formatPrice = (amount: number): string => {
+const formatPrice = (amount: number | null | undefined): string => {
+    if (amount == null) return "N/A";
     if (amount >= 1000000) {
         const millions = amount / 1000000;
         const formatted = millions % 1 === 0 ? millions.toFixed(0) : millions.toFixed(1);
@@ -80,7 +81,9 @@ const PropertyCard = memo(({ property, location }: { property: RealEstatePropert
                 <div className="absolute bottom-3 right-3">
                     <div className="bg-white rounded-full px-3 py-1.5 shadow-md">
                         <span className="text-sm font-semibold text-gray-900">
-                            {formatPrice(property.price_amount)}
+                            {property.price_amount != null
+                                ? formatPrice(property.price_amount)
+                                : property.price}
                         </span>
                     </div>
                 </div>
