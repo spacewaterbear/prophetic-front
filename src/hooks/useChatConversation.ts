@@ -269,8 +269,6 @@ export function useChatConversation({
                 } else if (parsed.type === "real_estate_data") {
                   streamingREData = parsed.data as import("@/types/chat").RealEstateData;
                   setStreamingRealEstateData(streamingREData);
-                } else if (parsed.type === "status") {
-                  setCurrentStatus(parsed.message || "");
                 } else if (parsed.type === "questions_chunk") {
                   questionsContent += parsed.content || "";
                   setStreamingMessage(
@@ -572,8 +570,7 @@ export function useChatConversation({
               resetStreamingState();
             }
           },
-          status: (data) => {
-            setCurrentStatus(data.message as string);
+          status: (_data) => {
             setLastStreamingActivity(Date.now());
           },
         };
