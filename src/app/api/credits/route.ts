@@ -10,7 +10,7 @@ export async function GET() {
     const session = await auth();
 
     if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ detail: "Unauthorized" }, { status: 401 });
     }
 
     const supabase = createAdminClient();

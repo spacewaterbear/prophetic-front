@@ -7,7 +7,7 @@ export async function POST(request: Request) {
     const { likes, dislikes, paidFeature, userId } = body;
 
     if (!likes && !dislikes && !paidFeature) {
-      return NextResponse.json({ error: "Empty feedback" }, { status: 400 });
+      return NextResponse.json({ detail: "Empty feedback" }, { status: 400 });
     }
 
     const supabase = createAdminClient();
@@ -22,12 +22,12 @@ export async function POST(request: Request) {
 
     if (error) {
       console.error("Feedback insert error:", error);
-      return NextResponse.json({ error: "Database error" }, { status: 500 });
+      return NextResponse.json({ detail: "Database error" }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error("Feedback route error:", err);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ detail: "Internal server error" }, { status: 500 });
   }
 }

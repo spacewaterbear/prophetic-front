@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback, useReducer } from "react";
+import { useSidebar } from "@/contexts/sidebar-context";
 import { useRouter } from "next/navigation";
 import {
   Message,
@@ -152,6 +153,7 @@ export function useChatConversation({
   isGuest = false,
 }: UseChatConversationProps) {
   const router = useRouter();
+  const { bumpConversations } = useSidebar();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -172,9 +174,7 @@ export function useChatConversation({
   const lastProcessedConversationIdRef = useRef<number | null>(null);
   const scrollToTopIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const refreshConversations = useCallback(() => {
-    window.dispatchEvent(new Event("refreshConversations"));
-  }, []);
+  const refreshConversations = bumpConversations;
 
   const resetStreamingState = useCallback(() => {
     dispatch({ type: "RESET" });
@@ -534,7 +534,7 @@ export function useChatConversation({
 
         if (response.status === 402) {
           const data = await response.json().catch(() => ({}));
-          if ((data as { error?: string }).error === "guest_quota_exceeded") {
+          if ((data as { code?: string }).code === "guest_quota_exceeded") {
             setGuestQuotaExhausted(true);
             router.push("/pricing");
           }

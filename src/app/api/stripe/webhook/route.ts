@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
     );
   } catch (err) {
     console.error("[Stripe Webhook] Signature verification failed:", err);
-    return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
+    return NextResponse.json({ detail: "Invalid signature" }, { status: 400 });
   }
 
   try {
@@ -159,7 +159,7 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     console.error("[Stripe Webhook] Processing error:", err);
     return NextResponse.json(
-      { error: "Webhook handler failed" },
+      { detail: "Webhook handler failed" },
       { status: 500 },
     );
   }

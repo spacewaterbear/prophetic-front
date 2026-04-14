@@ -35,7 +35,7 @@ export async function POST(
     const userId = session?.user?.id || (isDevMode ? DEV_USER_ID : (isGuestAllowed() ? GUEST_USER_ID : null));
 
     if (!userId) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      return new Response(JSON.stringify({ detail: "Unauthorized" }), {
         status: 401,
         headers: { "Content-Type": "application/json" }
       });
@@ -57,7 +57,7 @@ export async function POST(
       const questionsUsed = typedQuota?.questions_used ?? 0;
 
       if (questionsUsed >= GUEST_QUESTION_LIMIT) {
-        return new Response(JSON.stringify({ error: "guest_quota_exceeded" }), {
+        return new Response(JSON.stringify({ detail: "Guest quota exceeded", code: "guest_quota_exceeded" }), {
           status: 402,
           headers: { "Content-Type": "application/json" },
         });
@@ -84,7 +84,7 @@ export async function POST(
     const { content, agent_type, attachments, flash_cards, flash_card_question, flash_card_type, uuid_product, product_category } = body;
 
     if (!content) {
-      return new Response(JSON.stringify({ error: "Content is required" }), {
+      return new Response(JSON.stringify({ detail: "Content is required" }), {
         status: 400,
         headers: { "Content-Type": "application/json" }
       });
@@ -101,7 +101,7 @@ export async function POST(
       .single();
 
     if (conversationError || !conversation) {
-      return new Response(JSON.stringify({ error: "Conversation not found" }), {
+      return new Response(JSON.stringify({ detail: "Conversation not found" }), {
         status: 404,
         headers: { "Content-Type": "application/json" }
       });
@@ -132,7 +132,7 @@ export async function POST(
 
     if (userMessageError) {
       console.error("Error creating user message:", userMessageError);
-      return new Response(JSON.stringify({ error: "Failed to create message" }), {
+      return new Response(JSON.stringify({ detail: "Failed to create message" }), {
         status: 500,
         headers: { "Content-Type": "application/json" }
       });
@@ -359,7 +359,7 @@ export async function POST(
     });
   } catch (error) {
     console.error("Error in POST /api/conversations/[id]/messages:", error);
-    return new Response(JSON.stringify({ error: "Internal server error" }), {
+    return new Response(JSON.stringify({ detail: "Internal server error" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
     });

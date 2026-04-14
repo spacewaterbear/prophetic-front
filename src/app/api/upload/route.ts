@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
     const session = await auth();
 
     if (!session?.user?.id) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      return new Response(JSON.stringify({ detail: "Unauthorized" }), {
         status: 401,
         headers: { "Content-Type": "application/json" }
       });
@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     const conversationId = formData.get('conversationId') as string | null;
 
     if (!file) {
-      return new Response(JSON.stringify({ error: "No file provided" }), {
+      return new Response(JSON.stringify({ detail: "No file provided" }), {
         status: 400,
         headers: { "Content-Type": "application/json" }
       });
@@ -27,14 +27,14 @@ export async function POST(request: NextRequest) {
 
     // File validation
     if (file.size > MAX_FILE_SIZE) {
-      return new Response(JSON.stringify({ error: "File size exceeds 50MB limit" }), {
+      return new Response(JSON.stringify({ detail: "File size exceeds 50MB limit" }), {
         status: 400,
         headers: { "Content-Type": "application/json" }
       });
     }
 
     if (file.size === 0) {
-      return new Response(JSON.stringify({ error: "File is empty" }), {
+      return new Response(JSON.stringify({ detail: "File is empty" }), {
         status: 400,
         headers: { "Content-Type": "application/json" }
       });
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error('[Upload API] Upload error:', error);
-      return new Response(JSON.stringify({ error: `Upload failed: ${error.message}` }), {
+      return new Response(JSON.stringify({ detail: `Upload failed: ${error.message}` }), {
         status: 500,
         headers: { "Content-Type": "application/json" }
       });
@@ -111,7 +111,7 @@ export async function DELETE(request: NextRequest) {
     const session = await auth();
 
     if (!session?.user?.id) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      return new Response(JSON.stringify({ detail: "Unauthorized" }), {
         status: 401,
         headers: { "Content-Type": "application/json" }
       });
@@ -121,7 +121,7 @@ export async function DELETE(request: NextRequest) {
     const { path } = body;
 
     if (!path) {
-      return new Response(JSON.stringify({ error: "No path provided" }), {
+      return new Response(JSON.stringify({ detail: "No path provided" }), {
         status: 400,
         headers: { "Content-Type": "application/json" }
       });
@@ -129,7 +129,7 @@ export async function DELETE(request: NextRequest) {
 
     // Verify the path belongs to the current user
     if (!path.startsWith(session.user.id)) {
-      return new Response(JSON.stringify({ error: "Unauthorized: Cannot delete files from other users" }), {
+      return new Response(JSON.stringify({ detail: "Unauthorized: Cannot delete files from other users" }), {
         status: 403,
         headers: { "Content-Type": "application/json" }
       });
@@ -143,7 +143,7 @@ export async function DELETE(request: NextRequest) {
 
     if (error) {
       console.error('[Upload API] Delete error:', error);
-      return new Response(JSON.stringify({ error: `Delete failed: ${error.message}` }), {
+      return new Response(JSON.stringify({ detail: `Delete failed: ${error.message}` }), {
         status: 500,
         headers: { "Content-Type": "application/json" }
       });

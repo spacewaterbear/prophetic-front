@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
 
     if (!userId || !email) {
       return NextResponse.json(
-        { error: "Missing userId or email" },
+        { detail: "Missing userId or email" },
         { status: 400 }
       );
     }
@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     // For new users, require first and last name
     if (isNewUser && (!firstName || !lastName)) {
       return NextResponse.json(
-        { error: "First name and last name are required for new users" },
+        { detail: "First name and last name are required for new users" },
         { status: 400 }
       );
     }
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
 
     if (!profileId) {
       return NextResponse.json(
-        { error: "Failed to create/update profile" },
+        { detail: "Failed to create/update profile" },
         { status: 500 }
       );
     }
@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error("[MagicLink Callback] Error:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { detail: "Internal server error" },
       { status: 500 }
     );
   }

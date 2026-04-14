@@ -44,14 +44,14 @@ export async function GET(req: NextRequest) {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
   const session = await auth();
   if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ detail: "Unauthorized" }, { status: 401 });
   }
 
   const { searchParams } = new URL(req.url);
   const priceId = searchParams.get("priceId");
 
   if (!priceId || !ALLOWED_PRICE_IDS.has(priceId)) {
-    return NextResponse.json({ error: "Invalid priceId" }, { status: 400 });
+    return NextResponse.json({ detail: "Invalid priceId" }, { status: 400 });
   }
 
   const userId = session.user.id;
@@ -163,6 +163,6 @@ export async function GET(req: NextRequest) {
   return NextResponse.redirect(stripeSession.url!);
   } catch (err) {
     console.error("[Stripe Checkout] Unhandled error:", err);
-    return NextResponse.json({ error: "Internal server error", details: String(err) }, { status: 500 });
+    return NextResponse.json({ detail: "Internal server error", details: String(err) }, { status: 500 });
   }
 }

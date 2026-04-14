@@ -6,7 +6,7 @@ export async function GET(request: NextRequest) {
     const url = searchParams.get("url");
 
     if (!url) {
-        return NextResponse.json({ error: "URL is required" }, { status: 400 });
+        return NextResponse.json({ detail: "URL is required" }, { status: 400 });
     }
 
     try {
@@ -118,7 +118,7 @@ export async function GET(request: NextRequest) {
             });
         } catch {
             return NextResponse.json(
-                { error: "Failed to generate preview" },
+                { detail: "Failed to generate preview" },
                 { status: 500 }
             );
         }

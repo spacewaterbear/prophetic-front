@@ -23,7 +23,7 @@ export async function POST(
     const userId = session?.user?.id || (isDevMode ? DEV_USER_ID : (isGuestAllowed() ? GUEST_USER_ID : null));
 
     if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ detail: "Unauthorized" }, { status: 401 });
     }
 
     // Guests don't persist conversation content (no history feature)
@@ -44,14 +44,14 @@ export async function POST(
       .single();
 
     if (conversationError || !conversation) {
-      return NextResponse.json({ error: "Conversation not found" }, { status: 404 });
+      return NextResponse.json({ detail: "Conversation not found" }, { status: 404 });
     }
 
     const body = await request.json();
     const { messages } = body;
 
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
-      return NextResponse.json({ error: "Messages array is required" }, { status: 400 });
+      return NextResponse.json({ detail: "Messages array is required" }, { status: 400 });
     }
 
     // Insert all messages
@@ -69,7 +69,7 @@ export async function POST(
 
     if (insertError) {
       console.error("Error inserting vignette messages:", insertError);
-      return NextResponse.json({ error: "Failed to save messages" }, { status: 500 });
+      return NextResponse.json({ detail: "Failed to save messages" }, { status: 500 });
     }
 
     console.log(`[Vignette Content] Saved ${insertedMessages?.length} messages to conversation ${conversationId}`);
@@ -81,6 +81,6 @@ export async function POST(
 
   } catch (error) {
     console.error("Error in POST /api/conversations/[id]/vignette-content:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ detail: "Internal server error" }, { status: 500 });
   }
 }

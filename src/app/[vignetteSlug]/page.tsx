@@ -273,7 +273,6 @@ export default function VignettePage() {
         JSON.stringify({ content: userInput, scrollToTop: true }),
       );
 
-      window.dispatchEvent(new Event("refreshConversations"));
       router.push(`/chat/${newConversationId}`);
     } catch (error) {
       console.error("[VignettePage] Error creating conversation:", error);

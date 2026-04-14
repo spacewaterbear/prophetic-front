@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { ChatInput } from "@/components/chat-input";
 import { AgentType, UserStatus } from "@/types/agents";
 import { useI18n } from "@/contexts/i18n-context";
+import { useSidebar } from "@/contexts/sidebar-context";
 import { getCategoryDisplayNames } from "@/lib/translations";
 import {
   convertMarkdownTablesToStyledHtml,
@@ -59,6 +60,7 @@ export function VignetteDetailView({
   userStatus,
 }: VignetteDetailViewProps) {
   const router = useRouter();
+  const { bumpConversations } = useSidebar();
   const { language } = useI18n();
   const categoryNames = getCategoryDisplayNames(language);
   const [input, setInput] = useState("");
@@ -524,7 +526,7 @@ export function VignetteDetailView({
         JSON.stringify({ content: userInput, scrollToTop: true }),
       );
 
-      window.dispatchEvent(new Event("refreshConversations"));
+      bumpConversations();
       router.push(`/chat/${newConversationId}`);
     } catch (error) {
       console.error("[VignetteDetailView] Error creating conversation:", error);

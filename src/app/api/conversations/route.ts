@@ -40,7 +40,7 @@ export async function GET() {
     const userId = session?.user?.id || (isDevMode ? DEV_USER_ID : null);
 
     if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ detail: "Unauthorized" }, { status: 401 });
     }
 
     const supabase = createAdminClient();
@@ -65,14 +65,14 @@ export async function GET() {
 
     if (error) {
       console.error("Error fetching conversations:", error);
-      return NextResponse.json({ error: "Failed to fetch conversations" }, { status: 500 });
+      return NextResponse.json({ detail: "Failed to fetch conversations" }, { status: 500 });
     }
 
     console.log(`[API] Loaded ${conversations?.length || 0} conversations for user ${userId}`);
     return NextResponse.json({ conversations });
   } catch (error) {
     console.error("Error in GET /api/conversations:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ detail: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
     const userId = session?.user?.id || (isDevMode ? DEV_USER_ID : (isGuestAllowed() ? GUEST_USER_ID : null));
 
     if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ detail: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
@@ -114,12 +114,12 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error("Error creating conversation:", error);
-      return NextResponse.json({ error: "Failed to create conversation" }, { status: 500 });
+      return NextResponse.json({ detail: "Failed to create conversation" }, { status: 500 });
     }
 
     return NextResponse.json({ conversation }, { status: 201 });
   } catch (error) {
     console.error("Error in POST /api/conversations:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ detail: "Internal server error" }, { status: 500 });
   }
 }

@@ -19,14 +19,14 @@ export async function GET(request: NextRequest) {
         if (!process.env.PROPHETIC_API_URL || !process.env.INTERNAL_API_KEY) {
             console.error("[Markdown Proxy] API configuration missing: PROPHETIC_API_URL or INTERNAL_API_KEY");
             return NextResponse.json(
-                { error: "API configuration missing" },
+                { detail: "API configuration missing" },
                 { status: 500 }
             );
         }
 
         if (!type) {
             return NextResponse.json(
-                { error: "Markdown type (independant, dependant-without-sub, dependant-with-sub) is required" },
+                { detail: "Markdown type (independant, dependant-without-sub, dependant-with-sub) is required" },
                 { status: 400 }
             );
         }
@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
                 break;
             default:
                 return NextResponse.json(
-                    { error: "Invalid markdown type" },
+                    { detail: "Invalid markdown type" },
                     { status: 400 }
                 );
         }
@@ -85,7 +85,7 @@ export async function GET(request: NextRequest) {
                 const errorJson = JSON.parse(errorText);
                 return NextResponse.json(errorJson, { status: response.status });
             } catch {
-                return NextResponse.json({ error: errorText || "Failed to fetch content" }, { status: response.status });
+                return NextResponse.json({ detail: errorText || "Failed to fetch content" }, { status: response.status });
             }
         }
 
@@ -114,7 +114,7 @@ export async function GET(request: NextRequest) {
     } catch (error) {
         console.error("[Markdown Proxy] Controller error:", error);
         return NextResponse.json(
-            { error: "Internal server error" },
+            { detail: "Internal server error" },
             { status: 500 }
         );
     }

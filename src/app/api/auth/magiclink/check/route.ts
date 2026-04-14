@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
 
     if (!userId || !email) {
       return NextResponse.json(
-        { error: "Missing userId or email" },
+        { detail: "Missing userId or email" },
         { status: 400 }
       );
     }
@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error("[MagicLink Check] Error:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { detail: "Internal server error" },
       { status: 500 }
     );
   }

@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email || !emailRegex.test(email)) {
       return NextResponse.json(
-        { error: "Please enter a valid email address" },
+        { detail: "Please enter a valid email address" },
         { status: 400 }
       );
     }
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
     if (error) {
       console.error("[MagicLink] Error sending:", error);
       return NextResponse.json(
-        { error: "Failed to send magic link. Please try again." },
+        { detail: "Failed to send magic link. Please try again." },
         { status: 500 }
       );
     }
@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error("[MagicLink] Unexpected error:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { detail: "Internal server error" },
       { status: 500 }
     );
   }

@@ -1,11 +1,13 @@
 "use client";
 
-import React, { createContext, useContext, useState, useLayoutEffect } from "react";
+import React, { createContext, useCallback, useContext, useState, useLayoutEffect } from "react";
 
 interface SidebarContextType {
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
   isMobile: boolean;
+  conversationsVersion: number;
+  bumpConversations: () => void;
 }
 
 const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
@@ -13,6 +15,8 @@ const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
 export function SidebarProvider({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [conversationsVersion, setConversationsVersion] = useState(0);
+  const bumpConversations = useCallback(() => setConversationsVersion((v) => v + 1), []);
 
   useLayoutEffect(() => {
     const isDesktop = window.innerWidth >= 768;
@@ -30,7 +34,7 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <SidebarContext.Provider value={{ sidebarOpen, setSidebarOpen, isMobile }}>
+    <SidebarContext.Provider value={{ sidebarOpen, setSidebarOpen, isMobile, conversationsVersion, bumpConversations }}>
       {children}
     </SidebarContext.Provider>
   );

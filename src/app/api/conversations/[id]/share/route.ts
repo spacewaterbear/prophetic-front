@@ -12,7 +12,7 @@ export async function POST(
     const session = await auth();
 
     if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ detail: "Unauthorized" }, { status: 401 });
     }
 
     const { id } = await params;
@@ -28,7 +28,7 @@ export async function POST(
       .single();
 
     if (conversationError || !conversation) {
-      return NextResponse.json({ error: "Conversation not found" }, { status: 404 });
+      return NextResponse.json({ detail: "Conversation not found" }, { status: 404 });
     }
 
     // Check if a share already exists for this conversation
@@ -66,7 +66,7 @@ export async function POST(
 
     if (shareError || !share) {
       console.error("Error creating share:", shareError);
-      return NextResponse.json({ error: "Failed to create share" }, { status: 500 });
+      return NextResponse.json({ detail: "Failed to create share" }, { status: 500 });
     }
 
     // Generate the shareable URL
@@ -80,6 +80,6 @@ export async function POST(
     });
   } catch (error) {
     console.error("Error in POST /api/conversations/[id]/share:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ detail: "Internal server error" }, { status: 500 });
   }
 }

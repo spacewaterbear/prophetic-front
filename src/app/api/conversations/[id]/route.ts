@@ -21,7 +21,7 @@ export async function GET(
     const userId = session?.user?.id || (isDevMode ? DEV_USER_ID : (isGuestAllowed() ? GUEST_USER_ID : null));
 
     if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ detail: "Unauthorized" }, { status: 401 });
     }
 
     const { id } = await params;
@@ -37,7 +37,7 @@ export async function GET(
       .single();
 
     if (conversationError || !conversation) {
-      return NextResponse.json({ error: "Conversation not found" }, { status: 404 });
+      return NextResponse.json({ detail: "Conversation not found" }, { status: 404 });
     }
 
     // Fetch messages
@@ -49,7 +49,7 @@ export async function GET(
 
     if (messagesError) {
       console.error("Error fetching messages:", messagesError);
-      return NextResponse.json({ error: "Failed to fetch messages" }, { status: 500 });
+      return NextResponse.json({ detail: "Failed to fetch messages" }, { status: 500 });
     }
 
     console.log("[GET Conversation] Raw messages from DB:", rawMessages?.length);
@@ -277,7 +277,7 @@ export async function GET(
     return NextResponse.json({ conversation, messages });
   } catch (error) {
     console.error("Error in GET /api/conversations/[id]:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ detail: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -290,7 +290,7 @@ export async function PATCH(
     const session = await auth();
 
     if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ detail: "Unauthorized" }, { status: 401 });
     }
 
     const { id } = await params;
@@ -316,13 +316,13 @@ export async function PATCH(
 
     if (error || !conversation) {
       console.error("Error updating conversation:", error);
-      return NextResponse.json({ error: "Failed to update conversation" }, { status: 500 });
+      return NextResponse.json({ detail: "Failed to update conversation" }, { status: 500 });
     }
 
     return NextResponse.json({ conversation });
   } catch (error) {
     console.error("Error in PATCH /api/conversations/[id]:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ detail: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -335,7 +335,7 @@ export async function DELETE(
     const session = await auth();
 
     if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ detail: "Unauthorized" }, { status: 401 });
     }
 
     const { id } = await params;
@@ -351,7 +351,7 @@ export async function DELETE(
       .single();
 
     if (conversationError || !conversation) {
-      return NextResponse.json({ error: "Conversation not found" }, { status: 404 });
+      return NextResponse.json({ detail: "Conversation not found" }, { status: 404 });
     }
 
     // Delete all messages associated with the conversation
@@ -362,7 +362,7 @@ export async function DELETE(
 
     if (messagesError) {
       console.error("Error deleting messages:", messagesError);
-      return NextResponse.json({ error: "Failed to delete messages" }, { status: 500 });
+      return NextResponse.json({ detail: "Failed to delete messages" }, { status: 500 });
     }
 
     // Delete the conversation
@@ -374,12 +374,12 @@ export async function DELETE(
 
     if (deleteError) {
       console.error("Error deleting conversation:", deleteError);
-      return NextResponse.json({ error: "Failed to delete conversation" }, { status: 500 });
+      return NextResponse.json({ detail: "Failed to delete conversation" }, { status: 500 });
     }
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
     console.error("Error in DELETE /api/conversations/[id]:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ detail: "Internal server error" }, { status: 500 });
   }
 }

@@ -19,7 +19,7 @@ export async function GET() {
 
     if (error) {
       console.error("[Sidebar Categories] Supabase error:", error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ detail: error.message }, { status: 500 });
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -30,6 +30,6 @@ export async function GET() {
     return NextResponse.json({ categories });
   } catch (error) {
     console.error("[Sidebar Categories] Error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ detail: "Internal server error" }, { status: 500 });
   }
 }

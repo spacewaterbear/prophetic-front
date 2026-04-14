@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
 
         if (!category) {
             return NextResponse.json(
-                { error: "Category parameter is required" },
+                { detail: "Category parameter is required" },
                 { status: 400 }
             );
         }
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
         if (!process.env.PROPHETIC_API_URL) {
             console.error("[Vignettes API] PROPHETIC_API_URL not configured");
             return NextResponse.json(
-                { error: "API URL not configured" },
+                { detail: "API URL not configured" },
                 { status: 500 }
             );
         }
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
         if (!process.env.INTERNAL_API_KEY) {
             console.error("[Vignettes API] INTERNAL_API_KEY not configured");
             return NextResponse.json(
-                { error: "API key not configured" },
+                { detail: "API key not configured" },
                 { status: 500 }
             );
         }
@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
             const errorText = await response.text();
             console.error(`[Vignettes API] Error details:`, errorText);
             return NextResponse.json(
-                { error: "Failed to fetch vignettes from backend" },
+                { detail: "Failed to fetch vignettes from backend" },
                 { status: response.status }
             );
         }
@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
     } catch (error) {
         console.error("[Vignettes API] Error:", error);
         return NextResponse.json(
-            { error: "Internal server error" },
+            { detail: "Internal server error" },
             { status: 500 }
         );
     }

@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   const fileName = searchParams.get("fileName");
 
   if (!fileName) {
-    return NextResponse.json({ error: "fileName is required" }, { status: 400 });
+    return NextResponse.json({ detail: "fileName is required" }, { status: 400 });
   }
 
   const appEnv = process.env.ENVIRONNEMENT ?? "dev";
@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
     if (error || !data?.signedUrl) {
       console.error("[pdf-url] Failed to create signed URL:", error);
       return NextResponse.json(
-        { error: "Could not generate signed URL", detail: error?.message ?? null, bucket: BUCKET, path: storagePath },
+        { detail: "Could not generate signed URL", detail: error?.message ?? null, bucket: BUCKET, path: storagePath },
         { status: 500 }
       );
     }
@@ -32,6 +32,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ signedUrl: data.signedUrl });
   } catch (err) {
     console.error("[pdf-url] Unexpected error:", err);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ detail: "Internal server error" }, { status: 500 });
   }
 }

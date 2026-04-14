@@ -111,7 +111,7 @@ function ChatLayoutInner({
   const activeCategory = searchParams.get("category");
   const categoryNames = getCategoryDisplayNames(language);
   const [conversations, setConversations] = useState<Conversation[]>([]);
-  const { sidebarOpen, setSidebarOpen, isMobile } = useSidebar();
+  const { sidebarOpen, setSidebarOpen, isMobile, conversationsVersion } = useSidebar();
   const [consultationsExpanded, setConsultationsExpanded] = useState(false);
   const [artCategories, setArtCategories] = useState<string[]>([]);
   const [mainCategories, setMainCategories] = useState<string[]>([]);
@@ -221,20 +221,10 @@ function ChatLayoutInner({
     await signOut({ callbackUrl: "/login" });
   };
 
-  // Expose refresh function to child components via custom event
+  // Reload conversation list when a child component signals a new conversation was created
   useEffect(() => {
-    const handleRefreshConversations = () => {
-      loadConversations();
-    };
-
-    window.addEventListener("refreshConversations", handleRefreshConversations);
-    return () => {
-      window.removeEventListener(
-        "refreshConversations",
-        handleRefreshConversations,
-      );
-    };
-  }, []);
+    if (conversationsVersion > 0) loadConversations();
+  }, [conversationsVersion]);
 
   // Listen for closeSidebar event to close sidebar on mobile
   useEffect(() => {

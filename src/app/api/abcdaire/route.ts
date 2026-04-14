@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       console.error("[Abcdaire API] Supabase error:", error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ detail: error.message }, { status: 500 });
     }
 
     return NextResponse.json({
@@ -49,6 +49,6 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error("[Abcdaire API] Error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ detail: "Internal server error" }, { status: 500 });
   }
 }

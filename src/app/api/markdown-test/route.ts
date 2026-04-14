@@ -15,7 +15,7 @@ export async function GET() {
     } catch (error) {
         console.error('Error reading markdown file:', error);
         return NextResponse.json(
-            { error: 'Failed to read markdown file' },
+            { detail: 'Failed to read markdown file' },
             { status: 500 }
         );
     }
