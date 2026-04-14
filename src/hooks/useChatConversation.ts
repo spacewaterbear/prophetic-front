@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useReducer } from "react";
 import { useRouter } from "next/navigation";
 import {
   Message,
@@ -35,6 +35,116 @@ interface UseChatConversationProps {
   isGuest?: boolean;
 }
 
+// ---------------------------------------------------------------------------
+// Streaming state — consolidated into a single useReducer to allow atomic
+// resets and eliminate the race conditions caused by batching 12+ setState
+// calls in sequence.
+// ---------------------------------------------------------------------------
+
+interface StreamingState {
+  message: string;
+  marketplaceData: MarketplaceData | null;
+  realEstateData: import("@/types/chat").RealEstateData | null;
+  vignetteData: VignetteData[] | null;
+  clothesSearchData: ClothesSearchData | null;
+  jewelrySearchData: JewelrySearchData | null;
+  carsSearchData: CarsSearchData | null;
+  watchesSearchData: WatchesSearchData | null;
+  whiskySearchData: WhiskySearchData | null;
+  wineSearchData: WineSearchData | null;
+  cardsSearchData: CardsSearchData | null;
+  vignetteCategory: string | null;
+  status: string;
+  lastActivity: number;
+  showIndicator: boolean;
+}
+
+type StreamingAction =
+  | { type: "RESET" }
+  | { type: "APPEND_CHUNK"; content: string }
+  | { type: "SET_MESSAGE"; message: string }
+  | { type: "SET_MARKETPLACE"; data: MarketplaceData }
+  | { type: "SET_REAL_ESTATE"; data: import("@/types/chat").RealEstateData }
+  | { type: "SET_VIGNETTE_DATA"; data: VignetteData[] }
+  | { type: "SET_CLOTHES"; data: ClothesSearchData }
+  | { type: "SET_JEWELRY"; data: JewelrySearchData }
+  | { type: "SET_CARS"; data: CarsSearchData }
+  | { type: "SET_WATCHES"; data: WatchesSearchData }
+  | { type: "SET_WHISKY"; data: WhiskySearchData }
+  | { type: "SET_WINE"; data: WineSearchData }
+  | { type: "SET_CARDS"; data: CardsSearchData }
+  | { type: "SET_VIGNETTE_CATEGORY"; category: string | null }
+  | { type: "SET_STATUS"; status: string }
+  | { type: "MARK_ACTIVITY" }
+  | { type: "SET_INDICATOR"; show: boolean };
+
+const initialStreaming: StreamingState = {
+  message: "",
+  marketplaceData: null,
+  realEstateData: null,
+  vignetteData: null,
+  clothesSearchData: null,
+  jewelrySearchData: null,
+  carsSearchData: null,
+  watchesSearchData: null,
+  whiskySearchData: null,
+  wineSearchData: null,
+  cardsSearchData: null,
+  vignetteCategory: null,
+  status: "",
+  lastActivity: 0,
+  showIndicator: false,
+};
+
+function streamingReducer(
+  state: StreamingState,
+  action: StreamingAction,
+): StreamingState {
+  switch (action.type) {
+    case "RESET":
+      return { ...initialStreaming, vignetteCategory: state.vignetteCategory };
+    case "APPEND_CHUNK":
+      return {
+        ...state,
+        message: state.message + action.content,
+        lastActivity: Date.now(),
+        status: "",
+      };
+    case "SET_MESSAGE":
+      return { ...state, message: action.message };
+    case "SET_MARKETPLACE":
+      return { ...state, marketplaceData: action.data };
+    case "SET_REAL_ESTATE":
+      return { ...state, realEstateData: action.data };
+    case "SET_VIGNETTE_DATA":
+      return { ...state, vignetteData: action.data };
+    case "SET_CLOTHES":
+      return { ...state, clothesSearchData: action.data };
+    case "SET_JEWELRY":
+      return { ...state, jewelrySearchData: action.data };
+    case "SET_CARS":
+      return { ...state, carsSearchData: action.data };
+    case "SET_WATCHES":
+      return { ...state, watchesSearchData: action.data };
+    case "SET_WHISKY":
+      return { ...state, whiskySearchData: action.data };
+    case "SET_WINE":
+      return { ...state, wineSearchData: action.data };
+    case "SET_CARDS":
+      return { ...state, cardsSearchData: action.data };
+    case "SET_VIGNETTE_CATEGORY":
+      return { ...state, vignetteCategory: action.category };
+    case "SET_STATUS":
+      return { ...state, status: action.status, lastActivity: Date.now() };
+    case "MARK_ACTIVITY":
+      return { ...state, lastActivity: Date.now() };
+    case "SET_INDICATOR":
+      return { ...state, showIndicator: action.show };
+    default:
+      return state;
+  }
+}
+
 export function useChatConversation({
   conversationId,
   selectedModel = "anthropic/claude-3.7-sonnet",
@@ -45,40 +155,11 @@ export function useChatConversation({
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [streamingMessage, setStreamingMessage] = useState("");
-  const [streamingMarketplaceData, setStreamingMarketplaceData] =
-    useState<MarketplaceData | null>(null);
-  const [streamingRealEstateData, setStreamingRealEstateData] = useState<
-    import("@/types/chat").RealEstateData | null
-  >(null);
-  const [streamingVignetteData, setStreamingVignetteData] = useState<
-    VignetteData[] | null
-  >(null);
-  const [streamingClothesSearchData, setStreamingClothesSearchData] =
-    useState<ClothesSearchData | null>(null);
-  const [streamingJewelrySearchData, setStreamingJewelrySearchData] =
-    useState<JewelrySearchData | null>(null);
-  const [streamingCarsSearchData, setStreamingCarsSearchData] =
-    useState<CarsSearchData | null>(null);
-  const [streamingWatchesSearchData, setStreamingWatchesSearchData] =
-    useState<WatchesSearchData | null>(null);
-  const [streamingWhiskySearchData, setStreamingWhiskySearchData] =
-    useState<WhiskySearchData | null>(null);
-  const [streamingWineSearchData, setStreamingWineSearchData] =
-    useState<WineSearchData | null>(null);
-  const [streamingCardsSearchData, setStreamingCardsSearchData] =
-    useState<CardsSearchData | null>(null);
-  const [streamingVignetteCategory, setStreamingVignetteCategory] = useState<
-    string | null
-  >(null);
-  const [currentStatus, setCurrentStatus] = useState("");
-  const [lastStreamingActivity, setLastStreamingActivity] = useState<number>(0);
-  const [showStreamingIndicator, setShowStreamingIndicator] = useState(false);
-  const [lastUserMessageId, setLastUserMessageId] = useState<number | null>(
-    null,
-  );
+  const [lastUserMessageId, setLastUserMessageId] = useState<number | null>(null);
   const [shouldScrollToTop, setShouldScrollToTop] = useState(false);
   const [guestQuotaExhausted, setGuestQuotaExhausted] = useState(false);
+
+  const [streaming, dispatch] = useReducer(streamingReducer, initialStreaming);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -95,14 +176,17 @@ export function useChatConversation({
     window.dispatchEvent(new Event("refreshConversations"));
   }, []);
 
+  const resetStreamingState = useCallback(() => {
+    dispatch({ type: "RESET" });
+  }, []);
+
   const loadConversation = useCallback(
     async (id: number) => {
       try {
         const response = await fetch(`/api/conversations/${id}`);
         if (response.ok) {
           const data = await response.json();
-          const msgs = data.messages || [];
-          setMessages(msgs);
+          setMessages(data.messages || []);
         } else if (response.status === 404) {
           console.error("Conversation not found, redirecting to home");
           router.push("/");
@@ -134,11 +218,7 @@ export function useChatConversation({
             const data = await response.json();
             const newId = data.conversation.id;
 
-            const pendingStream: PendingMarkdownStream = {
-              type,
-              params,
-              options,
-            };
+            const pendingStream: PendingMarkdownStream = { type, params, options };
             sessionStorage.setItem(
               STORAGE_KEYS.PENDING_MARKDOWN_STREAM,
               JSON.stringify(pendingStream),
@@ -155,10 +235,11 @@ export function useChatConversation({
       }
 
       setIsLoading(true);
-      setStreamingMessage("");
-      setStreamingVignetteCategory(
-        params.category || params.sub_category || null,
-      );
+      dispatch({ type: "SET_MESSAGE", message: "" });
+      dispatch({
+        type: "SET_VIGNETTE_CATEGORY",
+        category: params.category || params.sub_category || null,
+      });
 
       if (options?.userPrompt) {
         const userMsg: Message = {
@@ -227,56 +308,57 @@ export function useChatConversation({
                 const parsed = JSON.parse(eventData);
                 if (parsed.type === "document") {
                   documentContent = parsed.content || "";
-                  setStreamingMessage(documentContent);
+                  dispatch({ type: "SET_MESSAGE", message: documentContent });
                 } else if (parsed.type === "markdown") {
                   documentContent = parsed.text || "";
-                  setStreamingMessage(documentContent);
+                  dispatch({ type: "SET_MESSAGE", message: documentContent });
                 } else if (parsed.type === "jewelry_data") {
                   if ((parsed.data as JewelrySearchData)?.listings) {
                     streamingJewelryData = parsed.data as JewelrySearchData;
-                    setStreamingJewelrySearchData(streamingJewelryData);
+                    dispatch({ type: "SET_JEWELRY", data: streamingJewelryData });
                   }
                 } else if (parsed.type === "clothes_data") {
                   if ((parsed.data as ClothesSearchData)?.listings) {
                     streamingClothesData = parsed.data as ClothesSearchData;
-                    setStreamingClothesSearchData(streamingClothesData);
+                    dispatch({ type: "SET_CLOTHES", data: streamingClothesData });
                   }
                 } else if (parsed.type === "cars_data") {
                   if ((parsed.data as CarsSearchData)?.listings) {
                     streamingCarsData = parsed.data as CarsSearchData;
-                    setStreamingCarsSearchData(streamingCarsData);
+                    dispatch({ type: "SET_CARS", data: streamingCarsData });
                   }
                 } else if (parsed.type === "watches_data") {
                   if ((parsed.data as WatchesSearchData)?.listings) {
                     streamingWatchesData = parsed.data as WatchesSearchData;
-                    setStreamingWatchesSearchData(streamingWatchesData);
+                    dispatch({ type: "SET_WATCHES", data: streamingWatchesData });
                   }
                 } else if (parsed.type === "whisky_data") {
                   if ((parsed.data as WhiskySearchData)?.listings) {
                     streamingWhiskyData = parsed.data as WhiskySearchData;
-                    setStreamingWhiskySearchData(streamingWhiskyData);
+                    dispatch({ type: "SET_WHISKY", data: streamingWhiskyData });
                   }
                 } else if (parsed.type === "wine_data") {
                   if ((parsed.data as WineSearchData)?.listings) {
                     streamingWineData = parsed.data as WineSearchData;
-                    setStreamingWineSearchData(streamingWineData);
+                    dispatch({ type: "SET_WINE", data: streamingWineData });
                   }
                 } else if (parsed.type === "cards_data") {
                   if ((parsed.data as CardsSearchData)?.listings) {
                     streamingCardsData = parsed.data as CardsSearchData;
-                    setStreamingCardsSearchData(streamingCardsData);
+                    dispatch({ type: "SET_CARDS", data: streamingCardsData });
                   }
                 } else if (parsed.type === "marketplace_data") {
                   streamingMktData = parsed.data as MarketplaceData;
-                  setStreamingMarketplaceData(streamingMktData);
+                  dispatch({ type: "SET_MARKETPLACE", data: streamingMktData });
                 } else if (parsed.type === "real_estate_data") {
                   streamingREData = parsed.data as import("@/types/chat").RealEstateData;
-                  setStreamingRealEstateData(streamingREData);
+                  dispatch({ type: "SET_REAL_ESTATE", data: streamingREData });
                 } else if (parsed.type === "questions_chunk") {
                   questionsContent += parsed.content || "";
-                  setStreamingMessage(
-                    documentContent + "\n\n" + questionsContent,
-                  );
+                  dispatch({
+                    type: "SET_MESSAGE",
+                    message: documentContent + "\n\n" + questionsContent,
+                  });
                 } else if (parsed.type === "done") {
                   const allQuestions = questionsContent || parsed.questions || "";
                   const finalContent = allQuestions
@@ -302,47 +384,26 @@ export function useChatConversation({
 
                   const saveToDb = async (convId: number) => {
                     try {
-                      await fetch(
-                        `/api/conversations/${convId}/vignette-content`,
-                        {
-                          method: "POST",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({
-                            messages: [
-                              {
-                                content: finalContent,
-                                vignetteCategory:
-                                  params.category || params.sub_category,
-                              },
-                            ],
-                          }),
-                        },
-                      );
+                      await fetch(`/api/conversations/${convId}/vignette-content`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          messages: [
+                            {
+                              content: finalContent,
+                              vignetteCategory: params.category || params.sub_category,
+                            },
+                          ],
+                        }),
+                      });
                     } catch (e) {
-                      console.error(
-                        "[Markdown SSE] Error saving to database:",
-                        e,
-                      );
+                      console.error("[Markdown SSE] Error saving to database:", e);
                     }
                   };
 
-                  if (conversationId) {
-                    setMessages((prev) => [...prev, aiMessage]);
-                    saveToDb(conversationId);
-                  } else {
-                    setMessages((prev) => [...prev, aiMessage]);
-                  }
-                  setStreamingMessage("");
-                  setCurrentStatus("");
-                  setStreamingMarketplaceData(null);
-                  setStreamingRealEstateData(null);
-                  setStreamingClothesSearchData(null);
-                  setStreamingJewelrySearchData(null);
-                  setStreamingCarsSearchData(null);
-                  setStreamingWatchesSearchData(null);
-                  setStreamingWhiskySearchData(null);
-                  setStreamingWineSearchData(null);
-                  setStreamingCardsSearchData(null);
+                  setMessages((prev) => [...prev, aiMessage]);
+                  if (conversationId) saveToDb(conversationId);
+                  dispatch({ type: "RESET" });
                 }
               } catch (e) {
                 console.error("[Markdown Stream] Parse error:", e);
@@ -352,22 +413,22 @@ export function useChatConversation({
         } else {
           const jsonResponse = await response.json();
           const textContent = jsonResponse.text || jsonResponse.content || "";
-          const questionsContent = jsonResponse.questions || "";
-          const content = questionsContent
-            ? `${textContent}\n\n${questionsContent}`
+          const qContent = jsonResponse.questions || "";
+          const content = qContent
+            ? `${textContent}\n\n${qContent}`
             : textContent;
 
           if (content) {
             const aiMessage: Message = {
               id: Date.now(),
-              content: content,
+              content,
               sender: "ai",
               created_at: new Date().toISOString(),
               vignetteCategory: params.category || params.sub_category,
             };
 
+            setMessages((prev) => [...prev, aiMessage]);
             if (conversationId) {
-              setMessages((prev) => [...prev, aiMessage]);
               await fetch(
                 `/api/conversations/${conversationId}/vignette-content`,
                 {
@@ -376,16 +437,13 @@ export function useChatConversation({
                   body: JSON.stringify({
                     messages: [
                       {
-                        content: content,
-                        vignetteCategory:
-                          params.category || params.sub_category,
+                        content,
+                        vignetteCategory: params.category || params.sub_category,
                       },
                     ],
                   }),
                 },
               );
-            } else {
-              setMessages((prev) => [...prev, aiMessage]);
             }
           }
         }
@@ -395,7 +453,7 @@ export function useChatConversation({
       } catch (error) {
         console.error("[streamMarkdown] Error:", error);
         setIsLoading(false);
-        setStreamingMessage("");
+        dispatch({ type: "SET_MESSAGE", message: "" });
         return false;
       }
     },
@@ -426,22 +484,6 @@ export function useChatConversation({
     [streamMarkdown],
   );
 
-  /** Resets all streaming state back to initial values. */
-  const resetStreamingState = useCallback(() => {
-    setStreamingMessage("");
-    setStreamingMarketplaceData(null);
-    setStreamingRealEstateData(null);
-    setStreamingVignetteData(null);
-    setStreamingClothesSearchData(null);
-    setStreamingJewelrySearchData(null);
-    setStreamingCarsSearchData(null);
-    setStreamingWatchesSearchData(null);
-    setStreamingWhiskySearchData(null);
-    setStreamingWineSearchData(null);
-    setStreamingCardsSearchData(null);
-    setCurrentStatus("");
-  }, []);
-
   const sendMessageToApi = useCallback(
     async (
       targetConversationId: number,
@@ -454,9 +496,9 @@ export function useChatConversation({
       agentType?: string,
     ) => {
       setIsLoading(true);
-      resetStreamingState();
-      setLastStreamingActivity(Date.now());
-      setShowStreamingIndicator(false);
+      dispatch({ type: "RESET" });
+      dispatch({ type: "MARK_ACTIVITY" });
+      dispatch({ type: "SET_INDICATOR", show: false });
 
       const tempUserMessage: Message = {
         id: Date.now(),
@@ -510,9 +552,7 @@ export function useChatConversation({
         const sseHandlers: Record<string, SseHandler> = {
           chunk: (data) => {
             streamContent += data.content as string;
-            setStreamingMessage(streamContent);
-            setLastStreamingActivity(Date.now());
-            setCurrentStatus("");
+            dispatch({ type: "APPEND_CHUNK", content: data.content as string });
           },
           marketplace_data: (data) => {
             let payload = data.data;
@@ -520,60 +560,60 @@ export function useChatConversation({
               try { payload = JSON.parse(payload as string); } catch { /* keep as-is */ }
             }
             setShouldScrollToTop(false);
-            setStreamingMarketplaceData(payload as MarketplaceData);
+            dispatch({ type: "SET_MARKETPLACE", data: payload as MarketplaceData });
           },
           real_estate_data: (data) => {
             setShouldScrollToTop(false);
-            setStreamingRealEstateData(data.data as import("@/types/chat").RealEstateData);
+            dispatch({ type: "SET_REAL_ESTATE", data: data.data as import("@/types/chat").RealEstateData });
           },
           vignette_data: (data) => {
-            setStreamingVignetteData(data.data as VignetteData[]);
+            dispatch({ type: "SET_VIGNETTE_DATA", data: data.data as VignetteData[] });
           },
           clothes_data: (data) => {
             if ((data.data as ClothesSearchData)?.listings) {
               setShouldScrollToTop(false);
-              setStreamingClothesSearchData(data.data as ClothesSearchData);
+              dispatch({ type: "SET_CLOTHES", data: data.data as ClothesSearchData });
             }
           },
           jewelry_data: (data) => {
             if ((data.data as JewelrySearchData)?.listings) {
               setShouldScrollToTop(false);
-              setStreamingJewelrySearchData(data.data as JewelrySearchData);
+              dispatch({ type: "SET_JEWELRY", data: data.data as JewelrySearchData });
             }
           },
           cars_data: (data) => {
             if ((data.data as CarsSearchData)?.listings) {
               setShouldScrollToTop(false);
-              setStreamingCarsSearchData(data.data as CarsSearchData);
+              dispatch({ type: "SET_CARS", data: data.data as CarsSearchData });
             }
           },
           watches_data: (data) => {
             if ((data.data as WatchesSearchData)?.listings) {
               setShouldScrollToTop(false);
-              setStreamingWatchesSearchData(data.data as WatchesSearchData);
+              dispatch({ type: "SET_WATCHES", data: data.data as WatchesSearchData });
             }
           },
           whisky_data: (data) => {
             if ((data.data as WhiskySearchData)?.listings) {
               setShouldScrollToTop(false);
-              setStreamingWhiskySearchData(data.data as WhiskySearchData);
+              dispatch({ type: "SET_WHISKY", data: data.data as WhiskySearchData });
             }
           },
           wine_data: (data) => {
             if ((data.data as WineSearchData)?.listings) {
               setShouldScrollToTop(false);
-              setStreamingWineSearchData(data.data as WineSearchData);
+              dispatch({ type: "SET_WINE", data: data.data as WineSearchData });
             }
           },
           cards_data: (data) => {
             if ((data.data as CardsSearchData)?.listings) {
               setShouldScrollToTop(false);
-              setStreamingCardsSearchData(data.data as CardsSearchData);
+              dispatch({ type: "SET_CARDS", data: data.data as CardsSearchData });
             }
           },
           done: async () => {
             await loadConversation(targetConversationId);
-            resetStreamingState();
+            dispatch({ type: "RESET" });
             if (isGuest) {
               setGuestQuotaExhausted(true);
             }
@@ -581,11 +621,11 @@ export function useChatConversation({
           artist_info: async (data) => {
             if (data.userMessage || data.aiMessage) {
               await loadConversation(targetConversationId);
-              resetStreamingState();
+              dispatch({ type: "RESET" });
             }
           },
-          status: (_data) => {
-            setLastStreamingActivity(Date.now());
+          status: (data) => {
+            dispatch({ type: "SET_STATUS", status: data.message as string ?? "" });
           },
         };
 
@@ -614,13 +654,16 @@ export function useChatConversation({
             }
           }
         }
+
+        // suppress unused variable warning – kept for future use
+        void streamContent;
       } catch (error) {
         console.error("Error sending message:", error);
       } finally {
         setIsLoading(false);
       }
     },
-    [loadConversation, selectedAgent, resetStreamingState, isGuest, router],
+    [loadConversation, selectedAgent, isGuest, router],
   );
 
   // Main useEffect for pending logic and initialization
@@ -690,7 +733,7 @@ export function useChatConversation({
         pendingMessageProcessedRef.current = true;
         sessionStorage.removeItem(STORAGE_KEYS.PENDING_MESSAGE);
 
-        // Also pre-load any vignette content that was displayed before the chat
+        // Pre-load any vignette content that was displayed before the chat
         const pendingVignetteContentStr = sessionStorage.getItem(
           STORAGE_KEYS.PENDING_VIGNETTE_CONTENT,
         );
@@ -702,7 +745,7 @@ export function useChatConversation({
             if (text) {
               setMessages([
                 {
-                  id: -Date.now(), // negative to avoid collision with user message id
+                  id: -Date.now(),
                   content: text,
                   sender: "ai" as const,
                   created_at: new Date().toISOString(),
@@ -822,10 +865,7 @@ export function useChatConversation({
     }
 
     if (sessionStorage.getItem(STORAGE_KEYS.PENDING_SCROLL_TO_TOP_VIGNETTE) === "true") {
-      messagesContainerRef.current?.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
+      messagesContainerRef.current?.scrollTo({ top: 0, behavior: "smooth" });
       sessionStorage.removeItem(STORAGE_KEYS.PENDING_SCROLL_TO_TOP_VIGNETTE);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -845,11 +885,7 @@ export function useChatConversation({
       disableAutoScrollRef.current ||
       sessionStorage.getItem(STORAGE_KEYS.DISABLE_AUTO_SCROLL) === "true";
 
-    if (
-      shouldScrollToTop &&
-      lastUserMessageId &&
-      messagesContainerRef.current
-    ) {
+    if (shouldScrollToTop && lastUserMessageId && messagesContainerRef.current) {
       const container = messagesContainerRef.current;
       const element = container.querySelector(
         `[data-message-id="${lastUserMessageId}"]`,
@@ -906,16 +942,16 @@ export function useChatConversation({
     }
   }, [
     messages,
-    streamingMessage,
-    streamingMarketplaceData,
-    streamingRealEstateData,
-    streamingVignetteData,
-    streamingClothesSearchData,
-    streamingJewelrySearchData,
-    streamingCarsSearchData,
-    streamingWatchesSearchData,
-    streamingWhiskySearchData,
-    streamingCardsSearchData,
+    streaming.message,
+    streaming.marketplaceData,
+    streaming.realEstateData,
+    streaming.vignetteData,
+    streaming.clothesSearchData,
+    streaming.jewelrySearchData,
+    streaming.carsSearchData,
+    streaming.watchesSearchData,
+    streaming.whiskySearchData,
+    streaming.cardsSearchData,
     isLoading,
     shouldAutoScroll,
     shouldScrollToTop,
@@ -925,17 +961,18 @@ export function useChatConversation({
   // Streaming indicator logic
   useEffect(() => {
     if (!isLoading) {
-      setShowStreamingIndicator(false);
+      dispatch({ type: "SET_INDICATOR", show: false });
       return;
     }
     const interval = setInterval(() => {
-      const timeSinceLastActivity = Date.now() - lastStreamingActivity;
-      setShowStreamingIndicator(
-        Boolean(isLoading && streamingMessage && timeSinceLastActivity > 500),
-      );
+      const timeSinceLastActivity = Date.now() - streaming.lastActivity;
+      dispatch({
+        type: "SET_INDICATOR",
+        show: Boolean(isLoading && streaming.message && timeSinceLastActivity > 500),
+      });
     }, 300);
     return () => clearInterval(interval);
-  }, [isLoading, streamingMessage, lastStreamingActivity]);
+  }, [isLoading, streaming.message, streaming.lastActivity]);
 
   const handleSend = async ({
     message: messageToSend,
@@ -1054,6 +1091,9 @@ export function useChatConversation({
         );
       }
     }
+
+    // suppress unused param warning — kept for API compatibility
+    void question;
   };
 
   const addAiMessage = async (content: string) => {
@@ -1093,20 +1133,20 @@ export function useChatConversation({
     input,
     setInput,
     isLoading,
-    streamingMessage,
-    streamingMarketplaceData,
-    streamingRealEstateData,
-    streamingVignetteData,
-    streamingClothesSearchData,
-    streamingJewelrySearchData,
-    streamingCarsSearchData,
-    streamingWatchesSearchData,
-    streamingWhiskySearchData,
-    streamingWineSearchData,
-    streamingCardsSearchData,
-    streamingVignetteCategory,
-    currentStatus,
-    showStreamingIndicator,
+    streamingMessage: streaming.message,
+    streamingMarketplaceData: streaming.marketplaceData,
+    streamingRealEstateData: streaming.realEstateData,
+    streamingVignetteData: streaming.vignetteData,
+    streamingClothesSearchData: streaming.clothesSearchData,
+    streamingJewelrySearchData: streaming.jewelrySearchData,
+    streamingCarsSearchData: streaming.carsSearchData,
+    streamingWatchesSearchData: streaming.watchesSearchData,
+    streamingWhiskySearchData: streaming.whiskySearchData,
+    streamingWineSearchData: streaming.wineSearchData,
+    streamingCardsSearchData: streaming.cardsSearchData,
+    streamingVignetteCategory: streaming.vignetteCategory,
+    currentStatus: streaming.status,
+    showStreamingIndicator: streaming.showIndicator,
     messagesEndRef,
     messagesContainerRef,
     disableAutoScrollRef,
@@ -1131,8 +1171,8 @@ export function useChatConversation({
     streamMarkdown,
     clearMessages: useCallback(() => {
       setMessages([]);
-      setStreamingVignetteCategory(null);
-      setShowStreamingIndicator(false);
+      dispatch({ type: "SET_VIGNETTE_CATEGORY", category: null });
+      dispatch({ type: "SET_INDICATOR", show: false });
       resetStreamingState();
     }, [resetStreamingState]),
   };

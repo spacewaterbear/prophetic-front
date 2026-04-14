@@ -2,6 +2,15 @@ import { NextRequest } from "next/server";
 import { auth } from "@/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getClientIp } from "@/lib/utils/ip";
+import {
+  isMaintenanceError,
+  extractErrorMessage,
+} from "@/lib/utils/error-parsing";
+import {
+  createAccumulatedState,
+  processEvent,
+  buildMessageMetadata,
+} from "@/lib/utils/stream-accumulator";
 
 // Dev mode user ID for testing (must be valid UUID format)
 const DEV_USER_ID = "00000000-0000-0000-0000-000000000000";
@@ -12,80 +21,6 @@ const GUEST_QUESTION_LIMIT = 1;
 function isGuestAllowed(): boolean {
   const env = process.env.NEXT_PUBLIC_APP_ENV;
   return env !== "staging" && env !== "preprod";
-}
-
-// Helper function to check if error is an API/maintenance error
-function isMaintenanceError(errorText: unknown): boolean {
-  // Convert to string if it's not already
-  const errorString = typeof errorText === 'string'
-    ? errorText
-    : JSON.stringify(errorText);
-
-  const maintenanceKeywords = [
-    'error generating insight',
-    'error code: 400',
-    'error code: 429',
-    'error code: 500',
-    'credit balance',
-    'credit_balance',
-    'too low',
-    'Plans & Billing',
-    'invalid_request_error',
-    'api error',
-    'api_error',
-    'rate limit',
-    'rate_limit',
-    'anthropic api'
-  ];
-
-  const lowerErrorText = errorString.toLowerCase();
-  return maintenanceKeywords.some(keyword => lowerErrorText.includes(keyword));
-}
-
-// Helper function to extract clean error message from nested error structures
-function extractErrorMessage(errorText: unknown): string {
-  // Convert to string if needed
-  const errorString = typeof errorText === 'string'
-    ? errorText
-    : JSON.stringify(errorText);
-
-  // Check if this is a maintenance/API error first
-  if (isMaintenanceError(errorString)) {
-    return "My brain is in maintenance right now, please wait";
-  }
-
-  try {
-    // Try to find JSON in the error text
-    const jsonMatch = errorString.match(/\{.*\}/);
-    if (jsonMatch) {
-      const parsed = JSON.parse(jsonMatch[0]);
-      // Check for detail.message pattern (common in FastAPI)
-      if (parsed.detail?.message) {
-        // Check if the detail message is also a maintenance error
-        if (isMaintenanceError(parsed.detail.message)) {
-          return "My brain is in maintenance right now, please wait";
-        }
-        return parsed.detail.message;
-      }
-      // Check for detail as string
-      if (typeof parsed.detail === 'string') {
-        if (isMaintenanceError(parsed.detail)) {
-          return "My brain is in maintenance right now, please wait";
-        }
-        return parsed.detail;
-      }
-      // Check for message field
-      if (parsed.message) {
-        if (isMaintenanceError(parsed.message)) {
-          return "My brain is in maintenance right now, please wait";
-        }
-        return parsed.message;
-      }
-    }
-  } catch {
-    // If JSON parsing fails, continue to return original
-  }
-  return errorString;
 }
 
 // POST /api/conversations/[id]/messages - Add a message and stream AI response
@@ -118,7 +53,8 @@ export async function POST(
         .eq("ip_address", ip)
         .maybeSingle();
 
-      const questionsUsed = (quota as { questions_used?: number } | null)?.questions_used ?? 0;
+      const typedQuota = quota as { questions_used?: number } | null;
+      const questionsUsed = typedQuota?.questions_used ?? 0;
 
       if (questionsUsed >= GUEST_QUESTION_LIMIT) {
         return new Response(JSON.stringify({ error: "guest_quota_exceeded" }), {
@@ -128,7 +64,7 @@ export async function POST(
       }
 
       // Increment quota before processing (prevents parallel abuse)
-      if (quota) {
+      if (typedQuota) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await (supabase as any)
           .from("guest_quotas")
@@ -156,7 +92,7 @@ export async function POST(
 
     const supabase = createAdminClient();
 
-    // Verify conversation belongs to user (using admin client, manually filtering)
+    // Verify conversation belongs to user
     const { data: conversation, error: conversationError } = await supabase
       .from("conversations")
       .select("*")
@@ -171,14 +107,12 @@ export async function POST(
       });
     }
 
-    // Get the model from the conversation, default to Claude 3.7 Sonnet
     const requestedModel = (conversation as { model?: string }).model;
     const modelToUse = requestedModel || "anthropic/claude-3.7-sonnet";
 
     console.log(`[API] Requested model: ${requestedModel}, Using model: ${modelToUse} for conversation ${conversationId}`);
 
-    // Use agent_type for tiers_level (in uppercase)
-    const tiersLevel = (agent_type || 'discover').toUpperCase(); // DISCOVER, INTELLIGENCE, or ORACLE
+    const tiersLevel = (agent_type || "discover").toUpperCase();
     console.log(`[API] Tiers level (from agent): ${tiersLevel}`);
 
     // Insert user message
@@ -204,7 +138,7 @@ export async function POST(
       });
     }
 
-    // Update conversation: auto-generate title if needed, and always update updated_at
+    // Update conversation title / updated_at
     const updateData: { updated_at: string; title?: string } = {
       updated_at: new Date().toISOString(),
     };
@@ -216,7 +150,7 @@ export async function POST(
       .update(updateData)
       .eq("id", conversationId);
 
-    // Fetch last 5 messages (user + AI) for conversation history (excluding the current message)
+    // Fetch last 5 messages for conversation history
     const { data: previousMessages } = await supabase
       .from("messages")
       .select("content, sender, created_at")
@@ -225,7 +159,6 @@ export async function POST(
       .order("created_at", { ascending: false })
       .limit(5);
 
-    // Transform to structured format with role, in chronological order
     const conversationHistory = (previousMessages || [])
       .reverse()
       .map(msg => ({
@@ -233,958 +166,135 @@ export async function POST(
         content: msg.content
       }));
 
-    // Create a streaming response with Prophetic API
     const encoder = new TextEncoder();
     const stream = new ReadableStream({
       async start(controller) {
+        const enqueue = (chunk: Uint8Array) => controller.enqueue(chunk);
+
         try {
-          // Validate API credentials exist
           if (!process.env.PROPHETIC_API_URL) {
-            console.error("[Prophetic API Error] PROPHETIC_API_URL environment variable is not set");
             throw new Error("Prophetic API URL is not configured");
           }
           if (!process.env.INTERNAL_API_KEY) {
-            console.error("[Prophetic API Error] INTERNAL_API_KEY environment variable is not set");
             throw new Error("Prophetic API key is not configured");
           }
 
-          // Call Prophetic API with the selected model
           const requestBody = {
             question: flash_card_question || content,
             model: modelToUse,
             session_id: conversationId.toString(),
             user_id: conversation.user_id,
             conversation_history: conversationHistory,
-            tiers_level: tiersLevel, // DISCOVER, INTELLIGENCE, or ORACLE in uppercase
-            attachments: attachments || [], // Include file attachments
-            flash_cards: flash_cards || undefined, // Include flashcard type if provided
-            flash_card_type: flash_card_type || undefined, // Include flashcard type (flash_invest or ranking) if provided
-            uuid_product: uuid_product || null, // Product UUID from abcdaire table
-            product_category: product_category === "MONTRES_LUXE" ? "MONTRES" : product_category === "IMMO_LUXE" ? "REAL_ESTATE" : (product_category || null) // Product category from abcdaire table
+            tiers_level: tiersLevel,
+            attachments: attachments || [],
+            flash_cards: flash_cards || undefined,
+            flash_card_type: flash_card_type || undefined,
+            uuid_product: uuid_product || null,
+            product_category:
+              product_category === "MONTRES_LUXE"
+                ? "MONTRES"
+                : product_category === "IMMO_LUXE"
+                ? "REAL_ESTATE"
+                : product_category || null,
           };
 
           console.log(`[Prophetic API] Request to langchain_agent/query:`, JSON.stringify(requestBody, null, 2));
-          console.log(`[Prophetic API] API URL configured:`, !!process.env.PROPHETIC_API_URL);
-          console.log(`[Prophetic API] API Key configured:`, !!process.env.INTERNAL_API_KEY);
-          console.log(`[Prophetic API] Full endpoint:`, `${process.env.PROPHETIC_API_URL}/prophetic/langchain_agent/query`);
 
-          const response = await fetch(`${process.env.PROPHETIC_API_URL}/prophetic/langchain_agent/query`, {
-            method: "POST",
-            headers: {
-              "x-api-key": process.env.INTERNAL_API_KEY!,
-              "Content-Type": "application/json",
-              "Accept": "application/json"
-            },
-            body: JSON.stringify(requestBody)
-          });
+          const upstreamResponse = await fetch(
+            `${process.env.PROPHETIC_API_URL}/prophetic/langchain_agent/query`,
+            {
+              method: "POST",
+              headers: {
+                "x-api-key": process.env.INTERNAL_API_KEY!,
+                "Content-Type": "application/json",
+                Accept: "application/json",
+              },
+              body: JSON.stringify(requestBody),
+            }
+          );
 
-          if (!response.ok) {
-            const errorBody = await response.text();
-            console.error(`[Prophetic API Error] Status: ${response.status}, Model: ${modelToUse}, Body: ${errorBody}`);
-
-            // Check if this is a maintenance error and provide friendly message
+          if (!upstreamResponse.ok) {
+            const errorBody = await upstreamResponse.text();
+            console.error(
+              `[Prophetic API Error] Status: ${upstreamResponse.status}, Body: ${errorBody}`
+            );
             if (isMaintenanceError(errorBody)) {
               throw new Error("My brain is in maintenance right now, please wait");
             }
-
-            throw new Error(`Prophetic API error: ${response.status} - ${errorBody}`);
+            throw new Error(`Prophetic API error: ${upstreamResponse.status} - ${errorBody}`);
           }
 
-          const reader = response.body?.getReader();
-          if (!reader) {
-            throw new Error("No response body");
-          }
+          const reader = upstreamResponse.body?.getReader();
+          if (!reader) throw new Error("No response body");
 
           const decoder = new TextDecoder();
-          let fullResponse = "";
-          let buffer = ""; // Buffer for incomplete SSE events
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          let structuredData: any = null; // Capture artist_info or other structured responses
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          let marketplaceData: any = null; // Capture marketplace_data separately
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          let realEstateData: any = null; // Capture real_estate_data separately
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          let vignetteData: any = null; // Capture vignette_data separately
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          let clothesSearchData: any = null; // Capture clothes_data separately
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          let jewelrySearchData: any = null; // Capture jewelry_data separately
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          let carsSearchData: any = null; // Capture cars_data separately
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          let watchesSearchData: any = null; // Capture watches_data separately
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          let whiskySearchData: any = null; // Capture whisky_data separately
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          let wineSearchData: any = null; // Capture wine_data separately
+          const acc = createAccumulatedState();
+          let buffer = "";
 
-          // Read and stream the response
           while (true) {
             const { done, value } = await reader.read();
             if (done) break;
 
-            // Append new chunk to buffer
-            const chunk = decoder.decode(value, { stream: true });
-            buffer += chunk;
-
-            // Split by double newline to get complete SSE events
+            buffer += decoder.decode(value, { stream: true });
             const events = buffer.split("\n\n");
-
-            // Keep the last incomplete event in the buffer
             buffer = events.pop() || "";
 
-            // Process each complete event
             for (const event of events) {
               if (!event.trim()) continue;
 
-              // Extract content from "data: " lines
-              const lines = event.split("\n");
               let eventData = "";
-
-              for (const line of lines) {
-                if (line.startsWith("data: ")) {
-                  eventData += line.slice(6);
-                }
+              for (const line of event.split("\n")) {
+                if (line.startsWith("data: ")) eventData += line.slice(6);
               }
-
-              // Skip empty data
-              if (!eventData || eventData === "[DONE]") {
-                continue;
-              }
+              if (!eventData || eventData === "[DONE]") continue;
 
               try {
-                // Parse JSON-encoded chunk from Prophetic API
                 console.log("[DEBUG] Raw eventData:", eventData);
-                const parsed = JSON.parse(eventData);
-                console.log("[DEBUG] Parsed type:", parsed.type, "has content:", !!parsed.content, "content preview:", parsed.content?.substring(0, 100));
-
-                // Handle structured data responses (artist_info, metadata, etc.)
-                if (parsed.type && parsed.type === "artist_info") {
-                  console.log("[Prophetic API] Received artist_info structured data");
-                  structuredData = parsed;
-
-                  // Send artist_info to client immediately for display (SSE format)
-                  const artistChunk = `data: ${JSON.stringify({
-                    type: "artist_info",
-                    data: parsed
-                  })}\n\n`;
-                  controller.enqueue(encoder.encode(artistChunk));
-                  continue;
-                }
-
-                // Handle metadata messages (intro text, etc.)
-                if (parsed.type && parsed.type === "metadata") {
-                  console.log("[Prophetic API] Received metadata");
-                  // Forward metadata to client (SSE format)
-                  const metadataChunk = `data: ${JSON.stringify(parsed)}\n\n`;
-                  controller.enqueue(encoder.encode(metadataChunk));
-
-                  // If skip_streaming is true and there's intro text, add it to fullResponse
-                  if (parsed.skip_streaming && parsed.intro) {
-                    fullResponse += parsed.intro + "\n\n";
-                  }
-                  continue;
-                }
-
-                // Handle marketplace_data messages
-                if (parsed.type && parsed.type === "marketplace_data") {
-                  console.log("[Prophetic API] Received marketplace_data, data type:", typeof parsed.data);
-                  // If data is a string, parse it
-                  let marketplacePayload = parsed.data;
-                  if (typeof marketplacePayload === 'string') {
-                    try {
-                      marketplacePayload = JSON.parse(marketplacePayload);
-                      console.log("[Prophetic API] Parsed stringified marketplace_data.data");
-                    } catch {
-                      console.error("[Prophetic API] Failed to parse marketplace_data.data string");
-                    }
-                  }
-                  // Capture marketplace data for database storage (with parsed data)
-                  marketplaceData = { ...parsed, data: marketplacePayload };
-
-                  // Forward marketplace_data to client immediately (SSE format)
-                  const marketplaceChunk = `data: ${JSON.stringify({
-                    type: "marketplace_data",
-                    data: marketplacePayload
-                  })}\n\n`;
-                  controller.enqueue(encoder.encode(marketplaceChunk));
-                  continue;
-                }
-
-                // Handle real_estate_data messages
-                if (parsed.type && parsed.type === "real_estate_data") {
-                  console.log("[Prophetic API] Received real_estate_data");
-                  // Capture real estate data for database storage
-                  realEstateData = parsed;
-
-                  // Forward real_estate_data to client immediately (SSE format)
-                  const realEstateChunk = `data: ${JSON.stringify({
-                    type: "real_estate_data",
-                    data: parsed.data
-                  })}\n\n`;
-                  controller.enqueue(encoder.encode(realEstateChunk));
-                  continue;
-                }
-
-                // Handle vignette_data messages
-                if (parsed.type && parsed.type === "vignette_data") {
-                  console.log("[Prophetic API] Received vignette_data");
-                  // Capture vignette data for database storage
-                  vignetteData = parsed;
-
-                  // Forward vignette_data to client immediately (SSE format)
-                  const vignetteChunk = `data: ${JSON.stringify({
-                    type: "vignette_data",
-                    data: parsed.data
-                  })}\n\n`;
-                  controller.enqueue(encoder.encode(vignetteChunk));
-                  continue;
-                }
-
-                // Handle clothes_data messages
-                if (parsed.type && parsed.type === "clothes_data") {
-                  console.log("[Prophetic API] Received clothes_data");
-                  // Capture clothes search data for database storage
-                  clothesSearchData = parsed;
-
-                  // Forward clothes_data to client immediately (SSE format)
-                  const clothesChunk = `data: ${JSON.stringify({
-                    type: "clothes_data",
-                    data: parsed.data
-                  })}\n\n`;
-                  controller.enqueue(encoder.encode(clothesChunk));
-                  continue;
-                }
-
-                // Handle jewelry_data messages
-                if (parsed.type && parsed.type === "jewelry_data") {
-                  console.log("[Prophetic API] Received jewelry_data");
-                  jewelrySearchData = parsed;
-                  const jewelryChunk = `data: ${JSON.stringify({
-                    type: "jewelry_data",
-                    data: parsed.data
-                  })}\n\n`;
-                  controller.enqueue(encoder.encode(jewelryChunk));
-                  continue;
-                }
-
-                // Handle cars_data messages
-                if (parsed.type && parsed.type === "cars_data") {
-                  console.log("[Prophetic API] Received cars_data");
-                  carsSearchData = parsed;
-                  const carsChunk = `data: ${JSON.stringify({
-                    type: "cars_data",
-                    data: parsed.data
-                  })}\n\n`;
-                  controller.enqueue(encoder.encode(carsChunk));
-                  continue;
-                }
-
-                // Handle watches_data messages
-                if (parsed.type && parsed.type === "watches_data") {
-                  console.log("[Prophetic API] Received watches_data");
-                  watchesSearchData = parsed;
-                  const watchesChunk = `data: ${JSON.stringify({
-                    type: "watches_data",
-                    data: parsed.data
-                  })}\n\n`;
-                  controller.enqueue(encoder.encode(watchesChunk));
-                  continue;
-                }
-
-                // Handle whisky_data messages
-                if (parsed.type && parsed.type === "whisky_data") {
-                  console.log("[Prophetic API] Received whisky_data");
-                  whiskySearchData = parsed;
-                  const whiskyChunk = `data: ${JSON.stringify({
-                    type: "whisky_data",
-                    data: parsed.data
-                  })}\n\n`;
-                  controller.enqueue(encoder.encode(whiskyChunk));
-                  continue;
-                }
-
-                // Handle wine_data messages
-                if (parsed.type && parsed.type === "wine_data") {
-                  console.log("[Prophetic API] Received wine_data");
-                  wineSearchData = parsed;
-                  const wineChunk = `data: ${JSON.stringify({
-                    type: "wine_data",
-                    data: parsed.data
-                  })}\n\n`;
-                  controller.enqueue(encoder.encode(wineChunk));
-                  continue;
-                }
-
-                // Handle status messages
-                if (parsed.type && parsed.type === "status") {
-                  console.log("[Prophetic API] Received status:", parsed.message);
-                  // Forward status to client immediately (SSE format)
-                  const statusChunk = `data: ${JSON.stringify({
-                    type: "status",
-                    message: parsed.message
-                  })}\n\n`;
-                  controller.enqueue(encoder.encode(statusChunk));
-                  continue;
-                }
-
-                // Handle content chunks (regular text responses)
-                if (parsed.content) {
-                  const content = parsed.content;
-                  const trimmedContent = content.trim();
-
-                  // Check if content contains nested SSE data (Prophetic API sends structured data this way)
-                  if (trimmedContent.startsWith('data:')) {
-                    console.log("[NESTED SSE] Detected nested SSE in content field");
-                    // Extract the JSON after "data: " and before any trailing whitespace/newlines
-                    const nestedJsonStr = trimmedContent.slice(6).trim();
-
-                    try {
-                      const nestedData = JSON.parse(nestedJsonStr);
-                      console.log("[NESTED SSE] Parsed nested data type:", nestedData.type);
-
-                      // Handle artist_info nested in content
-                      if (nestedData.type === "artist_info") {
-                        console.log("[Prophetic API] Received artist_info (from nested content)");
-                        structuredData = nestedData;
-
-                        // Send artist_info to client immediately for display (SSE format)
-                        const artistChunk = `data: ${JSON.stringify({
-                          type: "artist_info",
-                          data: nestedData
-                        })}\n\n`;
-                        controller.enqueue(encoder.encode(artistChunk));
-                        continue;
-                      }
-
-                      // Handle metadata nested in content
-                      if (nestedData.type === "metadata") {
-                        console.log("[Prophetic API] Received metadata (from nested content)");
-                        // Forward metadata to client (SSE format)
-                        const metadataChunk = `data: ${JSON.stringify(nestedData)}\n\n`;
-                        controller.enqueue(encoder.encode(metadataChunk));
-
-                        // If skip_streaming is true and there's intro text, add it to fullResponse
-                        if (nestedData.skip_streaming && nestedData.intro) {
-                          fullResponse += nestedData.intro + "\n\n";
-                        }
-                        continue;
-                      }
-
-                      // Handle marketplace_data nested in content
-                      if (nestedData.type === "marketplace_data") {
-                        console.log("[Prophetic API] Received marketplace_data (from nested content)");
-                        marketplaceData = nestedData;
-                        const nestedMarketplaceChunk = `data: ${JSON.stringify({
-                          type: "marketplace_data",
-                          data: nestedData.data
-                        })}\n\n`;
-                        controller.enqueue(encoder.encode(nestedMarketplaceChunk));
-                        continue;
-                      }
-
-                      // Handle real_estate_data nested in content
-                      if (nestedData.type === "real_estate_data") {
-                        console.log("[Prophetic API] Received real_estate_data (from nested content)");
-                        realEstateData = nestedData;
-                        const nestedRealEstateChunk = `data: ${JSON.stringify({
-                          type: "real_estate_data",
-                          data: nestedData.data
-                        })}\n\n`;
-                        controller.enqueue(encoder.encode(nestedRealEstateChunk));
-                        continue;
-                      }
-
-                      // Handle vignette_data nested in content
-                      if (nestedData.type === "vignette_data") {
-                        console.log("[Prophetic API] Received vignette_data (from nested content)");
-                        vignetteData = nestedData;
-                        const nestedVignetteChunk = `data: ${JSON.stringify({
-                          type: "vignette_data",
-                          data: nestedData.data
-                        })}\n\n`;
-                        controller.enqueue(encoder.encode(nestedVignetteChunk));
-                        continue;
-                      }
-
-                      // Handle clothes_data nested in content
-                      if (nestedData.type === "clothes_data") {
-                        console.log("[Prophetic API] Received clothes_data (from nested content)");
-                        clothesSearchData = nestedData;
-                        const nestedClothesChunk = `data: ${JSON.stringify({
-                          type: "clothes_data",
-                          data: nestedData.data
-                        })}\n\n`;
-                        controller.enqueue(encoder.encode(nestedClothesChunk));
-                        continue;
-                      }
-
-                      // Handle jewelry_data nested in content
-                      if (nestedData.type === "jewelry_data") {
-                        console.log("[Prophetic API] Received jewelry_data (from nested content)");
-                        jewelrySearchData = nestedData;
-                        const nestedJewelryChunk = `data: ${JSON.stringify({
-                          type: "jewelry_data",
-                          data: nestedData.data
-                        })}\n\n`;
-                        controller.enqueue(encoder.encode(nestedJewelryChunk));
-                        continue;
-                      }
-
-                      // Handle cars_data nested in content
-                      if (nestedData.type === "cars_data") {
-                        console.log("[Prophetic API] Received cars_data (from nested content)");
-                        carsSearchData = nestedData;
-                        const nestedCarsChunk = `data: ${JSON.stringify({
-                          type: "cars_data",
-                          data: nestedData.data
-                        })}\n\n`;
-                        controller.enqueue(encoder.encode(nestedCarsChunk));
-                        continue;
-                      }
-
-                      // Handle watches_data nested in content
-                      if (nestedData.type === "watches_data") {
-                        console.log("[Prophetic API] Received watches_data (from nested content)");
-                        watchesSearchData = nestedData;
-                        const nestedWatchesChunk = `data: ${JSON.stringify({
-                          type: "watches_data",
-                          data: nestedData.data
-                        })}\n\n`;
-                        controller.enqueue(encoder.encode(nestedWatchesChunk));
-                        continue;
-                      }
-
-                      // Handle whisky_data nested in content
-                      if (nestedData.type === "whisky_data") {
-                        console.log("[Prophetic API] Received whisky_data (from nested content)");
-                        whiskySearchData = nestedData;
-                        const nestedWhiskyChunk = `data: ${JSON.stringify({
-                          type: "whisky_data",
-                          data: nestedData.data
-                        })}\n\n`;
-                        controller.enqueue(encoder.encode(nestedWhiskyChunk));
-                        continue;
-                      }
-
-                      // Handle wine_data nested in content
-                      if (nestedData.type === "wine_data") {
-                        console.log("[Prophetic API] Received wine_data (from nested content)");
-                        wineSearchData = nestedData;
-                        const nestedWineChunk = `data: ${JSON.stringify({
-                          type: "wine_data",
-                          data: nestedData.data
-                        })}\n\n`;
-                        controller.enqueue(encoder.encode(nestedWineChunk));
-                        continue;
-                      }
-
-                      // Handle status nested in content
-                      if (nestedData.type === "status") {
-                        console.log("[Prophetic API] Received status (from nested content)");
-                        const nestedStatusChunk = `data: ${JSON.stringify({
-                          type: "status",
-                          message: nestedData.message
-                        })}\n\n`;
-                        controller.enqueue(encoder.encode(nestedStatusChunk));
-                        continue;
-                      }
-
-                      // If it's some other nested type, log and skip
-                      console.log("[NESTED SSE] Unhandled nested type, skipping:", nestedData.type);
-                      continue;
-                    } catch (e) {
-                      // Not valid JSON after "data: ", skip this chunk
-                      console.log("[NESTED SSE] Failed to parse nested JSON, skipping");
-                      continue;
-                    }
-                  }
-
-                  // Handle standalone JSON objects in content field
-                  if (trimmedContent.startsWith('{')) {
-                    try {
-                      const standaloneData = JSON.parse(trimmedContent);
-                      if (standaloneData.type === "marketplace_data") {
-                        console.log("[Prophetic API] Received marketplace_data (from standalone JSON in content)");
-                        marketplaceData = standaloneData;
-                        const standaloneMarketplaceChunk = `data: ${JSON.stringify({
-                          type: "marketplace_data",
-                          data: standaloneData.data
-                        })}\n\n`;
-                        controller.enqueue(encoder.encode(standaloneMarketplaceChunk));
-                        continue;
-                      }
-                      if (standaloneData.type === "real_estate_data") {
-                        console.log("[Prophetic API] Received real_estate_data (from standalone JSON in content)");
-                        realEstateData = standaloneData;
-                        const standaloneRealEstateChunk = `data: ${JSON.stringify({
-                          type: "real_estate_data",
-                          data: standaloneData.data
-                        })}\n\n`;
-                        controller.enqueue(encoder.encode(standaloneRealEstateChunk));
-                        continue;
-                      }
-                      if (standaloneData.type === "vignette_data") {
-                        console.log("[Prophetic API] Received vignette_data (from standalone JSON in content)");
-                        vignetteData = standaloneData;
-                        const standaloneVignetteChunk = `data: ${JSON.stringify({
-                          type: "vignette_data",
-                          data: standaloneData.data
-                        })}\n\n`;
-                        controller.enqueue(encoder.encode(standaloneVignetteChunk));
-                        continue;
-                      }
-                      if (standaloneData.type === "clothes_data") {
-                        console.log("[Prophetic API] Received clothes_data (from standalone JSON in content)");
-                        clothesSearchData = standaloneData;
-                        const standaloneClothesChunk = `data: ${JSON.stringify({
-                          type: "clothes_data",
-                          data: standaloneData.data
-                        })}\n\n`;
-                        controller.enqueue(encoder.encode(standaloneClothesChunk));
-                        continue;
-                      }
-                      if (standaloneData.type === "jewelry_data") {
-                        console.log("[Prophetic API] Received jewelry_data (from standalone JSON in content)");
-                        jewelrySearchData = standaloneData;
-                        const standaloneJewelryChunk = `data: ${JSON.stringify({
-                          type: "jewelry_data",
-                          data: standaloneData.data
-                        })}\n\n`;
-                        controller.enqueue(encoder.encode(standaloneJewelryChunk));
-                        continue;
-                      }
-                      if (standaloneData.type === "cars_data") {
-                        console.log("[Prophetic API] Received cars_data (from standalone JSON in content)");
-                        carsSearchData = standaloneData;
-                        const standaloneCarsChunk = `data: ${JSON.stringify({
-                          type: "cars_data",
-                          data: standaloneData.data
-                        })}\n\n`;
-                        controller.enqueue(encoder.encode(standaloneCarsChunk));
-                        continue;
-                      }
-                      if (standaloneData.type === "watches_data") {
-                        console.log("[Prophetic API] Received watches_data (from standalone JSON in content)");
-                        watchesSearchData = standaloneData;
-                        const standaloneWatchesChunk = `data: ${JSON.stringify({
-                          type: "watches_data",
-                          data: standaloneData.data
-                        })}\n\n`;
-                        controller.enqueue(encoder.encode(standaloneWatchesChunk));
-                        continue;
-                      }
-                      if (standaloneData.type === "whisky_data") {
-                        console.log("[Prophetic API] Received whisky_data (from standalone JSON in content)");
-                        whiskySearchData = standaloneData;
-                        const standaloneWhiskyChunk = `data: ${JSON.stringify({
-                          type: "whisky_data",
-                          data: standaloneData.data
-                        })}\n\n`;
-                        controller.enqueue(encoder.encode(standaloneWhiskyChunk));
-                        continue;
-                      }
-                      if (standaloneData.type === "wine_data") {
-                        console.log("[Prophetic API] Received wine_data (from standalone JSON in content)");
-                        wineSearchData = standaloneData;
-                        const standaloneWineChunk = `data: ${JSON.stringify({
-                          type: "wine_data",
-                          data: standaloneData.data
-                        })}\n\n`;
-                        controller.enqueue(encoder.encode(standaloneWineChunk));
-                        continue;
-                      }
-                      if (standaloneData.type === "artist_info") {
-                        console.log("[Prophetic API] Received artist_info (from standalone JSON in content)");
-                        structuredData = standaloneData;
-                        const standaloneArtistChunk = `data: ${JSON.stringify({
-                          type: "artist_info",
-                          data: standaloneData
-                        })}\n\n`;
-                        controller.enqueue(encoder.encode(standaloneArtistChunk));
-                        continue;
-                      }
-                    } catch {
-                      // Not valid JSON, fall through
-                    }
-                    console.log("[SKIP] Ignoring unrecognized standalone JSON in content field");
-                    continue;
-                  }
-
-                  // Check if content is actually an error message
-                  if (isMaintenanceError(content)) {
-                    console.log("[ERROR DETECTION] Content contains error, converting to error type");
-                    const errorChunk = `data: ${JSON.stringify({
-                      type: "error",
-                      error: "My brain is in maintenance right now, please wait"
-                    })}\n\n`;
-                    controller.enqueue(encoder.encode(errorChunk));
-                    continue;
-                  }
-
-                  // Normal text content - add to response and send to client
-                  fullResponse += content;
-
-                  // Send chunk to client (SSE format)
-                  const chunkData = `data: ${JSON.stringify({
-                    type: "chunk",
-                    content: content
-                  })}\n\n`;
-                  controller.enqueue(encoder.encode(chunkData));
-                }
-
-                // Handle error messages
-                if (parsed.error) {
-                  console.error("[Prophetic API] Error in stream:", parsed.error);
-                  const cleanError = extractErrorMessage(parsed.error);
-                  const errorChunk = `data: ${JSON.stringify({
-                    type: "error",
-                    error: cleanError
-                  })}\n\n`;
-                  controller.enqueue(encoder.encode(errorChunk));
-                }
+                const parsed = JSON.parse(eventData) as Record<string, unknown>;
+                console.log("[DEBUG] Parsed type:", parsed.type);
+                processEvent(parsed, acc, enqueue, encoder);
               } catch (e) {
-                // If JSON parsing fails, log and skip this chunk
                 console.error("[Prophetic API] Failed to parse JSON:", eventData, e);
               }
             }
           }
 
-          // Process any remaining data left in the buffer after stream ends
+          // Process any remaining data in the buffer
           if (buffer.trim()) {
-            console.log("[Prophetic API] Processing remaining buffer after stream end:", buffer.substring(0, 200));
-            const lines = buffer.split("\n");
             let eventData = "";
-            for (const line of lines) {
-              if (line.startsWith("data: ")) {
-                eventData += line.slice(6);
-              }
+            for (const line of buffer.split("\n")) {
+              if (line.startsWith("data: ")) eventData += line.slice(6);
             }
             if (eventData && eventData !== "[DONE]") {
               try {
-                const parsed = JSON.parse(eventData);
-                console.log("[Prophetic API] Remaining buffer parsed type:", parsed.type);
-                if (parsed.type === "marketplace_data" && !marketplaceData) {
-                  console.log("[Prophetic API] Captured marketplace_data from remaining buffer");
-                  marketplaceData = parsed;
-                  const marketplaceChunk = `data: ${JSON.stringify({
-                    type: "marketplace_data",
-                    data: parsed.data
-                  })}\n\n`;
-                  controller.enqueue(encoder.encode(marketplaceChunk));
-                } else if (parsed.type === "real_estate_data" && !realEstateData) {
-                  realEstateData = parsed;
-                  const chunk = `data: ${JSON.stringify({ type: "real_estate_data", data: parsed.data })}\n\n`;
-                  controller.enqueue(encoder.encode(chunk));
-                } else if (parsed.type === "vignette_data" && !vignetteData) {
-                  vignetteData = parsed;
-                  const chunk = `data: ${JSON.stringify({ type: "vignette_data", data: parsed.data })}\n\n`;
-                  controller.enqueue(encoder.encode(chunk));
-                } else if (parsed.type === "clothes_data" && !clothesSearchData) {
-                  clothesSearchData = parsed;
-                  const chunk = `data: ${JSON.stringify({ type: "clothes_data", data: parsed.data })}\n\n`;
-                  controller.enqueue(encoder.encode(chunk));
-                } else if (parsed.type === "jewelry_data" && !jewelrySearchData) {
-                  jewelrySearchData = parsed;
-                  const chunk = `data: ${JSON.stringify({ type: "jewelry_data", data: parsed.data })}\n\n`;
-                  controller.enqueue(encoder.encode(chunk));
-                } else if (parsed.type === "cars_data" && !carsSearchData) {
-                  carsSearchData = parsed;
-                  const chunk = `data: ${JSON.stringify({ type: "cars_data", data: parsed.data })}\n\n`;
-                  controller.enqueue(encoder.encode(chunk));
-                } else if (parsed.type === "watches_data" && !watchesSearchData) {
-                  watchesSearchData = parsed;
-                  const chunk = `data: ${JSON.stringify({ type: "watches_data", data: parsed.data })}\n\n`;
-                  controller.enqueue(encoder.encode(chunk));
-                } else if (parsed.type === "whisky_data" && !whiskySearchData) {
-                  whiskySearchData = parsed;
-                  const chunk = `data: ${JSON.stringify({ type: "whisky_data", data: parsed.data })}\n\n`;
-                  controller.enqueue(encoder.encode(chunk));
-                } else if (parsed.type === "wine_data" && !wineSearchData) {
-                  wineSearchData = parsed;
-                  const chunk = `data: ${JSON.stringify({ type: "wine_data", data: parsed.data })}\n\n`;
-                  controller.enqueue(encoder.encode(chunk));
-                } else if (parsed.content) {
-                  fullResponse += parsed.content;
-                  const chunkData = `data: ${JSON.stringify({ type: "chunk", content: parsed.content })}\n\n`;
-                  controller.enqueue(encoder.encode(chunkData));
-                }
+                const parsed = JSON.parse(eventData) as Record<string, unknown>;
+                processEvent(parsed, acc, enqueue, encoder);
               } catch (e) {
                 console.log("[Prophetic API] Could not parse remaining buffer:", e);
               }
             }
           }
 
-          // Prepare message content and metadata based on response type
-          const messageContent = fullResponse.trim();
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          let messageMetadata: any = null;
-
-          // If we captured structured data (e.g., artist_info), store it in metadata
-          if (structuredData && structuredData.type) {
-            messageMetadata = {
-              type: structuredData.type,
-              structured_data: structuredData
-            };
-
-            // For artist_info, the intro text is what the user sees first
-            // The structured data will be rendered as a card by the frontend
-            console.log(`[Message Storage] Storing structured response type: ${structuredData.type}`);
-          }
-
-          // If we captured marketplace data, store it in metadata
-          if (marketplaceData && marketplaceData.type === "marketplace_data") {
-            // If we already have structured data (e.g., artist_info), create a combined metadata
-            if (messageMetadata) {
-              messageMetadata.marketplace_data = marketplaceData.data;
-              // For artist questions, put marketplace data at the end ("after")
-              // Otherwise, use provided position or default to "before"
-              const defaultPosition = messageMetadata.type === "artist_info" ? "after" : "before";
-              messageMetadata.marketplace_position = marketplaceData.marketplace_position || marketplaceData.data?.marketplace_position || defaultPosition;
-            } else {
-              messageMetadata = {
-                type: "marketplace_data",
-                structured_data: marketplaceData,
-                marketplace_data: marketplaceData.data,
-                marketplace_position: marketplaceData.marketplace_position || marketplaceData.data?.marketplace_position || "before"
-              };
-            }
-            console.log(`[Message Storage] Storing marketplace_data with position: ${messageMetadata.marketplace_position}`);
-          }
-
-          // If we captured real estate data, store it in metadata
-          if (realEstateData && realEstateData.type === "real_estate_data") {
-            // If we already have structured data, add real_estate_data to it
-            if (messageMetadata) {
-              messageMetadata.real_estate_data = realEstateData.data;
-            } else {
-              messageMetadata = {
-                type: "real_estate_data",
-                structured_data: realEstateData,
-                real_estate_data: realEstateData.data
-              };
-            }
-            console.log(`[Message Storage] Storing real_estate_data`);
-          }
-
-          // If we captured vignette data, store it in metadata
-          if (vignetteData && vignetteData.type === "vignette_data") {
-            // If we already have structured data, add vignette_data to it
-            if (messageMetadata) {
-              messageMetadata.vignette_data = vignetteData.data;
-            } else {
-              messageMetadata = {
-                type: "vignette_data",
-                structured_data: vignetteData,
-                vignette_data: vignetteData.data
-              };
-            }
-            console.log(`[Message Storage] Storing vignette_data`);
-          }
-
-          // If we captured clothes search data, store it in metadata
-          if (clothesSearchData && clothesSearchData.type === "clothes_data") {
-            // Ensure the data is properly structured (not stringified)
-            let parsedClothesData = clothesSearchData.data;
-
-            // If data is a string, try to parse it
-            if (typeof parsedClothesData === 'string') {
-              try {
-                parsedClothesData = JSON.parse(parsedClothesData);
-                console.log('[Message Storage] Parsed stringified clothes_search_data');
-              } catch (e) {
-                console.error('[Message Storage] Failed to parse clothes_search_data string:', e);
-              }
-            }
-
-            // Validate the structure
-            if (parsedClothesData && typeof parsedClothesData === 'object' && !Array.isArray(parsedClothesData)) {
-              // If we already have structured data, add clothes_search_data to it
-              if (messageMetadata) {
-                messageMetadata.clothes_search_data = parsedClothesData;
-              } else {
-                messageMetadata = {
-                  type: "clothes_data",
-                  structured_data: clothesSearchData,
-                  clothes_search_data: parsedClothesData
-                };
-              }
-              console.log('[Message Storage] Storing clothes_search_data:', {
-                type: parsedClothesData.type,
-                totalListings: parsedClothesData.total_listings,
-                listingsCount: parsedClothesData.listings?.length,
-                isObject: typeof parsedClothesData === 'object',
-                isArray: Array.isArray(parsedClothesData)
-              });
-            } else {
-              console.error('[Message Storage] Invalid clothes_search_data structure:', {
-                type: typeof parsedClothesData,
-                isArray: Array.isArray(parsedClothesData),
-                data: parsedClothesData
-              });
-            }
-          }
-
-          // If we captured jewelry search data, store it in metadata
-          if (jewelrySearchData && jewelrySearchData.type === "jewelry_data") {
-            let parsedJewelryData = jewelrySearchData.data;
-            if (typeof parsedJewelryData === 'string') {
-              try {
-                parsedJewelryData = JSON.parse(parsedJewelryData);
-              } catch (e) {
-                console.error('[Message Storage] Failed to parse jewelry_search_data string:', e);
-              }
-            }
-            if (parsedJewelryData && typeof parsedJewelryData === 'object' && !Array.isArray(parsedJewelryData)) {
-              if (messageMetadata) {
-                messageMetadata.jewelry_search_data = parsedJewelryData;
-              } else {
-                messageMetadata = {
-                  type: "jewelry_data",
-                  structured_data: jewelrySearchData,
-                  jewelry_search_data: parsedJewelryData
-                };
-              }
-              console.log('[Message Storage] Storing jewelry_search_data:', {
-                type: parsedJewelryData.type,
-                totalListings: parsedJewelryData.total_listings,
-                listingsCount: parsedJewelryData.listings?.length,
-              });
-            }
-          }
-
-          // If we captured watches search data, store it in metadata
-          if (watchesSearchData && watchesSearchData.type === "watches_data") {
-            let parsedWatchesData = watchesSearchData.data;
-            if (typeof parsedWatchesData === 'string') {
-              try {
-                parsedWatchesData = JSON.parse(parsedWatchesData);
-              } catch (e) {
-                console.error('[Message Storage] Failed to parse watches_search_data string:', e);
-              }
-            }
-            if (parsedWatchesData && typeof parsedWatchesData === 'object' && !Array.isArray(parsedWatchesData)) {
-              if (messageMetadata) {
-                messageMetadata.watches_search_data = parsedWatchesData;
-              } else {
-                messageMetadata = {
-                  type: "watches_data",
-                  structured_data: watchesSearchData,
-                  watches_search_data: parsedWatchesData
-                };
-              }
-              console.log('[Message Storage] Storing watches_search_data:', {
-                type: parsedWatchesData.type,
-                totalListings: parsedWatchesData.total_listings,
-                listingsCount: parsedWatchesData.listings?.length,
-              });
-            }
-          }
-
-          // If we captured whisky search data, store it in metadata
-          if (whiskySearchData && whiskySearchData.type === "whisky_data") {
-            let parsedWhiskyData = whiskySearchData.data;
-            if (typeof parsedWhiskyData === 'string') {
-              try {
-                parsedWhiskyData = JSON.parse(parsedWhiskyData);
-              } catch (e) {
-                console.error('[Message Storage] Failed to parse whisky_search_data string:', e);
-              }
-            }
-            if (parsedWhiskyData && typeof parsedWhiskyData === 'object' && !Array.isArray(parsedWhiskyData)) {
-              if (messageMetadata) {
-                messageMetadata.whisky_search_data = parsedWhiskyData;
-              } else {
-                messageMetadata = {
-                  type: "whisky_data",
-                  structured_data: whiskySearchData,
-                  whisky_search_data: parsedWhiskyData
-                };
-              }
-              console.log('[Message Storage] Storing whisky_search_data:', {
-                type: parsedWhiskyData.type,
-                totalListings: parsedWhiskyData.total_listings,
-                listingsCount: parsedWhiskyData.listings?.length,
-              });
-            }
-          }
-
-          // If we captured wine search data, store it in metadata
-          if (wineSearchData && wineSearchData.type === "wine_data") {
-            let parsedWineData = wineSearchData.data;
-            if (typeof parsedWineData === 'string') {
-              try {
-                parsedWineData = JSON.parse(parsedWineData);
-              } catch (e) {
-                console.error('[Message Storage] Failed to parse wine_search_data string:', e);
-              }
-            }
-            if (parsedWineData && typeof parsedWineData === 'object' && !Array.isArray(parsedWineData)) {
-              if (messageMetadata) {
-                messageMetadata.wine_search_data = parsedWineData;
-              } else {
-                messageMetadata = {
-                  type: "wine_data",
-                  structured_data: wineSearchData,
-                  wine_search_data: parsedWineData
-                };
-              }
-              console.log('[Message Storage] Storing wine_search_data:', {
-                type: parsedWineData.type,
-                totalListings: parsedWineData.total_listings,
-                listingsCount: parsedWineData.listings?.length,
-              });
-            }
-          }
-
-          // If we captured cars search data, store it in metadata
-          if (carsSearchData && carsSearchData.type === "cars_data") {
-            let parsedCarsData = carsSearchData.data;
-            if (typeof parsedCarsData === 'string') {
-              try {
-                parsedCarsData = JSON.parse(parsedCarsData);
-              } catch (e) {
-                console.error('[Message Storage] Failed to parse cars_search_data string:', e);
-              }
-            }
-            if (parsedCarsData && typeof parsedCarsData === 'object' && !Array.isArray(parsedCarsData)) {
-              if (messageMetadata) {
-                messageMetadata.cars_search_data = parsedCarsData;
-              } else {
-                messageMetadata = {
-                  type: "cars_data",
-                  structured_data: carsSearchData,
-                  cars_search_data: parsedCarsData
-                };
-              }
-              console.log('[Message Storage] Storing cars_search_data:', {
-                type: parsedCarsData.type,
-                totalListings: parsedCarsData.total_listings,
-                listingsCount: parsedCarsData.listings?.length,
-              });
-            }
-          }
+          // Build and persist metadata
+          const messageContent = acc.fullResponse.trim();
+          const messageMetadata = buildMessageMetadata(acc);
 
           console.log("[Message Storage] About to save message:", {
             conversation_id: conversationId,
             contentLength: messageContent.length,
-            contentPreview: messageContent.substring(0, 100),
             hasMetadata: !!messageMetadata,
             metadataType: messageMetadata?.type,
-            hasMarketplaceData: !!messageMetadata?.marketplace_data,
-            hasVignetteData: !!messageMetadata?.vignette_data,
-            hasClothesSearchData: !!messageMetadata?.clothes_search_data
           });
 
-          // Save AI message to database
           const { data: aiMessage, error: aiMessageError } = await supabase
             .from("messages")
             .insert({
               conversation_id: conversationId,
               content: messageContent,
               sender: "ai",
-              metadata: messageMetadata,
+              // Cast through unknown: MessageMetadata is structurally Json-compatible
+              // but the generated Supabase type doesn't know that.
+              metadata: messageMetadata as unknown as import("@/lib/supabase/types").Json,
             })
             .select()
             .single();
@@ -1198,67 +308,43 @@ export async function POST(
               contentLength: aiMessage.content?.length,
               hasMetadata: !!aiMessage.metadata,
               metadataType: savedMetadata?.type,
-              hasMarketplaceData: !!(savedMetadata?.marketplace_data),
-              marketplace_position: savedMetadata?.marketplace_position,
-              metadataKeys: savedMetadata ? Object.keys(savedMetadata) : []
             });
-
-            // Log the full marketplace_data if present for debugging
-            if (savedMetadata?.marketplace_data) {
-              const marketplaceData = savedMetadata.marketplace_data as Record<string, unknown>;
-              const artworks = marketplaceData.artworks as Array<unknown> | undefined;
-              console.log("[Message Storage] Marketplace data details:", {
-                found: marketplaceData.found,
-                marketplace: marketplaceData.marketplace,
-                artworkCount: artworks?.length
-              });
-            }
           }
 
-          // Send completion message with type indicator if structured (SSE format)
           const doneChunk = `data: ${JSON.stringify({
-            type: messageMetadata?.type === "artist_info" ? "artist_info" : "done",
+            type:
+              messageMetadata?.type === "artist_info" ? "artist_info" : "done",
             userMessage,
-            aiMessage
+            aiMessage,
           })}\n\n`;
           controller.enqueue(encoder.encode(doneChunk));
-
           controller.close();
         } catch (error) {
-          console.error("[Stream Error] Detailed error information:", {
+          console.error("[Stream Error]:", {
             error,
             errorMessage: error instanceof Error ? error.message : String(error),
-            errorStack: error instanceof Error ? error.stack : undefined,
             conversationId,
-            userId: conversation.user_id,
-            model: modelToUse
+            model: modelToUse,
           });
 
-          // Determine specific error message
           let errorMessage = "Failed to generate AI response";
           if (error instanceof Error) {
-            // Check for maintenance errors first (highest priority)
             if (isMaintenanceError(error.message)) {
               errorMessage = "My brain is in maintenance right now, please wait";
             } else if (error.message.includes("API URL is not configured")) {
               errorMessage = "API configuration error: Missing API URL";
             } else if (error.message.includes("API token is not configured")) {
               errorMessage = "API configuration error: Missing API token";
-            } else if (error.message.includes("Prophetic API error")) {
-              // Extract clean message from nested error structure
-              errorMessage = extractErrorMessage(error.message);
-            } else if (error.message.includes("No response body")) {
-              errorMessage = "No response received from backend";
             } else {
               errorMessage = extractErrorMessage(error.message);
             }
           }
 
-          const errorChunk = `data: ${JSON.stringify({
-            type: "error",
-            error: errorMessage
-          })}\n\n`;
-          controller.enqueue(encoder.encode(errorChunk));
+          controller.enqueue(
+            encoder.encode(
+              `data: ${JSON.stringify({ type: "error", error: errorMessage })}\n\n`
+            )
+          );
           controller.close();
         }
       },
@@ -1268,14 +354,14 @@ export async function POST(
       headers: {
         "Content-Type": "text/event-stream",
         "Cache-Control": "no-cache",
-        "Connection": "keep-alive",
+        Connection: "keep-alive",
       },
     });
   } catch (error) {
     console.error("Error in POST /api/conversations/[id]/messages:", error);
     return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
-      headers: { "Content-Type": "application/json" }
+      headers: { "Content-Type": "application/json" },
     });
   }
 }

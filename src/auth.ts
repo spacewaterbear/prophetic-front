@@ -89,6 +89,20 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   secret: process.env.AUTH_SECRET,
   trustHost: true,
   useSecureCookies: process.env.NODE_ENV === "production",
+  cookies: {
+    // Explicitly configure the PKCE cookie with a stable name so the verifier
+    // set during the auth initiation and the value read on the callback always
+    // match — NextAuth v5 can otherwise produce a name mismatch in dev.
+    pkceCodeVerifier: {
+      name: "authjs.pkce.code_verifier",
+      options: {
+        httpOnly: true,
+        sameSite: "lax" as const,
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+      },
+    },
+  },
   callbacks: {
     async jwt({ token, account, profile, user }) {
       // Handle magic link authentication (credentials provider)

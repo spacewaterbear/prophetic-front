@@ -16,10 +16,8 @@ export default auth((req) => {
   }
 
   const isLoggedIn = !!req.auth;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const userStatus = (req.auth?.user as any)?.status;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const isAdmin = (req.auth?.user as any)?.isAdmin === true;
+  const userStatus = req.auth?.user?.status;
+  const isAdmin = req.auth?.user?.isAdmin === true;
 
   // Public routes that don't require authentication
   const isPublicRoute = nextUrl.pathname === "/login" || nextUrl.pathname === "/pricing" || nextUrl.pathname.startsWith("/share/") || nextUrl.pathname === "/test-verification" || nextUrl.pathname === "/test_visi";
@@ -85,7 +83,7 @@ export default auth((req) => {
 
   // If logged in and authorized (any valid tier) but on registration pending page, redirect to home
   const authorizedStatuses = ['free', 'paid', 'admini', 'discover', 'intelligence', 'oracle'];
-  if (authorizedStatuses.includes(userStatus) && isRegistrationPending) {
+  if (userStatus && authorizedStatuses.includes(userStatus) && isRegistrationPending) {
     return NextResponse.redirect(new URL("/", nextUrl));
   }
 
