@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { api, type CreditsResponse } from "@/lib/api";
 
 const TOTAL_FREE_CREDITS = 100;
 
@@ -30,14 +31,11 @@ export function useCredits(userId: string | undefined, isFreeUser: boolean): Use
     const fetchCredits = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch("/api/credits");
-        if (response.ok) {
-          const data = await response.json();
-          const value = data.credits ?? TOTAL_FREE_CREDITS;
-          setIsTester(data.isTester ?? false);
-          setCredits(value);
-          localStorage.setItem(cacheKey(userId), String(value));
-        }
+        const data = await api.get<CreditsResponse>("/api/credits");
+        const value = data.credits ?? TOTAL_FREE_CREDITS;
+        setIsTester(data.isTester ?? false);
+        setCredits(value);
+        localStorage.setItem(cacheKey(userId), String(value));
       } catch (error) {
         console.error("Error fetching credits:", error);
       } finally {

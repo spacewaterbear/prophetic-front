@@ -22,11 +22,11 @@
 
 ## API Layer
 
-- [ ] **Create a centralized API client** — replace scattered raw `fetch()` calls with a single `lib/api.ts` module that handles base URL, auth headers, error parsing, and retries.
-- [ ] **Add retry logic** — critical paths (conversation fetching, message streaming) have no retry on network error. Add exponential backoff for transient failures.
-- [ ] **Eliminate silent failures** — `.catch(() => {})` in `stripe-prices-context.tsx` and elsewhere swallows errors completely. At minimum, log them; ideally surface a user-facing message.
-- [ ] **Deduplicate requests** — `useCredits` and similar hooks make duplicate requests if called from multiple components. Use SWR or React Query, or add an `AbortController`-based deduplication layer.
-- [ ] **Add TypeScript types for all API responses** — responses are untyped or loosely typed. Generate or define strict types (see cross-cutting item on OpenAPI generation).
+- [x] **Create a centralized API client** — `src/lib/api.ts` wraps fetch with typed `api.get/post/patch/delete`; used in `useCredits`, `useChatConversation`, `stripe-prices-context`, `i18n-context`.
+- [x] **Add retry logic** — `api.ts` retries up to 3 times with exponential backoff (500 ms base) on 429/502/503/504 and network errors.
+- [x] **Eliminate silent failures** — `.catch(() => {})` in `stripe-prices-context.tsx` replaced with `console.error`; error body parsed and thrown as `ApiRequestError`.
+- [x] **Deduplicate requests** — `api.get` uses a module-level in-flight promise map so concurrent calls to the same GET URL reuse the same request.
+- [x] **Add TypeScript types for all API responses** — `CreditsResponse`, `GeolocationResponse`, `StripePricesResponse`, `ConversationItem`, `ConversationsListResponse`, `CreateConversationResponse`, `ConversationDetailResponse`, `UploadResponse` defined in `src/lib/api.ts`.
 
 ## Performance
 

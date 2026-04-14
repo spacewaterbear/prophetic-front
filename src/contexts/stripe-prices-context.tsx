@@ -1,11 +1,9 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { api, type StripePricesResponse } from "@/lib/api";
 
-interface StripePrices {
-  intelligence: string | null;
-  oracle: string | null;
-}
+type StripePrices = StripePricesResponse;
 
 const CACHE_KEY = "stripe_prices_cache";
 const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
@@ -51,13 +49,12 @@ export function StripePricesProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    fetch("/api/stripe/prices")
-      .then((r) => r.json())
-      .then((data: StripePrices) => {
+    api.get<StripePricesResponse>("/api/stripe/prices")
+      .then((data) => {
         cachePrices(data);
         setPrices(data);
       })
-      .catch(() => {});
+      .catch((err) => console.error("[StripePrices] Failed to fetch:", err));
   }, []);
 
   return <StripePricesContext.Provider value={prices}>{children}</StripePricesContext.Provider>;

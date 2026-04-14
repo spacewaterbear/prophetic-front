@@ -17,6 +17,7 @@ import { WhiskySearchData } from "@/components/WhiskyCard";
 import { WineSearchData } from "@/components/WineCard";
 import { CardsSearchData } from "@/components/SportsCardsCard";
 import { useChatPendingStore } from "@/store/chatPendingStore";
+import { api, type ConversationDetailResponse, type CreateConversationResponse } from "@/lib/api";
 
 export type { Message };
 
@@ -183,16 +184,15 @@ export function useChatConversation({
   const loadConversation = useCallback(
     async (id: number) => {
       try {
-        const response = await fetch(`/api/conversations/${id}`);
-        if (response.ok) {
-          const data = await response.json();
-          setMessages(data.messages || []);
-        } else if (response.status === 404) {
-          console.error("Conversation not found, redirecting to home");
-          router.push("/");
-        }
+        const data = await api.get<ConversationDetailResponse>(`/api/conversations/${id}`);
+        setMessages(data.messages || []);
       } catch (error) {
-        console.error("Error loading conversation:", error);
+        const status = (error as { status?: number }).status;
+        if (status === 404) {
+          console.error("Conversation not found, redirecting to home");
+        } else {
+          console.error("Error loading conversation:", error);
+        }
         router.push("/");
       }
     },
@@ -208,23 +208,15 @@ export function useChatConversation({
       if (!conversationId) {
         try {
           const title = options?.userPrompt || "New Chat";
-          const response = await fetch("/api/conversations", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ title, model: selectedModel }),
-          });
+          const data = await api.post<CreateConversationResponse>("/api/conversations", { title, model: selectedModel });
+          const newId = data.conversation.id;
 
-          if (response.ok) {
-            const data = await response.json();
-            const newId = data.conversation.id;
+          const pendingStream: PendingMarkdownStream = { type, params, options };
+          pendingStore.setPendingMarkdownStream(pendingStream);
 
-            const pendingStream: PendingMarkdownStream = { type, params, options };
-            pendingStore.setPendingMarkdownStream(pendingStream);
-
-            refreshConversations();
-            router.push(`/chat/${newId}`);
-            return true;
-          }
+          refreshConversations();
+          router.push(`/chat/${newId}`);
+          return true;
         } catch (error) {
           console.error("[streamMarkdown] Error creating conversation:", error);
         }
@@ -975,13 +967,7 @@ export function useChatConversation({
     try {
       const title =
         userInput.length > 50 ? userInput.substring(0, 50) + "..." : userInput;
-      const response = await fetch("/api/conversations", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, model: selectedModel }),
-      });
-      if (!response.ok) throw new Error("Failed to create conversation");
-      const data = await response.json();
+      const data = await api.post<CreateConversationResponse>("/api/conversations", { title, model: selectedModel });
       const newConversationId = data.conversation.id;
 
       pendingStore.setPendingMessage({
@@ -1061,13 +1047,7 @@ export function useChatConversation({
     try {
       const title =
         content.length > 50 ? content.substring(0, 50) + "..." : content;
-      const response = await fetch("/api/conversations", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, model: selectedModel }),
-      });
-      if (!response.ok) throw new Error("Failed to create conversation");
-      const data = await response.json();
+      const data = await api.post<CreateConversationResponse>("/api/conversations", { title, model: selectedModel });
       pendingStore.setPendingVignetteContent({ text: content });
       refreshConversations();
       router.push(`/chat/${data.conversation.id}`);

@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { translations, Language, getTranslation } from "@/lib/translations";
+import { api, type GeolocationResponse } from "@/lib/api";
 
 interface I18nContextType {
     language: Language;
@@ -26,13 +27,10 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
 
         const fetchGeolocation = async () => {
             try {
-                const response = await fetch("/api/geolocation");
-                if (response.ok) {
-                    const data = await response.json();
-                    const detectedLang = data.language || "fr";
-                    setLanguage(detectedLang as Language);
-                    sessionStorage.setItem(GEO_CACHE_KEY, detectedLang);
-                }
+                const data = await api.get<GeolocationResponse>("/api/geolocation");
+                const detectedLang = data.language || "fr";
+                setLanguage(detectedLang as Language);
+                sessionStorage.setItem(GEO_CACHE_KEY, detectedLang);
             } catch (error) {
                 console.error("[I18n] Error fetching geolocation:", error);
                 // Keep default French on error
