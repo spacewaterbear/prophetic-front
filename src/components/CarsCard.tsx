@@ -93,6 +93,7 @@ const CarItem = memo(({ listing }: { listing: CarListing }) => {
                             src={listing.image_url}
                             alt={listing.description || "Luxury car"}
                             fill
+                            unoptimized
                             className="object-cover"
                             sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 20vw"
                             onError={() => setImageError(true)}

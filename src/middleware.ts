@@ -11,7 +11,8 @@ export default auth((req) => {
   }
 
   // Dev mode: skip all auth checks when NEXT_PUBLIC_SKIP_AUTH is set
-  if (process.env.NEXT_PUBLIC_SKIP_AUTH === "true") {
+  // NODE_ENV is inlined at build time, so this branch is dead-code-eliminated in production
+  if (process.env.NODE_ENV === "development" && process.env.NEXT_PUBLIC_SKIP_AUTH === "true") {
     return NextResponse.next();
   }
 
@@ -20,7 +21,7 @@ export default auth((req) => {
   const isAdmin = req.auth?.user?.isAdmin === true;
 
   // Public routes that don't require authentication
-  const isPublicRoute = nextUrl.pathname === "/login" || nextUrl.pathname === "/pricing" || nextUrl.pathname.startsWith("/share/") || nextUrl.pathname === "/test-verification" || nextUrl.pathname === "/test_visi";
+  const isPublicRoute = nextUrl.pathname === "/login" || nextUrl.pathname === "/pricing" || nextUrl.pathname.startsWith("/share/") || nextUrl.pathname === "/test-verification" || nextUrl.pathname === "/test_visi" || nextUrl.pathname === "/auth/callback";
   const isRegistrationPending = nextUrl.pathname === "/registration-pending";
   const isRestrictedAccess = nextUrl.pathname === "/restricted-access";
 

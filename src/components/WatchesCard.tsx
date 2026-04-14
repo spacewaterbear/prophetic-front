@@ -91,6 +91,7 @@ const WatchItem = memo(({ listing }: { listing: WatchListing }) => {
                             src={listing.image_url}
                             alt={`${listing.brand} ${listing.collection}`}
                             fill
+                            unoptimized
                             className="object-contain p-2"
                             sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 20vw"
                             onError={() => setImageError(true)}

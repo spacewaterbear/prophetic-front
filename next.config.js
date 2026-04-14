@@ -40,11 +40,6 @@ const nextConfig = {
                 hostname: '**.cloudfront.net',
                 pathname: "/**",
             },
-            // Allow all HTTPS domains for link preview images
-            {
-                protocol: 'https',
-                hostname: '**',
-            },
         ],
     },
 };

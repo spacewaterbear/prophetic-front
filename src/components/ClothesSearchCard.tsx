@@ -106,6 +106,7 @@ const ProductCard = memo(({ listing }: { listing: ClothesListing }) => {
                             src={listing.image_url}
                             alt={listing.description || "Luxury item"}
                             fill
+                            unoptimized
                             className="object-cover"
                             sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 20vw"
                             onError={() => setImageError(true)}

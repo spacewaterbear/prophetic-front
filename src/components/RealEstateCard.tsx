@@ -67,6 +67,7 @@ const PropertyCard = memo(({ property, location }: { property: RealEstatePropert
                         src={property.image_url}
                         alt={property.title}
                         fill
+                        unoptimized
                         className="object-cover"
                         sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 20vw"
                         onError={() => setImageError(true)}

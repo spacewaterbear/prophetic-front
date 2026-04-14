@@ -39,6 +39,7 @@ export function ArtistCard({ artist, message, researchType, text, streamingText,
                                 src={artist.artist_picture_url}
                                 alt={artist.artist_name}
                                 fill
+                                unoptimized
                                 className="object-cover"
                                 sizes="200px"
                                 onError={() => setImageError(true)}

@@ -30,7 +30,7 @@ export async function POST(
 ) {
   try {
     const session = await auth();
-    const isDevMode = process.env.NEXT_PUBLIC_SKIP_AUTH === "true";
+    const isDevMode = process.env.NODE_ENV === "development" && process.env.NEXT_PUBLIC_SKIP_AUTH === "true";
     const isGuest = !session?.user?.id && !isDevMode && isGuestAllowed();
     const userId = session?.user?.id || (isDevMode ? DEV_USER_ID : (isGuestAllowed() ? GUEST_USER_ID : null));
 
@@ -91,6 +91,36 @@ export async function POST(
     }
 
     const supabase = createAdminClient();
+
+    // Server-side credit validation for free users
+    if (!isDevMode && !isGuest && session?.user?.status === "free") {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: profile } = await (supabase as any)
+        .from("profiles")
+        .select("is_tester")
+        .eq("id", userId)
+        .maybeSingle();
+
+      if (!(profile as { is_tester?: boolean } | null)?.is_tester) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data: totalCost, error: costError } = await (supabase as any).rpc("get_total_cost", {
+          p_user_id: userId,
+        });
+
+        if (!costError) {
+          const TOTAL_FREE_CREDITS = 100;
+          const COST_MULTIPLIER = Number(process.env.CREDITS_COST_MULTIPLIER ?? 100);
+          const remaining = Math.max(0, TOTAL_FREE_CREDITS - ((totalCost as number) ?? 0) * COST_MULTIPLIER);
+
+          if (remaining <= 0) {
+            return new Response(JSON.stringify({ detail: "Insufficient credits", code: "credits_exhausted" }), {
+              status: 402,
+              headers: { "Content-Type": "application/json" },
+            });
+          }
+        }
+      }
+    }
 
     // Verify conversation belongs to user
     const { data: conversation, error: conversationError } = await supabase
