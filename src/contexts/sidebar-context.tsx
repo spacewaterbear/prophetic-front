@@ -12,25 +12,54 @@ interface SidebarContextType {
 
 const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
 
+const SIDEBAR_PREF_KEY = "sidebar_open";
+
 export function SidebarProvider({ children }: { children: React.ReactNode }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpenState] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [conversationsVersion, setConversationsVersion] = useState(0);
   const bumpConversations = useCallback(() => setConversationsVersion((v) => v + 1), []);
 
+  // Persist user-initiated sidebar changes
+  const setSidebarOpen = useCallback((open: boolean) => {
+    setSidebarOpenState(open);
+    try {
+      localStorage.setItem(SIDEBAR_PREF_KEY, String(open));
+    } catch {
+      // ignore storage errors
+    }
+  }, []);
+
   useLayoutEffect(() => {
-    const isDesktop = window.innerWidth >= 768;
-    setSidebarOpen(isDesktop);
-    setIsMobile(!isDesktop);
+    const mobile = window.innerWidth < 768;
+    setIsMobile(mobile);
+
+    // Restore persisted preference, fall back to device-based default
+    try {
+      const stored = localStorage.getItem(SIDEBAR_PREF_KEY);
+      setSidebarOpenState(stored !== null ? stored === "true" : !mobile);
+    } catch {
+      setSidebarOpenState(!mobile);
+    }
 
     const handleResize = () => {
-      const isDesktop = window.innerWidth >= 768;
-      setSidebarOpen(isDesktop);
-      setIsMobile(!isDesktop);
+      const nowMobile = window.innerWidth < 768;
+      setIsMobile(nowMobile);
+      // On device-type boundary change, reset to appropriate default
+      const wasMobile = isMobile;
+      if (wasMobile !== nowMobile) {
+        setSidebarOpenState(!nowMobile);
+        try {
+          localStorage.setItem(SIDEBAR_PREF_KEY, String(!nowMobile));
+        } catch {
+          // ignore
+        }
+      }
     };
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

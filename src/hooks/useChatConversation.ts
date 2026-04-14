@@ -16,7 +16,7 @@ import { WatchesSearchData } from "@/components/WatchesCard";
 import { WhiskySearchData } from "@/components/WhiskyCard";
 import { WineSearchData } from "@/components/WineCard";
 import { CardsSearchData } from "@/components/SportsCardsCard";
-import { STORAGE_KEYS } from "@/lib/constants/storage-keys";
+import { useChatPendingStore } from "@/store/chatPendingStore";
 
 export type { Message };
 
@@ -154,6 +154,7 @@ export function useChatConversation({
 }: UseChatConversationProps) {
   const router = useRouter();
   const { bumpConversations } = useSidebar();
+  const pendingStore = useChatPendingStore();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -167,8 +168,7 @@ export function useChatConversation({
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const [shouldAutoScroll, setShouldAutoScroll] = useState(true);
   const disableAutoScrollRef = useRef(
-    typeof window !== "undefined" &&
-      sessionStorage.getItem(STORAGE_KEYS.DISABLE_AUTO_SCROLL) === "true",
+    typeof window !== "undefined" && useChatPendingStore.getState().disableAutoScroll,
   );
   const pendingMessageProcessedRef = useRef(false);
   const lastProcessedConversationIdRef = useRef<number | null>(null);
@@ -219,10 +219,7 @@ export function useChatConversation({
             const newId = data.conversation.id;
 
             const pendingStream: PendingMarkdownStream = { type, params, options };
-            sessionStorage.setItem(
-              STORAGE_KEYS.PENDING_MARKDOWN_STREAM,
-              JSON.stringify(pendingStream),
-            );
+            pendingStore.setPendingMarkdownStream(pendingStream);
 
             refreshConversations();
             router.push(`/chat/${newId}`);
@@ -254,7 +251,7 @@ export function useChatConversation({
           setLastUserMessageId(userMsg.id);
           setShouldScrollToTop(true);
           disableAutoScrollRef.current = true;
-          sessionStorage.setItem(STORAGE_KEYS.DISABLE_AUTO_SCROLL, "true");
+          pendingStore.setDisableAutoScroll(true);
         }
       }
 
@@ -512,7 +509,7 @@ export function useChatConversation({
         setLastUserMessageId(tempUserMessage.id);
         setShouldScrollToTop(true);
         disableAutoScrollRef.current = true;
-        sessionStorage.setItem(STORAGE_KEYS.DISABLE_AUTO_SCROLL, "true");
+        pendingStore.setDisableAutoScroll(true);
       }
 
       try {
@@ -682,20 +679,15 @@ export function useChatConversation({
       }
 
       // Priority 1: Pending Vignette Stream
-      const pendingVignetteStreamStr = sessionStorage.getItem(
-        STORAGE_KEYS.PENDING_VIGNETTE_STREAM,
-      );
-      if (pendingVignetteStreamStr) {
+      const pendingVignetteStream = pendingStore.pendingVignetteStream;
+      if (pendingVignetteStream) {
         pendingMessageProcessedRef.current = true;
-        sessionStorage.removeItem(STORAGE_KEYS.PENDING_VIGNETTE_STREAM);
+        pendingStore.setPendingVignetteStream(null);
         try {
-          const pendingStream: PendingVignetteStream = JSON.parse(
-            pendingVignetteStreamStr,
-          );
           streamVignetteMarkdown(
-            pendingStream.imageName,
-            pendingStream.category,
-            pendingStream.tier,
+            pendingVignetteStream.imageName,
+            pendingVignetteStream.category,
+            pendingVignetteStream.tier,
           );
         } catch (e) {
           console.error(e);
@@ -705,20 +697,15 @@ export function useChatConversation({
       }
 
       // Priority 2: Pending Markdown Stream
-      const pendingMarkdownStreamStr = sessionStorage.getItem(
-        STORAGE_KEYS.PENDING_MARKDOWN_STREAM,
-      );
-      if (pendingMarkdownStreamStr) {
+      const pendingMarkdownStream = pendingStore.pendingMarkdownStream;
+      if (pendingMarkdownStream) {
         pendingMessageProcessedRef.current = true;
-        sessionStorage.removeItem(STORAGE_KEYS.PENDING_MARKDOWN_STREAM);
+        pendingStore.setPendingMarkdownStream(null);
         try {
-          const pendingStream: PendingMarkdownStream = JSON.parse(
-            pendingMarkdownStreamStr,
-          );
           streamMarkdown(
-            pendingStream.type,
-            pendingStream.params,
-            pendingStream.options,
+            pendingMarkdownStream.type,
+            pendingMarkdownStream.params,
+            pendingMarkdownStream.options,
           );
         } catch (e) {
           console.error(e);
@@ -728,62 +715,47 @@ export function useChatConversation({
       }
 
       // Priority 3: Pending User Message
-      const pendingMessageStr = sessionStorage.getItem(STORAGE_KEYS.PENDING_MESSAGE);
-      if (pendingMessageStr) {
+      const pendingMessage = pendingStore.pendingMessage;
+      if (pendingMessage) {
         pendingMessageProcessedRef.current = true;
-        sessionStorage.removeItem(STORAGE_KEYS.PENDING_MESSAGE);
+        pendingStore.setPendingMessage(null);
 
         // Pre-load any vignette content that was displayed before the chat
-        const pendingVignetteContentStr = sessionStorage.getItem(
-          STORAGE_KEYS.PENDING_VIGNETTE_CONTENT,
-        );
-        if (pendingVignetteContentStr) {
-          sessionStorage.removeItem(STORAGE_KEYS.PENDING_VIGNETTE_CONTENT);
-          try {
-            const parsed = JSON.parse(pendingVignetteContentStr);
-            const text = parsed.text || pendingVignetteContentStr;
-            if (text) {
-              setMessages([
-                {
-                  id: -Date.now(),
-                  content: text,
-                  sender: "ai" as const,
-                  created_at: new Date().toISOString(),
-                  vignetteCategory: parsed.vignetteCategory,
-                },
-              ]);
-            }
-          } catch {
-            /* ignore */
+        const pendingVignetteContentData = pendingStore.pendingVignetteContent;
+        if (pendingVignetteContentData) {
+          pendingStore.setPendingVignetteContent(null);
+          const text = pendingVignetteContentData.text;
+          if (text) {
+            setMessages([
+              {
+                id: -Date.now(),
+                content: text,
+                sender: "ai" as const,
+                created_at: new Date().toISOString(),
+                vignetteCategory: pendingVignetteContentData.vignetteCategory,
+              },
+            ]);
           }
         }
 
-        try {
-          const pendingMessage: PendingMessage = JSON.parse(pendingMessageStr);
-          sendMessageToApi(
-            conversationId,
-            pendingMessage.content,
-            pendingMessage.flashCards,
-            pendingMessage.flashCardType,
-            pendingMessage.scrollToTop,
-            pendingMessage.uuidProduct,
-            pendingMessage.productCategory,
-            pendingMessage.agentType,
-          );
-        } catch (e) {
-          console.error(e);
-          loadConversation(conversationId);
-        }
+        sendMessageToApi(
+          conversationId,
+          pendingMessage.content,
+          pendingMessage.flashCards,
+          pendingMessage.flashCardType,
+          pendingMessage.scrollToTop,
+          pendingMessage.uuidProduct,
+          pendingMessage.productCategory,
+          pendingMessage.agentType,
+        );
         return;
       }
 
-      // Priority 4: Pending Vignette Content
-      const pendingVignetteContent = sessionStorage.getItem(
-        STORAGE_KEYS.PENDING_VIGNETTE_CONTENT,
-      );
+      // Priority 4: Pending Vignette Content (standalone, no user message)
+      const pendingVignetteContent = pendingStore.pendingVignetteContent;
       if (pendingVignetteContent) {
         pendingMessageProcessedRef.current = true;
-        sessionStorage.removeItem(STORAGE_KEYS.PENDING_VIGNETTE_CONTENT);
+        pendingStore.setPendingVignetteContent(null);
 
         const saveVignetteMessages = async (
           msgs: { content: string; vignetteCategory?: string }[],
@@ -802,43 +774,28 @@ export function useChatConversation({
           }
         };
 
-        try {
-          const parsed = JSON.parse(pendingVignetteContent);
-          if (parsed.text) {
-            const messagesToSave = [
-              {
-                content: parsed.text,
-                vignetteCategory: parsed.vignetteCategory,
-              },
-            ];
-            if (parsed.questions)
-              messagesToSave.push({
-                content: parsed.questions,
-                vignetteCategory: parsed.vignetteCategory,
-              });
-            setMessages(
-              messagesToSave.map((m, i) => ({
-                id: Date.now() + i,
-                content: m.content,
-                sender: "ai" as const,
-                created_at: new Date().toISOString(),
-              })),
-            );
-            saveVignetteMessages(messagesToSave);
-            return;
-          }
-        } catch {
-          /* ignore */
+        if (pendingVignetteContent.text) {
+          const messagesToSave = [
+            {
+              content: pendingVignetteContent.text,
+              vignetteCategory: pendingVignetteContent.vignetteCategory,
+            },
+          ];
+          if (pendingVignetteContent.questions)
+            messagesToSave.push({
+              content: pendingVignetteContent.questions,
+              vignetteCategory: pendingVignetteContent.vignetteCategory,
+            });
+          setMessages(
+            messagesToSave.map((m, i) => ({
+              id: Date.now() + i,
+              content: m.content,
+              sender: "ai" as const,
+              created_at: new Date().toISOString(),
+            })),
+          );
+          saveVignetteMessages(messagesToSave);
         }
-        setMessages([
-          {
-            id: Date.now(),
-            content: pendingVignetteContent,
-            sender: "ai",
-            created_at: new Date().toISOString(),
-          },
-        ]);
-        saveVignetteMessages([{ content: pendingVignetteContent }]);
         return;
       }
 
@@ -849,24 +806,22 @@ export function useChatConversation({
       lastProcessedConversationIdRef.current = null;
     }
 
-    const shouldDisableScroll =
-      sessionStorage.getItem(STORAGE_KEYS.DISABLE_AUTO_SCROLL) === "true";
-    if (shouldDisableScroll) {
+    if (pendingStore.disableAutoScroll) {
       disableAutoScrollRef.current = true;
       setTimeout(() => {
-        sessionStorage.removeItem(STORAGE_KEYS.DISABLE_AUTO_SCROLL);
+        pendingStore.setDisableAutoScroll(false);
         disableAutoScrollRef.current = false;
       }, 30000);
     }
 
-    if (sessionStorage.getItem(STORAGE_KEYS.PENDING_SCROLL_TO_TOP) === "true") {
+    if (pendingStore.pendingScrollToTop) {
       setShouldScrollToTop(true);
-      sessionStorage.removeItem(STORAGE_KEYS.PENDING_SCROLL_TO_TOP);
+      pendingStore.setPendingScrollToTop(false);
     }
 
-    if (sessionStorage.getItem(STORAGE_KEYS.PENDING_SCROLL_TO_TOP_VIGNETTE) === "true") {
+    if (pendingStore.pendingScrollToTopVignette) {
       messagesContainerRef.current?.scrollTo({ top: 0, behavior: "smooth" });
-      sessionStorage.removeItem(STORAGE_KEYS.PENDING_SCROLL_TO_TOP_VIGNETTE);
+      pendingStore.setPendingScrollToTopVignette(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -882,8 +837,7 @@ export function useChatConversation({
     const hasVignetteData =
       lastMessage?.vignette_data && lastMessage.vignette_data.length > 0;
     const isScrollDisabled =
-      disableAutoScrollRef.current ||
-      sessionStorage.getItem(STORAGE_KEYS.DISABLE_AUTO_SCROLL) === "true";
+      disableAutoScrollRef.current || pendingStore.disableAutoScroll;
 
     if (shouldScrollToTop && lastUserMessageId && messagesContainerRef.current) {
       const container = messagesContainerRef.current;
@@ -1015,7 +969,7 @@ export function useChatConversation({
     if (scrollToTop) {
       setLastUserMessageId(messageId);
       setShouldScrollToTop(true);
-      sessionStorage.setItem(STORAGE_KEYS.PENDING_SCROLL_TO_TOP, "true");
+      pendingStore.setPendingScrollToTop(true);
     }
 
     try {
@@ -1030,18 +984,15 @@ export function useChatConversation({
       const data = await response.json();
       const newConversationId = data.conversation.id;
 
-      sessionStorage.setItem(
-        STORAGE_KEYS.PENDING_MESSAGE,
-        JSON.stringify({
-          content: userInput,
-          flashCards,
-          flashCardType,
-          scrollToTop,
-          uuidProduct,
-          productCategory,
-          agentType: selectedAgent,
-        }),
-      );
+      pendingStore.setPendingMessage({
+        content: userInput,
+        flashCards,
+        flashCardType,
+        scrollToTop,
+        uuidProduct,
+        productCategory,
+        agentType: selectedAgent,
+      });
       refreshConversations();
       router.push(`/chat/${newConversationId}`);
     } catch (error) {
@@ -1117,10 +1068,7 @@ export function useChatConversation({
       });
       if (!response.ok) throw new Error("Failed to create conversation");
       const data = await response.json();
-      sessionStorage.setItem(
-        STORAGE_KEYS.PENDING_VIGNETTE_CONTENT,
-        JSON.stringify({ text: content }),
-      );
+      pendingStore.setPendingVignetteContent({ text: content });
       refreshConversations();
       router.push(`/chat/${data.conversation.id}`);
     } catch (error) {

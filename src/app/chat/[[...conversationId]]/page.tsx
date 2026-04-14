@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { LOGO_DARK, LOGO_LIGHT } from "@/lib/constants/logos";
 import { useDarkMode } from "@/hooks/useDarkMode";
-import { STORAGE_KEYS } from "@/lib/constants/storage-keys";
+import { useChatPendingStore } from "@/store/chatPendingStore";
 import { useSidebar } from "@/contexts/sidebar-context";
 import { DEFAULT_NON_ADMIN_MODEL } from "@/lib/models";
 import { VignetteData } from "@/types/vignettes";
@@ -65,6 +65,7 @@ export default function ChatPage() {
   const searchParams = useSearchParams();
   const isDark = useDarkMode();
   const { t, language } = useI18n();
+  const pendingStore = useChatPendingStore();
 
   const conversationIdParam = params.conversationId as string[] | undefined;
   const conversationId = conversationIdParam?.[0]
@@ -184,22 +185,17 @@ export default function ChatPage() {
     else if (checkout === "success") setSubscriptionBanner("new");
 
     // Artist deep-search triggered from the artists directory
-    const pendingArtist = sessionStorage.getItem(STORAGE_KEYS.PENDING_DEEP_SEARCH);
+    const pendingArtist = pendingStore.pendingDeepSearch;
     if (pendingArtist) {
-      sessionStorage.removeItem(STORAGE_KEYS.PENDING_DEEP_SEARCH);
+      pendingStore.setPendingDeepSearch(null);
       handleSend({ message: t("contextMenu.deepSearchPrompt").replace("{name}", pendingArtist) });
     }
 
     // Product deep-search triggered from the products directory
-    const pendingProductRaw = sessionStorage.getItem(STORAGE_KEYS.PENDING_PRODUCT_SEARCH);
-    if (pendingProductRaw) {
-      sessionStorage.removeItem(STORAGE_KEYS.PENDING_PRODUCT_SEARCH);
-      try {
-        const { id, name, category } = JSON.parse(pendingProductRaw) as { id: string; name: string; category: string };
-        handleSend({ message: t("contextMenu.deepSearchPrompt").replace("{name}", name), uuidProduct: id, productCategory: category });
-      } catch {
-        // ignore malformed data
-      }
+    const pendingProduct = pendingStore.pendingProductSearch;
+    if (pendingProduct) {
+      pendingStore.setPendingProductSearch(null);
+      handleSend({ message: t("contextMenu.deepSearchPrompt").replace("{name}", pendingProduct.name), uuidProduct: pendingProduct.id, productCategory: pendingProduct.category });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -263,7 +259,7 @@ export default function ChatPage() {
   useEffect(() => {
     const category = searchParams.get("category");
 
-    if (sessionStorage.getItem(STORAGE_KEYS.PENDING_VIGNETTE_STREAM)) {
+    if (pendingStore.pendingVignetteStream) {
       return;
     }
 
@@ -342,14 +338,11 @@ export default function ChatPage() {
       setSidebarOpen(false);
     }
 
-    sessionStorage.setItem(
-      STORAGE_KEYS.PENDING_VIGNETTE_VIEW,
-      JSON.stringify({
-        imageName: slug,
-        category: vignette.category,
-        tier: selectedAgent.toUpperCase(),
-      }),
-    );
+    pendingStore.setPendingVignetteView({
+      imageName: slug,
+      category: vignette.category,
+      slug,
+    });
 
     router.push(`/chat?d=${slug}&cat=${vignette.category}`);
   };

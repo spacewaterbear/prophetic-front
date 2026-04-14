@@ -6,6 +6,7 @@ import { Search, X } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useCredits } from "@/hooks/useCredits";
 import { useI18n } from "@/contexts/i18n-context";
+import { useChatPendingStore } from "@/store/chatPendingStore";
 
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 const LETTER_LIMIT = 24;
@@ -262,6 +263,7 @@ export default function ArtistsPage() {
   const router = useRouter();
   const { data: session } = useSession();
   const { t } = useI18n();
+  const setPendingDeepSearch = useChatPendingStore((s) => s.setPendingDeepSearch);
   const userStatus = (session?.user as { status?: string })?.status;
   const isFreeUser = userStatus === "free";
   const canClickItems = userStatus === "oracle" || userStatus === "discover" || userStatus === "admini";
@@ -310,10 +312,10 @@ export default function ArtistsPage() {
 
   const handleArtistClick = useCallback(
     (name: string) => {
-      sessionStorage.setItem("pendingDeepSearch", name);
+      setPendingDeepSearch(name);
       router.push("/chat");
     },
-    [router]
+    [router, setPendingDeepSearch]
   );
 
   const isSearching = debouncedSearch.length > 0;

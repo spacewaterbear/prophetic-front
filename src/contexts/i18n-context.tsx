@@ -11,11 +11,19 @@ interface I18nContextType {
 
 const I18nContext = createContext<I18nContextType | undefined>(undefined);
 
+const GEO_CACHE_KEY = "i18n_geolocation_language";
+
 export function I18nProvider({ children }: { children: React.ReactNode }) {
     const [language, setLanguage] = useState<Language>("fr");
 
-    // Fetch user's geolocation and set language on mount
+    // Fetch user's geolocation and set language on mount, with session-duration cache
     useEffect(() => {
+        const cached = sessionStorage.getItem(GEO_CACHE_KEY);
+        if (cached) {
+            setLanguage(cached as Language);
+            return;
+        }
+
         const fetchGeolocation = async () => {
             try {
                 const response = await fetch("/api/geolocation");
@@ -23,7 +31,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
                     const data = await response.json();
                     const detectedLang = data.language || "fr";
                     setLanguage(detectedLang as Language);
-                    console.log("[I18n] Language detected:", detectedLang, "from country:", data.country);
+                    sessionStorage.setItem(GEO_CACHE_KEY, detectedLang);
                 }
             } catch (error) {
                 console.error("[I18n] Error fetching geolocation:", error);

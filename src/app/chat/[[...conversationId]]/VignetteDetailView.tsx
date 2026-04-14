@@ -29,12 +29,11 @@ import { SportsCardsCard, type CardsSearchData } from "@/components/SportsCardsC
 import { MarketplaceCard } from "@/components/MarketplaceCard";
 import { RealEstateCard, type RealEstateData } from "@/components/RealEstateCard";
 import { type MarketplaceData } from "@/types/chat";
+import { useChatPendingStore } from "@/store/chatPendingStore";
 
 const Markdown = lazy(() =>
   import("@/components/Markdown").then((mod) => ({ default: mod.Markdown })),
 );
-
-const PENDING_VIGNETTE_VIEW_KEY = "pendingVignetteView";
 
 interface VignetteViewParams {
   imageName: string;
@@ -62,6 +61,7 @@ export function VignetteDetailView({
   const router = useRouter();
   const { bumpConversations } = useSidebar();
   const { language } = useI18n();
+  const pendingStore = useChatPendingStore();
   const categoryNames = getCategoryDisplayNames(language);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -85,9 +85,9 @@ export function VignetteDetailView({
   useEffect(() => {
     if (streamStartedRef.current) return;
 
-    const paramsStr = sessionStorage.getItem(PENDING_VIGNETTE_VIEW_KEY);
+    const storedParams = pendingStore.pendingVignetteView;
 
-    if (!paramsStr) {
+    if (!storedParams) {
       // Direct URL access (e.g. copy-pasted link) — stream using the slug from the URL
       streamStartedRef.current = true;
       streamVignetteContent({
@@ -99,15 +99,13 @@ export function VignetteDetailView({
     }
 
     streamStartedRef.current = true;
-    sessionStorage.removeItem(PENDING_VIGNETTE_VIEW_KEY);
+    pendingStore.setPendingVignetteView(null);
 
-    let vignetteParams: VignetteViewParams;
-    try {
-      vignetteParams = JSON.parse(paramsStr);
-    } catch {
-      return;
-    }
-
+    const vignetteParams: VignetteViewParams = {
+      imageName: storedParams.imageName,
+      category: storedParams.category,
+      tier: selectedAgent.toUpperCase(),
+    };
     setVignetteCategory(vignetteParams.category || undefined);
     streamVignetteContent(vignetteParams);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -506,10 +504,7 @@ export function VignetteDetailView({
       const newConversationId = data.conversation.id;
 
       if (finalContent) {
-        sessionStorage.setItem(
-          "pendingVignetteContent",
-          JSON.stringify({ text: finalContent, vignetteCategory }),
-        );
+        pendingStore.setPendingVignetteContent({ text: finalContent, vignetteCategory });
         fetch(`/api/conversations/${newConversationId}/vignette-content`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -521,10 +516,7 @@ export function VignetteDetailView({
         );
       }
 
-      sessionStorage.setItem(
-        "pendingChatMessage",
-        JSON.stringify({ content: userInput, scrollToTop: true }),
-      );
+      pendingStore.setPendingMessage({ content: userInput, scrollToTop: true });
 
       bumpConversations();
       router.push(`/chat/${newConversationId}`);

@@ -22,12 +22,11 @@ import { AgentType, getAvailableAgents } from "@/types/agents";
 import { getCategoryDisplayNames } from "@/lib/translations";
 import { DEFAULT_NON_ADMIN_MODEL } from "@/lib/models";
 import Image from "next/image";
+import { useChatPendingStore } from "@/store/chatPendingStore";
 
 const Markdown = lazy(() =>
   import("@/components/Markdown").then((mod) => ({ default: mod.Markdown })),
 );
-
-const PENDING_VIGNETTE_VIEW_KEY = "pendingVignetteView";
 
 interface VignetteViewParams {
   imageName: string;
@@ -42,6 +41,7 @@ export default function VignettePage() {
   const isDark = theme === "dark" || resolvedTheme === "dark";
   const { t, language } = useI18n();
   const categoryNames = getCategoryDisplayNames(language);
+  const pendingStore = useChatPendingStore();
 
   const [mounted, setMounted] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState<AgentType>("discover");
@@ -93,19 +93,17 @@ export default function VignettePage() {
   useEffect(() => {
     if (!mounted || streamStartedRef.current) return;
 
-    const paramsStr = sessionStorage.getItem(PENDING_VIGNETTE_VIEW_KEY);
-    if (!paramsStr) return;
+    const storedParams = pendingStore.pendingVignetteView;
+    if (!storedParams) return;
 
     streamStartedRef.current = true;
-    sessionStorage.removeItem(PENDING_VIGNETTE_VIEW_KEY);
+    pendingStore.setPendingVignetteView(null);
 
-    let vignetteParams: VignetteViewParams;
-    try {
-      vignetteParams = JSON.parse(paramsStr);
-    } catch {
-      return;
-    }
-
+    const vignetteParams: VignetteViewParams = {
+      imageName: storedParams.imageName,
+      category: storedParams.category,
+      tier: "DISCOVER",
+    };
     setVignetteCategory(vignetteParams.category || undefined);
     streamVignetteContent(vignetteParams);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -248,13 +246,10 @@ export default function VignettePage() {
       const data = await response.json();
       const newConversationId = data.conversation.id;
 
-      // Store vignette content in sessionStorage so the chat page displays it
+      // Store vignette content in Zustand so the chat page displays it
       // immediately, and save to DB for AI context
       if (finalContent) {
-        sessionStorage.setItem(
-          "pendingVignetteContent",
-          JSON.stringify({ text: finalContent, vignetteCategory }),
-        );
+        pendingStore.setPendingVignetteContent({ text: finalContent, vignetteCategory });
         // Fire-and-forget DB save for AI context (navigation won't wait)
         fetch(`/api/conversations/${newConversationId}/vignette-content`, {
           method: "POST",
@@ -268,10 +263,7 @@ export default function VignettePage() {
       }
 
       // Store user message to be sent after navigation
-      sessionStorage.setItem(
-        "pendingChatMessage",
-        JSON.stringify({ content: userInput, scrollToTop: true }),
-      );
+      pendingStore.setPendingMessage({ content: userInput, scrollToTop: true });
 
       router.push(`/chat/${newConversationId}`);
     } catch (error) {

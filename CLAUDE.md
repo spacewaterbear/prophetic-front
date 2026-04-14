@@ -195,7 +195,7 @@ src/
 
 - **Imports**: Use `@/` path alias. Barrel exports for `chat-input/`
 - **Components**: Client components use `"use client"` directive. Lazy-load heavy components (Markdown, cards)
-- **State**: React hooks + contexts. No Redux/Zustand. sessionStorage for cross-navigation persistence
+- **State**: React hooks + contexts. Zustand (`src/store/`) for cross-navigation pending state — replaces direct sessionStorage access. No Redux.
 - **Styling**: Tailwind CSS with CSS variables for theming. shadcn/ui "new-york" style, zinc base color
 - **Error handling**: `console.error` for actual errors only. No debug `console.log` in committed code
 - **Types**: Shared types in `src/types/`. Component-local interfaces in the component file

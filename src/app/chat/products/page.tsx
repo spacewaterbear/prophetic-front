@@ -7,6 +7,7 @@ import { CATEGORY_DISPLAY_NAMES } from "@/types/chat";
 import { useSession } from "next-auth/react";
 import { useCredits } from "@/hooks/useCredits";
 import { useI18n } from "@/contexts/i18n-context";
+import { useChatPendingStore } from "@/store/chatPendingStore";
 
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 const LETTER_LIMIT = 24;
@@ -273,6 +274,7 @@ function ProductsPageInner() {
   const searchParams = useSearchParams();
   const { data: session } = useSession();
   const { t } = useI18n();
+  const setPendingProductSearch = useChatPendingStore((s) => s.setPendingProductSearch);
   const userStatus = (session?.user as { status?: string })?.status;
   const isFreeUser = userStatus === "free";
   const canClickItems = userStatus === "oracle" || userStatus === "discover" || userStatus === "admini";
@@ -343,10 +345,10 @@ function ProductsPageInner() {
 
   const handleItemClick = useCallback(
     (item: ProductRow) => {
-      sessionStorage.setItem("pendingProductSearch", JSON.stringify({ id: item.id, name: item.name, category: item.category }));
+      setPendingProductSearch({ id: item.id, name: item.name, category: item.category });
       router.push("/chat");
     },
-    [router]
+    [router, setPendingProductSearch]
   );
 
   const handleCategoryChange = (cat: string) => {
