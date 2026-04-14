@@ -116,6 +116,8 @@ function ChatLayoutInner({
   const [artCategories, setArtCategories] = useState<string[]>([]);
   const [mainCategories, setMainCategories] = useState<string[]>([]);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [conversationPage, setConversationPage] = useState(1);
+  const CONVERSATIONS_PER_PAGE = 20;
 
   // Extract conversation ID from pathname
   const currentConversationId = pathname?.match(/\/chat\/(\d+)/)?.[1];
@@ -315,46 +317,56 @@ function ChatLayoutInner({
                       {t("nav.noConversations")}
                     </div>
                   ) : (
-                    conversations.map((conversation) => (
-                      <div key={conversation.id} className="relative group">
-                        <button
-                          onClick={() =>
-                            router.push(`/chat/${conversation.id}`)
-                          }
-                          className={`w-full text-left px-3 py-1.5 rounded-lg text-sm transition-all flex items-center gap-2 ${
-                            conversationId === conversation.id
-                              ? "bg-gray-700 border border-gray-600 shadow-sm text-white dark:bg-white/20 dark:border-white/30"
-                              : "hover:bg-gray-600/20 border border-transparent dark:hover:bg-white/5"
-                          }`}
-                        >
-                          <MessageSquare
-                            className={`h-3 w-3 flex-shrink-0 ${
+                    <>
+                      {conversations.slice(0, conversationPage * CONVERSATIONS_PER_PAGE).map((conversation) => (
+                        <div key={conversation.id} className="relative group">
+                          <button
+                            onClick={() =>
+                              router.push(`/chat/${conversation.id}`)
+                            }
+                            className={`w-full text-left px-3 py-1.5 rounded-lg text-sm transition-all flex items-center gap-2 ${
                               conversationId === conversation.id
-                                ? "text-gray-300 dark:text-gray-400"
-                                : ""
-                            }`}
-                          />
-                          <span
-                            className={`truncate text-xs ${
-                              conversationId === conversation.id
-                                ? "font-medium"
-                                : ""
+                                ? "bg-gray-700 border border-gray-600 shadow-sm text-white dark:bg-white/20 dark:border-white/30"
+                                : "hover:bg-gray-600/20 border border-transparent dark:hover:bg-white/5"
                             }`}
                           >
-                            {conversation.title}
-                          </span>
-                        </button>
+                            <MessageSquare
+                              className={`h-3 w-3 flex-shrink-0 ${
+                                conversationId === conversation.id
+                                  ? "text-gray-300 dark:text-gray-400"
+                                  : ""
+                              }`}
+                            />
+                            <span
+                              className={`truncate text-xs ${
+                                conversationId === conversation.id
+                                  ? "font-medium"
+                                  : ""
+                              }`}
+                            >
+                              {conversation.title}
+                            </span>
+                          </button>
+                          <button
+                            onClick={(e) =>
+                              deleteConversation(conversation.id, e)
+                            }
+                            className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-red-500/20 text-gray-600 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400"
+                            aria-label="Delete conversation"
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </div>
+                      ))}
+                      {conversations.length > conversationPage * CONVERSATIONS_PER_PAGE && (
                         <button
-                          onClick={(e) =>
-                            deleteConversation(conversation.id, e)
-                          }
-                          className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-red-500/20 text-gray-600 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400"
-                          aria-label="Delete conversation"
+                          onClick={() => setConversationPage((p) => p + 1)}
+                          className="w-full text-left px-3 py-1.5 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
                         >
-                          <X className="h-3 w-3" />
+                          {t("nav.showMore")}
                         </button>
-                      </div>
-                    ))
+                      )}
+                    </>
                   )}
                 </div>
               )}

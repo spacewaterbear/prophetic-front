@@ -30,9 +30,9 @@
 
 ## Performance
 
-- [ ] **Add `useCallback` / `useMemo`** in `useChatConversation` — multiple state updates per message cause cascade re-renders. Memoize stable callbacks and derived values.
-- [ ] **Use `React.memo`** on card components (RealEstateCard, ArtistCard, ClothesSearchCard, etc.) that receive stable props.
-- [ ] **Add pagination or virtual scroll** for conversations sidebar — currently loads the N most recent with no scroll strategy.
+- [x] **Add `useCallback` / `useMemo`** in `useChatConversation` — `handleSend`, `handleFlashcardClick`, `addAiMessage`, and `handleScroll` wrapped in `useCallback`; existing callbacks (`loadConversation`, `streamMarkdown`, `sendMessageToApi`, etc.) were already memoized.
+- [x] **Use `React.memo`** on card components — `ArtistCard` wrapped with `memo` (all others already had it: MarketplaceCard, ClothesSearchCard, WineCard, WatchesCard, WhiskyCard, CarsCard, JewelryCard, SportsCardsCard, VignetteGridCard, RealEstateCard).
+- [x] **Add pagination for conversations sidebar** — sidebar now shows 20 conversations at a time with a "Show more" button; `nav.showMore` key added to all 9 languages.
 
 ## Code Quality
 

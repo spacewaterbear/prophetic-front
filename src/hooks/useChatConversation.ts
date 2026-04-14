@@ -920,7 +920,7 @@ export function useChatConversation({
     return () => clearInterval(interval);
   }, [isLoading, streaming.message, streaming.lastActivity]);
 
-  const handleSend = async ({
+  const handleSend = useCallback(async ({
     message: messageToSend,
     flashCards,
     flashCardType,
@@ -985,9 +985,10 @@ export function useChatConversation({
       console.error("Error creating conversation:", error);
       setIsLoading(false);
     }
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [conversationId, input, isLoading, sendMessageToApi, selectedAgent, selectedModel, refreshConversations, router, pendingStore]);
 
-  const handleFlashcardClick = (
+  const handleFlashcardClick = useCallback((
     flashCards: string,
     question: string,
     flashCardType: "flash_invest" | "ranking" | "portfolio" | "PORTFOLIO",
@@ -1031,9 +1032,9 @@ export function useChatConversation({
 
     // suppress unused param warning — kept for API compatibility
     void question;
-  };
+  }, [streamMarkdown]);
 
-  const addAiMessage = async (content: string) => {
+  const addAiMessage = useCallback(async (content: string) => {
     const aiMessage: Message = {
       id: Date.now(),
       content,
@@ -1054,7 +1055,15 @@ export function useChatConversation({
     } catch (error) {
       console.error("Error:", error);
     }
-  };
+  }, [conversationId, selectedModel, pendingStore, refreshConversations, router]);
+
+  const handleScroll = useCallback(() => {
+    const container = messagesContainerRef.current;
+    if (container)
+      setShouldAutoScroll(
+        container.scrollHeight - container.scrollTop - container.clientHeight < 20,
+      );
+  }, []);
 
   return {
     messages,
@@ -1083,16 +1092,7 @@ export function useChatConversation({
     setShouldScrollToTop,
     handleSend,
     handleFlashcardClick,
-    handleScroll: () => {
-      const container = messagesContainerRef.current;
-      if (container)
-        setShouldAutoScroll(
-          container.scrollHeight -
-            container.scrollTop -
-            container.clientHeight <
-            20,
-        );
-    },
+    handleScroll,
     guestQuotaExhausted,
     addAiMessage,
     streamVignetteMarkdown,

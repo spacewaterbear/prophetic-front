@@ -3,7 +3,7 @@ import { MapPin, Image as ImageIcon } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Markdown } from "@/components/Markdown";
 import { MetricBadge } from "@/components/MetricBadge";
-import { useState } from "react";
+import { memo, useState } from "react";
 
 interface Artist {
     artist_name: string;
@@ -24,7 +24,7 @@ interface ArtistCardProps {
     hasExistingData?: boolean;
 }
 
-export function ArtistCard({ artist, message, researchType, text, streamingText, hasExistingData }: ArtistCardProps) {
+function ArtistCardInner({ artist, message, researchType, text, streamingText, hasExistingData }: ArtistCardProps) {
     const [imageError, setImageError] = useState(false);
 
     return (
@@ -137,3 +137,5 @@ export function ArtistCard({ artist, message, researchType, text, streamingText,
         </div>
     );
 }
+
+export const ArtistCard = memo(ArtistCardInner);
