@@ -2,6 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 
+const DEV_USER_ID = "00000000-0000-0000-0000-000000000000";
+const GUEST_USER_ID = "00000000-0000-0000-0000-000000000002";
+
+function isGuestAllowed(): boolean {
+  const env = process.env.NEXT_PUBLIC_APP_ENV;
+  return env !== "staging" && env !== "preprod";
+}
+
 // GET /api/conversations/[id] - Get a conversation with its messages
 export async function GET(
   request: NextRequest,
@@ -9,8 +17,10 @@ export async function GET(
 ) {
   try {
     const session = await auth();
+    const isDevMode = process.env.NEXT_PUBLIC_SKIP_AUTH === "true";
+    const userId = session?.user?.id || (isDevMode ? DEV_USER_ID : (isGuestAllowed() ? GUEST_USER_ID : null));
 
-    if (!session?.user?.id) {
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -23,7 +33,7 @@ export async function GET(
       .from("conversations")
       .select("*")
       .eq("id", conversationId)
-      .eq("user_id", session.user.id)
+      .eq("user_id", userId)
       .single();
 
     if (conversationError || !conversation) {

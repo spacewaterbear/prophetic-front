@@ -33,8 +33,11 @@ export default function Home() {
       // Redirect authenticated users to the chat welcome page
       router.replace("/chat");
     } else if (status === "unauthenticated") {
-      // Redirect unauthenticated users to login
-      router.replace("/login");
+      const isRestrictedEnv =
+        process.env.NEXT_PUBLIC_APP_ENV === "staging" ||
+        process.env.NEXT_PUBLIC_APP_ENV === "preprod";
+      // On restricted envs guests must log in; elsewhere send them to chat
+      router.replace(isRestrictedEnv ? "/login" : "/chat");
     }
     // If status is "loading", show loading screen below
   }, [status, router]);

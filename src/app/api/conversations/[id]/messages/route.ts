@@ -1,9 +1,18 @@
 import { NextRequest } from "next/server";
 import { auth } from "@/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getClientIp } from "@/lib/utils/ip";
 
 // Dev mode user ID for testing (must be valid UUID format)
 const DEV_USER_ID = "00000000-0000-0000-0000-000000000000";
+// Guest user ID for unauthenticated visitors (must exist in profiles table)
+const GUEST_USER_ID = "00000000-0000-0000-0000-000000000002";
+const GUEST_QUESTION_LIMIT = 1;
+
+function isGuestAllowed(): boolean {
+  const env = process.env.NEXT_PUBLIC_APP_ENV;
+  return env !== "staging" && env !== "preprod";
+}
 
 // Helper function to check if error is an API/maintenance error
 function isMaintenanceError(errorText: unknown): boolean {
@@ -87,13 +96,50 @@ export async function POST(
   try {
     const session = await auth();
     const isDevMode = process.env.NEXT_PUBLIC_SKIP_AUTH === "true";
-    const userId = session?.user?.id || (isDevMode ? DEV_USER_ID : null);
+    const isGuest = !session?.user?.id && !isDevMode && isGuestAllowed();
+    const userId = session?.user?.id || (isDevMode ? DEV_USER_ID : (isGuestAllowed() ? GUEST_USER_ID : null));
 
     if (!userId) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { "Content-Type": "application/json" }
       });
+    }
+
+    // For guest users: enforce IP-based question quota
+    if (isGuest) {
+      const ip = getClientIp(request);
+      const supabase = createAdminClient();
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: quota } = await (supabase as any)
+        .from("guest_quotas")
+        .select("questions_used")
+        .eq("ip_address", ip)
+        .maybeSingle();
+
+      const questionsUsed = (quota as { questions_used?: number } | null)?.questions_used ?? 0;
+
+      if (questionsUsed >= GUEST_QUESTION_LIMIT) {
+        return new Response(JSON.stringify({ error: "guest_quota_exceeded" }), {
+          status: 402,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+
+      // Increment quota before processing (prevents parallel abuse)
+      if (quota) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await (supabase as any)
+          .from("guest_quotas")
+          .update({ questions_used: questionsUsed + 1, last_used_at: new Date().toISOString() })
+          .eq("ip_address", ip);
+      } else {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await (supabase as any)
+          .from("guest_quotas")
+          .insert({ ip_address: ip, questions_used: 1 });
+      }
     }
 
     const { id } = await params;

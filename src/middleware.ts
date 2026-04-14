@@ -30,8 +30,14 @@ export default auth((req) => {
   const appEnv = process.env.NEXT_PUBLIC_APP_ENV;
   const isRestrictedEnv = appEnv === "staging" || appEnv === "preprod";
 
+  // Routes accessible to unauthenticated visitors on non-restricted environments
+  // (guests can browse vignettes and use one free question)
+  const isGuestAccessibleRoute =
+    !isRestrictedEnv &&
+    (nextUrl.pathname === "/" || nextUrl.pathname.startsWith("/chat"));
+
   // If not logged in and trying to access protected route, redirect to login
-  if (!isLoggedIn && !isPublicRoute) {
+  if (!isLoggedIn && !isPublicRoute && !isGuestAccessibleRoute) {
     return NextResponse.redirect(new URL("/login", nextUrl));
   }
 

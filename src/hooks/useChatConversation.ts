@@ -32,12 +32,14 @@ interface UseChatConversationProps {
   conversationId: number | null;
   selectedModel?: string;
   selectedAgent?: string;
+  isGuest?: boolean;
 }
 
 export function useChatConversation({
   conversationId,
   selectedModel = "anthropic/claude-3.7-sonnet",
   selectedAgent = "discover",
+  isGuest = false,
 }: UseChatConversationProps) {
   const router = useRouter();
   const [messages, setMessages] = useState<Message[]>([]);
@@ -76,6 +78,7 @@ export function useChatConversation({
     null,
   );
   const [shouldScrollToTop, setShouldScrollToTop] = useState(false);
+  const [guestQuotaExhausted, setGuestQuotaExhausted] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -487,6 +490,14 @@ export function useChatConversation({
           },
         );
 
+        if (response.status === 402) {
+          const data = await response.json().catch(() => ({}));
+          if ((data as { error?: string }).error === "guest_quota_exceeded") {
+            setGuestQuotaExhausted(true);
+            router.push("/pricing");
+          }
+          return;
+        }
         if (!response.ok) throw new Error("Failed to send message");
         const reader = response.body?.getReader();
         const decoder = new TextDecoder();
@@ -563,6 +574,9 @@ export function useChatConversation({
           done: async () => {
             await loadConversation(targetConversationId);
             resetStreamingState();
+            if (isGuest) {
+              setGuestQuotaExhausted(true);
+            }
           },
           artist_info: async (data) => {
             if (data.userMessage || data.aiMessage) {
@@ -606,7 +620,7 @@ export function useChatConversation({
         setIsLoading(false);
       }
     },
-    [loadConversation, selectedAgent, resetStreamingState],
+    [loadConversation, selectedAgent, resetStreamingState, isGuest, router],
   );
 
   // Main useEffect for pending logic and initialization
@@ -1111,6 +1125,7 @@ export function useChatConversation({
             20,
         );
     },
+    guestQuotaExhausted,
     addAiMessage,
     streamVignetteMarkdown,
     streamMarkdown,

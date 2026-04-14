@@ -55,6 +55,7 @@ interface ConversationViewProps {
   selectedAgent: AgentType;
   onAgentChange: (agent: AgentType) => void;
   creditsExhausted?: boolean;
+  guestQuotaExhausted?: boolean;
 }
 
 export function ConversationView({
@@ -88,6 +89,7 @@ export function ConversationView({
   selectedAgent,
   onAgentChange,
   creditsExhausted,
+  guestQuotaExhausted,
 }: ConversationViewProps) {
   const { t } = useI18n();
   return (
@@ -154,20 +156,47 @@ export function ConversationView({
       </div>
 
       {/* Input Area */}
-      <div className="flex-shrink-0 w-full px-6 py-3 sm:py-4 bg-[rgb(249,248,244)] dark:bg-black flex justify-center">
-        <ChatInput
-          input={input}
-          setInput={setInput}
-          handleSend={handleSend}
-          isLoading={isLoading}
-          onFlashcardClick={handleFlashcardClick}
-          userStatus={userStatus}
-          selectedAgent={selectedAgent}
-          onAgentChange={onAgentChange}
-          creditsExhausted={creditsExhausted}
-          className="max-w-3xl"
-        />
-      </div>
+      {guestQuotaExhausted ? (
+        <div className="flex-shrink-0 w-full px-6 py-4 bg-[rgb(249,248,244)] dark:bg-black flex justify-center">
+          <div className="max-w-3xl w-full rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 px-6 py-5 text-center">
+            <p className="font-semibold text-gray-900 dark:text-white text-base mb-1">
+              {t("guestPaywall.title")}
+            </p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+              {t("guestPaywall.message")}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-2 justify-center">
+              <a
+                href="/pricing"
+                className="inline-flex items-center justify-center px-5 py-2 rounded-full bg-[#372ee9] hover:bg-[#2a22c7] text-white text-sm font-medium transition-colors"
+              >
+                {t("guestPaywall.cta")}
+              </a>
+              <a
+                href="/login"
+                className="inline-flex items-center justify-center px-5 py-2 rounded-full border border-gray-300 dark:border-white/20 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 text-sm font-medium transition-colors"
+              >
+                {t("guestPaywall.login")}
+              </a>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="flex-shrink-0 w-full px-6 py-3 sm:py-4 bg-[rgb(249,248,244)] dark:bg-black flex justify-center">
+          <ChatInput
+            input={input}
+            setInput={setInput}
+            handleSend={handleSend}
+            isLoading={isLoading}
+            onFlashcardClick={handleFlashcardClick}
+            userStatus={userStatus}
+            selectedAgent={selectedAgent}
+            onAgentChange={onAgentChange}
+            creditsExhausted={creditsExhausted}
+            className="max-w-3xl"
+          />
+        </div>
+      )}
       <div className="flex-shrink-0 w-full pb-2 bg-[rgb(249,248,244)] dark:bg-black flex justify-center">
         <p className="text-[10px] text-gray-400 dark:text-gray-600 text-center">
           {t("chat.disclaimer")}

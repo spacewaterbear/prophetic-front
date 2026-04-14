@@ -462,6 +462,16 @@ function ChatLayoutInner({
         </div>
 
         <div className="px-4 pb-4">
+          {!session?.user && (
+            <div className="flex flex-col gap-2">
+              <Link
+                href="/login"
+                className="flex items-center justify-center gap-1 text-sm font-medium px-3 py-2 rounded-lg bg-[#372ee9] hover:bg-[#2a22c7] text-white transition-colors"
+              >
+                {t("nav.signIn")}
+              </Link>
+            </div>
+          )}
           {session?.user && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

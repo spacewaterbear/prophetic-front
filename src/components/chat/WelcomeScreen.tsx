@@ -50,6 +50,7 @@ interface WelcomeScreenProps {
   mounted: boolean;
   isDark: boolean;
   creditsExhausted?: boolean;
+  isGuest?: boolean;
 }
 
 export function WelcomeScreen({
@@ -74,6 +75,7 @@ export function WelcomeScreen({
   mounted,
   isDark,
   creditsExhausted,
+  isGuest,
 }: WelcomeScreenProps) {
   const welcomeContainerRef = useRef<HTMLDivElement>(null);
   const { t, language } = useI18n();

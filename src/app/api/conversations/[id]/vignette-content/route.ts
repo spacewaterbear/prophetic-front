@@ -4,6 +4,12 @@ import { createAdminClient } from "@/lib/supabase/admin";
 
 // Dev mode user ID for testing (must be valid UUID format)
 const DEV_USER_ID = "00000000-0000-0000-0000-000000000000";
+const GUEST_USER_ID = "00000000-0000-0000-0000-000000000002";
+
+function isGuestAllowed(): boolean {
+  const env = process.env.NEXT_PUBLIC_APP_ENV;
+  return env !== "staging" && env !== "preprod";
+}
 
 // POST /api/conversations/[id]/vignette-content - Save vignette AI messages without triggering response
 export async function POST(
@@ -13,10 +19,16 @@ export async function POST(
   try {
     const session = await auth();
     const isDevMode = process.env.NEXT_PUBLIC_SKIP_AUTH === "true";
-    const userId = session?.user?.id || (isDevMode ? DEV_USER_ID : null);
+    const isGuest = !session?.user?.id && !isDevMode && isGuestAllowed();
+    const userId = session?.user?.id || (isDevMode ? DEV_USER_ID : (isGuestAllowed() ? GUEST_USER_ID : null));
 
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Guests don't persist conversation content (no history feature)
+    if (isGuest) {
+      return NextResponse.json({ success: true, messages: [] });
     }
 
     const { id } = await params;

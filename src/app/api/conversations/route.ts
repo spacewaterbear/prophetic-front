@@ -4,6 +4,13 @@ import { createAdminClient } from "@/lib/supabase/admin";
 
 // Dev mode user ID for testing (must be valid UUID format)
 const DEV_USER_ID = "00000000-0000-0000-0000-000000000000";
+// Guest user ID for unauthenticated visitors (must exist in profiles table)
+const GUEST_USER_ID = "00000000-0000-0000-0000-000000000002";
+
+function isGuestAllowed(): boolean {
+  const env = process.env.NEXT_PUBLIC_APP_ENV;
+  return env !== "staging" && env !== "preprod";
+}
 
 // Ensure dev profile exists in database
 async function ensureDevProfile(supabase: ReturnType<typeof createAdminClient>) {
@@ -75,7 +82,7 @@ export async function POST(request: NextRequest) {
     const session = await auth();
     const isDevMode = process.env.NEXT_PUBLIC_SKIP_AUTH === "true";
 
-    const userId = session?.user?.id || (isDevMode ? DEV_USER_ID : null);
+    const userId = session?.user?.id || (isDevMode ? DEV_USER_ID : (isGuestAllowed() ? GUEST_USER_ID : null));
 
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

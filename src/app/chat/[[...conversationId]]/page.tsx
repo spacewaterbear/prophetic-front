@@ -88,6 +88,11 @@ export default function ChatPage() {
   const [profileUsername, setProfileUsername] = useState<string | null>(null);
   const { setSidebarOpen } = useSidebar();
 
+  const isGuestMode =
+    status === "unauthenticated" &&
+    process.env.NEXT_PUBLIC_SKIP_AUTH !== "true" &&
+    process.env.NEXT_PUBLIC_APP_ENV !== "staging" &&
+    process.env.NEXT_PUBLIC_APP_ENV !== "preprod";
   const isFreeUser = (session?.user as { status?: string })?.status === "free";
   const { credits, isTester, creditsExhausted, refresh: refreshCredits } = useCredits(session?.user?.id, isFreeUser);
 
@@ -122,7 +127,8 @@ export default function ChatPage() {
     handleFlashcardClick,
     handleScroll,
     clearMessages,
-  } = useChatConversation({ conversationId, selectedModel, selectedAgent });
+    guestQuotaExhausted,
+  } = useChatConversation({ conversationId, selectedModel, selectedAgent, isGuest: isGuestMode });
 
   const prevIsLoadingRef = useRef(false);
   useEffect(() => {
@@ -220,7 +226,11 @@ export default function ChatPage() {
   // Auth redirect
   useEffect(() => {
     if (process.env.NEXT_PUBLIC_SKIP_AUTH === "true") return;
-    if (status === "unauthenticated") {
+    const isRestrictedEnv =
+      process.env.NEXT_PUBLIC_APP_ENV === "staging" ||
+      process.env.NEXT_PUBLIC_APP_ENV === "preprod";
+    // On restricted envs, unauthenticated users must log in
+    if (status === "unauthenticated" && isRestrictedEnv) {
       router.push("/login");
     } else if (
       status === "authenticated" &&
@@ -375,7 +385,7 @@ export default function ChatPage() {
     );
   }
 
-  if (!session && process.env.NEXT_PUBLIC_SKIP_AUTH !== "true") {
+  if (!session && process.env.NEXT_PUBLIC_SKIP_AUTH !== "true" && !isGuestMode) {
     return null;
   }
 
@@ -480,6 +490,7 @@ export default function ChatPage() {
           mounted={mounted}
           isDark={isDark}
           creditsExhausted={creditsExhausted}
+          isGuest={isGuestMode}
         />
       ) : (
         <ConversationView
@@ -513,6 +524,7 @@ export default function ChatPage() {
           selectedAgent={selectedAgent}
           onAgentChange={handleAgentChange}
           creditsExhausted={creditsExhausted}
+          guestQuotaExhausted={guestQuotaExhausted}
         />
       )}
     </div>
