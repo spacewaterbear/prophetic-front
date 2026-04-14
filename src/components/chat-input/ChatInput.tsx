@@ -11,33 +11,21 @@ import {
 } from "@/components/FileUploadPreview";
 import { useFileUpload } from "@/hooks/useFileUpload";
 import { FLASHCARD_MAPPING } from "@/lib/constants/flashcards";
-import { getAvailableAgents, AgentType, UserStatus } from "@/types/agents";
+import { getAvailableAgents, type AgentType } from "@/types/agents";
+import { useChatInputContext } from "@/contexts/chat-input-context";
 import { ModeSelector } from "./ModeSelector";
 import { SettingsMenu } from "./SettingsMenu";
 import { MobileBottomSheets } from "./MobileBottomSheets";
 
-interface ChatInputProps {
+export interface ChatInputProps {
   input: string;
   setInput: (value: string) => void;
   handleSend: () => void;
   isLoading: boolean;
   className?: string;
   textareaRef?: React.RefObject<HTMLTextAreaElement>;
-  userStatus?: UserStatus;
-  selectedAgent?: AgentType;
-  onAgentChange?: (agent: AgentType) => void;
-  userId?: string;
-  conversationId?: number | null;
   attachedFiles?: AttachedFile[];
   onFilesChange?: (files: AttachedFile[]) => void;
-  creditsExhausted?: boolean;
-  onFlashcardClick?: (
-    flashCards: string,
-    question: string,
-    flashCardType: "flash_invest" | "ranking" | "portfolio" | "PORTFOLIO",
-    displayName: string,
-    tier?: string,
-  ) => void;
 }
 
 const isArtSpeciality = process.env.NEXT_PUBLIC_SPECIALITY === "art";
@@ -49,16 +37,21 @@ export function ChatInput({
   isLoading,
   className = "",
   textareaRef,
-  userStatus = "discover",
-  selectedAgent = "discover",
-  onAgentChange,
-  userId,
-  conversationId,
-  attachedFiles = [],
-  onFilesChange,
-  creditsExhausted = false,
-  onFlashcardClick,
+  attachedFiles: propsAttachedFiles,
+  onFilesChange: propsOnFilesChange,
 }: ChatInputProps) {
+  const {
+    userStatus = "discover",
+    selectedAgent = "discover",
+    onAgentChange,
+    userId,
+    conversationId,
+    creditsExhausted = false,
+    onFlashcardClick,
+  } = useChatInputContext();
+
+  const attachedFiles = propsAttachedFiles ?? [];
+  const onFilesChange = propsOnFilesChange;
   const isDark = useDarkMode();
   const { t } = useI18n();
   const [mounted, setMounted] = useState(false);

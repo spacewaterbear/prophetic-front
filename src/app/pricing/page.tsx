@@ -31,8 +31,7 @@ async function fetchStripePrices(): Promise<{ discover: string; flash: string; o
 export default async function PricingPage() {
   const session = await auth();
   const stripePrices = await fetchStripePrices();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const userStatus = (session?.user as any)?.status as string | undefined;
+  const userStatus = session?.user?.status;
   const isAuthorized = userStatus && userStatus !== "unauthorized";
 
   return (

@@ -11,7 +11,7 @@ import { AIAvatar } from "./AIAvatar";
 import { Message } from "@/types/chat";
 import { getCategoryDisplayNames } from "@/lib/translations";
 import { VignetteData } from "@/types/vignettes";
-import { AgentType, UserStatus } from "@/types/agents";
+import { useChatInputContext } from "@/contexts/chat-input-context";
 
 const Markdown = lazy(() =>
   import("@/components/Markdown").then((mod) => ({ default: mod.Markdown })),
@@ -33,23 +33,12 @@ interface WelcomeScreenProps {
   setInput: (value: string) => void;
   handleSend: () => void;
   isLoading: boolean;
-  handleFlashcardClick: (
-    flashCards: string,
-    question: string,
-    flashCardType: "flash_invest" | "ranking" | "portfolio" | "PORTFOLIO",
-    displayName: string,
-    tier?: string,
-  ) => void;
   handleVignetteClick: (vignette: VignetteData) => void;
   handleBackToCategory: (category: string) => void;
   userName: string;
   profileUsername: string | null;
-  userStatus?: UserStatus;
-  selectedAgent: AgentType;
-  onAgentChange: (agent: AgentType) => void;
   mounted: boolean;
   isDark: boolean;
-  creditsExhausted?: boolean;
   isGuest?: boolean;
 }
 
@@ -64,21 +53,17 @@ export function WelcomeScreen({
   setInput,
   handleSend,
   isLoading,
-  handleFlashcardClick,
   handleVignetteClick,
   handleBackToCategory,
   userName,
   profileUsername,
-  userStatus,
-  selectedAgent,
-  onAgentChange,
   mounted,
   isDark,
-  creditsExhausted,
   isGuest,
 }: WelcomeScreenProps) {
   const welcomeContainerRef = useRef<HTMLDivElement>(null);
   const { t, language } = useI18n();
+  const { selectedAgent, onAgentChange, userStatus, creditsExhausted, handleFlashcardClick } = useChatInputContext();
   const categoryNames = getCategoryDisplayNames(language);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -295,11 +280,6 @@ export function WelcomeScreen({
               setInput={setInput}
               handleSend={handleSend}
               isLoading={isLoading}
-              onFlashcardClick={handleFlashcardClick}
-              userStatus={userStatus}
-              selectedAgent={selectedAgent}
-              onAgentChange={onAgentChange}
-              creditsExhausted={creditsExhausted}
               className="max-w-3xl"
             />
           </>

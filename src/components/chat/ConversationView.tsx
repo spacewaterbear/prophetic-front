@@ -15,8 +15,8 @@ import { WatchesSearchData } from "@/components/WatchesCard";
 import { WhiskySearchData } from "@/components/WhiskyCard";
 import { WineSearchData } from "@/components/WineCard";
 import { CardsSearchData } from "@/components/SportsCardsCard";
-import { AgentType, UserStatus } from "@/types/agents";
 import { useI18n } from "@/contexts/i18n-context";
+import { useChatInputContext } from "@/contexts/chat-input-context";
 
 interface ConversationViewProps {
   messages: Message[];
@@ -40,22 +40,10 @@ interface ConversationViewProps {
   handleScroll: () => void;
   handleVignetteClick: (vignette: VignetteData) => void;
   handleBackToCategory: (category: string) => void;
-  handleFlashcardClick: (
-    flashCards: string,
-    question: string,
-    flashCardType: "flash_invest" | "ranking" | "portfolio" | "PORTFOLIO",
-    displayName: string,
-    tier?: string,
-  ) => void;
   input: string;
   setInput: (value: string) => void;
   handleSend: () => void;
   userName: string;
-  userStatus?: UserStatus;
-  selectedAgent: AgentType;
-  onAgentChange: (agent: AgentType) => void;
-  creditsExhausted?: boolean;
-  guestQuotaExhausted?: boolean;
 }
 
 export function ConversationView({
@@ -80,18 +68,13 @@ export function ConversationView({
   handleScroll,
   handleVignetteClick,
   handleBackToCategory,
-  handleFlashcardClick,
   input,
   setInput,
   handleSend,
   userName,
-  userStatus,
-  selectedAgent,
-  onAgentChange,
-  creditsExhausted,
-  guestQuotaExhausted,
 }: ConversationViewProps) {
   const { t } = useI18n();
+  const { creditsExhausted, guestQuotaExhausted } = useChatInputContext();
   return (
     <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
       {/* Messages */}
@@ -188,11 +171,6 @@ export function ConversationView({
             setInput={setInput}
             handleSend={handleSend}
             isLoading={isLoading}
-            onFlashcardClick={handleFlashcardClick}
-            userStatus={userStatus}
-            selectedAgent={selectedAgent}
-            onAgentChange={onAgentChange}
-            creditsExhausted={creditsExhausted}
             className="max-w-3xl"
           />
         </div>

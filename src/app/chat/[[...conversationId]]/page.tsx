@@ -22,6 +22,7 @@ import { WelcomeScreen } from "@/components/chat/WelcomeScreen";
 import { ConversationView } from "@/components/chat/ConversationView";
 import { VignetteDetailView } from "./VignetteDetailView";
 import { useCredits } from "@/hooks/useCredits";
+import { ChatInputProvider } from "@/contexts/chat-input-context";
 
 const isAdminUser = (
   session: { user?: { status?: string } } | null,
@@ -396,6 +397,16 @@ export default function ChatPage() {
     | undefined;
 
   return (
+    <ChatInputProvider value={{
+      userStatus,
+      selectedAgent,
+      onAgentChange: handleAgentChange,
+      creditsExhausted,
+      guestQuotaExhausted,
+      userId: session?.user?.id,
+      conversationId,
+      handleFlashcardClick,
+    }}>
     <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
       <div className="h-[56px] mb-4 flex-shrink-0" />
 
@@ -472,17 +483,12 @@ export default function ChatPage() {
           setInput={setInput}
           handleSend={() => handleSend()}
           isLoading={isLoading}
-          handleFlashcardClick={handleFlashcardClick}
           handleVignetteClick={handleVignetteClick}
           handleBackToCategory={handleBackToCategory}
           userName={profileUsername || session?.user?.name?.split(" ")[0] || ""}
           profileUsername={profileUsername}
-          userStatus={userStatus}
-          selectedAgent={selectedAgent}
-          onAgentChange={handleAgentChange}
           mounted={mounted}
           isDark={isDark}
-          creditsExhausted={creditsExhausted}
           isGuest={isGuestMode}
         />
       ) : (
@@ -508,18 +514,13 @@ export default function ChatPage() {
           handleScroll={handleScroll}
           handleVignetteClick={handleVignetteClick}
           handleBackToCategory={handleBackToCategory}
-          handleFlashcardClick={handleFlashcardClick}
           input={input}
           setInput={setInput}
           handleSend={() => handleSend()}
           userName={session?.user?.name?.[0]?.toUpperCase() || "U"}
-          userStatus={userStatus}
-          selectedAgent={selectedAgent}
-          onAgentChange={handleAgentChange}
-          creditsExhausted={creditsExhausted}
-          guestQuotaExhausted={guestQuotaExhausted}
         />
       )}
     </div>
+    </ChatInputProvider>
   );
 }

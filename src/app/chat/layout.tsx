@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SelectionContextMenu } from "@/components/SelectionContextMenu";
 import { FeedbackModal } from "@/components/FeedbackModal";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { getCategoryDisplayNames } from "@/lib/translations";
 import { ICON_CONVERSATIONS_DARK, ICON_CONVERSATIONS_LIGHT, ICONS_BASE_URL, LOGO_LIGHT, LOGO_DARK, LOGO_SMALL_LIGHT, LOGO_SMALL_DARK } from "@/lib/constants/logos";
 
