@@ -311,6 +311,7 @@ export default function VignettePage() {
               alt="Prophetic Orchestra"
               width={256}
               height={64}
+              unoptimized
               className="w-full h-full object-contain"
             />
           </div>

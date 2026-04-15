@@ -103,6 +103,7 @@ export default function PricingContent({
               alt="Prophetic Orchestra"
               width={64}
               height={64}
+              unoptimized
               className="w-full h-full object-cover dark:hidden"
             />
             <Image
@@ -110,6 +111,7 @@ export default function PricingContent({
               alt="Prophetic Orchestra"
               width={64}
               height={64}
+              unoptimized
               className="w-full h-full object-cover hidden dark:block"
             />
           </div>

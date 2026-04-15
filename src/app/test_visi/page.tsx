@@ -189,6 +189,7 @@ export default function TestVisiPage() {
             alt="Prophetic Orchestra"
             width={180}
             height={45}
+            unoptimized
             className="h-7 sm:h-10 w-auto"
           />
           <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">

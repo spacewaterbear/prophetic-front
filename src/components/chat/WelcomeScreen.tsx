@@ -263,6 +263,8 @@ export function WelcomeScreen({
                   alt="Prophetic Orchestra"
                   width={150}
                   height={150}
+                  unoptimized
+                  priority
                   className="w-full h-full object-contain"
                 />
               </div>

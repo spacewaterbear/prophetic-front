@@ -72,6 +72,7 @@ export function FlashcardMenu({
           alt={isRanking ? "Ranking" : "Chrono"}
           width={24}
           height={24}
+          unoptimized
           className="w-9 h-9"
         />
       </button>

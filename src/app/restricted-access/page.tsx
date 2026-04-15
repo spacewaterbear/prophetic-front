@@ -47,6 +47,7 @@ export default function RestrictedAccessPage() {
                 width={96}
                 height={96}
                 className="w-full h-full object-cover"
+                unoptimized
                 suppressHydrationWarning
                 priority
               />

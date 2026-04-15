@@ -53,6 +53,7 @@ export function PortfolioMenu({
           alt="Portfolio"
           width={24}
           height={24}
+          unoptimized
           className="w-9 h-9"
         />
       </button>

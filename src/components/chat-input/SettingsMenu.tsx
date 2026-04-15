@@ -52,6 +52,7 @@ export function SettingsMenu({
           alt="Settings"
           width={28}
           height={28}
+          unoptimized
           className="w-6 h-6"
         />
         <span className="hidden sm:inline text-sm font-medium whitespace-nowrap">{t("agents.orchestration")}</span>
@@ -92,6 +93,7 @@ export function SettingsMenu({
                   alt="Market Scout"
                   width={24}
                   height={24}
+                  unoptimized
                   className="w-6 h-6"
                 />
                 <div>
@@ -126,6 +128,7 @@ export function SettingsMenu({
                   alt="Community Radar"
                   width={24}
                   height={24}
+                  unoptimized
                   className="w-6 h-6"
                 />
                 <div>

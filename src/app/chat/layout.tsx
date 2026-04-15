@@ -260,8 +260,8 @@ function ChatLayoutInner({
       >
         {/* Logo */}
         <Link href="/chat" className="h-[56px] px-4 pt-3 flex items-start gap-2">
-          <Image src={LOGO_SMALL_LIGHT} alt="Logo" width={22} height={22} className="flex-shrink-0 block dark:hidden" />
-          <Image src={LOGO_SMALL_DARK} alt="Logo" width={22} height={22} className="flex-shrink-0 hidden dark:block" />
+          <Image src={LOGO_SMALL_LIGHT} alt="Logo" width={22} height={22} unoptimized priority className="flex-shrink-0 block dark:hidden" />
+          <Image src={LOGO_SMALL_DARK} alt="Logo" width={22} height={22} unoptimized priority className="flex-shrink-0 hidden dark:block" />
           <div className="flex items-start gap-1 leading-none">
             <span className="font-[family-name:var(--font-spectral)] font-semibold text-gray-900 dark:text-white text-lg leading-tight">
               {process.env.NEXT_PUBLIC_SPECIALITY === "art" ? "Art Orchestra" : "Prophetic Orchestra"}
@@ -293,6 +293,7 @@ function ChatLayoutInner({
                   alt="Conversations"
                   width={20}
                   height={20}
+                  unoptimized
                   className="flex-shrink-0 block dark:hidden"
                 />
                 <Image
@@ -300,6 +301,7 @@ function ChatLayoutInner({
                   alt="Conversations"
                   width={20}
                   height={20}
+                  unoptimized
                   className="flex-shrink-0 hidden dark:block"
                 />
                 <span className="flex-1">{t("nav.conversations")}</span>

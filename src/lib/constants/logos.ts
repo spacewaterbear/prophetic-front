@@ -1,4 +1,4 @@
-const BASE = "https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo";
+const BASE = "/logo";
 
 /** Main brand logo — swap these two URLs to change the logo across the entire app */
 export const LOGO_LIGHT = `${BASE}/logo/logo_home_blue.svg`;

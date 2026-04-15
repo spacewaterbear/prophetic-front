@@ -1,4 +1,6 @@
 import { memo, useState } from "react";
+
+const BLUR_PLACEHOLDER = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGN49uAaAAVMAp2gYz/iAAAAAElFTkSuQmCC";
 import Image from "next/image";
 import { Download, ChevronDown } from "lucide-react";
 import { VignetteData } from "@/types/vignettes";
@@ -45,6 +47,8 @@ const PdfCard = ({ item }: { item: VignetteData }) => {
                     src={item.public_url}
                     alt={item.brand_name}
                     fill
+                    placeholder="blur"
+                    blurDataURL={BLUR_PLACEHOLDER}
                     className="object-cover"
                     sizes="(max-width: 768px) 50vw, 25vw"
                 />
@@ -113,6 +117,8 @@ const VignetteItem = ({ item, onVignetteClick, forceArtLayout }: { item: Vignett
                             src={item.public_url}
                             alt={item.brand_name}
                             fill
+                            placeholder="blur"
+                            blurDataURL={BLUR_PLACEHOLDER}
                             className="object-cover"
                             sizes="(max-width: 768px) 50vw, 25vw"
                         />
@@ -154,6 +160,8 @@ const VignetteItem = ({ item, onVignetteClick, forceArtLayout }: { item: Vignett
                     src={item.public_url}
                     alt={item.brand_name}
                     fill
+                    placeholder="blur"
+                    blurDataURL={BLUR_PLACEHOLDER}
                     className="object-cover"
                     sizes="(max-width: 768px) 50vw, 25vw"
                 />
@@ -244,6 +252,8 @@ const VignetteItem = ({ item, onVignetteClick, forceArtLayout }: { item: Vignett
                 src={item.public_url}
                 alt={item.brand_name}
                 fill
+                placeholder="blur"
+                blurDataURL={BLUR_PLACEHOLDER}
                 className="object-cover"
                 sizes="(max-width: 768px) 50vw, 25vw"
             />

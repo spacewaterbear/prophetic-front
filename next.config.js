@@ -4,6 +4,9 @@ const nextConfig = {
     output: "standalone",
     images: {
         formats: ["image/avif", "image/webp"],
+        dangerouslyAllowSVG: true,
+        minimumCacheTTL: 86400,
+        deviceSizes: [640, 1080, 1920],
         remotePatterns: [
             {
                 protocol: "https",

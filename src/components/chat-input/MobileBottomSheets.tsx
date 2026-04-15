@@ -291,6 +291,7 @@ export function MobileBottomSheets({
                   alt="Market Scout"
                   width={24}
                   height={24}
+                  unoptimized
                   className="w-6 h-6"
                 />
                 <div>
@@ -323,6 +324,7 @@ export function MobileBottomSheets({
                   alt="Community Radar"
                   width={24}
                   height={24}
+                  unoptimized
                   className="w-6 h-6"
                 />
                 <div>

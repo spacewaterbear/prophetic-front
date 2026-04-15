@@ -65,6 +65,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${spectral.variable} ${inter.variable} ${instrumentSerif.variable}`} suppressHydrationWarning>
       <head>
+        <link rel="preload" as="image" href="/logo/logo/logo_home_blue.svg" media="(prefers-color-scheme: light)" />
+        <link rel="preload" as="image" href="/logo/logo/logo_home_white.svg" media="(prefers-color-scheme: dark)" />
+        <link rel="preload" as="image" href="/logo/logo/small_logo_black.svg" media="(prefers-color-scheme: light)" />
+        <link rel="preload" as="image" href="/logo/logo/small_logo_white.svg" media="(prefers-color-scheme: dark)" />
         <Script
           crossOrigin="anonymous"
           src="//unpkg.com/same-runtime/dist/index.global.js"

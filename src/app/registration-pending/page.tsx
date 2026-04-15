@@ -46,6 +46,7 @@ export default function RegistrationPendingPage() {
                 width={96}
                 height={96}
                 className="w-full h-full object-cover"
+                unoptimized
                 suppressHydrationWarning
                 priority
               />

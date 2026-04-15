@@ -26,6 +26,7 @@ export const AIAvatar = memo(() => {
         width={28}
         height={28}
         className="w-full h-full object-contain"
+        unoptimized
         priority
       />
     </div>
