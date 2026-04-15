@@ -64,7 +64,7 @@ export function ModeSelector({
         <div className="bg-white dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl sm:rounded-3xl p-5 w-full sm:w-[420px] shadow-2xl border-t border-gray-200 sm:border dark:border-transparent max-h-[80vh] overflow-y-auto">
           <ModeCard
             title="FLASH"
-            price={t("agents.flashPrice")}
+            price={stripePrices.flash ?? ""}
             description={t("agents.flashDesc")}
             isActive={selectedAgent === "flash"}
             isAvailable={availableAgents.includes("flash")}
@@ -72,7 +72,7 @@ export function ModeSelector({
           />
           <ModeCard
             title="DISCOVER"
-            price={t("agents.discoverPrice")}
+            price={stripePrices.discover ?? ""}
             description={t("agents.discoverDesc")}
             isActive={selectedAgent === "discover"}
             isAvailable={availableAgents.includes("discover")}

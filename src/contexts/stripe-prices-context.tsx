@@ -37,10 +37,10 @@ function cachePrices(prices: StripePrices) {
   }
 }
 
-const StripePricesContext = createContext<StripePrices>({ intelligence: null, oracle: null });
+const StripePricesContext = createContext<StripePrices>({ flash: null, discover: null, oracle: null });
 
 export function StripePricesProvider({ children }: { children: ReactNode }) {
-  const [prices, setPrices] = useState<StripePrices>({ intelligence: null, oracle: null });
+  const [prices, setPrices] = useState<StripePrices>({ flash: null, discover: null, oracle: null });
 
   useEffect(() => {
     const cached = getCachedPrices();

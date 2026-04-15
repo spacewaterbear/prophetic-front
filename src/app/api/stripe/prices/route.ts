@@ -11,19 +11,43 @@ function formatPrice(price: Stripe.Price): string {
 }
 
 export async function GET() {
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+  const secretKey = process.env.STRIPE_SECRET_KEY;
+  const oraclePriceId = process.env.STRIPE_ORACLE_PRICE_ID;
+
+  if (!secretKey || !oraclePriceId) {
+    console.error("[Stripe prices] Missing env vars:", {
+      STRIPE_SECRET_KEY: !!secretKey,
+      STRIPE_ORACLE_PRICE_ID: !!oraclePriceId,
+    });
+    return NextResponse.json({ flash: null, discover: null, oracle: null }, { status: 500 });
+  }
+
+  const flashPriceId = process.env.STRIPE_FLASH_PRICE_ID;
+  const discoverPriceId = process.env.STRIPE_DISCOVER_PRICE_ID;
+
+  if (!flashPriceId || !discoverPriceId) {
+    console.error("[Stripe prices] Missing env vars:", {
+      STRIPE_FLASH_PRICE_ID: !!flashPriceId,
+      STRIPE_DISCOVER_PRICE_ID: !!discoverPriceId,
+    });
+    return NextResponse.json({ flash: null, discover: null, oracle: null }, { status: 500 });
+  }
+
+  const stripe = new Stripe(secretKey);
   try {
-    const [intelligence, oracle] = await Promise.all([
-      stripe.prices.retrieve(process.env.STRIPE_INTELLIGENCE_PRICE_ID!),
-      stripe.prices.retrieve(process.env.STRIPE_ORACLE_PRICE_ID!),
+    const [flash, discover, oracle] = await Promise.all([
+      stripe.prices.retrieve(flashPriceId),
+      stripe.prices.retrieve(discoverPriceId),
+      stripe.prices.retrieve(oraclePriceId),
     ]);
 
     return NextResponse.json({
-      intelligence: formatPrice(intelligence),
+      flash: formatPrice(flash),
+      discover: formatPrice(discover),
       oracle: formatPrice(oracle),
     });
   } catch (err) {
     console.error("[Stripe prices] Failed to fetch:", err);
-    return NextResponse.json({ intelligence: null, oracle: null }, { status: 500 });
+    return NextResponse.json({ flash: null, discover: null, oracle: null }, { status: 500 });
   }
 }

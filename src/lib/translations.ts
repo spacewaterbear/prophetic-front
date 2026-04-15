@@ -123,8 +123,6 @@ export const translations = {
             save: "Enregistrer",
         },
         agents: {
-            discoverPrice: "Gratuit",
-            flashPrice: "Gratuit",
             discoverDesc: "Explorez les actifs. Repérez les tendances",
             intelligenceDesc: "Prédisez la valeur. Investissez mieux",
             oracleDesc: "Pilotez le marché. Multipliez votre patrimoine",
@@ -402,8 +400,6 @@ export const translations = {
             save: "Save",
         },
         agents: {
-            discoverPrice: "Free",
-            flashPrice: "Free",
             discoverDesc: "Explore assets. Spot trends",
             intelligenceDesc: "Predict value. Invest smarter",
             oracleDesc: "Lead the market. Multiply wealth",
@@ -673,8 +669,6 @@ export const translations = {
             save: "Guardar",
         },
         agents: {
-            discoverPrice: "Gratis",
-            flashPrice: "Gratis",
             discoverDesc: "Explora activos. Detecta tendencias",
             intelligenceDesc: "Predice el valor. Invierte mejor",
             oracleDesc: "Lidera el mercado. Multiplica tu patrimonio",
@@ -944,8 +938,6 @@ export const translations = {
             save: "Speichern",
         },
         agents: {
-            discoverPrice: "Kostenlos",
-            flashPrice: "Kostenlos",
             discoverDesc: "Erkunden Sie Vermögenswerte. Trends erkennen",
             intelligenceDesc: "Wert vorhersagen. Klüger investieren",
             oracleDesc: "Den Markt führen. Vermögen multiplizieren",
@@ -1215,8 +1207,6 @@ export const translations = {
             save: "Salva",
         },
         agents: {
-            discoverPrice: "Gratuito",
-            flashPrice: "Gratuito",
             discoverDesc: "Esplora gli asset. Individua le tendenze",
             intelligenceDesc: "Prevedi il valore. Investi meglio",
             oracleDesc: "Guida il mercato. Moltiplica il patrimonio",
@@ -1486,8 +1476,6 @@ export const translations = {
             save: "Salvar",
         },
         agents: {
-            discoverPrice: "Grátis",
-            flashPrice: "Grátis",
             discoverDesc: "Explore ativos. Identifique tendências",
             intelligenceDesc: "Preveja valor. Invista melhor",
             oracleDesc: "Lidere o mercado. Multiplique o patrimônio",
@@ -1757,8 +1745,6 @@ export const translations = {
             save: "Opslaan",
         },
         agents: {
-            discoverPrice: "Gratis",
-            flashPrice: "Gratis",
             discoverDesc: "Verken activa. Spot trends",
             intelligenceDesc: "Voorspel waarde. Investeer slimmer",
             oracleDesc: "Leid de markt. Vermenigvuldig vermogen",
@@ -2028,8 +2014,6 @@ export const translations = {
             save: "保存",
         },
         agents: {
-            discoverPrice: "無料",
-            flashPrice: "無料",
             discoverDesc: "資産を探索。トレンドを発見",
             intelligenceDesc: "価値を予測。賢く投資",
             oracleDesc: "市場をリード。富を倍増",
@@ -2299,8 +2283,6 @@ export const translations = {
             save: "保存",
         },
         agents: {
-            discoverPrice: "免费",
-            flashPrice: "免费",
             discoverDesc: "探索资产。发现趋势",
             intelligenceDesc: "预测价值。更明智地投资",
             oracleDesc: "引领市场。倍增财富",

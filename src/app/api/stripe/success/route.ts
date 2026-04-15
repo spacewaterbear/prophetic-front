@@ -5,7 +5,6 @@ import { createAdminClient } from "@/lib/supabase/admin";
 const PRICE_STATUS_MAP: Record<string, string> = {
   [process.env.STRIPE_FLASH_PRICE_ID!]: "flash",
   [process.env.STRIPE_DISCOVER_PRICE_ID!]: "discover",
-  [process.env.STRIPE_INTELLIGENCE_PRICE_ID!]: "intelligence",
   [process.env.STRIPE_ORACLE_PRICE_ID!]: "oracle",
 };
 

@@ -5,10 +5,10 @@ export type UserStatus =
   | "paid"
   | "admini"
   | "discover"
-  | "intelligence"
+  | "intelligence" // legacy — maps to discover access
   | "oracle";
 
-export type AgentType = "discover" | "intelligence" | "oracle" | "flash";
+export type AgentType = "discover" | "oracle" | "flash";
 
 export function getAvailableAgents(status: string | undefined): AgentType[] {
   switch (status) {
@@ -16,12 +16,11 @@ export function getAvailableAgents(status: string | undefined): AgentType[] {
     case "free":
       return ["flash"];
     case "discover":
+    case "intelligence": // legacy users get discover-level access
       return ["flash", "discover"];
-    case "intelligence":
-      return ["flash", "discover", "intelligence"];
     case "oracle":
     case "admini":
-      return ["flash", "discover", "intelligence", "oracle"];
+      return ["flash", "discover", "oracle"];
     default:
       return ["flash"];
   }

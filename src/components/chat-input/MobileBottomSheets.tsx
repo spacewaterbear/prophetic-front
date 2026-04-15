@@ -86,7 +86,7 @@ export function MobileBottomSheets({
         <div className="bg-white dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl p-5 w-full shadow-2xl border-t border-gray-200 dark:border-transparent max-h-[70vh] overflow-y-auto">
           <ModeCard
             title="FLASH"
-            price={t("agents.flashPrice")}
+            price={stripePrices.flash ?? ""}
             description={t("agents.flashDesc")}
             isActive={selectedAgent === "flash"}
             isAvailable={availableAgents.includes("flash")}
@@ -98,7 +98,7 @@ export function MobileBottomSheets({
           />
           <ModeCard
             title="DISCOVER"
-            price={t("agents.discoverPrice")}
+            price={stripePrices.discover ?? ""}
             description={t("agents.discoverDesc")}
             isActive={selectedAgent === "discover"}
             isAvailable={availableAgents.includes("discover")}

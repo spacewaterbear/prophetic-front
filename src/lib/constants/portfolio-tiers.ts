@@ -11,18 +11,6 @@ export const DISCOVER_PORTFOLIO_TIERS = [
   { label: "25k-30k VIRTUOSE", value: "25k-30k_VIRTUOSE" },
 ];
 
-export const INTELLIGENCE_PORTFOLIO_TIERS = [
-  { label: "30k-35k STRATEGE", value: "30k-35k_STRATEGE" },
-  { label: "35k-40k VISIONNAIRE", value: "35k-40k_VISIONNAIRE" },
-  { label: "40k-50k ARCHITECTE", value: "40k-50k_ARCHITECTE" },
-  { label: "50k-60k BATISSEUR", value: "50k-60k_BATISSEUR" },
-  { label: "60k-70k INFLUENT", value: "60k-70k_INFLUENT" },
-  { label: "70k-80k DECIDEUR", value: "70k-80k_DECIDEUR" },
-  { label: "80k-90k DIRIGEANT", value: "80k-90k_DIRIGEANT" },
-  { label: "90k-100k GOUVERNEUR", value: "90k-100k_GOUVERNEUR" },
-  { label: "100k-120k REGENT", value: "100k-120k_REGENT" },
-  { label: "120k-150k SOUVERAIN", value: "120k-150k_SOUVERAIN" },
-];
 
 export const ORACLE_PORTFOLIO_TIERS = [
   { label: "150k-300k PATRIMOINE", value: "150k-300k_PATRIMOINE" },
@@ -43,6 +31,5 @@ export type PortfolioTier = { label: string; value: string };
 
 export function getPortfolioTiers(agent: AgentType): PortfolioTier[] {
   if (agent === "oracle") return ORACLE_PORTFOLIO_TIERS;
-  if (agent === "intelligence") return INTELLIGENCE_PORTFOLIO_TIERS;
   return DISCOVER_PORTFOLIO_TIERS;
 }

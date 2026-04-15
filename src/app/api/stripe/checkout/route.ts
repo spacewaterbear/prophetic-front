@@ -4,24 +4,21 @@ import { auth } from "@/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 const ALLOWED_PRICE_IDS = new Set([
-  process.env.STRIPE_DISCOVER_PRICE_ID,
   process.env.STRIPE_FLASH_PRICE_ID,
-  process.env.STRIPE_INTELLIGENCE_PRICE_ID,
+  process.env.STRIPE_DISCOVER_PRICE_ID,
   process.env.STRIPE_ORACLE_PRICE_ID,
 ]);
 
-// flash < discover < intelligence < oracle
+// flash < discover < oracle
 const PLAN_ORDER: Record<string, number> = {
   [process.env.STRIPE_FLASH_PRICE_ID!]: 0,
   [process.env.STRIPE_DISCOVER_PRICE_ID!]: 1,
-  [process.env.STRIPE_INTELLIGENCE_PRICE_ID!]: 2,
-  [process.env.STRIPE_ORACLE_PRICE_ID!]: 3,
+  [process.env.STRIPE_ORACLE_PRICE_ID!]: 2,
 };
 
 const PRICE_STATUS_MAP: Record<string, string> = {
   [process.env.STRIPE_FLASH_PRICE_ID!]: "flash",
   [process.env.STRIPE_DISCOVER_PRICE_ID!]: "discover",
-  [process.env.STRIPE_INTELLIGENCE_PRICE_ID!]: "intelligence",
   [process.env.STRIPE_ORACLE_PRICE_ID!]: "oracle",
 };
 

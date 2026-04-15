@@ -44,7 +44,8 @@ export interface GeolocationResponse {
 }
 
 export interface StripePricesResponse {
-  intelligence: string | null;
+  flash: string | null;
+  discover: string | null;
   oracle: string | null;
 }
 
