@@ -1083,6 +1083,7 @@ export function useChatConversation({
     streamingCardsSearchData: streaming.cardsSearchData,
     streamingVignetteCategory: streaming.vignetteCategory,
     currentStatus: streaming.status,
+    streamingLastActivity: streaming.lastActivity,
     showStreamingIndicator: streaming.showIndicator,
     messagesEndRef,
     messagesContainerRef,

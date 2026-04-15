@@ -80,6 +80,7 @@ export function VignetteDetailView({
   const [marketplaceData, setMarketplaceData] = useState<MarketplaceData | null>(null);
   const [realEstateData, setRealEstateData] = useState<RealEstateData | null>(null);
   const [statusMessage, setStatusMessage] = useState("");
+  const [lastActivityAt, setLastActivityAt] = useState(0);
   const streamStartedRef = useRef(false);
 
   useEffect(() => {
@@ -172,6 +173,7 @@ export function VignetteDetailView({
 
             try {
               const parsed = JSON.parse(eventData);
+              setLastActivityAt(Date.now());
               if (parsed.type === "document") {
                 documentContent = parsed.content || "";
                 setStreamingMessage(documentContent);
@@ -683,7 +685,7 @@ export function VignetteDetailView({
                   )}
                   {isLoading && !finalContent && (
                     <div className="mt-2">
-                      <TypingIndicator statusText={statusMessage} />
+                      <TypingIndicator statusText={statusMessage} lastActivityAt={lastActivityAt} />
                     </div>
                   )}
                   {displayContent && (

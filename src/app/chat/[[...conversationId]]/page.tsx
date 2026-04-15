@@ -121,6 +121,7 @@ export default function ChatPage() {
     streamingCardsSearchData,
     streamingVignetteCategory,
     currentStatus,
+    streamingLastActivity,
     showStreamingIndicator,
     messagesEndRef,
     messagesContainerRef,
@@ -509,6 +510,7 @@ export default function ChatPage() {
           streamingCardsSearchData={streamingCardsSearchData}
           streamingVignetteCategory={streamingVignetteCategory}
           currentStatus={currentStatus}
+          streamingLastActivity={streamingLastActivity}
           showStreamingIndicator={showStreamingIndicator}
           messagesEndRef={messagesEndRef}
           messagesContainerRef={messagesContainerRef}

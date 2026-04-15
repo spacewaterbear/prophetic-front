@@ -34,6 +34,7 @@ interface ConversationViewProps {
   streamingCardsSearchData: CardsSearchData | null;
   streamingVignetteCategory: string | null;
   currentStatus: string;
+  streamingLastActivity: number;
   showStreamingIndicator: boolean;
   messagesEndRef: RefObject<HTMLDivElement>;
   messagesContainerRef: RefObject<HTMLDivElement>;
@@ -62,6 +63,7 @@ export const ConversationView = memo(function ConversationView({
   streamingCardsSearchData,
   streamingVignetteCategory,
   currentStatus,
+  streamingLastActivity,
   showStreamingIndicator,
   messagesEndRef,
   messagesContainerRef,
@@ -109,7 +111,7 @@ export const ConversationView = memo(function ConversationView({
               <div className="flex gap-2 sm:gap-4 items-start justify-start">
                 <AIAvatar />
                 <div className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-3 sm:px-4 py-4 sm:py-5 rounded-2xl overflow-hidden bg-[rgb(249,248,244)] dark:bg-[rgb(1,1,0)]">
-                  <TypingIndicator statusText={currentStatus} />
+                  <TypingIndicator statusText={currentStatus} lastActivityAt={streamingLastActivity} />
                 </div>
               </div>
             )}
@@ -131,6 +133,7 @@ export const ConversationView = memo(function ConversationView({
             showStreamingIndicator={showStreamingIndicator}
             isLoading={isLoading}
             currentStatus={currentStatus}
+            lastActivityAt={streamingLastActivity}
             handleVignetteClick={handleVignetteClick}
             handleBackToCategory={handleBackToCategory}
           />

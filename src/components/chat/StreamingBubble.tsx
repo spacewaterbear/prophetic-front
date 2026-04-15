@@ -88,6 +88,7 @@ interface StreamingBubbleProps {
   showStreamingIndicator: boolean;
   isLoading: boolean;
   currentStatus?: string;
+  lastActivityAt?: number;
   handleVignetteClick: (vignette: VignetteData) => void;
   handleBackToCategory: (category: string) => void;
 }
@@ -165,6 +166,7 @@ export const StreamingBubble = memo(function StreamingBubble({
   showStreamingIndicator,
   isLoading,
   currentStatus,
+  lastActivityAt,
   handleVignetteClick,
   handleBackToCategory,
 }: StreamingBubbleProps) {
@@ -442,7 +444,7 @@ export const StreamingBubble = memo(function StreamingBubble({
         )}
         {isLoading && (
           <div className={hasContent ? "mt-2" : ""}>
-            <TypingIndicator statusText={currentStatus} />
+            <TypingIndicator statusText={currentStatus} lastActivityAt={lastActivityAt} />
           </div>
         )}
       </div>
