@@ -1,6 +1,6 @@
 "use client";
 
-import { lazy, Suspense, useState, useEffect, useRef } from "react";
+import { lazy, memo, Suspense, useState, useEffect, useRef } from "react";
 import { AIAvatar } from "./AIAvatar";
 import { TypingIndicator } from "@/components/TypingIndicator";
 import {
@@ -149,7 +149,7 @@ function useTypewriter(source: string): string {
   return displayed;
 }
 
-export function StreamingBubble({
+export const StreamingBubble = memo(function StreamingBubble({
   streamingMessage,
   streamingMarketplaceData,
   streamingRealEstateData,
@@ -448,4 +448,4 @@ export function StreamingBubble({
       </div>
     </div>
   );
-}
+});

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { LOGO_DARK, LOGO_LIGHT } from "@/lib/constants/logos";
@@ -329,7 +329,7 @@ export default function ChatPage() {
     localStorage.setItem("selectedAgent", agent);
   };
 
-  const handleVignetteClick = (vignette: VignetteData) => {
+  const handleVignetteClick = useCallback((vignette: VignetteData) => {
     const slug = vignette.id || getImageNameFromUrl(vignette.public_url).replace(/\.[^/.]+$/, "");
 
     if (!slug) return;
@@ -346,12 +346,12 @@ export default function ChatPage() {
     });
 
     router.push(`/chat?d=${slug}&cat=${vignette.category}`);
-  };
+  }, [router, setSidebarOpen, pendingStore]);
 
-  const handleBackToCategory = (category: string) => {
+  const handleBackToCategory = useCallback((category: string) => {
     const urlParam = process.env.NEXT_PUBLIC_SPECIALITY === "art" && category === "ART_CONTEMPORAIN" ? "REVELATIONS" : category;
     router.push(`/chat?category=${urlParam}`);
-  };
+  }, [router]);
 
   // Loading state
   if (status === "loading") {

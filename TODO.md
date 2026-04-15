@@ -33,6 +33,10 @@
 - [x] **Add `useCallback` / `useMemo`** in `useChatConversation` — `handleSend`, `handleFlashcardClick`, `addAiMessage`, and `handleScroll` wrapped in `useCallback`; existing callbacks (`loadConversation`, `streamMarkdown`, `sendMessageToApi`, etc.) were already memoized.
 - [x] **Use `React.memo`** on card components — `ArtistCard` wrapped with `memo` (all others already had it: MarketplaceCard, ClothesSearchCard, WineCard, WatchesCard, WhiskyCard, CarsCard, JewelryCard, SportsCardsCard, VignetteGridCard, RealEstateCard).
 - [x] **Add pagination for conversations sidebar** — sidebar now shows 20 conversations at a time with a "Show more" button; `nav.showMore` key added to all 9 languages.
+- [x] **Memoize i18n context value and `t` function** — `t` wrapped with `useCallback([language])`; context value wrapped with `useMemo`; prevents all `useI18n()` consumers from re-rendering when `I18nProvider`'s parent re-renders (`src/contexts/i18n-context.tsx`).
+- [x] **Wrap `ConversationView` and `StreamingBubble` with `React.memo`** — both components were re-rendering on every streaming chunk even when their props hadn't changed; `memo` lets React bail out during the typing phase (`ConversationView.tsx`, `StreamingBubble.tsx`).
+- [x] **Stabilize `handleVignetteClick` / `handleBackToCategory` with `useCallback`** — both callbacks were recreated on every render, defeating `MessageItem`'s `memo` wrap; now stable with router/setSidebarOpen/pendingStore deps (`page.tsx`).
+- [x] **Pre-compile PDF export regex patterns** — regex objects for class/tag/table-tag style injection were compiled inside `handleExportPdf` on every call; moved to module-level maps in `src/lib/pdf-styles.ts` (`PDF_CLASS_REGEXES`, `PDF_TAG_REGEXES`, `PDF_TABLE_TAG_REGEXES`); `MessageItem` reuses them with `lastIndex` reset.
 
 ## Code Quality
 

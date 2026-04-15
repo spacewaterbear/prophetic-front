@@ -1,6 +1,6 @@
 "use client";
 
-import { RefObject } from "react";
+import { memo, RefObject } from "react";
 import { ChatInput } from "@/components/chat-input";
 import { MessageItem } from "./MessageItem";
 import { AIAvatar } from "./AIAvatar";
@@ -46,7 +46,7 @@ interface ConversationViewProps {
   userName: string;
 }
 
-export function ConversationView({
+export const ConversationView = memo(function ConversationView({
   messages,
   isLoading,
   streamingMessage,
@@ -182,4 +182,4 @@ export function ConversationView({
       </div>
     </div>
   );
-}
+});

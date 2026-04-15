@@ -13,8 +13,11 @@ import { VignetteData } from "@/types/vignettes";
 import { applyHtmlConversions } from "@/lib/markdown-utils";
 import {
   PDF_CLASS_STYLES,
+  PDF_CLASS_REGEXES,
   PDF_TAG_STYLES,
+  PDF_TAG_REGEXES,
   PDF_TABLE_TAG_STYLES,
+  PDF_TABLE_TAG_REGEXES,
   PDF_PRE_CODE_STYLE,
   PDF_DOCUMENT_WRAPPER_STYLE,
 } from "@/lib/pdf-styles";
@@ -120,15 +123,17 @@ export const MessageItem = memo(
 
         for (const [cls, style] of Object.entries(PDF_CLASS_STYLES)) {
           if (!style) continue;
+          PDF_CLASS_REGEXES[cls].lastIndex = 0;
           html = html.replace(
-            new RegExp(`class="([^"]*\\b${cls}\\b[^"]*)"`, "g"),
+            PDF_CLASS_REGEXES[cls],
             (match) => `${match} style="${style}"`,
           );
         }
 
         for (const [tag, style] of Object.entries(PDF_TAG_STYLES)) {
+          PDF_TAG_REGEXES[tag].lastIndex = 0;
           html = html.replace(
-            new RegExp(`<${tag}((?![^>]*style=)[^>]*)>`, "g"),
+            PDF_TAG_REGEXES[tag],
             `<${tag}$1 style="${style}">`,
           );
         }
@@ -138,8 +143,9 @@ export const MessageItem = memo(
         );
 
         for (const [tag, style] of Object.entries(PDF_TABLE_TAG_STYLES)) {
+          PDF_TABLE_TAG_REGEXES[tag].lastIndex = 0;
           html = html.replace(
-            new RegExp(`<${tag}((?![^>]*style=)[^>]*)>`, "g"),
+            PDF_TABLE_TAG_REGEXES[tag],
             `<${tag}$1 style="${style}">`,
           );
         }

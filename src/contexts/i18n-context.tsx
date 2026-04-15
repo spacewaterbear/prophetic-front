@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { translations, Language, getTranslation } from "@/lib/translations";
 import { api, type GeolocationResponse } from "@/lib/api";
 
@@ -41,12 +41,14 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
     }, []);
 
     // Translation function
-    const t = (key: string): string => {
+    const t = useCallback((key: string): string => {
         return getTranslation(language, key);
-    };
+    }, [language]);
+
+    const value = useMemo(() => ({ language, setLanguage, t }), [language, setLanguage, t]);
 
     return (
-        <I18nContext.Provider value={{ language, setLanguage, t }}>
+        <I18nContext.Provider value={value}>
             {children}
         </I18nContext.Provider>
     );

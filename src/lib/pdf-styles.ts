@@ -106,6 +106,27 @@ export const PDF_TABLE_TAG_STYLES: Record<string, string> = {
   tr:    "border-bottom:1px solid #f4f4f5;background:#ffffff;",
 };
 
+// Pre-compiled regex maps — avoids recompiling on every PDF export call.
+export const PDF_CLASS_REGEXES: Record<string, RegExp> = Object.fromEntries(
+  Object.entries(PDF_CLASS_STYLES)
+    .filter(([, style]) => style)
+    .map(([cls]) => [cls, new RegExp(`class="([^"]*\\b${cls}\\b[^"]*)"`, "g")]),
+);
+
+export const PDF_TAG_REGEXES: Record<string, RegExp> = Object.fromEntries(
+  Object.keys(PDF_TAG_STYLES).map((tag) => [
+    tag,
+    new RegExp(`<${tag}((?![^>]*style=)[^>]*)>`, "g"),
+  ]),
+);
+
+export const PDF_TABLE_TAG_REGEXES: Record<string, RegExp> = Object.fromEntries(
+  Object.keys(PDF_TABLE_TAG_STYLES).map((tag) => [
+    tag,
+    new RegExp(`<${tag}((?![^>]*style=)[^>]*)>`, "g"),
+  ]),
+);
+
 /** Inline style applied to code elements inside pre blocks */
 export const PDF_PRE_CODE_STYLE =
   "font-family:'JetBrains Mono',monospace;font-size:12px;color:#52525b;background:transparent;border:none;padding:0;white-space:pre-wrap;line-height:1.4;";
