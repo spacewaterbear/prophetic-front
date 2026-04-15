@@ -47,7 +47,7 @@ export function ChatInput({
     userId,
     conversationId,
     creditsExhausted = false,
-    onFlashcardClick,
+    handleFlashcardClick: onFlashcardClick,
   } = useChatInputContext();
 
   const attachedFiles = propsAttachedFiles ?? [];

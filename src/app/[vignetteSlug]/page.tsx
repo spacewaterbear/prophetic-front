@@ -23,6 +23,7 @@ import { getCategoryDisplayNames } from "@/lib/translations";
 import { DEFAULT_NON_ADMIN_MODEL } from "@/lib/models";
 import Image from "next/image";
 import { useChatPendingStore } from "@/store/chatPendingStore";
+import { ChatInputProvider } from "@/contexts/chat-input-context";
 
 const Markdown = lazy(() =>
   import("@/components/Markdown").then((mod) => ({ default: mod.Markdown })),
@@ -326,6 +327,18 @@ export default function VignettePage() {
   }
 
   return (
+    <ChatInputProvider
+      value={{
+        userStatus,
+        selectedAgent,
+        onAgentChange: handleAgentChange,
+        creditsExhausted: false,
+        guestQuotaExhausted: false,
+        userId: session?.user?.id,
+        conversationId: null,
+        handleFlashcardClick: () => {},
+      }}
+    >
     <>
       <div className="h-[56px] mb-4 flex-shrink-0 border-b border-gray-400 dark:border-gray-800" />
       <div className="absolute top-2 right-3 z-20">
@@ -423,13 +436,11 @@ export default function VignettePage() {
             setInput={setInput}
             handleSend={handleSend}
             isLoading={isLoading}
-            userStatus={userStatus}
-            selectedAgent={selectedAgent}
-            onAgentChange={handleAgentChange}
             className="max-w-3xl"
           />
         </div>
       </div>
     </>
+    </ChatInputProvider>
   );
 }

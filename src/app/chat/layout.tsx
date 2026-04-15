@@ -515,19 +515,21 @@ function ChatLayoutInner({
       </aside>
 
       {/* Main content area with menu button */}
-      <div className="flex-1 h-full min-h-0 flex flex-col overflow-hidden">
-        <div className="absolute top-2 left-3 z-20 md:hidden">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="backdrop-blur-sm h-10 w-10 bg-[#f9f8f4] dark:bg-[rgb(1,1,0)]"
-          >
-            <Menu className="h-5 w-5" />
-          </Button>
+      <ErrorBoundary name="ChatMain">
+        <div className="flex-1 h-full min-h-0 flex flex-col overflow-hidden">
+          <div className="absolute top-2 left-3 z-20 md:hidden">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="backdrop-blur-sm h-10 w-10 bg-[#f9f8f4] dark:bg-[rgb(1,1,0)]"
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
+          </div>
+          {children}
         </div>
-        {children}
-      </div>
+      </ErrorBoundary>
       <SelectionContextMenu />
       <FeedbackModal
         open={feedbackOpen}

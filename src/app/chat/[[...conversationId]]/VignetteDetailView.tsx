@@ -747,9 +747,6 @@ export function VignetteDetailView({
           setInput={setInput}
           handleSend={handleSend}
           isLoading={isLoading}
-          userStatus={userStatus}
-          selectedAgent={selectedAgent}
-          onAgentChange={onAgentChange}
           className="max-w-3xl"
         />
       </div>

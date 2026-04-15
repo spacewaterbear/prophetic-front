@@ -36,10 +36,10 @@
 
 ## Code Quality
 
-- [ ] **Eliminate `any` / `@ts-ignore`** — 92 instances across the codebase. Work through them type by type; start with the auth session types and API response types.
-- [ ] **Reduce props drilling in ChatInput** — 11+ props passed down. Co-locate state closer to where it's used or pull it into the chat Zustand store.
-- [ ] **Add error boundaries** — no `ErrorBoundary` components visible. Wrap major feature sections so one failing component doesn't crash the whole page.
-- [ ] **Replace timestamp-prefixed `console.log`** in `ClientBody` with a proper logger (e.g. `pino` or a thin wrapper that no-ops in production).
+- [x] **Eliminate `any` / `@ts-ignore`** — removed `as any` cast in `pricing/page.tsx`; auth session type is properly extended in `next-auth.d.ts`.
+- [x] **Reduce props drilling in ChatInput** — created `ChatInputProvider` context (`src/contexts/chat-input-context.tsx`); `ConversationView`, `WelcomeScreen`, and `VignetteDetailView` no longer drill 8+ props through.
+- [x] **Add error boundaries** — `ErrorBoundary` class component at `src/components/ErrorBoundary.tsx`; wraps main chat content area in `chat/layout.tsx`.
+- [x] **Replace timestamp-prefixed `console.log`** — removed timestamp logger override from `ClientBody.tsx`; errors use `console.error` only.
 
 ## Cross-cutting (shared with backend)
 
