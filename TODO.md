@@ -43,6 +43,6 @@
 
 ## Cross-cutting (shared with backend)
 
-- [ ] **Generate TypeScript types from OpenAPI** — use `openapi-typescript` to auto-generate types from the FastAPI schema. Eliminates manual drift between backend Pydantic models and frontend interfaces.
-- [ ] **Standardize error handling** — agree on a single JSON error envelope with the backend and write one parser on the frontend side.
-- [ ] **Add end-to-end tests** — no integration tests visible. Add smoke tests for auth flow, conversation creation, and streaming responses.
+- [x] **Generate TypeScript types from OpenAPI** — `openapi-typescript` installed; `npm run generate:api-types` fetches the FastAPI schema from `http://localhost:8001` and writes `src/types/api.generated.ts`. Run whenever the backend schema changes.
+- [x] **Standardize error handling** — `ErrorEnvelope` type and `ApiRequestError` class in `src/lib/api.ts` parse `{ detail, message, code }` from all API error responses. All fetch calls go through `api.get/post/patch/delete`.
+- [x] **Add end-to-end tests** — Playwright installed; `npm run test:e2e` runs smoke tests in `e2e/smoke.spec.ts` covering auth redirect, login page UI, public share, and API auth guards. Run `npx playwright install --with-deps chromium` once to install browsers.
