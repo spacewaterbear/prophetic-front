@@ -50,7 +50,14 @@ function AuthCallbackInner() {
     const tokenHash = searchParams.get("token_hash");
     const type = searchParams.get("type");
 
-    if (!code && !tokenHash) {
+    // Supabase magic links deliver tokens in the URL hash fragment (#access_token=...)
+    const hash = typeof window !== "undefined" ? window.location.hash.slice(1) : "";
+    const hashParams = new URLSearchParams(hash);
+    const hashAccessToken = hashParams.get("access_token");
+    const hashRefreshToken = hashParams.get("refresh_token");
+    const hashType = hashParams.get("type");
+
+    if (!code && !tokenHash && !hashAccessToken) {
       setStatus("error");
       setErrorMessage(t("login.sendError"));
       return;
@@ -58,22 +65,43 @@ function AuthCallbackInner() {
 
     const exchangeCode = async () => {
       try {
-        // Magic link OTP flow (token_hash + type=email) or OAuth PKCE flow (code)
-        const { data, error } =
-          tokenHash && (type === "email" || type === "magiclink")
-            ? await supabase.auth.verifyOtp({ token_hash: tokenHash, type: "email" })
-            : await supabase.auth.exchangeCodeForSession(code!);
+        let session: { access_token: string; refresh_token: string } | null = null;
+        let user: { id: string; email?: string } | null = null;
+        let error: { message: string } | null = null;
 
-        if (error || !data.session || !data.user) {
+        if (hashAccessToken && hashRefreshToken && (hashType === "magiclink" || hashType === "email")) {
+          // Hash-fragment magic link flow — set session directly from tokens
+          const result = await supabase.auth.setSession({
+            access_token: hashAccessToken,
+            refresh_token: hashRefreshToken,
+          });
+          session = result.data.session;
+          user = result.data.user;
+          error = result.error;
+        } else if (tokenHash && (type === "email" || type === "magiclink")) {
+          // token_hash query param flow
+          const result = await supabase.auth.verifyOtp({ token_hash: tokenHash, type: "email" });
+          session = result.data.session;
+          user = result.data.user;
+          error = result.error;
+        } else {
+          // OAuth PKCE code flow
+          const result = await supabase.auth.exchangeCodeForSession(code!);
+          session = result.data.session;
+          user = result.data.user;
+          error = result.error;
+        }
+
+        if (error || !session || !user) {
           console.error("[AuthCallback] Code exchange failed:", error);
           setStatus("error");
           setErrorMessage(t("login.sendError"));
           return;
         }
 
-        const { access_token, refresh_token } = data.session;
-        const userId = data.user.id;
-        const email = data.user.email ?? "";
+        const { access_token, refresh_token } = session;
+        const userId = user.id;
+        const email = user.email ?? "";
 
         // Check whether the profile already exists and registration is complete
         const checkResponse = await fetch("/api/auth/magiclink/check", {
@@ -99,7 +127,7 @@ function AuthCallbackInner() {
             return;
           }
 
-          router.push(checkData.status === "unauthorized" ? "/registration-pending" : "/chat");
+          window.location.href = checkData.status === "unauthorized" ? "/registration-pending" : "/chat";
         } else {
           // New user — collect name before creating profile
           setPendingSession({ accessToken: access_token, refreshToken: refresh_token, userId, email });
@@ -149,7 +177,7 @@ function AuthCallbackInner() {
         return;
       }
 
-      router.push("/registration-pending");
+      window.location.href = "/registration-pending";
     } catch (err) {
       console.error("[AuthCallback] Registration error:", err);
       setErrorMessage(t("login.sendError"));
