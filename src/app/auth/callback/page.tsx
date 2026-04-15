@@ -31,7 +31,10 @@ export default function AuthCallbackPage() {
 
   useEffect(() => {
     const code = searchParams.get("code");
-    if (!code) {
+    const tokenHash = searchParams.get("token_hash");
+    const type = searchParams.get("type");
+
+    if (!code && !tokenHash) {
       setStatus("error");
       setErrorMessage(t("login.sendError"));
       return;
@@ -39,9 +42,13 @@ export default function AuthCallbackPage() {
 
     const exchangeCode = async () => {
       try {
-        const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+        // Magic link OTP flow (token_hash + type=email) or OAuth PKCE flow (code)
+        const { data, error } =
+          tokenHash && (type === "email" || type === "magiclink")
+            ? await supabase.auth.verifyOtp({ token_hash: tokenHash, type: "email" })
+            : await supabase.auth.exchangeCodeForSession(code!);
 
-        if (error || !data.session) {
+        if (error || !data.session || !data.user) {
           console.error("[AuthCallback] Code exchange failed:", error);
           setStatus("error");
           setErrorMessage(t("login.sendError"));
