@@ -237,11 +237,11 @@ export function ChatInput({
             onClick={(e) => e.stopPropagation()}
           >
             {/* Gradient header with floating search bar */}
-            <div className="shrink-0 h-[70px] overflow-hidden rounded-t-[24px]">
+            <div className="shrink-0 h-[70px] sm:h-[120px] overflow-hidden bg-black">
               <img
                 src="https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/start/help.png"
                 alt=""
-                className="w-full object-cover object-top"
+                className="w-full h-full object-cover object-top scale-[1.03]"
               />
             </div>
 
