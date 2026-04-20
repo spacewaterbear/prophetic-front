@@ -64,8 +64,8 @@ export const translations = {
         // Chat Interface
         chat: {
             greeting: "Bonjour, {name}",
-            heroTitle: "Le plus grand marché. Décodé, scoré, accessible.",
-            heroSubtitle: "Chaque actif d'exception cache une opportunité. Prophetic Orchestra la révèle — scoring propriétaire, signaux d'opportunité, ROI projeté. La rigueur de la finance institutionnelle, pensée pour les actifs qui traversent les marchés.",
+            heroTitle: "L’intelligence au cœur de l’exception.",
+            heroSubtitle: " Prophetic Orchestra croise, décode et projette la donnée de 10 segments du luxe. Une infrastructure analytique et informationnelle pour éclairer vos décisions d’investissement.",
             welcomeMessage: "Comment puis-je vous aider à investir ?",
             welcomeSubtitle: "Comment puis-je vous aider à investir ?",
             placeholder: "Comment puis-je vous aider à investir ?",
@@ -378,8 +378,8 @@ export const translations = {
         },
         chat: {
             greeting: "Hello, {name}",
-            heroTitle: "The largest market. Decoded, scored, accessible.",
-            heroSubtitle: "Every exceptional asset hides an opportunity. Prophetic Orchestra reveals it — proprietary scoring, opportunity signals, projected ROI. The rigour of institutional finance, built for assets that outlast markets.",
+            heroTitle: "Intelligence at the core of the exceptional.",
+            heroSubtitle: "Prophetic Orchestra connects, decodes, and projects data across 10 luxury segments. An analytical and informational infrastructure to inform your investment decisions.",
             welcomeMessage: "How can I help you invest?",
             welcomeSubtitle: "How can I help you invest?",
             placeholder: "How can I help you invest?",
