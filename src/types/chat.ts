@@ -85,6 +85,7 @@ export interface Message {
   wine_search_data?: WineSearchData;
   cards_search_data?: CardsSearchData;
   vignetteCategory?: string;
+  words_to_highlight?: string[];
 }
 
 export interface PendingMessage {

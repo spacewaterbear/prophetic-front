@@ -109,6 +109,7 @@ export default function ChatPage() {
     setInput,
     isLoading,
     streamingMessage,
+    streamingWordsToHighlight,
     streamingMarketplaceData,
     streamingRealEstateData,
     streamingVignetteData,
@@ -498,6 +499,7 @@ export default function ChatPage() {
           messages={messages}
           isLoading={isLoading}
           streamingMessage={streamingMessage}
+          streamingWordsToHighlight={streamingWordsToHighlight}
           streamingMarketplaceData={streamingMarketplaceData}
           streamingRealEstateData={streamingRealEstateData}
           streamingVignetteData={streamingVignetteData}

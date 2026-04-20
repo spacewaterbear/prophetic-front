@@ -259,6 +259,7 @@ export const MessageItem = memo(
                               handleBackToCategory(message.vignetteCategory!)
                           : undefined
                       }
+                      wordsToHighlight={message.words_to_highlight}
                     />
                   </SuspenseCard>
                 )}

@@ -19,10 +19,21 @@ interface MarkdownProps {
   className?: string;
   categoryName?: string;
   onCategoryClick?: () => void;
+  wordsToHighlight?: string[] | null;
 }
 
-export function Markdown({ content, className, categoryName, onCategoryClick }: MarkdownProps) {
+export function Markdown({ content, className, categoryName, onCategoryClick, wordsToHighlight }: MarkdownProps) {
   const [htmlContent, setHtmlContent] = useState<string>("");
+
+  const injectHighlightMarkers = (text: string, words: string[]): string => {
+    if (words.length === 0) return text;
+    let result = text;
+    for (const word of words) {
+      const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      result = result.replace(new RegExp(escaped, "g"), (match) => `-+-${match}-+-`);
+    }
+    return result;
+  };
 
   // Helper to convert -+-word-+- markers to clickable elements
   const convertAnalysisMarkers = (text: string): string => {
@@ -63,7 +74,11 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
     async function processMarkdown() {
       try {
         // First, convert markdown to HTML using marked
-        let html = await marked(content);
+        const processedContent =
+          wordsToHighlight && wordsToHighlight.length > 0
+            ? injectHighlightMarkers(content, wordsToHighlight)
+            : content;
+        let html = await marked(processedContent);
 
         // Apply conversion functions in the correct order
         // 1. Allocation profiles (must be before ASCII tables to avoid conflicts)
@@ -108,7 +123,7 @@ export function Markdown({ content, className, categoryName, onCategoryClick }: 
     }
 
     processMarkdown();
-  }, [content]);
+  }, [content, wordsToHighlight]);
 
   // Helper to handle analysis markers (-+-)
   const handleClick = (event: React.MouseEvent) => {

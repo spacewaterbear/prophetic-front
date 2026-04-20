@@ -23,6 +23,7 @@ interface ConversationViewProps {
   messages: Message[];
   isLoading: boolean;
   streamingMessage: string;
+  streamingWordsToHighlight?: string[] | null;
   streamingMarketplaceData: MarketplaceData | null;
   streamingRealEstateData: RealEstateData | null;
   streamingVignetteData: VignetteData[] | null;
@@ -52,6 +53,7 @@ export const ConversationView = memo(function ConversationView({
   messages,
   isLoading,
   streamingMessage,
+  streamingWordsToHighlight,
   streamingMarketplaceData,
   streamingRealEstateData,
   streamingVignetteData,
@@ -120,6 +122,7 @@ export const ConversationView = memo(function ConversationView({
           {/* Streaming Message Bubble */}
           <StreamingBubble
             streamingMessage={streamingMessage}
+            streamingWordsToHighlight={streamingWordsToHighlight}
             streamingMarketplaceData={streamingMarketplaceData}
             streamingRealEstateData={streamingRealEstateData}
             streamingVignetteData={streamingVignetteData}

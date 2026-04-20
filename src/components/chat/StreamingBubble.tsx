@@ -74,6 +74,7 @@ const SportsCardsCard = lazy(() =>
 
 interface StreamingBubbleProps {
   streamingMessage: string;
+  streamingWordsToHighlight?: string[] | null;
   streamingMarketplaceData: MarketplaceData | null;
   streamingRealEstateData: RealEstateData | null;
   streamingVignetteData: VignetteData[] | null;
@@ -152,6 +153,7 @@ function useTypewriter(source: string): string {
 
 export const StreamingBubble = memo(function StreamingBubble({
   streamingMessage,
+  streamingWordsToHighlight,
   streamingMarketplaceData,
   streamingRealEstateData,
   streamingVignetteData,
@@ -210,6 +212,7 @@ export const StreamingBubble = memo(function StreamingBubble({
                   ? () => handleBackToCategory(streamingVignetteCategory)
                   : undefined
               }
+              wordsToHighlight={streamingWordsToHighlight}
             />
           </Suspense>
         )}

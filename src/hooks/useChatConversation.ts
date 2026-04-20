@@ -21,6 +21,7 @@ import { api, type ConversationDetailResponse, type CreateConversationResponse }
 
 export type { Message };
 
+
 export interface HandleSendOptions {
   message?: string;
   flashCards?: string;
@@ -45,6 +46,7 @@ interface UseChatConversationProps {
 
 interface StreamingState {
   message: string;
+  wordsToHighlight: string[] | null;
   marketplaceData: MarketplaceData | null;
   realEstateData: import("@/types/chat").RealEstateData | null;
   vignetteData: VignetteData[] | null;
@@ -64,7 +66,7 @@ interface StreamingState {
 type StreamingAction =
   | { type: "RESET" }
   | { type: "APPEND_CHUNK"; content: string }
-  | { type: "SET_MESSAGE"; message: string }
+  | { type: "SET_MESSAGE"; message: string; wordsToHighlight?: string[] }
   | { type: "SET_MARKETPLACE"; data: MarketplaceData }
   | { type: "SET_REAL_ESTATE"; data: import("@/types/chat").RealEstateData }
   | { type: "SET_VIGNETTE_DATA"; data: VignetteData[] }
@@ -82,6 +84,7 @@ type StreamingAction =
 
 const initialStreaming: StreamingState = {
   message: "",
+  wordsToHighlight: null,
   marketplaceData: null,
   realEstateData: null,
   vignetteData: null,
@@ -113,7 +116,7 @@ function streamingReducer(
         status: "",
       };
     case "SET_MESSAGE":
-      return { ...state, message: action.message };
+      return { ...state, message: action.message, wordsToHighlight: action.wordsToHighlight ?? state.wordsToHighlight };
     case "SET_MARKETPLACE":
       return { ...state, marketplaceData: action.data };
     case "SET_REAL_ESTATE":
@@ -264,6 +267,7 @@ export function useChatConversation({
           const decoder = new TextDecoder();
           let documentContent = "";
           let questionsContent = "";
+          let wordsToHighlight: string[] | null = null;
           let buffer = "";
           let streamingJewelryData: JewelrySearchData | null = null;
           let streamingClothesData: ClothesSearchData | null = null;
@@ -297,10 +301,12 @@ export function useChatConversation({
                 const parsed = JSON.parse(eventData);
                 if (parsed.type === "document") {
                   documentContent = parsed.content || "";
-                  dispatch({ type: "SET_MESSAGE", message: documentContent });
+                  wordsToHighlight = parsed.words_to_highlight || null;
+                  dispatch({ type: "SET_MESSAGE", message: documentContent, wordsToHighlight: wordsToHighlight ?? undefined });
                 } else if (parsed.type === "markdown") {
                   documentContent = parsed.text || "";
-                  dispatch({ type: "SET_MESSAGE", message: documentContent });
+                  wordsToHighlight = parsed.words_to_highlight || null;
+                  dispatch({ type: "SET_MESSAGE", message: documentContent, wordsToHighlight: wordsToHighlight ?? undefined });
                 } else if (parsed.type === "jewelry_data") {
                   if ((parsed.data as JewelrySearchData)?.listings) {
                     streamingJewelryData = parsed.data as JewelrySearchData;
@@ -369,6 +375,7 @@ export function useChatConversation({
                     ...(streamingCardsData ? { cards_search_data: streamingCardsData } : {}),
                     ...(streamingMktData ? { marketplace_data: streamingMktData } : {}),
                     ...(streamingREData ? { real_estate_data: streamingREData } : {}),
+                    ...(wordsToHighlight ? { words_to_highlight: wordsToHighlight } : {}),
                   };
 
                   const saveToDb = async (convId: number) => {
@@ -1071,6 +1078,7 @@ export function useChatConversation({
     setInput,
     isLoading,
     streamingMessage: streaming.message,
+    streamingWordsToHighlight: streaming.wordsToHighlight,
     streamingMarketplaceData: streaming.marketplaceData,
     streamingRealEstateData: streaming.realEstateData,
     streamingVignetteData: streaming.vignetteData,
