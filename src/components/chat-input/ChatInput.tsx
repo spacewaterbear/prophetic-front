@@ -237,25 +237,12 @@ export function ChatInput({
             onClick={(e) => e.stopPropagation()}
           >
             {/* Gradient header with floating search bar */}
-            <div
-              className="h-[110px] sm:h-[140px] shrink-0 relative flex flex-col items-center justify-center px-5 sm:px-8"
-              style={{ background: "linear-gradient(135deg, #e3a857 0%, #7db9e8 100%)" }}
-            >
-              <div className="relative w-full max-w-[450px] mt-3 sm:mt-4">
-                <div className="bg-black/80 backdrop-blur-sm rounded-full py-2.5 sm:py-3 px-5 sm:px-6 flex items-center justify-between border border-white/10">
-                  <div className="h-6 w-[1px] bg-white animate-pulse" />
-                  <div className="bg-white rounded-full p-1 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="black" className="w-4 h-4">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
-                    </svg>
-                  </div>
-                </div>
-                <div className="absolute -bottom-5 sm:-bottom-6 -right-1 sm:-right-2 transform rotate-[-15deg]">
-                  <svg width="28" height="28" className="sm:w-8 sm:h-8" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M10 2L24 16L17.5 17.5L24 26L21 28L14.5 19.5L10 24V2Z" fill="white" stroke="black" strokeWidth="2" strokeLinejoin="round" />
-                  </svg>
-                </div>
-              </div>
+            <div className="shrink-0 h-[70px] overflow-hidden rounded-t-[24px]">
+              <img
+                src="https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/start/help.png"
+                alt=""
+                className="w-full object-cover object-top"
+              />
             </div>
 
             {/* Content */}
