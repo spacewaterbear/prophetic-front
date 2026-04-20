@@ -233,16 +233,16 @@ export function ChatInput({
         >
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
           <div
-            className="relative w-full max-w-[600px] bg-white dark:bg-[#1e1f20] rounded-[24px] shadow-2xl overflow-hidden"
+            className="relative w-full max-w-[600px] bg-white dark:bg-[#1e1f20] rounded-[24px] shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Gradient header with floating search bar */}
             <div
-              className="h-[140px] relative flex flex-col items-center justify-center px-8"
+              className="h-[110px] sm:h-[140px] shrink-0 relative flex flex-col items-center justify-center px-5 sm:px-8"
               style={{ background: "linear-gradient(135deg, #e3a857 0%, #7db9e8 100%)" }}
             >
-              <div className="relative w-full max-w-[450px] mt-4">
-                <div className="bg-black/80 backdrop-blur-sm rounded-full py-3 px-6 flex items-center justify-between border border-white/10">
+              <div className="relative w-full max-w-[450px] mt-3 sm:mt-4">
+                <div className="bg-black/80 backdrop-blur-sm rounded-full py-2.5 sm:py-3 px-5 sm:px-6 flex items-center justify-between border border-white/10">
                   <div className="h-6 w-[1px] bg-white animate-pulse" />
                   <div className="bg-white rounded-full p-1 flex items-center justify-center">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="black" className="w-4 h-4">
@@ -250,8 +250,8 @@ export function ChatInput({
                     </svg>
                   </div>
                 </div>
-                <div className="absolute -bottom-6 -right-2 transform rotate-[-15deg]">
-                  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <div className="absolute -bottom-5 sm:-bottom-6 -right-1 sm:-right-2 transform rotate-[-15deg]">
+                  <svg width="28" height="28" className="sm:w-8 sm:h-8" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M10 2L24 16L17.5 17.5L24 26L21 28L14.5 19.5L10 24V2Z" fill="white" stroke="black" strokeWidth="2" strokeLinejoin="round" />
                   </svg>
                 </div>
@@ -259,35 +259,35 @@ export function ChatInput({
             </div>
 
             {/* Content */}
-            <div className="px-10 pt-8 pb-6 text-gray-900 dark:text-white">
-              <h2 className="text-[1.4rem] font-bold mb-6 tracking-tight">{t("helpModal.title")}</h2>
+            <div className="px-5 sm:px-10 pt-6 sm:pt-8 pb-4 sm:pb-6 text-gray-900 dark:text-white overflow-y-auto">
+              <h2 className="text-[1.2rem] sm:text-[1.4rem] font-bold mb-4 sm:mb-6 tracking-tight">{t("helpModal.title")}</h2>
 
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 <div>
-                  <p className="text-[0.85rem] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2">
+                  <p className="text-[0.75rem] sm:text-[0.85rem] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1.5 sm:mb-2">
                     {t("helpModal.strategyLabel")}
                   </p>
-                  <div className="text-[1rem] text-gray-500 dark:text-gray-400 italic leading-relaxed">
+                  <div className="text-[0.9rem] sm:text-[1rem] text-gray-500 dark:text-gray-400 italic leading-relaxed">
                     <p>{t("helpModal.strategyEx1")}</p>
                     <p>{t("helpModal.strategyEx2")}</p>
                     <p>{t("helpModal.strategyEx3")}</p>
                   </div>
                 </div>
                 <div>
-                  <p className="text-[0.85rem] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2">
+                  <p className="text-[0.75rem] sm:text-[0.85rem] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1.5 sm:mb-2">
                     {t("helpModal.analysisLabel")}
                   </p>
-                  <div className="text-[1rem] text-gray-500 dark:text-gray-400 italic leading-relaxed">
+                  <div className="text-[0.9rem] sm:text-[1rem] text-gray-500 dark:text-gray-400 italic leading-relaxed">
                     <p>{t("helpModal.analysisEx1")}</p>
                     <p>{t("helpModal.analysisEx2")}</p>
                     <p>{t("helpModal.analysisEx3")}</p>
                   </div>
                 </div>
                 <div>
-                  <p className="text-[0.85rem] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2">
+                  <p className="text-[0.75rem] sm:text-[0.85rem] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1.5 sm:mb-2">
                     {t("helpModal.comparisonLabel")}
                   </p>
-                  <div className="text-[1rem] text-gray-500 dark:text-gray-400 italic leading-relaxed">
+                  <div className="text-[0.9rem] sm:text-[1rem] text-gray-500 dark:text-gray-400 italic leading-relaxed">
                     <p>{t("helpModal.comparisonEx1")}</p>
                     <p>{t("helpModal.comparisonEx2")}</p>
                     <p>{t("helpModal.comparisonEx3")}</p>
@@ -297,10 +297,10 @@ export function ChatInput({
             </div>
 
             {/* Footer */}
-            <div className="flex justify-end px-10 py-6">
+            <div className="flex justify-end px-5 sm:px-10 py-4 sm:py-6 shrink-0">
               <button
                 onClick={() => setHelpModalOpen(false)}
-                className="bg-black dark:bg-white text-white dark:text-black px-12 py-3.5 rounded-2xl font-bold text-lg hover:opacity-80 transition-opacity"
+                className="bg-black dark:bg-white text-white dark:text-black px-8 sm:px-12 py-3 sm:py-3.5 rounded-2xl font-bold text-base sm:text-lg hover:opacity-80 transition-opacity"
               >
                 {t("helpModal.close")}
               </button>
