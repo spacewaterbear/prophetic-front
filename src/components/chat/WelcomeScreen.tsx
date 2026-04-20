@@ -252,7 +252,7 @@ export function WelcomeScreen({
             </div>
 
             {/* Logo + Greeting */}
-            <div className="flex items-center gap-4 mb-0 pb-[30px] w-full max-w-3xl">
+            {(profileUsername || userName) && <div className="flex items-center gap-4 mb-0 pb-[30px] w-full max-w-3xl">
               <div className="w-[42px] h-[42px] flex items-center justify-center flex-shrink-0">
                 <Image
                   src={
@@ -274,7 +274,7 @@ export function WelcomeScreen({
                   profileUsername || userName || "",
                 )}
               </h1>
-            </div>
+            </div>}
 
             {/* Chat Input */}
             <ChatInput
