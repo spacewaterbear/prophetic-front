@@ -22,8 +22,8 @@ export async function GET() {
       return NextResponse.json({ detail: error.message }, { status: 500 });
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const categories: string[] = [
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ...new Set((data || []).map((v: any) => v.category as string)),
     ] as string[];
 

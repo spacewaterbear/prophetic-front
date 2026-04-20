@@ -234,6 +234,7 @@ export default function PricingContent({
           )}
           {isAuthorized && (
             <p className="text-sm text-gray-500 dark:text-gray-400">
+              {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
               <a href="/api/stripe/portal" className="text-gray-900 dark:text-white font-medium underline hover:opacity-75">
                 {t("pricing.manageSubscription")}
               </a>

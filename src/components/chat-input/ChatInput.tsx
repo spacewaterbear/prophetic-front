@@ -1,6 +1,7 @@
 "use client";
 
 import { Plus, ArrowUp, Paperclip, Info } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useI18n } from "@/contexts/i18n-context";
 import { useDarkMode } from "@/hooks/useDarkMode";
@@ -196,12 +197,12 @@ export function ChatInput({
           <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
             {t("credits.exhaustedMessage")}
           </p>
-          <a
+          <Link
             href="/pricing"
             className="inline-flex items-center gap-1.5 text-xs font-medium px-4 py-2 rounded-full bg-[#372ee9] hover:bg-[#2a22c7] text-white transition-colors"
           >
             {t("credits.choosePlan")}
-          </a>
+          </Link>
         </div>
       </div>
     );
