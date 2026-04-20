@@ -60,6 +60,8 @@ export function ChatInput({
   const ref = textareaRef || internalRef;
   const [textareaHeight, setTextareaHeight] = useState<number>(24);
 
+  const [helpModalOpen, setHelpModalOpen] = useState(false);
+
   // Dropdown states
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isFileUploadOpen, setIsFileUploadOpen] = useState(false);
@@ -214,60 +216,99 @@ export function ChatInput({
       onClick={() => ref.current?.focus()}
     >
       {/* Info icon */}
-      <div className="absolute top-2 right-3 z-10 group">
-        <div className="flex items-center justify-center w-6 h-6 rounded-full text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-pointer transition-colors">
+      <div className="absolute top-2 right-3 z-10">
+        <div
+          className="flex items-center justify-center w-6 h-6 rounded-full text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-pointer transition-colors"
+          onClick={(e) => { e.stopPropagation(); setHelpModalOpen(true); }}
+        >
           <Info className="w-4 h-4" />
         </div>
-        <div className="absolute right-0 bottom-full mb-2 w-[320px] bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-2xl p-4 shadow-2xl border dark:border-transparent opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 ease-out">
-          <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
-            Exemples de questions
-          </p>
-          <div className="space-y-2.5">
-            <div>
-              <p className="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">
-                Stratégie
-              </p>
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                &quot;Portfolio diversifié [Budget X] avec ROI&quot;
-              </p>
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                &quot;Top 5 actifs pour [Budget X]&quot;
-              </p>
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                &quot;Stratégie de réinvestissement des gains&quot;
-              </p>
+      </div>
+
+      {/* Help modal */}
+      {helpModalOpen && typeof document !== "undefined" && createPortal(
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          onClick={() => setHelpModalOpen(false)}
+        >
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+          <div
+            className="relative w-full max-w-[600px] bg-white dark:bg-[#1e1f20] rounded-[24px] shadow-2xl overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Gradient header with floating search bar */}
+            <div
+              className="h-[140px] relative flex flex-col items-center justify-center px-8"
+              style={{ background: "linear-gradient(135deg, #e3a857 0%, #7db9e8 100%)" }}
+            >
+              <div className="relative w-full max-w-[450px] mt-4">
+                <div className="bg-black/80 backdrop-blur-sm rounded-full py-3 px-6 flex items-center justify-between border border-white/10">
+                  <div className="h-6 w-[1px] bg-white animate-pulse" />
+                  <div className="bg-white rounded-full p-1 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="black" className="w-4 h-4">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
+                    </svg>
+                  </div>
+                </div>
+                <div className="absolute -bottom-6 -right-2 transform rotate-[-15deg]">
+                  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 2L24 16L17.5 17.5L24 26L21 28L14.5 19.5L10 24V2Z" fill="white" stroke="black" strokeWidth="2" strokeLinejoin="round" />
+                  </svg>
+                </div>
+              </div>
             </div>
-            <div>
-              <p className="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">
-                Analyse
-              </p>
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                &quot;Investir sur [Artiste/Marque] : Oui/Non ?&quot;
-              </p>
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                &quot;Potentiel de revente de [Nom de l&apos;actif]&quot;
-              </p>
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                &quot;Scoring de rareté vs demande actuelle&quot;
-              </p>
+
+            {/* Content */}
+            <div className="px-10 pt-8 pb-6 text-gray-900 dark:text-white">
+              <h2 className="text-[1.4rem] font-bold mb-6 tracking-tight">{t("helpModal.title")}</h2>
+
+              <div className="space-y-6">
+                <div>
+                  <p className="text-[0.85rem] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2">
+                    {t("helpModal.strategyLabel")}
+                  </p>
+                  <div className="text-[1rem] text-gray-500 dark:text-gray-400 italic leading-relaxed">
+                    <p>{t("helpModal.strategyEx1")}</p>
+                    <p>{t("helpModal.strategyEx2")}</p>
+                    <p>{t("helpModal.strategyEx3")}</p>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-[0.85rem] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2">
+                    {t("helpModal.analysisLabel")}
+                  </p>
+                  <div className="text-[1rem] text-gray-500 dark:text-gray-400 italic leading-relaxed">
+                    <p>{t("helpModal.analysisEx1")}</p>
+                    <p>{t("helpModal.analysisEx2")}</p>
+                    <p>{t("helpModal.analysisEx3")}</p>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-[0.85rem] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2">
+                    {t("helpModal.comparisonLabel")}
+                  </p>
+                  <div className="text-[1rem] text-gray-500 dark:text-gray-400 italic leading-relaxed">
+                    <p>{t("helpModal.comparisonEx1")}</p>
+                    <p>{t("helpModal.comparisonEx2")}</p>
+                    <p>{t("helpModal.comparisonEx3")}</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div>
-              <p className="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">
-                Comparaison
-              </p>
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                &quot;Luxe vs Locatif (Ville A/Ville B)&quot;
-              </p>
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                &quot;Comparatif [Actif A] vs [Actif B]&quot;
-              </p>
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                &quot;Performance Art vs S&amp;P 500&quot;
-              </p>
+
+            {/* Footer */}
+            <div className="flex justify-end px-10 py-6">
+              <button
+                onClick={() => setHelpModalOpen(false)}
+                className="bg-black dark:bg-white text-white dark:text-black px-12 py-3.5 rounded-2xl font-bold text-lg hover:opacity-80 transition-opacity"
+              >
+                {t("helpModal.close")}
+              </button>
             </div>
           </div>
-        </div>
-      </div>
+        </div>,
+        document.body
+      )}
 
       {/* Hidden file input */}
       <input
