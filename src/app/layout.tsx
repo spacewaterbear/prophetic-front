@@ -86,6 +86,10 @@ export default function RootLayout({
             gtag('config', 'G-LG3RQ47GB1');
           `}
         </Script>
+        <Script
+          src="https://t.contentsquare.net/uxa/2a463f3891692.js"
+          strategy="afterInteractive"
+        />
       </head>
       <body suppressHydrationWarning className="antialiased">
         <Providers>
