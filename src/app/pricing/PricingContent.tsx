@@ -97,14 +97,14 @@ export default function PricingContent({
       <div className="relative z-10 w-full max-w-5xl">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="w-16 h-16 mx-auto mb-6 rounded-full overflow-hidden">
+          <div className="w-16 h-16 mx-auto mb-6">
             <Image
               src={LOGO_LIGHT}
               alt="Prophetic Orchestra"
               width={64}
               height={64}
               unoptimized
-              className="w-full h-full object-cover dark:hidden"
+              className="w-full h-full object-contain dark:hidden"
             />
             <Image
               src={LOGO_DARK}
@@ -112,7 +112,7 @@ export default function PricingContent({
               width={64}
               height={64}
               unoptimized
-              className="w-full h-full object-cover hidden dark:block"
+              className="w-full h-full object-contain hidden dark:block"
             />
           </div>
           <h1 className="text-4xl sm:text-5xl font-light text-gray-900 dark:text-white mb-4">
@@ -234,6 +234,7 @@ export default function PricingContent({
           )}
           {isAuthorized && (
             <p className="text-sm text-gray-500 dark:text-gray-400">
+              {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
               <a href="/api/stripe/portal" className="text-gray-900 dark:text-white font-medium underline hover:opacity-75">
                 {t("pricing.manageSubscription")}
               </a>

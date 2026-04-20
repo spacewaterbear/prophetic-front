@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { Search, X, ChevronDown } from "lucide-react";
 import { CATEGORY_DISPLAY_NAMES } from "@/types/chat";
 import { useSession } from "next-auth/react";
@@ -480,9 +481,9 @@ function ProductsPageInner() {
             <div className="flex flex-col items-center gap-3 bg-white dark:bg-[#1e1f20] border border-gray-200 dark:border-gray-700 rounded-2xl px-8 py-6 shadow-xl max-w-xs mx-4">
               <p className="text-sm font-semibold text-gray-900 dark:text-white text-center">{t("credits.planRequiredTitle")}</p>
               <p className="text-xs text-gray-500 dark:text-gray-400 text-center">{t("credits.planRequiredMessage")}</p>
-              <a href="/pricing" className="inline-flex items-center gap-1.5 text-xs font-medium px-4 py-2 rounded-full bg-[#372ee9] hover:bg-[#2a22c7] text-white transition-colors">
+              <Link href="/pricing" className="inline-flex items-center gap-1.5 text-xs font-medium px-4 py-2 rounded-full bg-[#372ee9] hover:bg-[#2a22c7] text-white transition-colors">
                 {t("credits.choosePlan")}
-              </a>
+              </Link>
             </div>
           </div>
         )}
@@ -491,9 +492,9 @@ function ProductsPageInner() {
             <div className="flex flex-col items-center gap-3 bg-white dark:bg-[#1e1f20] border border-gray-200 dark:border-gray-700 rounded-2xl px-8 py-6 shadow-xl max-w-xs mx-4">
               <p className="text-sm font-semibold text-gray-900 dark:text-white text-center">{t("credits.exhaustedTitle")}</p>
               <p className="text-xs text-gray-500 dark:text-gray-400 text-center">{t("credits.exhaustedMessage")}</p>
-              <a href="/pricing" className="inline-flex items-center gap-1.5 text-xs font-medium px-4 py-2 rounded-full bg-[#372ee9] hover:bg-[#2a22c7] text-white transition-colors">
+              <Link href="/pricing" className="inline-flex items-center gap-1.5 text-xs font-medium px-4 py-2 rounded-full bg-[#372ee9] hover:bg-[#2a22c7] text-white transition-colors">
                 {t("credits.choosePlan")}
-              </a>
+              </Link>
             </div>
           </div>
         )}

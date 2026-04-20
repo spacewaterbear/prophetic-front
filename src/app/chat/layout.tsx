@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SelectionContextMenu } from "@/components/SelectionContextMenu";
 import { FeedbackModal } from "@/components/FeedbackModal";
+import { OnboardingPopup } from "@/components/OnboardingPopup";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { getCategoryDisplayNames } from "@/lib/translations";
 import { ICON_CONVERSATIONS_DARK, ICON_CONVERSATIONS_LIGHT, ICONS_BASE_URL, LOGO_LIGHT, LOGO_DARK, LOGO_SMALL_LIGHT, LOGO_SMALL_DARK } from "@/lib/constants/logos";
@@ -39,17 +40,17 @@ const IS_MAIN_SPECIALITY = process.env.NEXT_PUBLIC_SPECIALITY === "main" || !pro
 
 const MAIN_CATEGORY_ORDER = [
   "MARCHE_SPOT",
-  "CASH_FLOW_LEASING",
-  "ART_CONTEMPORAIN",
-  "WINE",
-  "IMMO_LUXE",
+  "SACS",
   "MONTRES_LUXE",
+  "ART_CONTEMPORAIN",
+  "IMMO_LUXE",
+  "WINE",
   "CARS",
-  "SNEAKERS",
   "WHISKY",
+  "SNEAKERS",
   "BIJOUX",
   "CARDS_US",
-  "SACS",
+  "CASH_FLOW_LEASING",
   "ART_TRADING_VALUE",
 ];
 
@@ -532,6 +533,7 @@ function ChatLayoutInner({
           {children}
         </div>
       </ErrorBoundary>
+      <OnboardingPopup userStatus={session?.user?.status ?? undefined} />
       <SelectionContextMenu />
       <FeedbackModal
         open={feedbackOpen}

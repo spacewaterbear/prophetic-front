@@ -1,6 +1,7 @@
 "use client";
 
 import { memo, RefObject } from "react";
+import Link from "next/link";
 import { ChatInput } from "@/components/chat-input";
 import { MessageItem } from "./MessageItem";
 import { AIAvatar } from "./AIAvatar";
@@ -22,6 +23,7 @@ interface ConversationViewProps {
   messages: Message[];
   isLoading: boolean;
   streamingMessage: string;
+  streamingWordsToHighlight?: string[] | null;
   streamingMarketplaceData: MarketplaceData | null;
   streamingRealEstateData: RealEstateData | null;
   streamingVignetteData: VignetteData[] | null;
@@ -51,6 +53,7 @@ export const ConversationView = memo(function ConversationView({
   messages,
   isLoading,
   streamingMessage,
+  streamingWordsToHighlight,
   streamingMarketplaceData,
   streamingRealEstateData,
   streamingVignetteData,
@@ -119,6 +122,7 @@ export const ConversationView = memo(function ConversationView({
           {/* Streaming Message Bubble */}
           <StreamingBubble
             streamingMessage={streamingMessage}
+            streamingWordsToHighlight={streamingWordsToHighlight}
             streamingMarketplaceData={streamingMarketplaceData}
             streamingRealEstateData={streamingRealEstateData}
             streamingVignetteData={streamingVignetteData}
@@ -152,18 +156,18 @@ export const ConversationView = memo(function ConversationView({
               {t("guestPaywall.message")}
             </p>
             <div className="flex flex-col sm:flex-row gap-2 justify-center">
-              <a
+              <Link
                 href="/pricing"
                 className="inline-flex items-center justify-center px-5 py-2 rounded-full bg-[#372ee9] hover:bg-[#2a22c7] text-white text-sm font-medium transition-colors"
               >
                 {t("guestPaywall.cta")}
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/login"
                 className="inline-flex items-center justify-center px-5 py-2 rounded-full border border-gray-300 dark:border-white/20 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 text-sm font-medium transition-colors"
               >
                 {t("guestPaywall.login")}
-              </a>
+              </Link>
             </div>
           </div>
         </div>

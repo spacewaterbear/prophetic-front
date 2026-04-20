@@ -1,6 +1,7 @@
 "use client";
 
 import { Plus, ArrowUp, Paperclip, Info } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useI18n } from "@/contexts/i18n-context";
 import { useDarkMode } from "@/hooks/useDarkMode";
@@ -58,6 +59,8 @@ export function ChatInput({
   const internalRef = useRef<HTMLTextAreaElement>(null);
   const ref = textareaRef || internalRef;
   const [textareaHeight, setTextareaHeight] = useState<number>(24);
+
+  const [helpModalOpen, setHelpModalOpen] = useState(false);
 
   // Dropdown states
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -196,12 +199,12 @@ export function ChatInput({
           <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
             {t("credits.exhaustedMessage")}
           </p>
-          <a
+          <Link
             href="/pricing"
             className="inline-flex items-center gap-1.5 text-xs font-medium px-4 py-2 rounded-full bg-[#372ee9] hover:bg-[#2a22c7] text-white transition-colors"
           >
             {t("credits.choosePlan")}
-          </a>
+          </Link>
         </div>
       </div>
     );
@@ -213,60 +216,86 @@ export function ChatInput({
       onClick={() => ref.current?.focus()}
     >
       {/* Info icon */}
-      <div className="absolute top-2 right-3 z-10 group">
-        <div className="flex items-center justify-center w-6 h-6 rounded-full text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-pointer transition-colors">
+      <div className="absolute top-2 right-3 z-10">
+        <div
+          className="flex items-center justify-center w-6 h-6 rounded-full text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-pointer transition-colors"
+          onClick={(e) => { e.stopPropagation(); setHelpModalOpen(true); }}
+        >
           <Info className="w-4 h-4" />
         </div>
-        <div className="absolute right-0 bottom-full mb-2 w-[320px] bg-[#f1e7dc] dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-2xl p-4 shadow-2xl border dark:border-transparent opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 ease-out">
-          <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
-            Exemples de questions
-          </p>
-          <div className="space-y-2.5">
-            <div>
-              <p className="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">
-                Stratégie
-              </p>
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                &quot;Portfolio diversifié [Budget X] avec ROI&quot;
-              </p>
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                &quot;Top 5 actifs pour [Budget X]&quot;
-              </p>
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                &quot;Stratégie de réinvestissement des gains&quot;
-              </p>
+      </div>
+
+      {/* Help modal */}
+      {helpModalOpen && typeof document !== "undefined" && createPortal(
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          onClick={() => setHelpModalOpen(false)}
+        >
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+          <div
+            className="relative w-full max-w-[600px] bg-white dark:bg-[#1e1f20] rounded-[24px] shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Gradient header with floating search bar */}
+            <div className="shrink-0 h-[70px] sm:h-[120px] overflow-hidden bg-black">
+              <img
+                src="https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/logo/start/help.png"
+                alt=""
+                className="w-full h-full object-cover object-top scale-[1.03]"
+              />
             </div>
-            <div>
-              <p className="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">
-                Analyse
-              </p>
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                &quot;Investir sur [Artiste/Marque] : Oui/Non ?&quot;
-              </p>
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                &quot;Potentiel de revente de [Nom de l&apos;actif]&quot;
-              </p>
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                &quot;Scoring de rareté vs demande actuelle&quot;
-              </p>
+
+            {/* Content */}
+            <div className="px-5 sm:px-10 pt-6 sm:pt-8 pb-4 sm:pb-6 text-gray-900 dark:text-white overflow-y-auto">
+              <h2 className="text-[1.2rem] sm:text-[1.4rem] font-bold mb-4 sm:mb-6 tracking-tight">{t("helpModal.title")}</h2>
+
+              <div className="space-y-4 sm:space-y-6">
+                <div>
+                  <p className="text-[0.75rem] sm:text-[0.85rem] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1.5 sm:mb-2">
+                    {t("helpModal.strategyLabel")}
+                  </p>
+                  <div className="text-[0.9rem] sm:text-[1rem] text-gray-500 dark:text-gray-400 italic leading-relaxed">
+                    <p>{t("helpModal.strategyEx1")}</p>
+                    <p>{t("helpModal.strategyEx2")}</p>
+                    <p>{t("helpModal.strategyEx3")}</p>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-[0.75rem] sm:text-[0.85rem] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1.5 sm:mb-2">
+                    {t("helpModal.analysisLabel")}
+                  </p>
+                  <div className="text-[0.9rem] sm:text-[1rem] text-gray-500 dark:text-gray-400 italic leading-relaxed">
+                    <p>{t("helpModal.analysisEx1")}</p>
+                    <p>{t("helpModal.analysisEx2")}</p>
+                    <p>{t("helpModal.analysisEx3")}</p>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-[0.75rem] sm:text-[0.85rem] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1.5 sm:mb-2">
+                    {t("helpModal.comparisonLabel")}
+                  </p>
+                  <div className="text-[0.9rem] sm:text-[1rem] text-gray-500 dark:text-gray-400 italic leading-relaxed">
+                    <p>{t("helpModal.comparisonEx1")}</p>
+                    <p>{t("helpModal.comparisonEx2")}</p>
+                    <p>{t("helpModal.comparisonEx3")}</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div>
-              <p className="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">
-                Comparaison
-              </p>
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                &quot;Luxe vs Locatif (Ville A/Ville B)&quot;
-              </p>
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                &quot;Comparatif [Actif A] vs [Actif B]&quot;
-              </p>
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                &quot;Performance Art vs S&amp;P 500&quot;
-              </p>
+
+            {/* Footer */}
+            <div className="flex justify-end px-5 sm:px-10 py-4 sm:py-6 shrink-0">
+              <button
+                onClick={() => setHelpModalOpen(false)}
+                className="bg-black dark:bg-white text-white dark:text-black px-8 sm:px-12 py-3 sm:py-3.5 rounded-2xl font-bold text-base sm:text-lg hover:opacity-80 transition-opacity"
+              >
+                {t("helpModal.close")}
+              </button>
             </div>
           </div>
-        </div>
-      </div>
+        </div>,
+        document.body
+      )}
 
       {/* Hidden file input */}
       <input

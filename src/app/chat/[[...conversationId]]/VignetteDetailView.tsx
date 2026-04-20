@@ -79,6 +79,7 @@ export function VignetteDetailView({
   const [cardsData, setCardsData] = useState<CardsSearchData | null>(null);
   const [marketplaceData, setMarketplaceData] = useState<MarketplaceData | null>(null);
   const [realEstateData, setRealEstateData] = useState<RealEstateData | null>(null);
+  const [wordsToHighlight, setWordsToHighlight] = useState<string[] | null>(null);
   const [statusMessage, setStatusMessage] = useState("");
   const [lastActivityAt, setLastActivityAt] = useState(0);
   const streamStartedRef = useRef(false);
@@ -149,6 +150,7 @@ export function VignetteDetailView({
         const decoder = new TextDecoder();
         let documentContent = "";
         let questionsContent = "";
+        let streamWordsToHighlight: string[] | null = null;
         let buffer = "";
         let finalContentSet = false;
 
@@ -176,9 +178,13 @@ export function VignetteDetailView({
               setLastActivityAt(Date.now());
               if (parsed.type === "document") {
                 documentContent = parsed.content || "";
+                streamWordsToHighlight = parsed.words_to_highlight || null;
+                setWordsToHighlight(streamWordsToHighlight);
                 setStreamingMessage(documentContent);
               } else if (parsed.type === "markdown") {
                 documentContent = parsed.text || "";
+                streamWordsToHighlight = parsed.words_to_highlight || null;
+                setWordsToHighlight(streamWordsToHighlight);
                 setStreamingMessage(documentContent);
               } else if (parsed.type === "jewelry_data") {
                 if ((parsed.data as JewelrySearchData)?.listings) {
@@ -635,6 +641,7 @@ export function VignetteDetailView({
                             ? () => handleBackToCategory(vignetteCategory)
                             : undefined
                         }
+                        wordsToHighlight={wordsToHighlight}
                       />
                     </Suspense>
                   </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useCallback, useContext, useState, useLayoutEffect } from "react";
+import React, { createContext, useCallback, useContext, useState, useEffect } from "react";
 
 interface SidebarContextType {
   sidebarOpen: boolean;
@@ -30,7 +30,7 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const mobile = window.innerWidth < 768;
     setIsMobile(mobile);
 
