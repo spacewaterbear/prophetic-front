@@ -90,7 +90,7 @@ export const ModeCard: React.FC<ModeCardProps> = ({
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <span className="text-gray-900 dark:text-white font-semibold text-base">
-            {title} - {price}
+            {title}
           </span>
         </div>
         {isAvailable ? (
