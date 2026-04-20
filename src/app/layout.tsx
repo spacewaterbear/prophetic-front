@@ -74,6 +74,18 @@ export default function RootLayout({
           src="//unpkg.com/same-runtime/dist/index.global.js"
           strategy="afterInteractive"
         />
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-LG3RQ47GB1"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-LG3RQ47GB1');
+          `}
+        </Script>
       </head>
       <body suppressHydrationWarning className="antialiased">
         <Providers>
