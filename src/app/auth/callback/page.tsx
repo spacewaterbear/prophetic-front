@@ -78,39 +78,16 @@ function AuthCallbackInner() {
           ({ data, error } = await supabase.auth.exchangeCodeForSession(code!));
         }
 
-        if (hashAccessToken && hashRefreshToken && (hashType === "magiclink" || hashType === "email")) {
-          // Hash-fragment magic link flow — set session directly from tokens
-          const result = await supabase.auth.setSession({
-            access_token: hashAccessToken,
-            refresh_token: hashRefreshToken,
-          });
-          session = result.data.session;
-          user = result.data.user;
-          error = result.error;
-        } else if (tokenHash && (type === "email" || type === "magiclink")) {
-          // token_hash query param flow
-          const result = await supabase.auth.verifyOtp({ token_hash: tokenHash, type: "email" });
-          session = result.data.session;
-          user = result.data.user;
-          error = result.error;
-        } else {
-          // OAuth PKCE code flow
-          const result = await supabase.auth.exchangeCodeForSession(code!);
-          session = result.data.session;
-          user = result.data.user;
-          error = result.error;
-        }
-
-        if (error || !session || !user) {
+        if (error || !data.session || !data.user) {
           console.error("[AuthCallback] Code exchange failed:", error);
           setStatus("error");
           setErrorMessage(t("login.sendError"));
           return;
         }
 
-        const { access_token, refresh_token } = session;
-        const userId = user.id;
-        const email = user.email ?? "";
+        const { access_token, refresh_token } = data.session;
+        const userId = data.user.id;
+        const email = data.user.email ?? "";
 
         // Check whether the profile already exists and registration is complete
         const checkResponse = await fetch("/api/auth/magiclink/check", {
@@ -136,7 +113,7 @@ function AuthCallbackInner() {
             return;
           }
 
-          window.location.href = checkData.status === "unauthorized" ? "/registration-pending" : "/chat";
+          router.push(checkData.status === "unauthorized" ? "/registration-pending" : "/chat");
         } else {
           // New user — collect name before creating profile
           setPendingSession({ accessToken: access_token, refreshToken: refresh_token, userId, email });
@@ -186,7 +163,7 @@ function AuthCallbackInner() {
         return;
       }
 
-      window.location.href = "/registration-pending";
+      router.push("/registration-pending");
     } catch (err) {
       console.error("[AuthCallback] Registration error:", err);
       setErrorMessage(t("login.sendError"));
