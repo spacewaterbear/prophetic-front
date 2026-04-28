@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, ArrowUp, Paperclip, Info } from "lucide-react";
+import { Plus, ArrowUp, Paperclip, Info, ChevronDown, Check } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useI18n } from "@/contexts/i18n-context";
@@ -14,6 +14,7 @@ import { useFileUpload } from "@/hooks/useFileUpload";
 import { FLASHCARD_MAPPING } from "@/lib/constants/flashcards";
 import { getAvailableAgents, type AgentType } from "@/types/agents";
 import { useChatInputContext } from "@/contexts/chat-input-context";
+import type { ImmoVariant } from "@/types/chat";
 import { ModeSelector } from "./ModeSelector";
 import { SettingsMenu } from "./SettingsMenu";
 import { MobileBottomSheets } from "./MobileBottomSheets";
@@ -30,6 +31,7 @@ export interface ChatInputProps {
 }
 
 const isArtSpeciality = process.env.NEXT_PUBLIC_SPECIALITY === "art";
+const isMainSpeciality = process.env.NEXT_PUBLIC_SPECIALITY === "main";
 
 export function ChatInput({
   input,
@@ -49,6 +51,8 @@ export function ChatInput({
     conversationId,
     creditsExhausted = false,
     handleFlashcardClick: onFlashcardClick,
+    immoVariant,
+    onImmoVariantChange,
   } = useChatInputContext();
 
   const attachedFiles = propsAttachedFiles ?? [];
@@ -66,6 +70,7 @@ export function ChatInput({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isFileUploadOpen, setIsFileUploadOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isImmoVariantOpen, setIsImmoVariantOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [mobileMenuLevel, setMobileMenuLevel] = useState<
     "main" | "flashcards" | "ranking" | "portfolio"
@@ -86,6 +91,7 @@ export function ChatInput({
     setIsDropdownOpen(false);
     setIsFileUploadOpen(false);
     setIsSettingsOpen(false);
+    setIsImmoVariantOpen(false);
   };
 
   const handleAgentClick = (agent: AgentType) => {
@@ -156,6 +162,12 @@ export function ChatInput({
     () => setIsFileUploadOpen(true),
     () => setIsFileUploadOpen(false),
   );
+  const immoVariantHover = makeHoverHandlers(
+    () => setIsImmoVariantOpen(true),
+    () => setIsImmoVariantOpen(false),
+  );
+
+  const IMMO_VARIANTS: ImmoVariant[] = ["notaire", "cgp_immo", "agence"];
 
   useEffect(() => {
     setMounted(true);
@@ -402,6 +414,71 @@ export function ChatInput({
 
         {/* Trailing Actions */}
         <div className="flex items-center gap-2">
+          {/* ImmoVariant Selector */}
+          {isMainSpeciality && <div className="static sm:relative flex-shrink-0">
+            <button
+              type="button"
+              className="flex items-center gap-1.5 rounded-full px-3 py-2 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsImmoVariantOpen(!isImmoVariantOpen);
+                setIsDropdownOpen(false);
+                setIsSettingsOpen(false);
+                setIsFileUploadOpen(false);
+              }}
+              onMouseEnter={immoVariantHover.onMouseEnter}
+              onMouseLeave={immoVariantHover.onMouseLeave}
+            >
+              <span className="text-gray-900 dark:text-white font-medium text-sm truncate whitespace-nowrap">
+                {immoVariant ? t(`immoVariant.${immoVariant}`) : t("immoVariant.label")}
+              </span>
+              <ChevronDown className="h-4 w-4 text-gray-900 dark:text-white" aria-hidden="true" />
+            </button>
+
+            {/* Desktop ImmoVariant Dropdown */}
+            <div
+              className={`
+                hidden sm:block
+                absolute right-0 bottom-full mb-2
+                transition-all duration-300 ease-out
+                z-10
+                ${isImmoVariantOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}
+              `}
+              onMouseEnter={immoVariantHover.onMouseEnter}
+              onMouseLeave={immoVariantHover.onMouseLeave}
+            >
+              <div className="bg-white dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-3xl p-3 w-[200px] shadow-2xl border dark:border-transparent">
+                <button
+                  type="button"
+                  onClick={() => { onImmoVariantChange(null); setIsImmoVariantOpen(false); }}
+                  className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm transition-colors ${
+                    immoVariant === null
+                      ? "bg-gray-100 dark:bg-[#1e1f20] font-semibold"
+                      : "hover:bg-gray-100 dark:hover:bg-[#1e1f20]"
+                  }`}
+                >
+                  <span>{t("immoVariant.label")}</span>
+                  {immoVariant === null && <Check className="h-4 w-4 text-blue-500" />}
+                </button>
+                {IMMO_VARIANTS.map((v) => (
+                  <button
+                    key={v}
+                    type="button"
+                    onClick={() => { onImmoVariantChange(v); setIsImmoVariantOpen(false); }}
+                    className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm transition-colors ${
+                      immoVariant === v
+                        ? "bg-gray-100 dark:bg-[#1e1f20] font-semibold"
+                        : "hover:bg-gray-100 dark:hover:bg-[#1e1f20]"
+                    }`}
+                  >
+                    <span>{t(`immoVariant.${v}`)}</span>
+                    {immoVariant === v && <Check className="h-4 w-4 text-blue-500" />}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>}
+
           {/* Mode Selector (Flash) */}
           <ModeSelector
             selectedAgent={selectedAgent}

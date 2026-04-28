@@ -302,6 +302,12 @@ export const translations = {
             continue: "Continuer",
             tryNow: "Essayer maintenant",
         },
+        immoVariant: {
+            label: "Profil",
+            notaire: "Notaire",
+            cgp_immo: "CGP Immo",
+            agence: "Agence",
+        },
         loadingMessages: [
             "Vérification des sources...",
             "Récupération de nouvelles sources...",
@@ -607,6 +613,12 @@ export const translations = {
             continue: "Continue",
             tryNow: "Try it now",
         },
+        immoVariant: {
+            label: "Profile",
+            notaire: "Notaire",
+            cgp_immo: "CGP Immo",
+            agence: "Agency",
+        },
         loadingMessages: [
             "Verifying the sources...",
             "Getting new sources...",
@@ -903,6 +915,12 @@ export const translations = {
             step3Desc: "Accede a capacidades clave incluyendo estimación con fuentes y cálculo, historial de precios, proyección de cartera, boletín de mercado y tendencias.",
             continue: "Continuar",
             tryNow: "Probar ahora",
+        },
+        immoVariant: {
+            label: "Perfil",
+            notaire: "Notario",
+            cgp_immo: "CGP Immo",
+            agence: "Agencia",
         },
         loadingMessages: [
             "Verificando las fuentes...",
@@ -1201,6 +1219,12 @@ export const translations = {
             continue: "Weiter",
             tryNow: "Jetzt ausprobieren",
         },
+        immoVariant: {
+            label: "Profil",
+            notaire: "Notar",
+            cgp_immo: "CGP Immo",
+            agence: "Agentur",
+        },
         loadingMessages: [
             "Quellen werden überprüft...",
             "Neue Quellen werden abgerufen...",
@@ -1497,6 +1521,12 @@ export const translations = {
             step3Desc: "Accedi alle funzionalità chiave: stima con fonti, storico dei prezzi, proiezione del portafoglio, bollettino di mercato e tendenze.",
             continue: "Continua",
             tryNow: "Prova ora",
+        },
+        immoVariant: {
+            label: "Profilo",
+            notaire: "Notaio",
+            cgp_immo: "CGP Immo",
+            agence: "Agenzia",
         },
         loadingMessages: [
             "Verifica delle fonti...",
@@ -1795,6 +1825,12 @@ export const translations = {
             continue: "Continuar",
             tryNow: "Experimentar agora",
         },
+        immoVariant: {
+            label: "Perfil",
+            notaire: "Notário",
+            cgp_immo: "CGP Immo",
+            agence: "Agência",
+        },
         loadingMessages: [
             "Verificando as fontes...",
             "Obtendo novas fontes...",
@@ -2091,6 +2127,12 @@ export const translations = {
             step3Desc: "Toegang tot sleutelfuncties inclusief schatting met bronnen, prijsgeschiedenis, portfolioprojectie, marktbulletin en trends.",
             continue: "Doorgaan",
             tryNow: "Nu proberen",
+        },
+        immoVariant: {
+            label: "Profiel",
+            notaire: "Notaris",
+            cgp_immo: "CGP Immo",
+            agence: "Kantoor",
         },
         loadingMessages: [
             "Bronnen verifiëren...",
@@ -2389,6 +2431,12 @@ export const translations = {
             continue: "続ける",
             tryNow: "今すぐ試す",
         },
+        immoVariant: {
+            label: "プロファイル",
+            notaire: "公証人",
+            cgp_immo: "CGP Immo",
+            agence: "仲介業者",
+        },
         loadingMessages: [
             "ソースを確認中...",
             "新しいソースを取得中...",
@@ -2685,6 +2733,12 @@ export const translations = {
             step3Desc: "访问关键功能，包括带来源的估值、价格历史、投资组合预测、市场公告和趋势。",
             continue: "继续",
             tryNow: "立即尝试",
+        },
+        immoVariant: {
+            label: "档案",
+            notaire: "公证人",
+            cgp_immo: "CGP Immo",
+            agence: "中介",
         },
         loadingMessages: [
             "正在验证来源...",

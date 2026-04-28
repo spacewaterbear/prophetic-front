@@ -88,6 +88,8 @@ export interface Message {
   words_to_highlight?: string[];
 }
 
+export type ImmoVariant = "notaire" | "cgp_immo" | "agence";
+
 export interface PendingMessage {
   content: string;
   flashCards?: string;
@@ -96,6 +98,7 @@ export interface PendingMessage {
   uuidProduct?: string;
   productCategory?: string;
   agentType?: string;
+  immoVariant?: ImmoVariant | null;
 }
 
 export interface PendingVignetteStream {

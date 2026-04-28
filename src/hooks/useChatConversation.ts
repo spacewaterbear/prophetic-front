@@ -7,6 +7,7 @@ import {
   PendingVignetteStream,
   PendingMarkdownStream,
   MarketplaceData,
+  type ImmoVariant,
 } from "@/types/chat";
 import { VignetteData } from "@/types/vignettes";
 import { ClothesSearchData } from "@/components/ClothesSearchCard";
@@ -29,6 +30,7 @@ export interface HandleSendOptions {
   scrollToTop?: boolean;
   uuidProduct?: string;
   productCategory?: string;
+  immoVariant?: ImmoVariant | null;
 }
 
 interface UseChatConversationProps {
@@ -490,6 +492,7 @@ export function useChatConversation({
       uuidProduct?: string,
       productCategory?: string,
       agentType?: string,
+      immoVariant?: ImmoVariant | null,
     ) => {
       setIsLoading(true);
       dispatch({ type: "RESET" });
@@ -524,6 +527,7 @@ export function useChatConversation({
               flash_card_type: flashCardType,
               ...(uuidProduct ? { uuid_product: uuidProduct } : {}),
               ...(productCategory ? { product_category: productCategory } : {}),
+              ...(immoVariant ? { immo_variant: immoVariant } : {}),
             }),
           },
         );
@@ -746,6 +750,7 @@ export function useChatConversation({
           pendingMessage.uuidProduct,
           pendingMessage.productCategory,
           pendingMessage.agentType,
+          pendingMessage.immoVariant,
         );
         return;
       }
@@ -934,6 +939,7 @@ export function useChatConversation({
     scrollToTop = true,
     uuidProduct,
     productCategory,
+    immoVariant,
   }: HandleSendOptions = {}) => {
     const userInput = messageToSend || input;
     if (!userInput.trim() || isLoading) return;
@@ -949,6 +955,7 @@ export function useChatConversation({
         uuidProduct,
         productCategory,
         selectedAgent,
+        immoVariant,
       );
       return;
     }
@@ -985,6 +992,7 @@ export function useChatConversation({
         uuidProduct,
         productCategory,
         agentType: selectedAgent,
+        immoVariant,
       });
       refreshConversations();
       router.push(`/chat/${newConversationId}`);
