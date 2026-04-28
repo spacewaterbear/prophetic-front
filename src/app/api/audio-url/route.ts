@@ -1,17 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { auth } from "@/auth";
 
 const BUCKET = "sources";
 const SIGNED_URL_EXPIRY = 3600; // 1 hour
 const SAFE_FILENAME_RE = /^[\w.\-]+$/;
 
 export async function GET(req: NextRequest) {
-  const session = await auth();
-  if (!session?.user?.id) {
-    return NextResponse.json({ detail: "Unauthorized" }, { status: 401 });
-  }
-
   const { searchParams } = new URL(req.url);
   const fileName = searchParams.get("fileName");
 

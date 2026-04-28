@@ -76,17 +76,24 @@ export function AudioCard({
       }
     };
     const onEnded = () => { setPlaying(false); setCurrentTime(0); };
+    const onError = () => {
+      const err = audio.error;
+      console.error("[AudioCard] media error:", err?.code, err?.message, audio.src);
+      setPlaying(false);
+    };
 
     audio.addEventListener("timeupdate", onTimeUpdate);
     audio.addEventListener("loadedmetadata", onDurationReady);
     audio.addEventListener("durationchange", onDurationReady);
     audio.addEventListener("ended", onEnded);
+    audio.addEventListener("error", onError);
 
     return () => {
       audio.removeEventListener("timeupdate", onTimeUpdate);
       audio.removeEventListener("loadedmetadata", onDurationReady);
       audio.removeEventListener("durationchange", onDurationReady);
       audio.removeEventListener("ended", onEnded);
+      audio.removeEventListener("error", onError);
     };
   }, []);
 
