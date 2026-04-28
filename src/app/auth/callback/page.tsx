@@ -50,12 +50,10 @@ function AuthCallbackInner() {
     const tokenHash = searchParams.get("token_hash");
     const type = searchParams.get("type");
 
-    // Supabase magic links deliver tokens in the URL hash fragment (#access_token=...)
-    const hash = typeof window !== "undefined" ? window.location.hash.slice(1) : "";
-    const hashParams = new URLSearchParams(hash);
+    // Supabase implicit flow puts tokens in the hash fragment, not the query string
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
     const hashAccessToken = hashParams.get("access_token");
     const hashRefreshToken = hashParams.get("refresh_token");
-    const hashType = hashParams.get("type");
 
     if (!code && !tokenHash && !hashAccessToken) {
       setStatus("error");
@@ -65,9 +63,20 @@ function AuthCallbackInner() {
 
     const exchangeCode = async () => {
       try {
-        let session: { access_token: string; refresh_token: string } | null = null;
-        let user: { id: string; email?: string } | null = null;
-        let error: { message: string } | null = null;
+        let data: Awaited<ReturnType<typeof supabase.auth.setSession>>["data"];
+        let error: Awaited<ReturnType<typeof supabase.auth.setSession>>["error"];
+
+        if (hashAccessToken && hashRefreshToken) {
+          // Implicit flow: access_token + refresh_token in hash fragment
+          ({ data, error } = await supabase.auth.setSession({
+            access_token: hashAccessToken,
+            refresh_token: hashRefreshToken,
+          }));
+        } else if (tokenHash && (type === "email" || type === "magiclink")) {
+          ({ data, error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type: "email" }));
+        } else {
+          ({ data, error } = await supabase.auth.exchangeCodeForSession(code!));
+        }
 
         if (hashAccessToken && hashRefreshToken && (hashType === "magiclink" || hashType === "email")) {
           // Hash-fragment magic link flow — set session directly from tokens
