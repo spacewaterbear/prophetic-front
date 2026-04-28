@@ -30,6 +30,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      checks: ["state"],
       authorization: {
         params: {
           prompt: "consent",
@@ -88,18 +89,26 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   secret: process.env.AUTH_SECRET,
   trustHost: true,
-  useSecureCookies: process.env.NODE_ENV === "production",
+  useSecureCookies: process.env.NEXT_PUBLIC_APP_ENV === "prod",
   cookies: {
-    // Explicitly configure the PKCE cookie with a stable name so the verifier
-    // set during the auth initiation and the value read on the callback always
-    // match — NextAuth v5 can otherwise produce a name mismatch in dev.
     pkceCodeVerifier: {
       name: "authjs.pkce.code_verifier",
       options: {
         httpOnly: true,
         sameSite: "lax" as const,
         path: "/",
-        secure: process.env.NODE_ENV === "production",
+        secure: process.env.NEXT_PUBLIC_APP_ENV === "prod",
+        maxAge: 60 * 15,
+      },
+    },
+    state: {
+      name: "authjs.state",
+      options: {
+        httpOnly: true,
+        sameSite: "lax" as const,
+        path: "/",
+        secure: process.env.NEXT_PUBLIC_APP_ENV === "prod",
+        maxAge: 60 * 15,
       },
     },
   },

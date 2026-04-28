@@ -50,7 +50,12 @@ function AuthCallbackInner() {
     const tokenHash = searchParams.get("token_hash");
     const type = searchParams.get("type");
 
-    if (!code && !tokenHash) {
+    // Supabase implicit flow puts tokens in the hash fragment, not the query string
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const hashAccessToken = hashParams.get("access_token");
+    const hashRefreshToken = hashParams.get("refresh_token");
+
+    if (!code && !tokenHash && !hashAccessToken) {
       setStatus("error");
       setErrorMessage(t("login.sendError"));
       return;
@@ -58,11 +63,20 @@ function AuthCallbackInner() {
 
     const exchangeCode = async () => {
       try {
-        // Magic link OTP flow (token_hash + type=email) or OAuth PKCE flow (code)
-        const { data, error } =
-          tokenHash && (type === "email" || type === "magiclink")
-            ? await supabase.auth.verifyOtp({ token_hash: tokenHash, type: "email" })
-            : await supabase.auth.exchangeCodeForSession(code!);
+        let data: Awaited<ReturnType<typeof supabase.auth.setSession>>["data"];
+        let error: Awaited<ReturnType<typeof supabase.auth.setSession>>["error"];
+
+        if (hashAccessToken && hashRefreshToken) {
+          // Implicit flow: access_token + refresh_token in hash fragment
+          ({ data, error } = await supabase.auth.setSession({
+            access_token: hashAccessToken,
+            refresh_token: hashRefreshToken,
+          }));
+        } else if (tokenHash && (type === "email" || type === "magiclink")) {
+          ({ data, error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type: "email" }));
+        } else {
+          ({ data, error } = await supabase.auth.exchangeCodeForSession(code!));
+        }
 
         if (error || !data.session || !data.user) {
           console.error("[AuthCallback] Code exchange failed:", error);
