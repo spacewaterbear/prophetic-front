@@ -35,8 +35,8 @@ const instrumentSerif = Instrument_Serif({
 });
 
 export const metadata: Metadata = {
-  title: "Prophetic",
-  description: "Prophetic",
+  title: "Prophetic Orchestra",
+  description: "Prophetic Orchestra",
   icons: {
     icon: [
       {
