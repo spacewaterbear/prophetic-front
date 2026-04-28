@@ -81,7 +81,7 @@ export async function POST(
     const { id } = await params;
     const conversationId = parseInt(id);
     const body = await request.json();
-    const { content, agent_type, attachments, flash_cards, flash_card_question, flash_card_type, uuid_product, product_category } = body;
+    const { content, agent_type, attachments, flash_cards, flash_card_question, flash_card_type, uuid_product, product_category, immo_variant } = body;
 
     if (!content) {
       return new Response(JSON.stringify({ detail: "Content is required" }), {
@@ -226,6 +226,7 @@ export async function POST(
                 : product_category === "IMMO_LUXE"
                 ? "REAL_ESTATE"
                 : product_category || null,
+            immo_variant: immo_variant || null,
           };
 
           console.log(`[Prophetic API] Request to langchain_agent/query:`, JSON.stringify(requestBody, null, 2));

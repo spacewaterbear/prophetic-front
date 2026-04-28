@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext } from "react";
 import type { AgentType, UserStatus } from "@/types/agents";
+import type { ImmoVariant } from "@/types/chat";
 
 interface ChatInputContextType {
   userStatus?: UserStatus;
@@ -18,6 +19,8 @@ interface ChatInputContextType {
     displayName: string,
     tier?: string,
   ) => void;
+  immoVariant: ImmoVariant | null;
+  onImmoVariantChange: (variant: ImmoVariant | null) => void;
 }
 
 const ChatInputContext = createContext<ChatInputContextType | undefined>(undefined);

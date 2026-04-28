@@ -11,6 +11,7 @@ import { DEFAULT_NON_ADMIN_MODEL } from "@/lib/models";
 import { VignetteData } from "@/types/vignettes";
 import { useChatConversation } from "@/hooks/useChatConversation";
 import { getAvailableAgents, AgentType } from "@/types/agents";
+import { type ImmoVariant } from "@/types/chat";
 import { supabase } from "@/lib/supabase/client";
 import Image from "next/image";
 import { useI18n } from "@/contexts/i18n-context";
@@ -88,6 +89,7 @@ export default function ChatPage() {
     return "flash";
   });
   const [profileUsername, setProfileUsername] = useState<string | null>(null);
+  const [immoVariant, setImmoVariant] = useState<ImmoVariant | null>(null);
   const { setSidebarOpen } = useSidebar();
 
   const isGuestMode =
@@ -409,6 +411,8 @@ export default function ChatPage() {
       userId: session?.user?.id,
       conversationId,
       handleFlashcardClick,
+      immoVariant,
+      onImmoVariantChange: setImmoVariant,
     }}>
     <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
       <div className="h-[56px] mb-4 flex-shrink-0" />
@@ -484,7 +488,7 @@ export default function ChatPage() {
           vignetteError={vignetteError}
           input={input}
           setInput={setInput}
-          handleSend={() => handleSend()}
+          handleSend={() => handleSend({ immoVariant })}
           isLoading={isLoading}
           handleVignetteClick={handleVignetteClick}
           handleBackToCategory={handleBackToCategory}
@@ -521,7 +525,7 @@ export default function ChatPage() {
           handleBackToCategory={handleBackToCategory}
           input={input}
           setInput={setInput}
-          handleSend={() => handleSend()}
+          handleSend={() => handleSend({ immoVariant })}
           userName={session?.user?.name?.[0]?.toUpperCase() || "U"}
         />
       )}

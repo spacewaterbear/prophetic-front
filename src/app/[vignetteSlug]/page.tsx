@@ -338,6 +338,8 @@ export default function VignettePage() {
         userId: session?.user?.id,
         conversationId: null,
         handleFlashcardClick: () => {},
+        immoVariant: null,
+        onImmoVariantChange: () => {},
       }}
     >
     <>
