@@ -527,6 +527,10 @@ export function ChatInput({
             onPortfolioClick={handlePortfolioClick}
             isSettingsOpen={isSettingsOpen}
             onCloseSettings={() => setIsSettingsOpen(false)}
+            isImmoVariantOpen={isImmoVariantOpen}
+            onCloseImmoVariant={() => setIsImmoVariantOpen(false)}
+            immoVariant={immoVariant}
+            onImmoVariantChange={onImmoVariantChange}
             mounted={mounted}
             isDark={isDark}
           />,

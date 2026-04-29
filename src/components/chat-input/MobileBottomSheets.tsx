@@ -1,11 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { Paperclip } from "lucide-react";
+import { Check, Paperclip } from "lucide-react";
 import { useI18n } from "@/contexts/i18n-context";
 import { useStripePrices } from "@/contexts/stripe-prices-context";
 import { CategoryButton, CARD_BUTTON_STYLES, ModeCard } from "./CategoryButton";
 import { AgentType } from "@/types/agents";
+import type { ImmoVariant } from "@/types/chat";
 import { getPortfolioTiers } from "@/lib/constants/portfolio-tiers";
 import { FLASHCARD_CATEGORIES } from "@/lib/constants/categories";
 import {
@@ -21,6 +22,8 @@ import {
   ICON_SCOUT_LIGHT,
 } from "@/lib/constants/logos";
 
+
+const IMMO_VARIANTS: ImmoVariant[] = ["notaire", "cgp_immo", "agence"];
 
 interface MobileBottomSheetsProps {
   // Mode selector
@@ -45,6 +48,11 @@ interface MobileBottomSheetsProps {
   // Settings
   isSettingsOpen: boolean;
   onCloseSettings: () => void;
+  // ImmoVariant
+  isImmoVariantOpen: boolean;
+  onCloseImmoVariant: () => void;
+  immoVariant: ImmoVariant | null;
+  onImmoVariantChange: (v: ImmoVariant | null) => void;
   // Common
   mounted: boolean;
   isDark: boolean;
@@ -65,6 +73,10 @@ export function MobileBottomSheets({
   onPortfolioClick,
   isSettingsOpen,
   onCloseSettings,
+  isImmoVariantOpen,
+  onCloseImmoVariant,
+  immoVariant,
+  onImmoVariantChange,
   mounted,
   isDark,
 }: MobileBottomSheetsProps) {
@@ -259,6 +271,52 @@ export function MobileBottomSheets({
               </div>
             </>
           )}
+        </div>
+      </div>
+
+      {/* ImmoVariant Bottom Sheet */}
+      <div
+        className={`sm:hidden fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 ${isImmoVariantOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+        onClick={onCloseImmoVariant}
+      />
+      <div
+        className={`sm:hidden fixed inset-x-0 bottom-0 z-50 transition-transform duration-300 ease-out ${isImmoVariantOpen ? "translate-y-0" : "translate-y-full"}`}
+      >
+        <div className="bg-white dark:bg-[#2a2b2c] text-gray-900 dark:text-white rounded-t-3xl p-5 w-full shadow-2xl border-t border-gray-200 dark:border-transparent">
+          <div className="mb-4">
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">
+              {t("immoVariant.label")}
+            </h3>
+          </div>
+          <div className="space-y-2">
+            <button
+              type="button"
+              onClick={() => { onImmoVariantChange(null); onCloseImmoVariant(); }}
+              className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-colors ${
+                immoVariant === null
+                  ? "bg-gray-100 dark:bg-[#1e1f20] font-semibold"
+                  : "hover:bg-gray-100 dark:hover:bg-[#1e1f20]"
+              }`}
+            >
+              <span>{t("immoVariant.label")}</span>
+              {immoVariant === null && <Check className="h-4 w-4 text-blue-500" />}
+            </button>
+            {IMMO_VARIANTS.map((v) => (
+              <button
+                key={v}
+                type="button"
+                onClick={() => { onImmoVariantChange(v); onCloseImmoVariant(); }}
+                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-colors ${
+                  immoVariant === v
+                    ? "bg-gray-100 dark:bg-[#1e1f20] font-semibold"
+                    : "hover:bg-gray-100 dark:hover:bg-[#1e1f20]"
+                }`}
+              >
+                <span>{t(`immoVariant.${v}`)}</span>
+                {immoVariant === v && <Check className="h-4 w-4 text-blue-500" />}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
