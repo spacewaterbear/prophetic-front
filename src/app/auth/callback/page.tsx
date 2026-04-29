@@ -50,12 +50,10 @@ function AuthCallbackInner() {
     const tokenHash = searchParams.get("token_hash");
     const type = searchParams.get("type");
 
-    // Supabase implicit flow puts tokens in the hash fragment, not the query string
+    // Implicit flow: tokens arrive in the hash fragment (legacy, pre-PKCE)
     const hashParams = new URLSearchParams(window.location.hash.substring(1));
     const hashAccessToken = hashParams.get("access_token");
     const hashRefreshToken = hashParams.get("refresh_token");
-
-    console.log("[AuthCallback] params:", { code: !!code, tokenHash: !!tokenHash, type, hashAccessToken: !!hashAccessToken });
 
     if (!code && !tokenHash && !hashAccessToken) {
       console.error("[AuthCallback] No auth params found in URL");
@@ -66,27 +64,27 @@ function AuthCallbackInner() {
 
     const exchangeCode = async () => {
       try {
-        let data: Awaited<ReturnType<typeof supabase.auth.setSession>>["data"];
-        let error: Awaited<ReturnType<typeof supabase.auth.setSession>>["error"];
+        // Three possible flows depending on how Supabase redirected here:
+        // 1. PKCE (primary): ?code=... — requires code_verifier in localStorage
+        // 2. token_hash: ?token_hash=...&type=... — older OTP redirect format
+        // 3. implicit: #access_token=... — legacy, tokens in hash fragment
+        let result: Awaited<ReturnType<typeof supabase.auth.exchangeCodeForSession>>;
 
         if (hashAccessToken && hashRefreshToken) {
-          console.log("[AuthCallback] Using implicit (hash) flow");
-          ({ data, error } = await supabase.auth.setSession({
+          result = await supabase.auth.setSession({
             access_token: hashAccessToken,
             refresh_token: hashRefreshToken,
-          }));
+          });
         } else if (tokenHash && (type === "email" || type === "magiclink")) {
-          console.log("[AuthCallback] Using verifyOtp flow, type:", type);
-          ({ data, error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type: (type as "email" | "magiclink") }));
+          result = await supabase.auth.verifyOtp({ token_hash: tokenHash, type: type as "email" | "magiclink" });
         } else {
-          console.log("[AuthCallback] Using PKCE exchangeCodeForSession");
-          ({ data, error } = await supabase.auth.exchangeCodeForSession(code!));
+          result = await supabase.auth.exchangeCodeForSession(code!);
         }
 
-        console.log("[AuthCallback] Exchange result:", { userId: data?.user?.id, email: data?.user?.email, error: error?.message });
+        const { data, error } = result;
 
         if (error || !data.session || !data.user) {
-          console.error("[AuthCallback] Code exchange failed:", error?.message, error?.status);
+          console.error("[AuthCallback] Token exchange failed:", error?.message);
           setStatus("error");
           setErrorMessage(t("login.sendError"));
           return;
@@ -96,8 +94,6 @@ function AuthCallbackInner() {
         const userId = data.user.id;
         const email = data.user.email ?? "";
 
-        // Check whether the profile already exists and registration is complete
-        console.log("[AuthCallback] Checking profile for userId:", userId, "email:", email);
         const checkResponse = await fetch("/api/auth/magiclink/check", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -112,33 +108,25 @@ function AuthCallbackInner() {
         }
 
         const checkData = await checkResponse.json();
-        console.log("[AuthCallback] Profile check result:", checkData);
 
         if (checkData.exists && checkData.registrationComplete) {
-          // Returning user — sign in immediately
           setStatus("signing_in");
-          console.log("[AuthCallback] Returning user, calling NextAuth signIn");
-          const result = await signIn("magic-link", {
+          const signInResult = await signIn("magic-link", {
             accessToken: access_token,
             refreshToken: refresh_token,
             redirect: false,
           });
 
-          console.log("[AuthCallback] NextAuth signIn result:", { ok: result?.ok, error: result?.error, url: result?.url });
-
-          if (result?.error) {
-            console.error("[AuthCallback] NextAuth signIn error:", result.error);
+          if (signInResult?.error) {
+            console.error("[AuthCallback] NextAuth signIn error:", signInResult.error);
             setStatus("error");
             setErrorMessage(t("login.sendError"));
             return;
           }
 
-          const dest = checkData.status === "unauthorized" ? "/registration-pending" : "/chat";
-          console.log("[AuthCallback] Redirecting to:", dest);
-          router.push(dest);
+          router.push(checkData.status === "unauthorized" ? "/registration-pending" : "/chat");
         } else {
-          // New user — collect name before creating profile
-          console.log("[AuthCallback] New user or incomplete registration, showing form");
+          // New user or incomplete registration — collect name before creating profile
           setPendingSession({ accessToken: access_token, refreshToken: refresh_token, userId, email });
           setStatus("registering");
         }
@@ -159,7 +147,6 @@ function AuthCallbackInner() {
 
     setIsSubmitting(true);
     try {
-      console.log("[AuthCallback] Submitting registration for:", pendingSession.email);
       const response = await fetch("/api/auth/magiclink/callback", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -172,21 +159,16 @@ function AuthCallbackInner() {
         }),
       });
 
-      const callbackData = await response.json();
-      console.log("[AuthCallback] Profile creation result:", { ok: response.ok, data: callbackData });
-
       if (!response.ok) throw new Error("Failed to create profile");
 
-      const result = await signIn("magic-link", {
+      const signInResult = await signIn("magic-link", {
         accessToken: pendingSession.accessToken,
         refreshToken: pendingSession.refreshToken,
         redirect: false,
       });
 
-      console.log("[AuthCallback] NextAuth signIn after registration:", { ok: result?.ok, error: result?.error });
-
-      if (result?.error) {
-        console.error("[AuthCallback] NextAuth signIn error:", result.error);
+      if (signInResult?.error) {
+        console.error("[AuthCallback] NextAuth signIn error:", signInResult.error);
         setErrorMessage(t("login.sendError"));
         setIsSubmitting(false);
         return;

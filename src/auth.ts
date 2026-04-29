@@ -2,7 +2,7 @@ import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js"; // anon client intentional — setSession validates tokens without elevated privileges
 import { upsertProfile } from "@/lib/supabase/profiles";
 
 // Generate a deterministic UUID v5 from Google account ID using Web Crypto API
@@ -176,9 +176,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return token;
     },
     async signIn({ user, account, profile }) {
-      // Handle magic link sign in - profile already created in callback API
       if (account?.provider === "magic-link") {
-        // Profile is already created/updated via the /api/auth/magiclink/callback endpoint
+        // Profile is created/updated by /api/auth/magiclink/callback (new users)
+        // or already exists (returning users). Nothing to do here.
         return true;
       }
 
@@ -204,7 +204,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     async session({ session, token }) {
       if (session.user) {
-        // Use the stable Google user ID stored in the token
         session.user.id = token.userId as string;
 
         // Fetch user's status and admin flag from database

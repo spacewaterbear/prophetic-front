@@ -54,9 +54,10 @@ export default function LoginPage() {
     setErrorMessage("");
 
     try {
-      // Uses implicit flow: email link contains ?token_hash=...&type=email
-      // verifyOtp runs in a client-side useEffect so email scanner prefetches
-      // (which don't execute JS) cannot consume the token.
+      // Client-side call so Supabase uses PKCE: the email contains a link
+      // directly to /auth/callback?code=... (not a Supabase /verify URL).
+      // Email security scanners visit the link but don't run JS, so the
+      // code_verifier in localStorage is never available to them.
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
