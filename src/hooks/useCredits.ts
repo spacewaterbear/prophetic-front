@@ -26,16 +26,18 @@ export function useCredits(userId: string | undefined, isFreeUser: boolean): Use
   const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
-    if (!userId || !isFreeUser) return;
+    if (!userId) return;
 
     const fetchCredits = async () => {
-      setIsLoading(true);
+      if (isFreeUser) setIsLoading(true);
       try {
         const data = await api.get<CreditsResponse>("/api/credits");
-        const value = data.credits ?? TOTAL_FREE_CREDITS;
         setIsTester(data.isTester ?? false);
-        setCredits(value);
-        localStorage.setItem(cacheKey(userId), String(value));
+        if (isFreeUser) {
+          const value = data.credits ?? TOTAL_FREE_CREDITS;
+          setCredits(value);
+          localStorage.setItem(cacheKey(userId), String(value));
+        }
       } catch (error) {
         console.error("Error fetching credits:", error);
       } finally {
