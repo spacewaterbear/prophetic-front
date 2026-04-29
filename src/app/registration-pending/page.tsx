@@ -39,7 +39,7 @@ export default function RegistrationPendingPage() {
           {/* Logo */}
           <div className="text-center mb-8">
             {/* Icon Logo */}
-            <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden flex items-center justify-center">
+            <div className="w-24 h-24 mx-auto mb-4 flex items-center justify-center">
               <Image
                 src={isDark ? LOGO_DARK : LOGO_LIGHT}
                 alt="Prophetic Orchestra"

@@ -27,7 +27,7 @@ export async function upsertProfile(
   adminClient: SupabaseClient<Database>,
   params: UpsertProfileParams,
 ): Promise<string | null> {
-  const { id, email, username, avatarUrl, firstName, lastName, status = "unauthorized", artStatus = "unauthorized" } = params;
+  const { id, email, username, avatarUrl, firstName, lastName, status = "free", artStatus = "free" } = params;
 
   try {
     // Build update fields — do NOT include status/art_status to preserve existing values
