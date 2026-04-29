@@ -1,0 +1,38 @@
+# syntax=docker/dockerfile:1.4
+# Local development image — hot-reload, no build step.
+# Source code is volume-mounted at runtime (see compose.local.yml).
+
+# ── Stage 1: install deps ──────────────────────────────────────────────────────
+# This layer is fully cached until package-lock.json changes.
+FROM node:20-alpine AS deps
+WORKDIR /app
+
+COPY package.json package-lock.json* ./
+
+# npm cache persists in BuildKit cache, not in the image layer.
+RUN --mount=type=cache,target=/root/.npm,sharing=locked \
+    npm ci
+
+# ── Stage 2: dev server ────────────────────────────────────────────────────────
+FROM node:20-alpine AS dev
+WORKDIR /app
+
+ENV NODE_ENV=development
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# node_modules from the deps stage — one thick cached layer.
+COPY --from=deps /app/node_modules ./node_modules
+
+# Config files only (rarely change → stays cached).
+# Source code and public/ are mounted as volumes at runtime.
+COPY package.json \
+     next.config.* \
+     tsconfig.json \
+     tailwind.config.* \
+     postcss.config.* \
+     biome.json* \
+     ./
+
+EXPOSE 3000
+
+CMD ["npm", "run", "dev"]

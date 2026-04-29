@@ -68,7 +68,7 @@ function AuthCallbackInner() {
         // 1. PKCE (primary): ?code=... — requires code_verifier in localStorage
         // 2. token_hash: ?token_hash=...&type=... — older OTP redirect format
         // 3. implicit: #access_token=... — legacy, tokens in hash fragment
-        let result: Awaited<ReturnType<typeof supabase.auth.exchangeCodeForSession>>;
+        let result: Awaited<ReturnType<typeof supabase.auth.setSession>>;
 
         if (hashAccessToken && hashRefreshToken) {
           result = await supabase.auth.setSession({

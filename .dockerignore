@@ -1,7 +1,8 @@
 # Dependencies
 node_modules
 npm-debug.log
-
+/playwright-report
+/e2e
 # Next.js
 .next
 out

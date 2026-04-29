@@ -44,6 +44,11 @@ Quick setup:
 bun dev
 ```
 
+### Test auth
+```bash
+npx playwright test e2e/auth.spec.ts
+```
+
 Open [http://localhost:3000/login](http://localhost:3000/login) to see the login page.
 
 ## Project Structure
