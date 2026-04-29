@@ -21,6 +21,7 @@ interface ChatInputContextType {
   ) => void;
   immoVariant: ImmoVariant | null;
   onImmoVariantChange: (variant: ImmoVariant | null) => void;
+  isTester?: boolean;
 }
 
 const ChatInputContext = createContext<ChatInputContextType | undefined>(undefined);

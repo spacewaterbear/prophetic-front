@@ -1,18 +1,22 @@
 services:
   prophetic-front:
-    image: prophetic/prophetic-front:latest
     build:
       context: .
-      dockerfile: Dockerfile
-      args:
-        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
-        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
-        NEXT_PUBLIC_SPECIALITY: ${NEXT_PUBLIC_SPECIALITY}
-    container_name: prophetic-front
+      dockerfile: Dockerfile.local
+      target: dev
+    container_name: prophetic-front-local
+    volumes:
+      - ./src:/app/src
+      - ./public:/app/public
+      - node_modules:/app/node_modules
+      - next_cache:/app/.next
     ports:
-      - 3000:3000
+      - "3000:3000"
     env_file:
       - .env
+    environment:
+      - NODE_ENV=development
+      - NEXT_TELEMETRY_DISABLED=1
     restart: unless-stopped
     networks:
       - prophetic-network
@@ -20,3 +24,7 @@ services:
 networks:
   prophetic-network:
     external: true
+
+volumes:
+  node_modules:
+  next_cache:

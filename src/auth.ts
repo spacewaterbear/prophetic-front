@@ -116,10 +116,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async jwt({ token, account, profile, user }) {
       // Handle magic link authentication (credentials provider)
       if (account?.provider === "magic-link" && user) {
-        // For magic link, the user.id is already the Supabase user ID
-        token.userId = user.id;
         token.email = user.email;
         token.provider = "magic-link";
+
+        // Resolve the profile ID from the DB — the Supabase auth UID may differ
+        // from the profile row ID (e.g. admin-provisioned or Google-registered users).
+        try {
+          const supabase = createAdminClient();
+          const { data: existingProfile } = await supabase
+            .from("profiles")
+            .select("id")
+            .eq("mail", user.email!)
+            .maybeSingle();
+          token.userId = existingProfile?.id ?? user.id;
+        } catch {
+          token.userId = user.id;
+        }
+
         return token;
       }
 

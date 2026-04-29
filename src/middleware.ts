@@ -83,7 +83,7 @@ export default auth((req) => {
   }
 
   // If logged in and authorized (any valid tier) but on registration pending page, redirect to home
-  const authorizedStatuses = ['free', 'paid', 'flash', 'admini', 'discover', 'intelligence', 'oracle'];
+  const authorizedStatuses = ['free', 'paid', 'admini', 'discover', 'intelligence', 'oracle'];
   if (userStatus && authorizedStatuses.includes(userStatus) && isRegistrationPending) {
     return NextResponse.redirect(new URL("/", nextUrl));
   }

@@ -55,7 +55,10 @@ function AuthCallbackInner() {
     const hashAccessToken = hashParams.get("access_token");
     const hashRefreshToken = hashParams.get("refresh_token");
 
+    console.log("[AuthCallback] params:", { code: !!code, tokenHash: !!tokenHash, type, hashAccessToken: !!hashAccessToken });
+
     if (!code && !tokenHash && !hashAccessToken) {
+      console.error("[AuthCallback] No auth params found in URL");
       setStatus("error");
       setErrorMessage(t("login.sendError"));
       return;
@@ -67,19 +70,23 @@ function AuthCallbackInner() {
         let error: Awaited<ReturnType<typeof supabase.auth.setSession>>["error"];
 
         if (hashAccessToken && hashRefreshToken) {
-          // Implicit flow: access_token + refresh_token in hash fragment
+          console.log("[AuthCallback] Using implicit (hash) flow");
           ({ data, error } = await supabase.auth.setSession({
             access_token: hashAccessToken,
             refresh_token: hashRefreshToken,
           }));
         } else if (tokenHash && (type === "email" || type === "magiclink")) {
-          ({ data, error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type: "email" }));
+          console.log("[AuthCallback] Using verifyOtp flow, type:", type);
+          ({ data, error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type: (type as "email" | "magiclink") }));
         } else {
+          console.log("[AuthCallback] Using PKCE exchangeCodeForSession");
           ({ data, error } = await supabase.auth.exchangeCodeForSession(code!));
         }
 
+        console.log("[AuthCallback] Exchange result:", { userId: data?.user?.id, email: data?.user?.email, error: error?.message });
+
         if (error || !data.session || !data.user) {
-          console.error("[AuthCallback] Code exchange failed:", error);
+          console.error("[AuthCallback] Code exchange failed:", error?.message, error?.status);
           setStatus("error");
           setErrorMessage(t("login.sendError"));
           return;
@@ -90,21 +97,34 @@ function AuthCallbackInner() {
         const email = data.user.email ?? "";
 
         // Check whether the profile already exists and registration is complete
+        console.log("[AuthCallback] Checking profile for userId:", userId, "email:", email);
         const checkResponse = await fetch("/api/auth/magiclink/check", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ userId, email }),
         });
+
+        if (!checkResponse.ok) {
+          console.error("[AuthCallback] Profile check failed:", checkResponse.status);
+          setStatus("error");
+          setErrorMessage(t("login.sendError"));
+          return;
+        }
+
         const checkData = await checkResponse.json();
+        console.log("[AuthCallback] Profile check result:", checkData);
 
         if (checkData.exists && checkData.registrationComplete) {
           // Returning user — sign in immediately
           setStatus("signing_in");
+          console.log("[AuthCallback] Returning user, calling NextAuth signIn");
           const result = await signIn("magic-link", {
             accessToken: access_token,
             refreshToken: refresh_token,
             redirect: false,
           });
+
+          console.log("[AuthCallback] NextAuth signIn result:", { ok: result?.ok, error: result?.error, url: result?.url });
 
           if (result?.error) {
             console.error("[AuthCallback] NextAuth signIn error:", result.error);
@@ -113,9 +133,12 @@ function AuthCallbackInner() {
             return;
           }
 
-          router.push(checkData.status === "unauthorized" ? "/registration-pending" : "/chat");
+          const dest = checkData.status === "unauthorized" ? "/registration-pending" : "/chat";
+          console.log("[AuthCallback] Redirecting to:", dest);
+          router.push(dest);
         } else {
           // New user — collect name before creating profile
+          console.log("[AuthCallback] New user or incomplete registration, showing form");
           setPendingSession({ accessToken: access_token, refreshToken: refresh_token, userId, email });
           setStatus("registering");
         }
@@ -136,6 +159,7 @@ function AuthCallbackInner() {
 
     setIsSubmitting(true);
     try {
+      console.log("[AuthCallback] Submitting registration for:", pendingSession.email);
       const response = await fetch("/api/auth/magiclink/callback", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -148,6 +172,9 @@ function AuthCallbackInner() {
         }),
       });
 
+      const callbackData = await response.json();
+      console.log("[AuthCallback] Profile creation result:", { ok: response.ok, data: callbackData });
+
       if (!response.ok) throw new Error("Failed to create profile");
 
       const result = await signIn("magic-link", {
@@ -155,6 +182,8 @@ function AuthCallbackInner() {
         refreshToken: pendingSession.refreshToken,
         redirect: false,
       });
+
+      console.log("[AuthCallback] NextAuth signIn after registration:", { ok: result?.ok, error: result?.error });
 
       if (result?.error) {
         console.error("[AuthCallback] NextAuth signIn error:", result.error);

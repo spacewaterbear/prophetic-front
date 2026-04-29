@@ -413,6 +413,7 @@ export default function ChatPage() {
       handleFlashcardClick,
       immoVariant,
       onImmoVariantChange: setImmoVariant,
+      isTester,
     }}>
     <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
       <div className="h-[56px] mb-4 flex-shrink-0" />

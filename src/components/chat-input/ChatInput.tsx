@@ -53,6 +53,7 @@ export function ChatInput({
     handleFlashcardClick: onFlashcardClick,
     immoVariant,
     onImmoVariantChange,
+    isTester,
   } = useChatInputContext();
 
   const attachedFiles = propsAttachedFiles ?? [];
@@ -415,7 +416,7 @@ export function ChatInput({
         {/* Trailing Actions */}
         <div className="flex items-center gap-2">
           {/* ImmoVariant Selector */}
-          {isMainSpeciality && <div className="static sm:relative flex-shrink-0">
+          {isMainSpeciality && isTester && <div className="static sm:relative flex-shrink-0">
             <button
               type="button"
               className="flex items-center gap-1.5 rounded-full px-3 py-2 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer"

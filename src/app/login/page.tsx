@@ -10,6 +10,7 @@ import { useI18n } from "@/contexts/i18n-context";
 import { useState, useEffect } from "react";
 import { Mail, ArrowRight, CheckCircle, AlertCircle } from "lucide-react";
 import { LOGO_DARK, LOGO_LIGHT } from "@/lib/constants/logos";
+import { supabase } from "@/lib/supabase/client";
 
 type MagicLinkStatus = "idle" | "sending" | "sent" | "error";
 
@@ -53,21 +54,24 @@ export default function LoginPage() {
     setErrorMessage("");
 
     try {
-      const response = await fetch("/api/auth/magiclink", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+      // Uses implicit flow: email link contains ?token_hash=...&type=email
+      // verifyOtp runs in a client-side useEffect so email scanner prefetches
+      // (which don't execute JS) cannot consume the token.
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          shouldCreateUser: true,
+        },
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to send magic link");
+      if (error) {
+        throw error;
       }
 
       setMagicLinkStatus("sent");
     } catch (error) {
-      console.error("Magic link error:", error);
+      console.error("[MagicLink] send error:", error);
       setMagicLinkStatus("error");
       setErrorMessage(t("login.sendError"));
     }
