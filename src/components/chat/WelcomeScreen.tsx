@@ -198,7 +198,7 @@ export function WelcomeScreen({
         ) : vignettes.length > 0 ? (
           <div className="w-full relative">
             {navTabs && (
-              <div className="flex items-center justify-center gap-6 mb-6">
+              <div className="sticky top-0 z-10 flex items-center justify-center gap-6 py-3 mb-6 bg-[rgb(249,248,244)] dark:bg-[rgb(1,1,0)]">
                 {navTabs.map((tab) => (
                   <button
                     key={tab.label}
