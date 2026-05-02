@@ -871,7 +871,6 @@ export function useChatConversation({
             setShouldScrollToTop(false);
             disableAutoScrollRef.current = false;
             pendingStore.setDisableAutoScroll(false);
-            setShouldAutoScroll(true);
             return;
           }
           container.scrollTo({ top: t, behavior: "smooth" });
@@ -884,7 +883,6 @@ export function useChatConversation({
           setShouldScrollToTop(false);
           disableAutoScrollRef.current = false;
           pendingStore.setDisableAutoScroll(false);
-          setShouldAutoScroll(true);
         }, 2000);
         return () => {
           clearTimeout(timeout);
