@@ -1,7 +1,8 @@
 "use client";
 
-import { lazy, memo, useState } from "react";
-import { Check, Copy, FileDown } from "lucide-react";
+import { lazy, memo, useRef, useState } from "react";
+import { Check, Copy, FileDown, Pencil, X } from "lucide-react";
+import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { AIAvatar } from "./AIAvatar";
@@ -99,6 +100,14 @@ export const MessageItem = memo(
     const categoryNames = getCategoryDisplayNames(language);
     const [copied, setCopied] = useState(false);
     const [pdfLoading, setPdfLoading] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [editedContent, setEditedContent] = useState(message.content);
+    const [isSaving, setIsSaving] = useState(false);
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const params = useParams();
+    const conversationId = Array.isArray(params.conversationId)
+      ? params.conversationId[0]
+      : params.conversationId;
 
     const handleCopy = async () => {
       try {
@@ -109,6 +118,53 @@ export const MessageItem = memo(
       } catch (error) {
         console.error("Failed to copy:", error);
         toast.error(t("chat.failedToCopy"));
+      }
+    };
+
+    const autoResize = (el: HTMLTextAreaElement) => {
+      el.style.height = "auto";
+      el.style.height = `${el.scrollHeight}px`;
+    };
+
+    const handleStartEdit = () => {
+      setEditedContent(message.content);
+      setIsEditing(true);
+      setTimeout(() => {
+        if (textareaRef.current) {
+          textareaRef.current.focus();
+          autoResize(textareaRef.current);
+        }
+      }, 0);
+    };
+
+    const handleCancelEdit = () => {
+      setIsEditing(false);
+      setEditedContent(message.content);
+    };
+
+    const handleSaveEdit = async () => {
+      if (!conversationId || editedContent.trim() === message.content.trim()) {
+        setIsEditing(false);
+        return;
+      }
+      setIsSaving(true);
+      try {
+        const res = await fetch(
+          `/api/conversations/${conversationId}/messages/${message.id}`,
+          {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ content: editedContent.trim() }),
+          }
+        );
+        if (!res.ok) throw new Error("Failed");
+        message.content = editedContent.trim();
+        toast.success(t("chat.editSaved"));
+        setIsEditing(false);
+      } catch {
+        toast.error(t("chat.editFailed"));
+      } finally {
+        setIsSaving(false);
       }
     };
 
@@ -244,24 +300,59 @@ export const MessageItem = memo(
             ) : (
               <>
                 {message.content && (
-                  <SuspenseCard>
-                    <Markdown
-                      content={message.content}
-                      className="text-base"
-                      categoryName={
-                        message.vignetteCategory
-                          ? categoryNames[message.vignetteCategory]
-                          : undefined
-                      }
-                      onCategoryClick={
-                        message.vignetteCategory && handleBackToCategory
-                          ? () =>
-                              handleBackToCategory(message.vignetteCategory!)
-                          : undefined
-                      }
-                      wordsToHighlight={message.words_to_highlight}
-                    />
-                  </SuspenseCard>
+                  isEditing ? (
+                    <div className="flex flex-col gap-2">
+                      <textarea
+                        ref={textareaRef}
+                        value={editedContent}
+                        onChange={(e) => {
+                          setEditedContent(e.target.value);
+                          autoResize(e.target);
+                        }}
+                        className="w-full min-h-[120px] resize-none overflow-hidden rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-base px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500"
+                        disabled={isSaving}
+                      />
+                      <div className="flex gap-2 justify-end">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleCancelEdit}
+                          disabled={isSaving}
+                          className="h-7 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        >
+                          {t("chat.cancelEdit")}
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleSaveEdit}
+                          disabled={isSaving}
+                          className="h-7 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        >
+                          {isSaving ? "..." : t("chat.saveEdit")}
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <SuspenseCard>
+                      <Markdown
+                        content={message.content}
+                        className="text-base"
+                        categoryName={
+                          message.vignetteCategory
+                            ? categoryNames[message.vignetteCategory]
+                            : undefined
+                        }
+                        onCategoryClick={
+                          message.vignetteCategory && handleBackToCategory
+                            ? () =>
+                                handleBackToCategory(message.vignetteCategory!)
+                            : undefined
+                        }
+                        wordsToHighlight={message.words_to_highlight}
+                      />
+                    </SuspenseCard>
+                  )
                 )}
 
                 {message.marketplace_data &&
@@ -373,18 +464,33 @@ export const MessageItem = memo(
               )}
             </Button>
             {message.sender === "ai" && message.content && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleExportPdf}
-                disabled={pdfLoading}
-                className="h-7 w-7 sm:h-8 sm:w-8 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
-                aria-label="Export as PDF"
-              >
-                <FileDown
-                  className={`h-3 w-3 sm:h-4 sm:w-4 ${pdfLoading ? "animate-pulse" : ""}`}
-                />
-              </Button>
+              <>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={isEditing ? handleCancelEdit : handleStartEdit}
+                  className="h-7 w-7 sm:h-8 sm:w-8 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  aria-label={t("chat.editMessage")}
+                >
+                  {isEditing ? (
+                    <X className="h-3 w-3 sm:h-4 sm:w-4" />
+                  ) : (
+                    <Pencil className="h-3 w-3 sm:h-4 sm:w-4" />
+                  )}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleExportPdf}
+                  disabled={pdfLoading}
+                  className="h-7 w-7 sm:h-8 sm:w-8 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  aria-label="Export as PDF"
+                >
+                  <FileDown
+                    className={`h-3 w-3 sm:h-4 sm:w-4 ${pdfLoading ? "animate-pulse" : ""}`}
+                  />
+                </Button>
+              </>
             )}
           </div>
         </div>
