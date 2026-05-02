@@ -870,6 +870,7 @@ export function useChatConversation({
             scrollToTopIntervalRef.current = null;
             setShouldScrollToTop(false);
             disableAutoScrollRef.current = false;
+            pendingStore.setDisableAutoScroll(false);
             setShouldAutoScroll(true);
             return;
           }
@@ -882,6 +883,7 @@ export function useChatConversation({
           }
           setShouldScrollToTop(false);
           disableAutoScrollRef.current = false;
+          pendingStore.setDisableAutoScroll(false);
           setShouldAutoScroll(true);
         }, 2000);
         return () => {
