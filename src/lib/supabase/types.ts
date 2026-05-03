@@ -294,7 +294,19 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      profile_trace_counts: {
+        Row: {
+          id: string
+          first_name: string | null
+          last_name: string | null
+          username: string | null
+          mail: string | null
+          status: string
+          is_admin: boolean
+          trace_count: number
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never

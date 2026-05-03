@@ -5,6 +5,7 @@ export interface TraceProfile {
   username: string | null;
   mail: string | null;
   status: string;
+  trace_count: number;
 }
 
 export interface Trace {

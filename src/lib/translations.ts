@@ -362,6 +362,7 @@ export const translations = {
                 collapseAll: "Tout réduire",
                 steps: "Étapes de l'agent",
                 traceDetails: "Détails de la trace",
+                loadMore: "Charger plus",
             },
         },
         loadingMessages: [
@@ -729,6 +730,7 @@ export const translations = {
                 collapseAll: "Collapse all",
                 steps: "Agent steps",
                 traceDetails: "Trace details",
+                loadMore: "Load more",
             },
         },
         loadingMessages: [
@@ -1088,6 +1090,7 @@ export const translations = {
                 collapseAll: "Contraer todo",
                 steps: "Pasos del agente",
                 traceDetails: "Detalles de la traza",
+                loadMore: "Cargar más",
             },
         },
         loadingMessages: [
@@ -1447,6 +1450,7 @@ export const translations = {
                 collapseAll: "Alle reduzieren",
                 steps: "Agent-Schritte",
                 traceDetails: "Trace-Details",
+                loadMore: "Mehr laden",
             },
         },
         loadingMessages: [
@@ -1806,6 +1810,7 @@ export const translations = {
                 collapseAll: "Comprimi tutto",
                 steps: "Passaggi agente",
                 traceDetails: "Dettagli traccia",
+                loadMore: "Carica altro",
             },
         },
         loadingMessages: [
@@ -2165,6 +2170,7 @@ export const translations = {
                 collapseAll: "Recolher tudo",
                 steps: "Passos do agente",
                 traceDetails: "Detalhes da trace",
+                loadMore: "Carregar mais",
             },
         },
         loadingMessages: [
@@ -2524,6 +2530,7 @@ export const translations = {
                 collapseAll: "Alles invouwen",
                 steps: "Agent stappen",
                 traceDetails: "Trace details",
+                loadMore: "Meer laden",
             },
         },
         loadingMessages: [
@@ -2883,6 +2890,7 @@ export const translations = {
                 collapseAll: "すべて折りたたむ",
                 steps: "エージェントステップ",
                 traceDetails: "トレース詳細",
+                loadMore: "もっと読み込む",
             },
         },
         loadingMessages: [
@@ -3242,6 +3250,7 @@ export const translations = {
                 collapseAll: "全部收起",
                 steps: "代理步骤",
                 traceDetails: "追踪详情",
+                loadMore: "加载更多",
             },
         },
         loadingMessages: [

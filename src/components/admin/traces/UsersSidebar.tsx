@@ -108,9 +108,16 @@ export function UsersSidebar({ selectedUserId, onSelect }: UsersSidebarProps) {
                       />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs font-medium text-zinc-800 dark:text-zinc-100 truncate">
-                        {displayName(user)}
-                      </p>
+                      <div className="flex items-center justify-between gap-1">
+                        <p className="text-xs font-medium text-zinc-800 dark:text-zinc-100 truncate">
+                          {displayName(user)}
+                        </p>
+                        {user.trace_count > 0 && (
+                          <span className="flex-shrink-0 text-xs font-mono text-zinc-400 dark:text-zinc-500">
+                            {user.trace_count}
+                          </span>
+                        )}
+                      </div>
                       {user.mail && (
                         <p className="text-xs text-zinc-400 dark:text-zinc-500 truncate">
                           {user.mail}

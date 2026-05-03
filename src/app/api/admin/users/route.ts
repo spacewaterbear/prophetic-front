@@ -16,9 +16,9 @@ export async function GET() {
   const supabase = createAdminClient();
 
   const { data, error } = await supabase
-    .from("profiles")
-    .select("id, first_name, last_name, username, mail, status")
-    .order("last_name", { ascending: true });
+    .from("profile_trace_counts")
+    .select("id, first_name, last_name, username, mail, status, trace_count")
+    .order("trace_count", { ascending: false });
 
   if (error) {
     console.error("Error fetching profiles:", error);

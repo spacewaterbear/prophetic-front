@@ -2,6 +2,8 @@ import { auth } from "@/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 
+const PAGE_SIZE = 50;
+
 export async function GET(req: NextRequest) {
   const session = await auth();
 
@@ -18,19 +20,33 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ detail: "Missing userId" }, { status: 400 });
   }
 
+  const before = req.nextUrl.searchParams.get("before");
+
   const supabase = createAdminClient();
 
-  const { data, error } = await supabase
+  let query = supabase
     .from("traces")
     .select("id, timestamp, name, user_id, total_cost, input, output, metadata")
     .eq("user_id", userId)
     .order("timestamp", { ascending: false })
-    .limit(100);
+    .limit(PAGE_SIZE + 1);
+
+  if (before) {
+    query = query.lt("timestamp", before);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     console.error("Error fetching traces:", error);
     return NextResponse.json({ detail: "Failed to fetch traces" }, { status: 500 });
   }
 
-  return NextResponse.json(data ?? []);
+  const rows = data ?? [];
+  const hasMore = rows.length > PAGE_SIZE;
+
+  return NextResponse.json({
+    data: hasMore ? rows.slice(0, PAGE_SIZE) : rows,
+    hasMore,
+  });
 }
