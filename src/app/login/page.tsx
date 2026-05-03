@@ -21,7 +21,6 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [magicLinkStatus, setMagicLinkStatus] = useState<MagicLinkStatus>("idle");
   const [errorMessage, setErrorMessage] = useState("");
-
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -246,22 +245,37 @@ export default function LoginPage() {
             <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
               {t('login.termsText')}
             </p>
+            <div className="flex items-center justify-center gap-4 mt-3">
+              <a
+                href="/cgu"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 underline underline-offset-2 transition-colors"
+              >
+                CGU
+              </a>
+              <span className="text-gray-300 dark:text-gray-600">·</span>
+              <a
+                href="/cgv"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 underline underline-offset-2 transition-colors"
+              >
+                CGV
+              </a>
+              <span className="text-gray-300 dark:text-gray-600">·</span>
+              <a
+                href="https://siomjdoyjuuwlpimzaju.supabase.co/storage/v1/object/public/front/legal/politique_de_conf.md"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 underline underline-offset-2 transition-colors"
+              >
+                {t('login.privacyLabel')}
+              </a>
+            </div>
           </div>
         </Card>
 
-        {/* Additional Info */}
-        <div className="mt-6 text-center">
-          <div className="flex items-center justify-center gap-6 text-xs text-gray-600 dark:text-gray-400">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-green-500"></div>
-              <span>{t('login.encryption')}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-              <span>{t('login.certified')}</span>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

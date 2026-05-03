@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -32,6 +33,7 @@ export default function PricingContent({
   oraclePrice,
 }: PricingContentProps) {
   const { t } = useI18n();
+  const [cguAccepted, setCguAccepted] = useState(false);
 
   const PLANS = [
     {
@@ -206,21 +208,49 @@ export default function PricingContent({
 
                 <div className="space-y-2">
                   <Button
-                    asChild
-                    className={`w-full h-11 rounded-xl font-medium ${
+                    asChild={cguAccepted}
+                    disabled={!cguAccepted}
+                    onClick={!cguAccepted ? undefined : undefined}
+                    className={`w-full h-11 rounded-xl font-medium transition-opacity ${
                       plan.highlighted
                         ? "bg-white text-gray-900 hover:bg-gray-100 dark:bg-gray-900 dark:text-white dark:hover:bg-gray-800"
                         : "bg-gray-900 text-white hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100"
-                    }`}
+                    } ${!cguAccepted ? "opacity-40 cursor-not-allowed" : ""}`}
                   >
-                    <a href={checkoutUrl}>
-                      {userStatus === plan.name.toLowerCase() ? t("pricing.currentPlan") : plan.cta}
-                    </a>
+                    {cguAccepted ? (
+                      <a href={checkoutUrl}>
+                        {userStatus === plan.name.toLowerCase() ? t("pricing.currentPlan") : plan.cta}
+                      </a>
+                    ) : (
+                      <span>{userStatus === plan.name.toLowerCase() ? t("pricing.currentPlan") : plan.cta}</span>
+                    )}
                   </Button>
                 </div>
               </Card>
             );
           })}
+        </div>
+
+        {/* CGU Checkbox */}
+        <div className="flex items-center justify-center gap-3 mb-8">
+          <input
+            id="cgu-checkbox"
+            type="checkbox"
+            checked={cguAccepted}
+            onChange={(e) => setCguAccepted(e.target.checked)}
+            className="w-4 h-4 rounded border-gray-400 dark:border-gray-500 accent-gray-900 dark:accent-white cursor-pointer"
+          />
+          <label htmlFor="cgu-checkbox" className="text-sm text-gray-600 dark:text-gray-400 cursor-pointer select-none">
+            {t("pricing.cguCheckbox")}{" "}
+            <a
+              href="/cgv"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-900 dark:text-white font-medium underline hover:opacity-75"
+            >
+              {t("pricing.cguLink")}
+            </a>
+          </label>
         </div>
 
         {/* Footer */}

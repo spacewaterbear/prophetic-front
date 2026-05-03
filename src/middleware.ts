@@ -27,7 +27,7 @@ export default auth((req) => {
   const isAdmin = req.auth?.user?.isAdmin === true;
 
   // Public routes that don't require authentication
-  const isPublicRoute = nextUrl.pathname === "/login" || nextUrl.pathname === "/pricing" || nextUrl.pathname.startsWith("/share/") || nextUrl.pathname === "/test-verification" || nextUrl.pathname === "/test_visi" || nextUrl.pathname === "/auth/callback" || nextUrl.pathname.startsWith("/test-immo-card");
+  const isPublicRoute = nextUrl.pathname === "/login" || nextUrl.pathname === "/pricing" || nextUrl.pathname === "/confidentiality-policy" || nextUrl.pathname === "/cgu" || nextUrl.pathname === "/cgv" || nextUrl.pathname.startsWith("/share/") || nextUrl.pathname === "/test-verification" || nextUrl.pathname === "/test_visi" || nextUrl.pathname === "/auth/callback" || nextUrl.pathname.startsWith("/test-immo-card");
   const isRegistrationPending = nextUrl.pathname === "/registration-pending";
   const isRestrictedAccess = nextUrl.pathname === "/restricted-access";
 

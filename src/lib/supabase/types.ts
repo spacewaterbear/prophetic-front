@@ -175,6 +175,7 @@ export type Database = {
           art_status: Database["public"]["Enums"]["user_status"] | null
           avatar_url: string | null
           first_name: string | null
+          has_accepted_conf_politic_and_cgu: boolean | null
           id: string
           is_admin: boolean
           last_name: string | null
@@ -187,6 +188,7 @@ export type Database = {
           art_status?: Database["public"]["Enums"]["user_status"] | null
           avatar_url?: string | null
           first_name?: string | null
+          has_accepted_conf_politic_and_cgu?: boolean | null
           id: string
           is_admin?: boolean
           last_name?: string | null
@@ -199,6 +201,7 @@ export type Database = {
           art_status?: Database["public"]["Enums"]["user_status"] | null
           avatar_url?: string | null
           first_name?: string | null
+          has_accepted_conf_politic_and_cgu?: boolean | null
           id?: string
           is_admin?: boolean
           last_name?: string | null

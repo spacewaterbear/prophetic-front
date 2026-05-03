@@ -43,6 +43,8 @@ function AuthCallbackInner() {
   const [pendingSession, setPendingSession] = useState<PendingSession | null>(null);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
+  const [cguAccepted, setCguAccepted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -143,7 +145,7 @@ function AuthCallbackInner() {
 
   const handleRegistrationSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!firstName.trim() || !lastName.trim() || !pendingSession) return;
+    if (!firstName.trim() || !lastName.trim() || !privacyAccepted || !cguAccepted || !pendingSession) return;
 
     setIsSubmitting(true);
     try {
@@ -252,6 +254,50 @@ function AuthCallbackInner() {
               </div>
             </div>
 
+            <div className="flex flex-col gap-3">
+              <label className="flex items-start gap-3 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={privacyAccepted}
+                  onChange={(e) => setPrivacyAccepted(e.target.checked)}
+                  className="mt-0.5 w-4 h-4 rounded accent-gray-900 dark:accent-white flex-shrink-0 cursor-pointer"
+                  disabled={isSubmitting}
+                />
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  {t("login.privacyCheckboxPrefix")}{" "}
+                  <a
+                    href="/confidentiality-policy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline text-gray-900 dark:text-white hover:opacity-75"
+                  >
+                    {t("login.privacyCheckboxLink")}
+                  </a>
+                </span>
+              </label>
+
+              <label className="flex items-start gap-3 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={cguAccepted}
+                  onChange={(e) => setCguAccepted(e.target.checked)}
+                  className="mt-0.5 w-4 h-4 rounded accent-gray-900 dark:accent-white flex-shrink-0 cursor-pointer"
+                  disabled={isSubmitting}
+                />
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  {t("privacyPopup.cguCheckboxLabel")}{" "}
+                  <a
+                    href="/cgu"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline text-gray-900 dark:text-white hover:opacity-75"
+                  >
+                    {t("privacyPopup.cguCheckboxLink")}
+                  </a>
+                </span>
+              </label>
+            </div>
+
             {errorMessage && (
               <div className="flex items-center gap-2 text-sm text-red-600 dark:text-red-400">
                 <AlertCircle className="w-4 h-4" />
@@ -261,7 +307,7 @@ function AuthCallbackInner() {
 
             <Button
               type="submit"
-              disabled={isSubmitting || !firstName.trim() || !lastName.trim()}
+              disabled={isSubmitting || !firstName.trim() || !lastName.trim() || !privacyAccepted || !cguAccepted}
               className="w-full h-12 bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-100 text-white dark:text-gray-900 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? (

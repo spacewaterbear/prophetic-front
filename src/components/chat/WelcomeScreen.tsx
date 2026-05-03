@@ -2,6 +2,7 @@
 
 import { lazy, Suspense, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useI18n } from "@/contexts/i18n-context";
 import { LOGO_DARK, LOGO_LIGHT } from "@/lib/constants/logos";
@@ -287,10 +288,23 @@ export function WelcomeScreen({
           </>
         )}
       </div>
-      <div className="w-full pb-2 flex justify-center">
+      <div className="w-full pb-2 flex justify-center items-center gap-3 flex-wrap">
         <p className="text-[10px] text-gray-400 dark:text-gray-600 text-center">
           {t("chat.disclaimer")}
         </p>
+        <div className="flex items-center gap-2">
+          <Link href="/cgu" target="_blank" className="text-[10px] text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-400 underline transition-colors">
+            CGU
+          </Link>
+          <span className="text-[10px] text-gray-400 dark:text-gray-600">·</span>
+          <Link href="/cgv" target="_blank" className="text-[10px] text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-400 underline transition-colors">
+            CGV
+          </Link>
+          <span className="text-[10px] text-gray-400 dark:text-gray-600">·</span>
+          <Link href="/confidentiality-policy" target="_blank" className="text-[10px] text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-400 underline transition-colors">
+            {t("login.privacyLabel")}
+          </Link>
+        </div>
       </div>
     </div>
   );

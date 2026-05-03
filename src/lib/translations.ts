@@ -111,6 +111,12 @@ export const translations = {
             lastNamePlaceholder: "Entrez votre nom",
             createAccount: "Créer mon compte",
             creating: "Création en cours...",
+            privacyCheckboxPrefix: "J'accepte la",
+            privacyCheckboxLink: "politique de confidentialité",
+            privacyCheckboxSuffix: "",
+            privacyCheckboxRequired: "Vous devez accepter la politique de confidentialité pour continuer.",
+            cguLabel: "CGU / CGV",
+            privacyLabel: "Politique de confidentialité",
         },
         // Context Menu
         contextMenu: {
@@ -248,6 +254,8 @@ export const translations = {
             signIn: "Se connecter",
             perMonth: "par mois",
             creditsIncluded: "100 crédits inclus",
+            cguCheckbox: "J'ai lu et j'accepte les",
+            cguLink: "Conditions Générales de Vente",
             discover: {
                 description: "Explorez les opportunités d'investissement de luxe guidé par l'IA. Commencez sans engagement.",
                 feature1: "Accès à l'agent Discover",
@@ -295,6 +303,15 @@ export const translations = {
             downgradedMessage: "Votre changement de plan est confirmé. Vous bénéficiez de votre plan actuel jusqu'à la fin de cette période de facturation, puis vous passerez automatiquement au nouveau plan.",
             newTitle: "Bienvenue !",
             newMessage: "Votre abonnement est maintenant actif. Profitez de votre nouveau plan !",
+        },
+        privacyPopup: {
+            title: "Documents légaux",
+            message: "Avant de continuer, veuillez lire et accepter nos documents légaux.",
+            checkboxLabel: "J'ai lu et j'accepte la",
+            checkboxLink: "politique de confidentialité",
+            cguCheckboxLabel: "J'ai lu et j'accepte les",
+            cguCheckboxLink: "Conditions Générales d'Utilisation",
+            accept: "Accepter et continuer",
         },
         onboarding: {
             step1Title: "Découvrez Prophetic Orchestra",
@@ -489,6 +506,12 @@ export const translations = {
             lastNamePlaceholder: "Enter your last name",
             createAccount: "Create my account",
             creating: "Creating...",
+            privacyCheckboxPrefix: "I agree to the",
+            privacyCheckboxLink: "privacy policy",
+            privacyCheckboxSuffix: "",
+            privacyCheckboxRequired: "You must accept the privacy policy to continue.",
+            cguLabel: "Terms of Service",
+            privacyLabel: "Privacy Policy",
         },
         common: {
             loading: "Loading...",
@@ -620,6 +643,8 @@ export const translations = {
             signIn: "Sign in",
             perMonth: "per month",
             creditsIncluded: "1,000 credits included",
+            cguCheckbox: "I have read and agree to the",
+            cguLink: "General Terms of Sale",
             discover: {
                 description: "Explore luxury investment opportunities guided by AI. No commitment.",
                 feature1: "Access to Discover agent",
@@ -667,6 +692,15 @@ export const translations = {
             downgradedMessage: "Your plan change is confirmed. You'll keep your current plan until the end of this billing period, then automatically switch to the lower plan.",
             newTitle: "Welcome!",
             newMessage: "Your subscription is now active. Enjoy your new plan!",
+        },
+        privacyPopup: {
+            title: "Legal Documents",
+            message: "Before continuing, please read and accept our legal documents.",
+            checkboxLabel: "I have read and agree to the",
+            checkboxLink: "privacy policy",
+            cguCheckboxLabel: "I have read and agree to the",
+            cguCheckboxLink: "Terms and Conditions of Use",
+            accept: "Accept and continue",
         },
         onboarding: {
             step1Title: "Introducing Prophetic Orchestra-1o",
