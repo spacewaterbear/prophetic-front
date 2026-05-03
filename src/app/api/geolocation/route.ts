@@ -3,30 +3,14 @@ import { NextRequest, NextResponse } from "next/server";
 // Map countries to language codes
 const countryToLanguage: Record<string, string> = {
     FR: "fr",
-    BE: "fr", // Belgium - French/Dutch, defaulting to French
-    CH: "fr", // Switzerland - French/German/Italian, defaulting to French
-    CA: "fr", // Canada - English/French, defaulting to French
+    BE: "fr",
+    CH: "fr",
+    CA: "fr",
     US: "en",
     GB: "en",
     AU: "en",
     NZ: "en",
     IE: "en",
-    ES: "es",
-    MX: "es",
-    AR: "es",
-    CO: "es",
-    CL: "es",
-    PE: "es",
-    DE: "de",
-    AT: "de",
-    IT: "it",
-    PT: "pt",
-    BR: "pt",
-    NL: "nl",
-    JP: "ja",
-    CN: "zh",
-    TW: "zh",
-    HK: "zh",
 };
 
 export async function GET(request: NextRequest) {
