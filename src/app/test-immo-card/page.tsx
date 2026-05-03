@@ -19,7 +19,12 @@ const mockData: ImmoDisplayData = {
     price_per_sqm: 11396,
     description: "Médiane des ventes appartement sur les 12 derniers mois dans le quartier Paris.",
   },
-  price_factors: [],
+  price_factors: [
+    { label: "Étage élevé", description: "6ᵉ étage sur 7", delta_per_sqm: 350, direction: "positive" },
+    { label: "Petit surface", description: "< 25 m², décote surface", delta_per_sqm: 800, direction: "negative" },
+    { label: "DPE G — passoire", description: "Pénalité thermique légale", delta_per_sqm: 1200, direction: "negative" },
+    { label: "Proximité Jardin des Plantes", description: "< 300 m d'un parc", delta_per_sqm: 280, direction: "positive" },
+  ],
   waterfall: {
     reference_per_sqm: 11396,
     atouts_total: 0,

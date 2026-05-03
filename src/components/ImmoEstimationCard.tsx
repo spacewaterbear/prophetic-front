@@ -1,6 +1,6 @@
 "use client";
 
-import { memo } from "react";
+import { memo, useState } from "react";
 import { useI18n } from "@/contexts/i18n-context";
 
 export interface ImmoPriceFactor {
@@ -94,10 +94,60 @@ export const ImmoEstimationCard = memo(function ImmoEstimationCard({ data }: Pro
   const { t } = useI18n();
   const { property, estimation, reference_price, price_factors, waterfall, dpe, comparables } = data;
 
-  const scale = 76 / waterfall.estimated_per_sqm;
-  const refPct = waterfall.reference_per_sqm * scale;
-  const atoutPct = waterfall.atouts_total * scale;
-  const limitePct = waterfall.limites_total * scale;
+  // signedPct: -15 to +15 (signed), active: included in price calculation
+  type EditableFactor = ImmoPriceFactor & { signedPct: number; initialSignedPct: number; active: boolean };
+  const [editableFactors, setEditableFactors] = useState<EditableFactor[]>(
+    () => price_factors.map(f => {
+      const mag = reference_price.price_per_sqm > 0
+        ? Math.round((Math.abs(f.delta_per_sqm) / reference_price.price_per_sqm) * 1000) / 10
+        : 0;
+      const raw = f.direction === "positive" ? mag : -mag;
+      const clamped = Math.max(-15, Math.min(15, raw));
+      return {
+        ...f,
+        signedPct: clamped,
+        initialSignedPct: clamped,
+        active: true,
+      };
+    })
+  );
+  const [selectedDpeClass, setSelectedDpeClass] = useState(dpe.class);
+
+  // Derive surface from original estimate so we can recompute total_k
+  const surfaceM2 = estimation.price_per_sqm > 0
+    ? estimation.total_k * 1000 / estimation.price_per_sqm
+    : 0;
+
+  // Dynamic calculation — only active factors, derive €/m² from signed pct
+  const ref = reference_price.price_per_sqm;
+  const dynAtouts = editableFactors
+    .filter(f => f.active && f.signedPct > 0)
+    .reduce((s, f) => s + (f.signedPct / 100) * ref, 0);
+  const dynLimites = editableFactors
+    .filter(f => f.active && f.signedPct < 0)
+    .reduce((s, f) => s + (-f.signedPct / 100) * ref, 0);
+  const dynEstimatedPerSqm = Math.round(waterfall.reference_per_sqm + dynAtouts - dynLimites);
+  const dynTotalK = surfaceM2 > 0
+    ? Math.round(dynEstimatedPerSqm * surfaceM2 / 1000)
+    : estimation.total_k;
+  const dynVsPct =
+    reference_price.price_per_sqm > 0
+      ? Math.round(
+          ((dynEstimatedPerSqm - reference_price.price_per_sqm) /
+            reference_price.price_per_sqm) *
+            1000,
+        ) / 10
+      : estimation.vs_neighborhood_pct;
+
+  const dynThermalPenalty = selectedDpeClass === "F" || selectedDpeClass === "G";
+
+  // Waterfall bars — scale anchored to reference price (fixed), estimated varies
+  const FIXED_REF_PCT = 60;
+  const scale = waterfall.reference_per_sqm > 0 ? FIXED_REF_PCT / waterfall.reference_per_sqm : 1;
+  const refPct = FIXED_REF_PCT;
+  const atoutPct = dynAtouts * scale;
+  const limitePct = dynLimites * scale;
+  const estimatedPct = dynEstimatedPerSqm * scale;
 
   const waterfallRows = [
     {
@@ -112,7 +162,7 @@ export const ImmoEstimationCard = memo(function ImmoEstimationCard({ data }: Pro
     },
     {
       label: t("immoCard.strengths"),
-      value: waterfall.atouts_total,
+      value: dynAtouts,
       color: C.green,
       barLeft: refPct,
       barWidth: atoutPct,
@@ -122,9 +172,9 @@ export const ImmoEstimationCard = memo(function ImmoEstimationCard({ data }: Pro
     },
     {
       label: t("immoCard.weaknesses"),
-      value: waterfall.limites_total,
+      value: dynLimites,
       color: C.red,
-      barLeft: refPct + atoutPct,
+      barLeft: refPct + atoutPct - limitePct,
       barWidth: limitePct,
       bold: false,
       separator: false,
@@ -132,15 +182,44 @@ export const ImmoEstimationCard = memo(function ImmoEstimationCard({ data }: Pro
     },
     {
       label: t("immoCard.estimatedPerSqm"),
-      value: waterfall.estimated_per_sqm,
+      value: dynEstimatedPerSqm,
       color: C.dark,
       barLeft: 0,
-      barWidth: 76,
+      barWidth: estimatedPct,
       bold: true,
       separator: true,
       sign: "",
     },
-  ] as const;
+  ];
+
+  const handleFactorSlider = (index: number, value: number) => {
+    setEditableFactors(prev =>
+      prev.map((f, i) => (i === index ? { ...f, signedPct: value } : f))
+    );
+  };
+
+  const handleFactorToggle = (index: number) => {
+    setEditableFactors(prev =>
+      prev.map((f, i) => (i === index ? { ...f, active: !f.active } : f))
+    );
+  };
+
+  const handleDpeChange = (cls: string) => {
+    setSelectedDpeClass(cls);
+    const goodClasses = ["A", "B", "C"];
+    const badClasses = ["F", "G"];
+    setEditableFactors(prev =>
+      prev.map(f => {
+        if (!f.label.toLowerCase().includes("dpe")) return f;
+        const updatedLabel = f.label.replace(/\b[A-G]\b/, cls);
+        if (goodClasses.includes(cls) && f.initialSignedPct < 0)
+          return { ...f, label: updatedLabel, signedPct: 0 };
+        if (badClasses.includes(cls) && f.initialSignedPct < 0)
+          return { ...f, label: updatedLabel, signedPct: f.initialSignedPct };
+        return { ...f, label: updatedLabel };
+      })
+    );
+  };
 
   return (
     <div
@@ -171,7 +250,7 @@ export const ImmoEstimationCard = memo(function ImmoEstimationCard({ data }: Pro
         </div>
       </div>
 
-      {/* Estimation — full width */}
+      {/* Estimation — full width, dynamic */}
       <div
         style={{
           background: C.card,
@@ -203,13 +282,13 @@ export const ImmoEstimationCard = memo(function ImmoEstimationCard({ data }: Pro
             color: C.dark,
           }}
         >
-          {fmt(estimation.total_k)}{" "}
+          {fmt(dynTotalK)}{" "}
           <span style={{ fontSize: 20, fontWeight: 500, color: C.mid }}>k€</span>
         </div>
         <div style={{ fontSize: 13, color: C.mid, marginTop: 8 }}>
           {t("immoCard.soit")}{" "}
           <span style={{ color: C.dark, fontWeight: 600 }}>
-            {fmt(estimation.price_per_sqm)} €/m²
+            {fmt(dynEstimatedPerSqm)} €/m²
           </span>
         </div>
         <div
@@ -219,23 +298,21 @@ export const ImmoEstimationCard = memo(function ImmoEstimationCard({ data }: Pro
             gap: 5,
             marginTop: 10,
             padding: "4px 10px",
-            background: estimation.vs_neighborhood_pct >= 0 ? C.greenBg : C.redBg,
-            color: estimation.vs_neighborhood_pct >= 0 ? C.green : C.red,
+            background: dynVsPct >= 0 ? C.greenBg : C.redBg,
+            color: dynVsPct >= 0 ? C.green : C.red,
             borderRadius: 999,
             fontSize: 11,
             fontWeight: 600,
           }}
         >
-          {estimation.vs_neighborhood_pct >= 0 ? "↑" : "↓"}{" "}
-          {estimation.vs_neighborhood_pct >= 0 ? "+" : ""}
-          {estimation.vs_neighborhood_pct} % {t("immoCard.vsNeighborhood")}
+          {dynVsPct >= 0 ? "↑" : "↓"}{" "}
+          {dynVsPct >= 0 ? "+" : ""}
+          {dynVsPct} % {t("immoCard.vsNeighborhood")}
         </div>
       </div>
 
-      {/* Two-column grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Left column: Prix de référence + Ventes comparables */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      {/* Single column */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           {/* Reference price */}
           <div
             style={{
@@ -394,11 +471,8 @@ export const ImmoEstimationCard = memo(function ImmoEstimationCard({ data }: Pro
               </span>
             </div>
           </div>
-        </div>
 
-        {/* Right column: DPE + Ce qui change le prix */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {/* DPE */}
+          {/* DPE — clickable classes */}
           <div
             style={{
               background: C.card,
@@ -427,6 +501,7 @@ export const ImmoEstimationCard = memo(function ImmoEstimationCard({ data }: Pro
               {["A", "B", "C", "D", "E", "F", "G"].map((cls) => (
                 <div
                   key={cls}
+                  onClick={() => handleDpeChange(cls)}
                   style={{
                     flex: 1,
                     padding: "10px 0",
@@ -434,12 +509,14 @@ export const ImmoEstimationCard = memo(function ImmoEstimationCard({ data }: Pro
                     fontSize: 12,
                     fontWeight: 600,
                     borderRadius: 7,
+                    cursor: "pointer",
                     background:
-                      cls === dpe.class
+                      cls === selectedDpeClass
                         ? DPE_BG[cls] ?? C.border
                         : "rgb(244,241,236)",
-                    color: cls === dpe.class ? C.dark : C.light,
-                    border: `2px solid ${cls === dpe.class ? C.dark : "transparent"}`,
+                    color: cls === selectedDpeClass ? C.dark : C.light,
+                    border: `2px solid ${cls === selectedDpeClass ? C.dark : "transparent"}`,
+                    transition: "background 0.15s, border-color 0.15s",
                   }}
                 >
                   {cls}
@@ -513,19 +590,20 @@ export const ImmoEstimationCard = memo(function ImmoEstimationCard({ data }: Pro
             <div
               style={{
                 padding: "8px 10px",
-                background: dpe.thermal_penalty ? C.redBg : C.greenBg,
+                background: dynThermalPenalty ? C.redBg : C.greenBg,
                 borderRadius: 8,
                 fontSize: 11,
-                color: dpe.thermal_penalty ? C.red : C.green,
+                color: dynThermalPenalty ? C.red : C.green,
+                transition: "background 0.15s, color 0.15s",
               }}
             >
-              {dpe.thermal_penalty
+              {dynThermalPenalty
                 ? t("immoCard.thermalPenalty")
                 : t("immoCard.noThermalPenalty")}
             </div>
           </div>
 
-          {/* Price factors */}
+          {/* Price factors — editable deltas */}
           <div
             style={{
               background: C.card,
@@ -547,77 +625,187 @@ export const ImmoEstimationCard = memo(function ImmoEstimationCard({ data }: Pro
                 {t("immoCard.whatChangesPrice")}
               </div>
               <div style={{ fontSize: 11, color: C.light }}>
-                {price_factors.length} {t("immoCard.factors")}
+                {editableFactors.length} {t("immoCard.factors")}
               </div>
             </div>
             <div style={{ fontSize: 11, color: C.light, marginBottom: 12 }}>
               {t("immoCard.factorsDescription")}
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 14 }}>
-              {price_factors.map((factor, i) => (
-                <div
-                  key={i}
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    background: C.bg,
-                    border: `1px solid ${C.border}`,
-                    borderRadius: 11,
-                    padding: "10px 12px",
-                  }}
-                >
-                  <div style={{ minWidth: 0 }}>
-                    <div
-                      style={{
-                        fontSize: 12,
-                        color: C.dark,
-                        fontWeight: 500,
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                      }}
-                    >
-                      {factor.label}
-                    </div>
-                    <div
-                      style={{
-                        fontSize: 10,
-                        color: C.light,
-                        marginTop: 2,
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                      }}
-                    >
-                      {factor.description}
-                    </div>
-                  </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 14 }}>
+              {editableFactors.map((factor, i) => {
+                const sp = factor.signedPct;
+                const pos = ((sp + 15) / 30) * 100;
+                const fillColor = sp >= 0 ? C.green : C.red;
+                const fillLeft = sp >= 0 ? 50 : pos;
+                const fillWidth = sp >= 0 ? pos - 50 : 50 - pos;
+                const badgeBg = !factor.active ? C.border : sp >= 0 ? C.greenBg : C.redBg;
+                const badgeColor = !factor.active ? C.light : sp >= 0 ? C.green : C.red;
+
+                return (
                   <div
+                    key={i}
                     style={{
-                      background:
-                        factor.direction === "positive" ? C.greenBg : C.redBg,
-                      color:
-                        factor.direction === "positive" ? C.green : C.red,
-                      padding: "4px 8px",
-                      borderRadius: 999,
-                      fontSize: 11,
-                      fontWeight: 600,
-                      fontVariantNumeric: "tabular-nums",
-                      whiteSpace: "nowrap",
-                      marginLeft: 6,
-                      flexShrink: 0,
+                      background: factor.active ? C.bg : "rgb(244,244,246)",
+                      border: `1px solid ${C.border}`,
+                      borderRadius: 11,
+                      padding: "10px 12px",
+                      transition: "background 0.15s",
                     }}
                   >
-                    {factor.direction === "positive" ? "+" : "−"}
-                    {fmt(factor.delta_per_sqm)} €
+                    {/* Top row: checkbox + label + badge */}
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <input
+                        type="checkbox"
+                        checked={factor.active}
+                        onChange={() => handleFactorToggle(i)}
+                        style={{ cursor: "pointer", width: 14, height: 14, flexShrink: 0, accentColor: C.dark } as React.CSSProperties}
+                      />
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div
+                          style={{
+                            fontSize: 12,
+                            color: factor.active ? C.dark : C.light,
+                            fontWeight: 500,
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            transition: "color 0.15s",
+                          }}
+                        >
+                          {factor.label}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: 10,
+                            color: C.light,
+                            marginTop: 1,
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                          }}
+                        >
+                          {factor.description}
+                        </div>
+                      </div>
+                      {/* Badge */}
+                      <div
+                        style={{
+                          background: badgeBg,
+                          color: badgeColor,
+                          padding: "3px 8px",
+                          borderRadius: 999,
+                          fontSize: 11,
+                          fontWeight: 600,
+                          fontVariantNumeric: "tabular-nums",
+                          flexShrink: 0,
+                          minWidth: 44,
+                          textAlign: "center",
+                          transition: "background 0.15s, color 0.15s",
+                        }}
+                      >
+                        {sp >= 0 ? "+" : "−"}{Math.abs(sp)}%
+                      </div>
+                    </div>
+
+                    {/* Slider */}
+                    <div style={{ paddingLeft: 22, marginTop: 8 }}>
+                      <div style={{ position: "relative", height: 20, display: "flex", alignItems: "center" }}>
+                        {/* Track */}
+                        <div
+                          style={{
+                            position: "absolute",
+                            left: 0,
+                            right: 0,
+                            height: 4,
+                            borderRadius: 999,
+                            background: C.border,
+                            overflow: "hidden",
+                          }}
+                        >
+                          {/* Directional fill */}
+                          {factor.active && fillWidth > 0 && (
+                            <div
+                              style={{
+                                position: "absolute",
+                                left: `${fillLeft}%`,
+                                width: `${fillWidth}%`,
+                                top: 0,
+                                bottom: 0,
+                                background: fillColor,
+                                opacity: 0.7,
+                              }}
+                            />
+                          )}
+                          {/* Center tick */}
+                          <div
+                            style={{
+                              position: "absolute",
+                              left: "calc(50% - 1px)",
+                              top: 0,
+                              bottom: 0,
+                              width: 2,
+                              background: factor.active ? C.mid : C.border,
+                              opacity: 0.4,
+                            }}
+                          />
+                        </div>
+                        {/* Thumb */}
+                        <div
+                          style={{
+                            position: "absolute",
+                            left: `calc(${pos}% - 7px)`,
+                            width: 14,
+                            height: 14,
+                            borderRadius: "50%",
+                            background: factor.active ? C.card : "rgb(230,229,232)",
+                            border: `2px solid ${factor.active ? fillColor : C.light}`,
+                            boxShadow: factor.active ? "0 1px 3px rgba(0,0,0,0.18)" : "none",
+                            pointerEvents: "none",
+                            transition: "border-color 0.1s",
+                          }}
+                        />
+                        {/* Native range — invisible, handles interaction */}
+                        <input
+                          type="range"
+                          min={-15}
+                          max={15}
+                          step={0.1}
+                          value={sp}
+                          disabled={!factor.active}
+                          onChange={(e) => handleFactorSlider(i, Number(e.target.value))}
+                          style={{
+                            position: "absolute",
+                            left: 0,
+                            right: 0,
+                            width: "100%",
+                            opacity: 0,
+                            cursor: factor.active ? "pointer" : "not-allowed",
+                            height: 20,
+                            margin: 0,
+                          } as React.CSSProperties}
+                        />
+                      </div>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          fontSize: 9,
+                          color: C.light,
+                          marginTop: 2,
+                        }}
+                      >
+                        <span>−15%</span>
+                        <span>0</span>
+                        <span>+15%</span>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
-            {/* Waterfall */}
+            {/* Waterfall — live */}
             <div
               style={{
                 background: C.bg,
@@ -672,7 +860,6 @@ export const ImmoEstimationCard = memo(function ImmoEstimationCard({ data }: Pro
                           bottom: 0,
                           width: `${row.barWidth}%`,
                           background: row.color,
-                          borderRadius: 4,
                           opacity: row.bold ? 1 : 0.85,
                         }}
                       />
@@ -697,10 +884,38 @@ export const ImmoEstimationCard = memo(function ImmoEstimationCard({ data }: Pro
                     </div>
                   </div>
                 ))}
+                {surfaceM2 > 0 && (
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "150px 1fr 84px",
+                      alignItems: "center",
+                      gap: 10,
+                      paddingTop: 8,
+                      borderTop: `1px solid ${C.border}`,
+                    }}
+                  >
+                    <div style={{ fontSize: 12, color: C.mid, fontWeight: 400 }}>
+                      {t("immoCard.totalPrice")}
+                    </div>
+                    <div />
+                    <div
+                      style={{
+                        fontSize: 13,
+                        color: C.dark,
+                        fontWeight: 700,
+                        textAlign: "right",
+                        fontVariantNumeric: "tabular-nums",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {fmt(dynTotalK * 1000)} €
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
-        </div>
       </div>
 
       {/* Footer */}
