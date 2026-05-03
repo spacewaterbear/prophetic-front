@@ -209,6 +209,89 @@ export type Database = {
         }
         Relationships: []
       }
+      traces: {
+        Row: {
+          id: string
+          timestamp: string | null
+          name: string | null
+          user_id: string | null
+          input: Json | null
+          output: Json | null
+          total_cost: number
+          metadata: Json | null
+        }
+        Insert: {
+          id: string
+          timestamp?: string | null
+          name?: string | null
+          user_id?: string | null
+          input?: Json | null
+          output?: Json | null
+          total_cost?: number
+          metadata?: Json | null
+        }
+        Update: {
+          id?: string
+          timestamp?: string | null
+          name?: string | null
+          user_id?: string | null
+          input?: Json | null
+          output?: Json | null
+          total_cost?: number
+          metadata?: Json | null
+        }
+        Relationships: []
+      }
+      observations: {
+        Row: {
+          id: string
+          trace_id: string
+          parent_observation_id: string | null
+          type: string | null
+          name: string | null
+          start_time: string | null
+          end_time: string | null
+          input: Json | null
+          output: Json | null
+          usage_tokens: number | null
+          usage_cost: number | null
+        }
+        Insert: {
+          id: string
+          trace_id: string
+          parent_observation_id?: string | null
+          type?: string | null
+          name?: string | null
+          start_time?: string | null
+          end_time?: string | null
+          input?: Json | null
+          output?: Json | null
+          usage_tokens?: number | null
+          usage_cost?: number | null
+        }
+        Update: {
+          id?: string
+          trace_id?: string
+          parent_observation_id?: string | null
+          type?: string | null
+          name?: string | null
+          start_time?: string | null
+          end_time?: string | null
+          input?: Json | null
+          output?: Json | null
+          usage_tokens?: number | null
+          usage_cost?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "observations_trace_id_fkey"
+            columns: ["trace_id"]
+            isOneToOne: false
+            referencedRelation: "traces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

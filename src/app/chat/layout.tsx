@@ -15,6 +15,7 @@ import {
   MessageCircleHeart,
   Palette,
   ArrowUpCircle,
+  Activity,
 } from "lucide-react";
 import { useI18n } from "@/contexts/i18n-context";
 import { useSidebar, SidebarProvider } from "@/contexts/sidebar-context";
@@ -504,6 +505,14 @@ function ChatLayoutInner({
                 align="end"
                 className="w-56 bg-white dark:bg-[#1e1f20] border-gray-300 dark:border-gray-700"
               >
+                {session.user.isAdmin && (
+                  <DropdownMenuItem asChild className="cursor-pointer text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 focus:bg-gray-100 dark:focus:bg-white/10">
+                    <Link href="/admin/traces">
+                      <Activity className="h-4 w-4 mr-2" />
+                      {t("nav.adminTraces")}
+                    </Link>
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem
                   onClick={handleSignOut}
                   className="cursor-pointer text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 focus:bg-gray-100 dark:focus:bg-white/10"
