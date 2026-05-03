@@ -94,16 +94,6 @@ export const ImmoEstimationCard = memo(function ImmoEstimationCard({ data }: Pro
   const { t } = useI18n();
   const { property, estimation, reference_price, price_factors, waterfall, dpe, comparables } = data;
 
-  const thumbPct = Math.max(
-    0,
-    Math.min(
-      100,
-      ((estimation.total_k - estimation.range_low_k) /
-        (estimation.range_high_k - estimation.range_low_k)) *
-        100,
-    ),
-  );
-
   const scale = 76 / waterfall.estimated_per_sqm;
   const refPct = waterfall.reference_per_sqm * scale;
   const atoutPct = waterfall.atouts_total * scale;
@@ -181,152 +171,71 @@ export const ImmoEstimationCard = memo(function ImmoEstimationCard({ data }: Pro
         </div>
       </div>
 
+      {/* Estimation — full width */}
+      <div
+        style={{
+          background: C.card,
+          border: `1px solid ${C.border}`,
+          borderRadius: 18,
+          padding: "20px 16px",
+          textAlign: "center",
+          marginBottom: 12,
+        }}
+      >
+        <div
+          style={{
+            fontSize: 10,
+            color: C.light,
+            letterSpacing: "1.2px",
+            textTransform: "uppercase",
+            marginBottom: 6,
+          }}
+        >
+          {t("immoCard.estimation")}
+        </div>
+        <div
+          style={{
+            fontSize: 42,
+            fontWeight: 700,
+            lineHeight: 1,
+            letterSpacing: -2,
+            fontVariantNumeric: "tabular-nums",
+            color: C.dark,
+          }}
+        >
+          {fmt(estimation.total_k)}{" "}
+          <span style={{ fontSize: 20, fontWeight: 500, color: C.mid }}>k€</span>
+        </div>
+        <div style={{ fontSize: 13, color: C.mid, marginTop: 8 }}>
+          {t("immoCard.soit")}{" "}
+          <span style={{ color: C.dark, fontWeight: 600 }}>
+            {fmt(estimation.price_per_sqm)} €/m²
+          </span>
+        </div>
+        <div
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 5,
+            marginTop: 10,
+            padding: "4px 10px",
+            background: estimation.vs_neighborhood_pct >= 0 ? C.greenBg : C.redBg,
+            color: estimation.vs_neighborhood_pct >= 0 ? C.green : C.red,
+            borderRadius: 999,
+            fontSize: 11,
+            fontWeight: 600,
+          }}
+        >
+          {estimation.vs_neighborhood_pct >= 0 ? "↑" : "↓"}{" "}
+          {estimation.vs_neighborhood_pct >= 0 ? "+" : ""}
+          {estimation.vs_neighborhood_pct} % {t("immoCard.vsNeighborhood")}
+        </div>
+      </div>
+
       {/* Two-column grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Left column */}
+        {/* Left column: Prix de référence + Ventes comparables */}
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {/* Estimation panel */}
-          <div
-            style={{
-              background: C.card,
-              border: `1px solid ${C.border}`,
-              borderRadius: 18,
-              padding: 16,
-            }}
-          >
-            {/* Photo placeholder */}
-            <div
-              style={{
-                height: 130,
-                borderRadius: 13,
-                background:
-                  "repeating-linear-gradient(45deg,rgb(239,234,224) 0,rgb(239,234,224) 8px,rgb(233,227,214) 8px,rgb(233,227,214) 16px)",
-                marginBottom: 14,
-                display: "grid",
-                placeItems: "center",
-                fontSize: 10,
-                color: C.light,
-                fontFamily: "ui-monospace, monospace",
-                letterSpacing: "0.5px",
-              }}
-            >
-              {t("immoCard.photoPlaceholder")}
-            </div>
-
-            {/* Price block */}
-            <div
-              style={{
-                background: C.bg,
-                borderRadius: 13,
-                padding: "16px 12px",
-                textAlign: "center",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: 10,
-                  color: C.light,
-                  letterSpacing: "1.2px",
-                  textTransform: "uppercase",
-                  marginBottom: 6,
-                }}
-              >
-                {t("immoCard.estimation")}
-              </div>
-              <div
-                style={{
-                  fontSize: 42,
-                  fontWeight: 700,
-                  lineHeight: 1,
-                  letterSpacing: -2,
-                  fontVariantNumeric: "tabular-nums",
-                  color: C.dark,
-                }}
-              >
-                {fmt(estimation.total_k)}{" "}
-                <span style={{ fontSize: 20, fontWeight: 500, color: C.mid }}>
-                  k€
-                </span>
-              </div>
-              <div style={{ fontSize: 13, color: C.mid, marginTop: 8 }}>
-                {t("immoCard.soit")}{" "}
-                <span style={{ color: C.dark, fontWeight: 600 }}>
-                  {fmt(estimation.price_per_sqm)} €/m²
-                </span>
-              </div>
-              <div
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 5,
-                  marginTop: 10,
-                  padding: "4px 10px",
-                  background:
-                    estimation.vs_neighborhood_pct >= 0 ? C.greenBg : C.redBg,
-                  color:
-                    estimation.vs_neighborhood_pct >= 0 ? C.green : C.red,
-                  borderRadius: 999,
-                  fontSize: 11,
-                  fontWeight: 600,
-                }}
-              >
-                {estimation.vs_neighborhood_pct >= 0 ? "↑" : "↓"}{" "}
-                {estimation.vs_neighborhood_pct >= 0 ? "+" : ""}
-                {estimation.vs_neighborhood_pct} % {t("immoCard.vsNeighborhood")}
-              </div>
-
-              {/* Range slider */}
-              <div style={{ marginTop: 16 }}>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    fontSize: 10,
-                    color: C.light,
-                    marginBottom: 5,
-                  }}
-                >
-                  <span>{fmt(estimation.range_low_k)} k€</span>
-                  <span>{t("immoCard.priceRange")}</span>
-                  <span>{fmt(estimation.range_high_k)} k€</span>
-                </div>
-                <div
-                  style={{
-                    height: 6,
-                    borderRadius: 999,
-                    background: C.border,
-                    position: "relative",
-                  }}
-                >
-                  <div
-                    style={{
-                      position: "absolute",
-                      top: 0,
-                      bottom: 0,
-                      left: 0,
-                      right: `${100 - thumbPct}%`,
-                      background: C.dark,
-                      borderRadius: 999,
-                    }}
-                  />
-                  <div
-                    style={{
-                      position: "absolute",
-                      left: `${thumbPct}%`,
-                      top: -4,
-                      transform: "translateX(-50%)",
-                      width: 14,
-                      height: 14,
-                      borderRadius: "50%",
-                      background: C.card,
-                      border: `2px solid ${C.dark}`,
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
           {/* Reference price */}
           <div
             style={{
@@ -363,6 +272,259 @@ export const ImmoEstimationCard = memo(function ImmoEstimationCard({ data }: Pro
             </div>
           </div>
 
+          {/* Comparable sales */}
+          <div
+            style={{
+              background: C.card,
+              border: `1px solid ${C.border}`,
+              borderRadius: 16,
+              padding: 16,
+              flex: 1,
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: 12,
+              }}
+            >
+              <div style={{ fontSize: 13, fontWeight: 600, color: C.dark }}>
+                {t("immoCard.comparableSales")}
+              </div>
+              <div style={{ fontSize: 10, color: C.light }}>
+                {comparables.shown} / {comparables.total}
+              </div>
+            </div>
+
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 44px 32px 28px 68px",
+                fontSize: 10,
+                color: C.light,
+                paddingBottom: 6,
+                textTransform: "uppercase",
+                letterSpacing: "0.8px",
+              }}
+            >
+              <div>{t("immoCard.address")}</div>
+              <div style={{ textAlign: "right" }}>{t("immoCard.surface")}</div>
+              <div style={{ textAlign: "right" }}>{t("immoCard.floor")}</div>
+              <div style={{ textAlign: "center" }}>{t("immoCard.dpe")}</div>
+              <div style={{ textAlign: "right" }}>€/m²</div>
+            </div>
+
+            {comparables.items.map((item, i) => (
+              <div
+                key={i}
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 44px 32px 28px 68px",
+                  fontSize: 12,
+                  padding: "8px 0",
+                  borderTop: `1px solid ${C.border}`,
+                  alignItems: "center",
+                }}
+              >
+                <div
+                  style={{
+                    color: C.dark,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {item.address}
+                </div>
+                <div style={{ textAlign: "right", color: C.mid }}>
+                  {item.surface_m2} m²
+                </div>
+                <div style={{ textAlign: "right", color: C.mid }}>
+                  {item.floor !== null && item.floor !== undefined
+                    ? `${item.floor}ᵉ`
+                    : "—"}
+                </div>
+                <div style={{ textAlign: "center" }}>
+                  {item.dpe_class ? (
+                    <span
+                      style={{
+                        fontSize: 9,
+                        fontWeight: 700,
+                        padding: "2px 4px",
+                        borderRadius: 3,
+                        background: "rgb(244,241,236)",
+                        color: C.mid,
+                      }}
+                    >
+                      {item.dpe_class}
+                    </span>
+                  ) : (
+                    "—"
+                  )}
+                </div>
+                <div
+                  style={{
+                    textAlign: "right",
+                    color: C.dark,
+                    fontWeight: 600,
+                    fontVariantNumeric: "tabular-nums",
+                  }}
+                >
+                  {fmt(item.price_per_sqm)}
+                </div>
+              </div>
+            ))}
+
+            <div style={{ marginTop: 10, fontSize: 11, color: C.light }}>
+              {t("immoCard.medianComps")} ·{" "}
+              <span style={{ color: C.dark, fontWeight: 600 }}>
+                {fmt(comparables.median_per_sqm)} €/m²
+              </span>{" "}
+              · {t("immoCard.yourPropertyAt")}{" "}
+              <span
+                style={{
+                  color: comparables.vs_comps_pct >= 0 ? C.green : C.red,
+                  fontWeight: 600,
+                }}
+              >
+                {comparables.vs_comps_pct >= 0 ? "+" : ""}
+                {comparables.vs_comps_pct} %
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Right column: DPE + Ce qui change le prix */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {/* DPE */}
+          <div
+            style={{
+              background: C.card,
+              border: `1px solid ${C.border}`,
+              borderRadius: 16,
+              padding: 16,
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: 12,
+              }}
+            >
+              <div style={{ fontSize: 13, fontWeight: 600, color: C.dark }}>
+                {t("immoCard.energyPerformance")}
+              </div>
+              <div style={{ fontSize: 10, color: C.light }}>
+                {t("immoCard.dpe")} · GES
+              </div>
+            </div>
+
+            <div style={{ display: "flex", gap: 3, marginBottom: 12 }}>
+              {["A", "B", "C", "D", "E", "F", "G"].map((cls) => (
+                <div
+                  key={cls}
+                  style={{
+                    flex: 1,
+                    padding: "10px 0",
+                    textAlign: "center",
+                    fontSize: 12,
+                    fontWeight: 600,
+                    borderRadius: 7,
+                    background:
+                      cls === dpe.class
+                        ? DPE_BG[cls] ?? C.border
+                        : "rgb(244,241,236)",
+                    color: cls === dpe.class ? C.dark : C.light,
+                    border: `2px solid ${cls === dpe.class ? C.dark : "transparent"}`,
+                  }}
+                >
+                  {cls}
+                </div>
+              ))}
+            </div>
+
+            {(dpe.energy_kwh_per_sqm !== null ||
+              dpe.co2_kg_per_sqm !== null) && (
+              <div
+                className="grid grid-cols-2 gap-2"
+                style={{ marginBottom: 10 }}
+              >
+                {dpe.energy_kwh_per_sqm !== null && (
+                  <div
+                    style={{ background: C.bg, borderRadius: 8, padding: 10 }}
+                  >
+                    <div style={{ fontSize: 11, color: C.light }}>
+                      {t("immoCard.energy")}
+                    </div>
+                    <div
+                      style={{
+                        fontWeight: 600,
+                        marginTop: 2,
+                        fontSize: 13,
+                        color: C.dark,
+                      }}
+                    >
+                      {dpe.energy_kwh_per_sqm}{" "}
+                      <span
+                        style={{
+                          color: C.light,
+                          fontSize: 10,
+                          fontWeight: 400,
+                        }}
+                      >
+                        kWh/m²/an
+                      </span>
+                    </div>
+                  </div>
+                )}
+                {dpe.co2_kg_per_sqm !== null && (
+                  <div
+                    style={{ background: C.bg, borderRadius: 8, padding: 10 }}
+                  >
+                    <div style={{ fontSize: 11, color: C.light }}>CO₂</div>
+                    <div
+                      style={{
+                        fontWeight: 600,
+                        marginTop: 2,
+                        fontSize: 13,
+                        color: C.dark,
+                      }}
+                    >
+                      {dpe.co2_kg_per_sqm}{" "}
+                      <span
+                        style={{
+                          color: C.light,
+                          fontSize: 10,
+                          fontWeight: 400,
+                        }}
+                      >
+                        kg/m²/an
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div
+              style={{
+                padding: "8px 10px",
+                background: dpe.thermal_penalty ? C.redBg : C.greenBg,
+                borderRadius: 8,
+                fontSize: 11,
+                color: dpe.thermal_penalty ? C.red : C.green,
+              }}
+            >
+              {dpe.thermal_penalty
+                ? t("immoCard.thermalPenalty")
+                : t("immoCard.noThermalPenalty")}
+            </div>
+          </div>
+
           {/* Price factors */}
           <div
             style={{
@@ -370,6 +532,7 @@ export const ImmoEstimationCard = memo(function ImmoEstimationCard({ data }: Pro
               border: `1px solid ${C.border}`,
               borderRadius: 18,
               padding: 16,
+              flex: 1,
             }}
           >
             <div
@@ -391,7 +554,7 @@ export const ImmoEstimationCard = memo(function ImmoEstimationCard({ data }: Pro
               {t("immoCard.factorsDescription")}
             </div>
 
-            <div className="grid grid-cols-2 gap-2" style={{ marginBottom: 14 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 14 }}>
               {price_factors.map((factor, i) => (
                 <div
                   key={i}
@@ -399,7 +562,7 @@ export const ImmoEstimationCard = memo(function ImmoEstimationCard({ data }: Pro
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
-                    background: C.card,
+                    background: C.bg,
                     border: `1px solid ${C.border}`,
                     borderRadius: 11,
                     padding: "10px 12px",
@@ -535,259 +698,6 @@ export const ImmoEstimationCard = memo(function ImmoEstimationCard({ data }: Pro
                   </div>
                 ))}
               </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Right column */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {/* DPE */}
-          <div
-            style={{
-              background: C.card,
-              border: `1px solid ${C.border}`,
-              borderRadius: 16,
-              padding: 16,
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: 12,
-              }}
-            >
-              <div style={{ fontSize: 13, fontWeight: 600, color: C.dark }}>
-                {t("immoCard.energyPerformance")}
-              </div>
-              <div style={{ fontSize: 10, color: C.light }}>
-                {t("immoCard.dpe")} · GES
-              </div>
-            </div>
-
-            <div style={{ display: "flex", gap: 3, marginBottom: 12 }}>
-              {["A", "B", "C", "D", "E", "F", "G"].map((cls) => (
-                <div
-                  key={cls}
-                  style={{
-                    flex: 1,
-                    padding: "10px 0",
-                    textAlign: "center",
-                    fontSize: 12,
-                    fontWeight: 600,
-                    borderRadius: 7,
-                    background:
-                      cls === dpe.class
-                        ? DPE_BG[cls] ?? C.border
-                        : "rgb(244,241,236)",
-                    color: cls === dpe.class ? C.dark : C.light,
-                    border: `2px solid ${cls === dpe.class ? C.dark : "transparent"}`,
-                  }}
-                >
-                  {cls}
-                </div>
-              ))}
-            </div>
-
-            {(dpe.energy_kwh_per_sqm !== null ||
-              dpe.co2_kg_per_sqm !== null) && (
-              <div
-                className="grid grid-cols-2 gap-2"
-                style={{ marginBottom: 10 }}
-              >
-                {dpe.energy_kwh_per_sqm !== null && (
-                  <div
-                    style={{ background: C.bg, borderRadius: 8, padding: 10 }}
-                  >
-                    <div style={{ fontSize: 11, color: C.light }}>
-                      {t("immoCard.energy")}
-                    </div>
-                    <div
-                      style={{
-                        fontWeight: 600,
-                        marginTop: 2,
-                        fontSize: 13,
-                        color: C.dark,
-                      }}
-                    >
-                      {dpe.energy_kwh_per_sqm}{" "}
-                      <span
-                        style={{
-                          color: C.light,
-                          fontSize: 10,
-                          fontWeight: 400,
-                        }}
-                      >
-                        kWh/m²/an
-                      </span>
-                    </div>
-                  </div>
-                )}
-                {dpe.co2_kg_per_sqm !== null && (
-                  <div
-                    style={{ background: C.bg, borderRadius: 8, padding: 10 }}
-                  >
-                    <div style={{ fontSize: 11, color: C.light }}>CO₂</div>
-                    <div
-                      style={{
-                        fontWeight: 600,
-                        marginTop: 2,
-                        fontSize: 13,
-                        color: C.dark,
-                      }}
-                    >
-                      {dpe.co2_kg_per_sqm}{" "}
-                      <span
-                        style={{
-                          color: C.light,
-                          fontSize: 10,
-                          fontWeight: 400,
-                        }}
-                      >
-                        kg/m²/an
-                      </span>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            <div
-              style={{
-                padding: "8px 10px",
-                background: dpe.thermal_penalty ? C.redBg : C.greenBg,
-                borderRadius: 8,
-                fontSize: 11,
-                color: dpe.thermal_penalty ? C.red : C.green,
-              }}
-            >
-              {dpe.thermal_penalty
-                ? t("immoCard.thermalPenalty")
-                : t("immoCard.noThermalPenalty")}
-            </div>
-          </div>
-
-          {/* Comparable sales */}
-          <div
-            style={{
-              background: C.card,
-              border: `1px solid ${C.border}`,
-              borderRadius: 16,
-              padding: 16,
-              flex: 1,
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: 12,
-              }}
-            >
-              <div style={{ fontSize: 13, fontWeight: 600, color: C.dark }}>
-                {t("immoCard.comparableSales")}
-              </div>
-              <div style={{ fontSize: 10, color: C.light }}>
-                {comparables.shown} / {comparables.total}
-              </div>
-            </div>
-
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 44px 32px 28px 68px",
-                fontSize: 10,
-                color: C.light,
-                paddingBottom: 6,
-                textTransform: "uppercase",
-                letterSpacing: "0.8px",
-              }}
-            >
-              <div>{t("immoCard.address")}</div>
-              <div style={{ textAlign: "right" }}>{t("immoCard.surface")}</div>
-              <div style={{ textAlign: "right" }}>{t("immoCard.floor")}</div>
-              <div style={{ textAlign: "center" }}>{t("immoCard.dpe")}</div>
-              <div style={{ textAlign: "right" }}>€/m²</div>
-            </div>
-
-            {comparables.items.map((item, i) => (
-              <div
-                key={i}
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 44px 32px 28px 68px",
-                  fontSize: 12,
-                  padding: "8px 0",
-                  borderTop: `1px solid ${C.border}`,
-                  alignItems: "center",
-                }}
-              >
-                <div
-                  style={{
-                    color: C.dark,
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {item.address}
-                </div>
-                <div style={{ textAlign: "right", color: C.mid }}>
-                  {item.surface_m2} m²
-                </div>
-                <div style={{ textAlign: "right", color: C.mid }}>
-                  {item.floor !== null && item.floor !== undefined
-                    ? `${item.floor}ᵉ`
-                    : "—"}
-                </div>
-                <div style={{ textAlign: "center" }}>
-                  {item.dpe_class ? (
-                    <span
-                      style={{
-                        fontSize: 9,
-                        fontWeight: 700,
-                        padding: "2px 4px",
-                        borderRadius: 3,
-                        background: "rgb(244,241,236)",
-                        color: C.mid,
-                      }}
-                    >
-                      {item.dpe_class}
-                    </span>
-                  ) : (
-                    "—"
-                  )}
-                </div>
-                <div
-                  style={{
-                    textAlign: "right",
-                    color: C.dark,
-                    fontWeight: 600,
-                    fontVariantNumeric: "tabular-nums",
-                  }}
-                >
-                  {fmt(item.price_per_sqm)}
-                </div>
-              </div>
-            ))}
-
-            <div style={{ marginTop: 10, fontSize: 11, color: C.light }}>
-              {t("immoCard.medianComps")} ·{" "}
-              <span style={{ color: C.dark, fontWeight: 600 }}>
-                {fmt(comparables.median_per_sqm)} €/m²
-              </span>{" "}
-              · {t("immoCard.yourPropertyAt")}{" "}
-              <span
-                style={{
-                  color: comparables.vs_comps_pct >= 0 ? C.green : C.red,
-                  fontWeight: 600,
-                }}
-              >
-                {comparables.vs_comps_pct >= 0 ? "+" : ""}
-                {comparables.vs_comps_pct} %
-              </span>
             </div>
           </div>
         </div>

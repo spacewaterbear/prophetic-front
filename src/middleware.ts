@@ -10,6 +10,12 @@ export default auth((req) => {
     return NextResponse.rewrite(new URL("/404", nextUrl));
   }
 
+  // Block staging-only test routes when ENVIRONNEMENT is not staging
+  const isStagingRoute = nextUrl.pathname.startsWith("/test-immo-card");
+  if (isStagingRoute && process.env.ENVIRONNEMENT !== "staging") {
+    return NextResponse.rewrite(new URL("/404", nextUrl));
+  }
+
   // Dev mode: skip all auth checks when NEXT_PUBLIC_SKIP_AUTH is set
   // NODE_ENV is inlined at build time, so this branch is dead-code-eliminated in production
   if (process.env.NODE_ENV === "development" && process.env.NEXT_PUBLIC_SKIP_AUTH === "true") {
@@ -21,7 +27,7 @@ export default auth((req) => {
   const isAdmin = req.auth?.user?.isAdmin === true;
 
   // Public routes that don't require authentication
-  const isPublicRoute = nextUrl.pathname === "/login" || nextUrl.pathname === "/pricing" || nextUrl.pathname.startsWith("/share/") || nextUrl.pathname === "/test-verification" || nextUrl.pathname === "/test_visi" || nextUrl.pathname === "/auth/callback";
+  const isPublicRoute = nextUrl.pathname === "/login" || nextUrl.pathname === "/pricing" || nextUrl.pathname.startsWith("/share/") || nextUrl.pathname === "/test-verification" || nextUrl.pathname === "/test_visi" || nextUrl.pathname === "/auth/callback" || nextUrl.pathname.startsWith("/test-immo-card");
   const isRegistrationPending = nextUrl.pathname === "/registration-pending";
   const isRestrictedAccess = nextUrl.pathname === "/restricted-access";
 
@@ -34,6 +40,15 @@ export default auth((req) => {
   const isGuestAccessibleRoute =
     !isRestrictedEnv &&
     (nextUrl.pathname === "/" || nextUrl.pathname.startsWith("/chat"));
+
+  // Admin-only routes
+  const isAdminRoute = nextUrl.pathname.startsWith("/admin");
+  if (isAdminRoute && !isLoggedIn) {
+    return NextResponse.redirect(new URL("/login", nextUrl));
+  }
+  if (isAdminRoute && isLoggedIn && !isAdmin) {
+    return NextResponse.redirect(new URL("/", nextUrl));
+  }
 
   // If not logged in and trying to access protected route, redirect to login
   if (!isLoggedIn && !isPublicRoute && !isGuestAccessibleRoute) {
