@@ -17,6 +17,7 @@ import { WatchesSearchData } from "@/components/WatchesCard";
 import { WhiskySearchData } from "@/components/WhiskyCard";
 import { WineSearchData } from "@/components/WineCard";
 import { CardsSearchData } from "@/components/SportsCardsCard";
+import { ImmoDisplayData } from "@/components/ImmoEstimationCard";
 import { useChatPendingStore } from "@/store/chatPendingStore";
 import { api, type ConversationDetailResponse, type CreateConversationResponse } from "@/lib/api";
 
@@ -59,6 +60,7 @@ interface StreamingState {
   whiskySearchData: WhiskySearchData | null;
   wineSearchData: WineSearchData | null;
   cardsSearchData: CardsSearchData | null;
+  immoDisplayData: ImmoDisplayData | null;
   vignetteCategory: string | null;
   status: string;
   lastActivity: number;
@@ -79,6 +81,7 @@ type StreamingAction =
   | { type: "SET_WHISKY"; data: WhiskySearchData }
   | { type: "SET_WINE"; data: WineSearchData }
   | { type: "SET_CARDS"; data: CardsSearchData }
+  | { type: "SET_IMMO_DISPLAY"; data: ImmoDisplayData }
   | { type: "SET_VIGNETTE_CATEGORY"; category: string | null }
   | { type: "SET_STATUS"; status: string }
   | { type: "MARK_ACTIVITY" }
@@ -97,6 +100,7 @@ const initialStreaming: StreamingState = {
   whiskySearchData: null,
   wineSearchData: null,
   cardsSearchData: null,
+  immoDisplayData: null,
   vignetteCategory: null,
   status: "",
   lastActivity: 0,
@@ -139,6 +143,8 @@ function streamingReducer(
       return { ...state, wineSearchData: action.data };
     case "SET_CARDS":
       return { ...state, cardsSearchData: action.data };
+    case "SET_IMMO_DISPLAY":
+      return { ...state, immoDisplayData: action.data };
     case "SET_VIGNETTE_CATEGORY":
       return { ...state, vignetteCategory: action.category };
     case "SET_STATUS":
@@ -280,6 +286,7 @@ export function useChatConversation({
           let streamingCardsData: CardsSearchData | null = null;
           let streamingMktData: MarketplaceData | null = null;
           let streamingREData: import("@/types/chat").RealEstateData | null = null;
+          let streamingImmoData: ImmoDisplayData | null = null;
 
           while (true) {
             const { done, value } = await reader.read();
@@ -350,6 +357,9 @@ export function useChatConversation({
                 } else if (parsed.type === "real_estate_data") {
                   streamingREData = parsed.data as import("@/types/chat").RealEstateData;
                   dispatch({ type: "SET_REAL_ESTATE", data: streamingREData });
+                } else if (parsed.type === "immo_display_data") {
+                  streamingImmoData = parsed.data as ImmoDisplayData;
+                  dispatch({ type: "SET_IMMO_DISPLAY", data: streamingImmoData });
                 } else if (parsed.type === "questions_chunk") {
                   questionsContent += parsed.content || "";
                   dispatch({
@@ -377,6 +387,7 @@ export function useChatConversation({
                     ...(streamingCardsData ? { cards_search_data: streamingCardsData } : {}),
                     ...(streamingMktData ? { marketplace_data: streamingMktData } : {}),
                     ...(streamingREData ? { real_estate_data: streamingREData } : {}),
+                    ...(streamingImmoData ? { immo_display_data: streamingImmoData } : {}),
                     ...(wordsToHighlight ? { words_to_highlight: wordsToHighlight } : {}),
                   };
 
@@ -610,6 +621,10 @@ export function useChatConversation({
               setShouldScrollToTop(false);
               dispatch({ type: "SET_CARDS", data: data.data as CardsSearchData });
             }
+          },
+          immo_display_data: (data) => {
+            setShouldScrollToTop(false);
+            dispatch({ type: "SET_IMMO_DISPLAY", data: data.data as ImmoDisplayData });
           },
           done: async () => {
             await loadConversation(targetConversationId);
@@ -1097,6 +1112,7 @@ export function useChatConversation({
     streamingWhiskySearchData: streaming.whiskySearchData,
     streamingWineSearchData: streaming.wineSearchData,
     streamingCardsSearchData: streaming.cardsSearchData,
+    streamingImmoDisplayData: streaming.immoDisplayData,
     streamingVignetteCategory: streaming.vignetteCategory,
     currentStatus: streaming.status,
     streamingLastActivity: streaming.lastActivity,

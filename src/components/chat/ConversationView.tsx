@@ -16,6 +16,7 @@ import { WatchesSearchData } from "@/components/WatchesCard";
 import { WhiskySearchData } from "@/components/WhiskyCard";
 import { WineSearchData } from "@/components/WineCard";
 import { CardsSearchData } from "@/components/SportsCardsCard";
+import { ImmoDisplayData } from "@/components/ImmoEstimationCard";
 import { useI18n } from "@/contexts/i18n-context";
 import { useChatInputContext } from "@/contexts/chat-input-context";
 
@@ -34,6 +35,7 @@ interface ConversationViewProps {
   streamingWhiskySearchData: WhiskySearchData | null;
   streamingWineSearchData: WineSearchData | null;
   streamingCardsSearchData: CardsSearchData | null;
+  streamingImmoDisplayData: ImmoDisplayData | null;
   streamingVignetteCategory: string | null;
   currentStatus: string;
   streamingLastActivity: number;
@@ -64,6 +66,7 @@ export const ConversationView = memo(function ConversationView({
   streamingWhiskySearchData,
   streamingWineSearchData,
   streamingCardsSearchData,
+  streamingImmoDisplayData,
   streamingVignetteCategory,
   currentStatus,
   streamingLastActivity,
@@ -110,7 +113,8 @@ export const ConversationView = memo(function ConversationView({
             !streamingWatchesSearchData &&
             !streamingWhiskySearchData &&
             !streamingWineSearchData &&
-            !streamingCardsSearchData && (
+            !streamingCardsSearchData &&
+            !streamingImmoDisplayData && (
               <div className="flex gap-2 sm:gap-4 items-start justify-start">
                 <AIAvatar />
                 <div className="max-w-[90vw] sm:max-w-3xl lg:max-w-4xl px-3 sm:px-4 py-4 sm:py-5 rounded-2xl overflow-hidden bg-[rgb(249,248,244)] dark:bg-[rgb(1,1,0)]">
@@ -133,6 +137,7 @@ export const ConversationView = memo(function ConversationView({
             streamingWhiskySearchData={streamingWhiskySearchData}
             streamingWineSearchData={streamingWineSearchData}
             streamingCardsSearchData={streamingCardsSearchData}
+            streamingImmoDisplayData={streamingImmoDisplayData}
             streamingVignetteCategory={streamingVignetteCategory}
             showStreamingIndicator={showStreamingIndicator}
             isLoading={isLoading}

@@ -6,6 +6,7 @@ import { WatchesSearchData } from "@/components/WatchesCard";
 import { WhiskySearchData } from "@/components/WhiskyCard";
 import { WineSearchData } from "@/components/WineCard";
 import { CardsSearchData } from "@/components/SportsCardsCard";
+import { ImmoDisplayData } from "@/components/ImmoEstimationCard";
 
 export interface Artist {
   artist_name: string;
@@ -84,6 +85,7 @@ export interface Message {
   whisky_search_data?: WhiskySearchData;
   wine_search_data?: WineSearchData;
   cards_search_data?: CardsSearchData;
+  immo_display_data?: ImmoDisplayData;
   vignetteCategory?: string;
   words_to_highlight?: string[];
 }

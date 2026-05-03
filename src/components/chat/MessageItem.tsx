@@ -81,6 +81,11 @@ const SportsCardsCard = lazy(() =>
     default: mod.SportsCardsCard,
   })),
 );
+const ImmoEstimationCard = lazy(() =>
+  import("@/components/ImmoEstimationCard").then((mod) => ({
+    default: mod.ImmoEstimationCard,
+  })),
+);
 
 interface MessageItemProps {
   message: Message;
@@ -439,6 +444,13 @@ export const MessageItem = memo(
                   <div className={message.content ? "mt-4" : ""}>
                     <SuspenseCard fallbackText="Loading sports cards...">
                       <SportsCardsCard data={message.cards_search_data} />
+                    </SuspenseCard>
+                  </div>
+                )}
+                {message.immo_display_data && (
+                  <div className={message.content ? "mt-4" : ""}>
+                    <SuspenseCard fallbackText="Chargement du rapport immobilier...">
+                      <ImmoEstimationCard data={message.immo_display_data} />
                     </SuspenseCard>
                   </div>
                 )}

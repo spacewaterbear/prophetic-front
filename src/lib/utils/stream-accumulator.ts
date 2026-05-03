@@ -13,6 +13,7 @@ export interface AccumulatedStreamState {
   watchesSearchData: Record<string, unknown> | null;
   whiskySearchData: Record<string, unknown> | null;
   wineSearchData: Record<string, unknown> | null;
+  immoDisplayData: Record<string, unknown> | null;
 }
 
 export function createAccumulatedState(): AccumulatedStreamState {
@@ -28,6 +29,7 @@ export function createAccumulatedState(): AccumulatedStreamState {
     watchesSearchData: null,
     whiskySearchData: null,
     wineSearchData: null,
+    immoDisplayData: null,
   };
 }
 
@@ -115,6 +117,11 @@ function handleTypedEvent(
     case "wine_data":
       acc.wineSearchData = parsed as Record<string, unknown>;
       enqueue(encodeEvent(encoder, { type: "wine_data", data: parsed.data }));
+      return true;
+
+    case "immo_display_data":
+      acc.immoDisplayData = parsed as Record<string, unknown>;
+      enqueue(encodeEvent(encoder, { type: "immo_display_data", data: parsed.data }));
       return true;
 
     case "status":
@@ -313,6 +320,12 @@ export function buildMessageMetadata(
       accKey: "wineSearchData",
       expectedType: "wine_data",
       metaKey: "wine_search_data",
+      dataKey: "data",
+    },
+    {
+      accKey: "immoDisplayData",
+      expectedType: "immo_display_data",
+      metaKey: "immo_display_data",
       dataKey: "data",
     },
   ];

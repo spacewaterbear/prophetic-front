@@ -122,6 +122,7 @@ export default function ChatPage() {
     streamingWhiskySearchData,
     streamingWineSearchData,
     streamingCardsSearchData,
+    streamingImmoDisplayData,
     streamingVignetteCategory,
     currentStatus,
     streamingLastActivity,
@@ -515,6 +516,7 @@ export default function ChatPage() {
           streamingWhiskySearchData={streamingWhiskySearchData}
           streamingWineSearchData={streamingWineSearchData}
           streamingCardsSearchData={streamingCardsSearchData}
+          streamingImmoDisplayData={streamingImmoDisplayData}
           streamingVignetteCategory={streamingVignetteCategory}
           currentStatus={currentStatus}
           streamingLastActivity={streamingLastActivity}

@@ -250,6 +250,19 @@ export async function GET(
             return msg;
           }
         }
+
+        // If a message has immo_display_data in metadata, include it in the message object
+        if (metadata.immo_display_data) {
+          try {
+            return {
+              ...msg,
+              immo_display_data: metadata.immo_display_data
+            };
+          } catch (error) {
+            console.error("[GET Conversation] Error processing immo_display_data for message:", msg.id, error);
+            return msg;
+          }
+        }
       }
       return msg;
     });

@@ -7,6 +7,7 @@ import {
   MarketplaceData,
   RealEstateData,
 } from "@/types/chat";
+import { ImmoDisplayData } from "@/components/ImmoEstimationCard";
 import { useI18n } from "@/contexts/i18n-context";
 import { getCategoryDisplayNames } from "@/lib/translations";
 import { VignetteData } from "@/types/vignettes";
@@ -71,6 +72,11 @@ const SportsCardsCard = lazy(() =>
     default: mod.SportsCardsCard,
   })),
 );
+const ImmoEstimationCard = lazy(() =>
+  import("@/components/ImmoEstimationCard").then((mod) => ({
+    default: mod.ImmoEstimationCard,
+  })),
+);
 
 interface StreamingBubbleProps {
   streamingMessage: string;
@@ -85,6 +91,7 @@ interface StreamingBubbleProps {
   streamingWhiskySearchData: WhiskySearchData | null;
   streamingWineSearchData: WineSearchData | null;
   streamingCardsSearchData: CardsSearchData | null;
+  streamingImmoDisplayData: ImmoDisplayData | null;
   streamingVignetteCategory: string | null;
   showStreamingIndicator: boolean;
   isLoading: boolean;
@@ -164,6 +171,7 @@ export const StreamingBubble = memo(function StreamingBubble({
   streamingWhiskySearchData,
   streamingWineSearchData,
   streamingCardsSearchData,
+  streamingImmoDisplayData,
   streamingVignetteCategory,
   showStreamingIndicator,
   isLoading,
@@ -187,7 +195,8 @@ export const StreamingBubble = memo(function StreamingBubble({
     streamingWatchesSearchData ||
     streamingWhiskySearchData ||
     streamingWineSearchData ||
-    streamingCardsSearchData;
+    streamingCardsSearchData ||
+    streamingImmoDisplayData;
 
   if (!hasContent) return null;
 
@@ -442,6 +451,13 @@ export const StreamingBubble = memo(function StreamingBubble({
               }
             >
               <SportsCardsCard data={streamingCardsSearchData} />
+            </Suspense>
+          </div>
+        )}
+        {streamingImmoDisplayData && (
+          <div className={displayedMessage || streamingMarketplaceData || streamingRealEstateData || streamingVignetteData || streamingClothesSearchData || streamingJewelrySearchData || streamingCarsSearchData || streamingWatchesSearchData || streamingWhiskySearchData || streamingWineSearchData || streamingCardsSearchData ? "mt-4" : ""}>
+            <Suspense fallback={<div className="text-base text-gray-400">Chargement du rapport immobilier...</div>}>
+              <ImmoEstimationCard data={streamingImmoDisplayData} />
             </Suspense>
           </div>
         )}
