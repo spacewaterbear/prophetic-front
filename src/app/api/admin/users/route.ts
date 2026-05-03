@@ -18,6 +18,7 @@ export async function GET() {
   const { data, error } = await supabase
     .from("profile_trace_counts")
     .select("id, first_name, last_name, username, mail, status, trace_count")
+    .gt("trace_count", 0)
     .order("trace_count", { ascending: false });
 
   if (error) {

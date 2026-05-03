@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { Copy, Check } from "lucide-react";
 import { RefreshCw, List, GitFork, Download } from "lucide-react";
 import type { Trace, Observation } from "@/types/traces";
 import { ObservationTree } from "./ObservationTree";
@@ -18,6 +19,14 @@ export function TraceDetail({ trace }: TraceDetailProps) {
   const [observations, setObservations] = useState<Observation[]>([]);
   const [loading, setLoading] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("graph");
+  const [copied, setCopied] = useState(false);
+
+  const copyId = useCallback(() => {
+    if (!trace) return;
+    navigator.clipboard.writeText(trace.id);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  }, [trace]);
 
   const handleExport = useCallback(() => {
     const payload = { trace, observations };
@@ -64,9 +73,17 @@ export function TraceDetail({ trace }: TraceDetailProps) {
       {/* Header */}
       <div className="flex items-start justify-between p-4 border-b border-zinc-200 dark:border-zinc-800 flex-shrink-0">
         <div className="min-w-0">
-          <p className="text-xs text-zinc-500 dark:text-zinc-400 font-mono">
+          <button
+            type="button"
+            onClick={copyId}
+            className="group inline-flex items-center gap-1 text-xs text-zinc-500 dark:text-zinc-400 font-mono hover:text-zinc-800 dark:hover:text-zinc-100 transition-colors"
+          >
             {trace.id.slice(0, 8)}…
-          </p>
+            {copied
+              ? <Check className="w-3 h-3 text-emerald-500" />
+              : <Copy className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+            }
+          </button>
           <h2 className="text-sm font-semibold text-zinc-800 dark:text-zinc-100 mt-0.5 truncate">
             {trace.name ?? t("admin.traces.traceDetails")}
           </h2>

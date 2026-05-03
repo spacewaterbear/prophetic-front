@@ -1,9 +1,53 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
+import { createPortal } from "react-dom";
 import { RefreshCw, Clock, DollarSign, ChevronDown } from "lucide-react";
 import type { Trace, TraceProfile } from "@/types/traces";
 import { useI18n } from "@/contexts/i18n-context";
+
+function extractImmoPrice(trace: { output: Record<string, unknown> | null; metadata: Record<string, unknown> | null }): number | null {
+  for (const obj of [trace.output, trace.metadata]) {
+    if (!obj) continue;
+    for (const src of [obj, (obj as Record<string, unknown>).output]) {
+      if (!src || typeof src !== "object") continue;
+      const immo = (src as Record<string, unknown>).immo_display_data;
+      if (immo && typeof immo === "object") {
+        const est = (immo as Record<string, unknown>).estimation;
+        if (est && typeof est === "object") {
+          const tk = (est as Record<string, unknown>).total_k;
+          if (typeof tk === "number") return tk;
+        }
+      }
+    }
+  }
+  return null;
+}
+
+function extractUserContent(input: Record<string, unknown> | null): string | null {
+  if (!input) return null;
+  // Format: { messages: [[{ type: "human", content: "..." }]] } (LangChain)
+  const msgs = input.messages;
+  if (Array.isArray(msgs)) {
+    for (const item of msgs) {
+      const arr = Array.isArray(item) ? item : [item];
+      for (const m of arr) {
+        if (m && typeof m === "object") {
+          const role = (m as Record<string, unknown>).role ?? (m as Record<string, unknown>).type;
+          if (role === "human" || role === "user") {
+            const content = (m as Record<string, unknown>).content;
+            if (typeof content === "string") return content;
+          }
+        }
+      }
+    }
+  }
+  // Format: { input: "..." } or { content: "..." }
+  for (const key of ["input", "content", "query", "text"]) {
+    if (typeof input[key] === "string") return input[key] as string;
+  }
+  return null;
+}
 
 const PAGE_SIZE = 50;
 
@@ -13,12 +57,19 @@ interface TracesListProps {
   onSelect: (trace: Trace) => void;
 }
 
+interface TooltipState {
+  label: string;
+  x: number;
+  y: number;
+}
+
 export function TracesList({ user, selectedTraceId, onSelect }: TracesListProps) {
   const { t } = useI18n();
   const [traces, setTraces] = useState<Trace[]>([]);
   const [hasMore, setHasMore] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [tooltip, setTooltip] = useState<TooltipState | null>(null);
   const seenIds = useRef(new Set<string>());
 
   const fetchPage = useCallback(
@@ -139,11 +190,19 @@ export function TracesList({ user, selectedTraceId, onSelect }: TracesListProps)
             <ul>
               {traces.map((trace) => {
                 const isSelected = trace.id === selectedTraceId;
+                const userContent = extractUserContent(trace.input);
+                const label = userContent ?? trace.name ?? `Trace ${trace.id.slice(0, 8)}`;
+                const immoPrice = extractImmoPrice(trace);
                 return (
                   <li key={trace.id}>
                     <button
                       type="button"
                       onClick={() => onSelect(trace)}
+                      onMouseEnter={(e) => {
+                        const rect = e.currentTarget.getBoundingClientRect();
+                        setTooltip({ label, x: rect.right + 8, y: rect.top + rect.height / 2 });
+                      }}
+                      onMouseLeave={() => setTooltip(null)}
                       className={`w-full text-left px-3 py-3 border-b border-zinc-100 dark:border-zinc-800/60 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors ${
                         isSelected
                           ? "bg-zinc-100 dark:bg-zinc-800 border-l-2 border-l-indigo-500"
@@ -151,7 +210,7 @@ export function TracesList({ user, selectedTraceId, onSelect }: TracesListProps)
                       }`}
                     >
                       <p className="text-sm font-medium text-zinc-800 dark:text-zinc-100 truncate leading-tight">
-                        {trace.name ?? `Trace ${trace.id.slice(0, 8)}`}
+                        {label}
                       </p>
                       <div className="flex items-center gap-3 mt-1.5">
                         {trace.timestamp && (
@@ -169,6 +228,11 @@ export function TracesList({ user, selectedTraceId, onSelect }: TracesListProps)
                           <span className="flex items-center gap-0.5 text-xs text-emerald-600 dark:text-emerald-400 font-mono">
                             <DollarSign className="w-3 h-3" />
                             {trace.total_cost.toFixed(4)}
+                          </span>
+                        )}
+                        {immoPrice !== null && (
+                          <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 font-mono">
+                            {immoPrice.toLocaleString("fr-FR")} k€
                           </span>
                         )}
                       </div>
@@ -203,6 +267,16 @@ export function TracesList({ user, selectedTraceId, onSelect }: TracesListProps)
           </>
         )}
       </div>
+
+      {tooltip && createPortal(
+        <div
+          className="pointer-events-none fixed z-[9999] rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-2 py-1.5 text-xs text-zinc-800 dark:text-zinc-100 shadow-md w-64 break-words"
+          style={{ left: tooltip.x, top: tooltip.y, transform: "translateY(-50%)" }}
+        >
+          {tooltip.label}
+        </div>,
+        document.body
+      )}
     </div>
   );
 }
