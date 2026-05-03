@@ -18,9 +18,10 @@ const STATUS_COLORS: Record<string, string> = {
 interface UsersSidebarProps {
   selectedUserId: string | null;
   onSelect: (user: TraceProfile) => void;
+  collapsed?: boolean;
 }
 
-export function UsersSidebar({ selectedUserId, onSelect }: UsersSidebarProps) {
+export function UsersSidebar({ selectedUserId, onSelect, collapsed = false }: UsersSidebarProps) {
   const { t } = useI18n();
   const [users, setUsers] = useState<TraceProfile[]>([]);
   const [loading, setLoading] = useState(false);
@@ -58,6 +59,44 @@ export function UsersSidebar({ selectedUserId, onSelect }: UsersSidebarProps) {
       return `${u.first_name ?? ""} ${u.last_name ?? ""}`.trim();
     }
     return u.username ?? u.mail ?? u.id.slice(0, 8);
+  }
+
+  if (collapsed) {
+    return (
+      <div className="flex flex-col h-full">
+        <div className="flex-1 overflow-y-auto py-1">
+          <ul>
+            {filtered.map((user) => {
+              const isSelected = user.id === selectedUserId;
+              const dot = STATUS_COLORS[user.status] ?? "bg-zinc-400";
+              return (
+                <li key={user.id}>
+                  <button
+                    type="button"
+                    onClick={() => onSelect(user)}
+                    title={displayName(user)}
+                    className={`w-full flex justify-center py-2 transition-colors border-l-2 ${
+                      isSelected
+                        ? "bg-zinc-100 dark:bg-zinc-800 border-l-indigo-500"
+                        : "border-l-transparent hover:bg-zinc-50 dark:hover:bg-zinc-800/40"
+                    }`}
+                  >
+                    <div className="relative">
+                      <div className="w-7 h-7 rounded-full bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center text-xs font-semibold text-zinc-600 dark:text-zinc-300">
+                        {initials(user)}
+                      </div>
+                      <span
+                        className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-white dark:border-zinc-900 ${dot}`}
+                      />
+                    </div>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </div>
+    );
   }
 
   return (

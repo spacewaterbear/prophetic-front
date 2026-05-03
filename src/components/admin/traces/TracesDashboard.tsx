@@ -12,6 +12,7 @@ export function TracesDashboard() {
   const { t } = useI18n();
   const [selectedUser, setSelectedUser] = useState<TraceProfile | null>(null);
   const [selectedTrace, setSelectedTrace] = useState<Trace | null>(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   function handleSelectUser(user: TraceProfile) {
     setSelectedUser(user);
@@ -31,10 +32,15 @@ export function TracesDashboard() {
       {/* 3-panel layout */}
       <div className="flex flex-1 overflow-hidden">
         {/* Left: users */}
-        <aside className="w-56 flex-shrink-0 border-r border-zinc-200 dark:border-zinc-800 flex flex-col">
+        <aside
+          className={`${sidebarCollapsed ? "w-11" : "w-56"} transition-[width] duration-200 ease-in-out flex-shrink-0 border-r border-zinc-200 dark:border-zinc-800 flex flex-col overflow-hidden`}
+          onMouseEnter={() => setSidebarCollapsed(false)}
+          onMouseLeave={() => { if (selectedUser) setSidebarCollapsed(true); }}
+        >
           <UsersSidebar
             selectedUserId={selectedUser?.id ?? null}
             onSelect={handleSelectUser}
+            collapsed={sidebarCollapsed}
           />
         </aside>
 
