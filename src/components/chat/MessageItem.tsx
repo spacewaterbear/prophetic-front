@@ -109,6 +109,7 @@ export const MessageItem = memo(
     const [editedContent, setEditedContent] = useState(message.content);
     const [isSaving, setIsSaving] = useState(false);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const immoCardRef = useRef<HTMLDivElement>(null);
     const params = useParams();
     const conversationId = Array.isArray(params.conversationId)
       ? params.conversationId[0]
@@ -214,6 +215,11 @@ export const MessageItem = memo(
         // Strip all class attributes so dark-mode Tailwind/CSS-variable styles
         // cannot bleed into the PDF when the app is in dark mode.
         html = html.replace(/\s+class="[^"]*"/g, "");
+
+        if (immoCardRef.current) {
+          const cardHtml = immoCardRef.current.outerHTML.replace(/\s+class="[^"]*"/g, "");
+          html += `<div style="margin-top:24px;page-break-inside:avoid;">${cardHtml}</div>`;
+        }
 
         const now = new Date();
         const dateStr = now.toLocaleDateString("en-US", {
@@ -448,7 +454,7 @@ export const MessageItem = memo(
                   </div>
                 )}
                 {message.immo_display_data && (
-                  <div className={message.content ? "mt-4" : ""}>
+                  <div ref={immoCardRef} className={message.content ? "mt-4" : ""}>
                     <SuspenseCard fallbackText="Chargement du rapport immobilier...">
                       <ImmoEstimationCard data={message.immo_display_data} />
                     </SuspenseCard>
@@ -475,21 +481,23 @@ export const MessageItem = memo(
                 <Copy className="h-3 w-3 sm:h-4 sm:w-4" />
               )}
             </Button>
-            {message.sender === "ai" && message.content && (
+            {message.sender === "ai" && (message.content || message.immo_display_data) && (
               <>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={isEditing ? handleCancelEdit : handleStartEdit}
-                  className="h-7 w-7 sm:h-8 sm:w-8 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  aria-label={t("chat.editMessage")}
-                >
-                  {isEditing ? (
-                    <X className="h-3 w-3 sm:h-4 sm:w-4" />
-                  ) : (
-                    <Pencil className="h-3 w-3 sm:h-4 sm:w-4" />
-                  )}
-                </Button>
+                {message.content && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={isEditing ? handleCancelEdit : handleStartEdit}
+                    className="h-7 w-7 sm:h-8 sm:w-8 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    aria-label={t("chat.editMessage")}
+                  >
+                    {isEditing ? (
+                      <X className="h-3 w-3 sm:h-4 sm:w-4" />
+                    ) : (
+                      <Pencil className="h-3 w-3 sm:h-4 sm:w-4" />
+                    )}
+                  </Button>
+                )}
                 <Button
                   variant="ghost"
                   size="icon"
