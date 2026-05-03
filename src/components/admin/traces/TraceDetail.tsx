@@ -1,10 +1,13 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, List, GitFork, Download } from "lucide-react";
 import type { Trace, Observation } from "@/types/traces";
 import { ObservationTree } from "./ObservationTree";
+import { ObservationGraph } from "./ObservationGraph";
 import { useI18n } from "@/contexts/i18n-context";
+
+type ViewMode = "tree" | "graph";
 
 interface TraceDetailProps {
   trace: Trace | null;
@@ -14,6 +17,18 @@ export function TraceDetail({ trace }: TraceDetailProps) {
   const { t } = useI18n();
   const [observations, setObservations] = useState<Observation[]>([]);
   const [loading, setLoading] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>("graph");
+
+  const handleExport = useCallback(() => {
+    const payload = { trace, observations };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `trace-${trace?.id ?? "export"}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [trace, observations]);
 
   const fetchObservations = useCallback(async () => {
     if (!trace) return;
@@ -70,6 +85,14 @@ export function TraceDetail({ trace }: TraceDetailProps) {
           </div>
           <button
             type="button"
+            onClick={handleExport}
+            title={t("admin.traces.exportJson")}
+            className="p-1.5 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 dark:text-zinc-400 transition-colors"
+          >
+            <Download className="w-3.5 h-3.5" />
+          </button>
+          <button
+            type="button"
             onClick={fetchObservations}
             disabled={loading}
             className="p-1.5 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 dark:text-zinc-400 transition-colors disabled:opacity-50"
@@ -110,10 +133,45 @@ export function TraceDetail({ trace }: TraceDetailProps) {
           </div>
         )}
 
-        {/* Observation tree */}
+        {/* Observation view */}
         <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 p-3">
+          {/* Mode toggle */}
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">
+              {t("admin.traces.steps")}
+            </p>
+            <div className="flex items-center rounded-md border border-zinc-200 dark:border-zinc-700 overflow-hidden">
+              <button
+                type="button"
+                onClick={() => setViewMode("tree")}
+                title={t("admin.traces.treeView")}
+                className={`p-1.5 flex items-center gap-1 text-xs transition-colors ${
+                  viewMode === "tree"
+                    ? "bg-zinc-800 text-zinc-100 dark:bg-zinc-100 dark:text-zinc-900"
+                    : "text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                }`}
+              >
+                <List className="w-3.5 h-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode("graph")}
+                title={t("admin.traces.graphView")}
+                className={`p-1.5 flex items-center gap-1 text-xs transition-colors ${
+                  viewMode === "graph"
+                    ? "bg-zinc-800 text-zinc-100 dark:bg-zinc-100 dark:text-zinc-900"
+                    : "text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                }`}
+              >
+                <GitFork className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+
           {loading ? (
             <p className="text-sm text-zinc-400 py-4 text-center">{t("admin.traces.loading")}</p>
+          ) : viewMode === "graph" ? (
+            <ObservationGraph observations={observations} />
           ) : (
             <ObservationTree observations={observations} />
           )}

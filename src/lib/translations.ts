@@ -363,6 +363,9 @@ export const translations = {
                 steps: "Étapes de l'agent",
                 traceDetails: "Détails de la trace",
                 loadMore: "Charger plus",
+                treeView: "Vue arbre",
+                graphView: "Vue graphe",
+                exportJson: "Exporter JSON",
             },
         },
         loadingMessages: [
@@ -731,6 +734,9 @@ export const translations = {
                 steps: "Agent steps",
                 traceDetails: "Trace details",
                 loadMore: "Load more",
+                treeView: "Tree view",
+                graphView: "Graph view",
+                exportJson: "Export JSON",
             },
         },
         loadingMessages: [
@@ -1091,6 +1097,9 @@ export const translations = {
                 steps: "Pasos del agente",
                 traceDetails: "Detalles de la traza",
                 loadMore: "Cargar más",
+                treeView: "Vista árbol",
+                graphView: "Vista grafo",
+                exportJson: "Exportar JSON",
             },
         },
         loadingMessages: [
@@ -1451,6 +1460,9 @@ export const translations = {
                 steps: "Agent-Schritte",
                 traceDetails: "Trace-Details",
                 loadMore: "Mehr laden",
+                treeView: "Baumansicht",
+                graphView: "Graphansicht",
+                exportJson: "JSON exportieren",
             },
         },
         loadingMessages: [
@@ -1811,6 +1823,9 @@ export const translations = {
                 steps: "Passaggi agente",
                 traceDetails: "Dettagli traccia",
                 loadMore: "Carica altro",
+                treeView: "Vista albero",
+                graphView: "Vista grafico",
+                exportJson: "Esporta JSON",
             },
         },
         loadingMessages: [
@@ -2171,6 +2186,9 @@ export const translations = {
                 steps: "Passos do agente",
                 traceDetails: "Detalhes da trace",
                 loadMore: "Carregar mais",
+                treeView: "Vista árvore",
+                graphView: "Vista grafo",
+                exportJson: "Exportar JSON",
             },
         },
         loadingMessages: [
@@ -2531,6 +2549,9 @@ export const translations = {
                 steps: "Agent stappen",
                 traceDetails: "Trace details",
                 loadMore: "Meer laden",
+                treeView: "Boomweergave",
+                graphView: "Grafiekweergave",
+                exportJson: "JSON exporteren",
             },
         },
         loadingMessages: [
@@ -2891,6 +2912,9 @@ export const translations = {
                 steps: "エージェントステップ",
                 traceDetails: "トレース詳細",
                 loadMore: "もっと読み込む",
+                treeView: "ツリー表示",
+                graphView: "グラフ表示",
+                exportJson: "JSONエクスポート",
             },
         },
         loadingMessages: [
@@ -3251,6 +3275,9 @@ export const translations = {
                 steps: "代理步骤",
                 traceDetails: "追踪详情",
                 loadMore: "加载更多",
+                treeView: "树形视图",
+                graphView: "图形视图",
+                exportJson: "导出JSON",
             },
         },
         loadingMessages: [
