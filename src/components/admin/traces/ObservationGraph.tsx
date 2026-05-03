@@ -10,49 +10,126 @@ const NODE_H = 68;
 const H_GAP = 44;
 const V_GAP = 60;
 const PADDING = 28;
+/** Sort observations by start_time ascending (nulls last). */
+function sortByTime(obs: Observation[]): Observation[] {
+  return [...obs].sort((a, b) => {
+    if (!a.start_time && !b.start_time) return 0;
+    if (!a.start_time) return 1;
+    if (!b.start_time) return -1;
+    return new Date(a.start_time).getTime() - new Date(b.start_time).getTime();
+  });
+}
 
-function buildTree(observations: Observation[]): ObservationNode[] {
-  const map = new Map<string, ObservationNode>();
-  const roots: ObservationNode[] = [];
-  for (const obs of observations) map.set(obs.id, { ...obs, children: [] });
+function makeVirtualNode(id: string, traceId: string): ObservationNode {
+  return {
+    id,
+    trace_id: traceId,
+    parent_observation_id: null,
+    type: "SPAN",
+    name: "(root)",
+    start_time: null,
+    end_time: null,
+    input: null,
+    output: null,
+    usage_tokens: null,
+    usage_cost: null,
+    children: [],
+  };
+}
 
-  // Create virtual placeholder nodes for parent IDs that are referenced but absent
-  const virtualNodes = new Map<string, ObservationNode>();
-  for (const obs of observations) {
-    if (obs.parent_observation_id && !map.has(obs.parent_observation_id) && !virtualNodes.has(obs.parent_observation_id)) {
-      virtualNodes.set(obs.parent_observation_id, {
-        id: obs.parent_observation_id,
-        trace_id: obs.trace_id,
-        parent_observation_id: null,
-        type: "SPAN",
-        name: "root",
-        start_time: null,
-        end_time: null,
-        input: null,
-        output: null,
-        usage_tokens: null,
-        usage_cost: null,
-        children: [],
-      });
-    }
-  }
-
-  for (const obs of observations) {
-    const node = map.get(obs.id)!;
-    if (obs.parent_observation_id) {
-      const parent = map.get(obs.parent_observation_id) ?? virtualNodes.get(obs.parent_observation_id);
-      if (parent) {
-        parent.children.push(node);
-      } else {
-        roots.push(node);
-      }
+/** Remove SPAN nodes with no input and no output, re-parenting their children upward. */
+function pruneEmptySpans(node: ObservationNode): ObservationNode {
+  const newChildren: ObservationNode[] = [];
+  for (const child of node.children) {
+    const processed = pruneEmptySpans(child);
+    if (processed.type === "SPAN" && processed.input === null && processed.output === null) {
+      newChildren.push(...processed.children);
     } else {
-      roots.push(node);
+      newChildren.push(processed);
+    }
+  }
+  return { ...node, children: newChildren };
+}
+
+/**
+ * Build a tree that guarantees exactly one root:
+ * - If no parent_observation_id exists anywhere → chain all nodes linearly by start_time.
+ * - If parent refs exist → link nodes, create virtual placeholders for missing parents,
+ *   then merge multiple roots under a synthetic "trace" root sorted by start_time.
+ * - Empty SPAN nodes (no input, no output) are pruned; their children are re-parented up.
+ */
+function buildTree(observations: Observation[]): ObservationNode[] {
+  if (observations.length === 0) return [];
+
+  const sorted = sortByTime(observations);
+  const traceId = sorted[0].trace_id;
+
+  // No parent connections at all → linear time chain (skip empty spans inline)
+  const hasConnections = sorted.some((o) => o.parent_observation_id !== null);
+  if (!hasConnections) {
+    const meaningful = sorted.filter(
+      (o) => !(o.type === "SPAN" && o.input === null && o.output === null),
+    );
+    const source = meaningful.length > 0 ? meaningful : sorted;
+    const nodes: ObservationNode[] = source.map((o) => ({ ...o, children: [] }));
+    for (let i = 0; i + 1 < nodes.length; i++) nodes[i].children.push(nodes[i + 1]);
+    return [nodes[0]];
+  }
+
+  // Build id → node map
+  const map = new Map<string, ObservationNode>();
+  for (const obs of sorted) map.set(obs.id, { ...obs, children: [] });
+
+  // Create virtual placeholders for referenced-but-absent parents
+  const allParentIds = new Set<string>(
+    sorted.map((o) => o.parent_observation_id).filter(Boolean) as string[],
+  );
+  for (const pid of allParentIds) {
+    if (!map.has(pid)) map.set(pid, makeVirtualNode(pid, traceId));
+  }
+
+  // Wire children to parents; track child ids
+  const childIds = new Set<string>();
+  for (const obs of sorted) {
+    if (obs.parent_observation_id) {
+      const parent = map.get(obs.parent_observation_id);
+      if (parent) {
+        parent.children.push(map.get(obs.id)!);
+        childIds.add(obs.id);
+      }
     }
   }
 
-  for (const vNode of virtualNodes.values()) roots.push(vNode);
-  return roots;
+  // Roots = nodes that are not anyone's child; prune empty spans from each subtree
+  const roots = [...map.values()]
+    .filter((n) => !childIds.has(n.id))
+    .map(pruneEmptySpans);
+
+  if (roots.length <= 1) return roots;
+
+  // Multiple roots → synthetic root (sorted by start_time so earliest is first child)
+  roots.sort((a, b) => {
+    if (!a.start_time && !b.start_time) return 0;
+    if (!a.start_time) return 1;
+    if (!b.start_time) return -1;
+    return new Date(a.start_time).getTime() - new Date(b.start_time).getTime();
+  });
+
+  const synthetic: ObservationNode = {
+    id: "__synthetic_root__",
+    trace_id: traceId,
+    parent_observation_id: null,
+    type: "SPAN",
+    name: "trace",
+    start_time: roots[0]?.start_time ?? null,
+    end_time: roots[roots.length - 1]?.end_time ?? null,
+    input: null,
+    output: null,
+    usage_tokens: null,
+    usage_cost: null,
+    children: roots,
+  };
+  return [synthetic];
 }
 
 function getDuration(start: string | null, end: string | null): string {
@@ -140,8 +217,7 @@ function layoutTree(
 
   if (parentPos) {
     const cfg = typeConfig(node.type);
-    const cpY1 = parentPos.y + NODE_H + V_GAP * 0.4;
-    const cpY2 = y - V_GAP * 0.4;
+    const midY = (parentPos.y + NODE_H + y) / 2;
     edges.push({
       x1: parentPos.x + NODE_W / 2,
       y1: parentPos.y + NODE_H,
@@ -149,8 +225,7 @@ function layoutTree(
       y2: y,
       color: cfg.edgeColor,
     });
-    void cpY1;
-    void cpY2;
+    void midY;
   }
 
   let slot = startSlot;
@@ -313,6 +388,7 @@ export function ObservationGraph({ observations }: ObservationGraphProps) {
           </svg>
 
           {layoutNodes.map(({ node, x, y }) => {
+            const isSynthetic = node.id === "__synthetic_root__";
             const cfg = typeConfig(node.type);
             const duration = getDuration(node.start_time, node.end_time);
             const isSelected = selectedNode?.id === node.id;
@@ -326,14 +402,15 @@ export function ObservationGraph({ observations }: ObservationGraphProps) {
                   left: x,
                   top: y,
                   width: NODE_W,
-                  borderColor: cfg.borderColor,
+                  borderColor: isSynthetic ? "#71717a" : cfg.borderColor,
                   boxShadow: isSelected ? `0 0 0 2px ${cfg.ringColor}` : undefined,
+                  opacity: isSynthetic ? 0.6 : 1,
                 }}
                 className="rounded-lg border-2 p-2.5 text-left bg-white dark:bg-zinc-800 hover:shadow-md transition-shadow cursor-pointer"
-                onClick={() => setSelectedNode(isSelected ? null : node)}
+                onClick={() => setSelectedNode(isSynthetic ? null : isSelected ? null : node)}
               >
                 <div className="flex items-center gap-1.5 mb-1.5">
-                  <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium ${cfg.badge}`}>
+                  <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium ${isSynthetic ? "bg-zinc-100 text-zinc-500 dark:bg-zinc-700 dark:text-zinc-400" : cfg.badge}`}>
                     {cfg.icon}
                     <span className="truncate max-w-[72px]">{node.type}</span>
                   </span>
