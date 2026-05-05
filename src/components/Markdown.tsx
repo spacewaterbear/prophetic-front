@@ -226,16 +226,7 @@ export function Markdown({ content, className, categoryName, onCategoryClick, wo
       )}
 
       {isEditing && (
-        <div className="flex items-center gap-2 mb-2">
-          <button
-            onClick={handleSave}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-md transition-colors"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-            Save
-          </button>
+        <div className="sticky top-0 z-10 flex items-center justify-end gap-2 mb-2 p-2 -mx-2 bg-white/90 dark:bg-black/90 backdrop-blur rounded-lg">
           <button
             onClick={handleCancel}
             className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-zinc-300 bg-zinc-700 hover:bg-zinc-600 rounded-md transition-colors"
@@ -245,6 +236,15 @@ export function Markdown({ content, className, categoryName, onCategoryClick, wo
               <line x1="6" y1="6" x2="18" y2="18" />
             </svg>
             Cancel
+          </button>
+          <button
+            onClick={handleSave}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-md transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+            Save
           </button>
         </div>
       )}
