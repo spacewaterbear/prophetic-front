@@ -125,7 +125,7 @@ function handleTypedEvent(
       return true;
 
     case "status":
-      enqueue(encodeEvent(encoder, { type: "status", message: parsed.message }));
+      enqueue(encodeEvent(encoder, { type: "status", message: parsed.message, favicon_url: parsed.favicon_url }));
       return true;
 
     default:

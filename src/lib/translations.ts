@@ -358,6 +358,7 @@ export const translations = {
             yourPropertyAt: "votre bien à",
             disclaimer: "Estimation indicative basée sur les ventes notariales de votre quartier sur les 12 derniers mois · marge ±4 % · document non contractuel",
             photoPlaceholder: "[ photo du bien ]",
+            locationMap: "Localisation",
         },
         admin: {
             traces: {
@@ -747,6 +748,7 @@ export const translations = {
             yourPropertyAt: "your property at",
             disclaimer: "Indicative estimate based on notarial sales in your area over the last 12 months · ±4% margin · non-contractual document",
             photoPlaceholder: "[ property photo ]",
+            locationMap: "Location",
         },
         admin: {
             traces: {

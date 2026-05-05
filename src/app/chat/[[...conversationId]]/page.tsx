@@ -125,6 +125,7 @@ export default function ChatPage() {
     streamingImmoDisplayData,
     streamingVignetteCategory,
     currentStatus,
+    currentStatusFaviconUrl,
     streamingLastActivity,
     showStreamingIndicator,
     messagesEndRef,
@@ -519,6 +520,7 @@ export default function ChatPage() {
           streamingImmoDisplayData={streamingImmoDisplayData}
           streamingVignetteCategory={streamingVignetteCategory}
           currentStatus={currentStatus}
+          currentStatusFaviconUrl={currentStatusFaviconUrl}
           streamingLastActivity={streamingLastActivity}
           showStreamingIndicator={showStreamingIndicator}
           messagesEndRef={messagesEndRef}

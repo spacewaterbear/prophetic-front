@@ -9,10 +9,11 @@ const LOADING_TEXT_DELAY_MS = 1500;
 
 interface TypingIndicatorProps {
   statusText?: string;
+  statusFaviconUrl?: string | null;
   lastActivityAt?: number;
 }
 
-export function TypingIndicator({ statusText, lastActivityAt }: TypingIndicatorProps) {
+export function TypingIndicator({ statusText, statusFaviconUrl, lastActivityAt }: TypingIndicatorProps) {
   const { language } = useI18n();
   const messages = translations[language].loadingMessages as readonly string[];
   const [index, setIndex] = useState(() => Math.floor(Math.random() * messages.length));
@@ -63,7 +64,15 @@ export function TypingIndicator({ statusText, lastActivityAt }: TypingIndicatorP
         />
       </span>
       {showText && (
-        <span className="text-sm text-gray-500 dark:text-gray-400 italic">
+        <span className="inline-flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400 italic">
+          {statusFaviconUrl && (
+            <img
+              src={statusFaviconUrl}
+              alt=""
+              className="w-4 h-4 rounded-sm shrink-0"
+              onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
+            />
+          )}
           {displayText}
         </span>
       )}

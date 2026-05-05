@@ -81,6 +81,7 @@ export function VignetteDetailView({
   const [realEstateData, setRealEstateData] = useState<RealEstateData | null>(null);
   const [wordsToHighlight, setWordsToHighlight] = useState<string[] | null>(null);
   const [statusMessage, setStatusMessage] = useState("");
+  const [statusFaviconUrl, setStatusFaviconUrl] = useState<string | null>(null);
   const [lastActivityAt, setLastActivityAt] = useState(0);
   const streamStartedRef = useRef(false);
 
@@ -220,6 +221,7 @@ export function VignetteDetailView({
                 setRealEstateData(parsed.data as RealEstateData);
               } else if (parsed.type === "status") {
                 setStatusMessage(parsed.message || "");
+                setStatusFaviconUrl(parsed.favicon_url || null);
               } else if (parsed.type === "questions_chunk") {
                 questionsContent += parsed.content || "";
                 setStreamingMessage(documentContent + "\n\n" + questionsContent);
@@ -231,6 +233,7 @@ export function VignetteDetailView({
                 setFinalContent(content);
                 setStreamingMessage("");
                 setStatusMessage("");
+                setStatusFaviconUrl(null);
                 finalContentSet = true;
               }
             } catch (e) {
@@ -246,6 +249,7 @@ export function VignetteDetailView({
           setFinalContent(content);
           setStreamingMessage("");
           setStatusMessage("");
+          setStatusFaviconUrl(null);
         }
       } else {
         const json = await response.json();
@@ -692,7 +696,7 @@ export function VignetteDetailView({
                   )}
                   {isLoading && !finalContent && (
                     <div className="mt-2">
-                      <TypingIndicator statusText={statusMessage} lastActivityAt={lastActivityAt} />
+                      <TypingIndicator statusText={statusMessage} statusFaviconUrl={statusFaviconUrl} lastActivityAt={lastActivityAt} />
                     </div>
                   )}
                   {displayContent && (
@@ -738,7 +742,15 @@ export function VignetteDetailView({
                     <span className="w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-500 animate-bounce [animation-delay:300ms]" />
                   </div>
                   {statusMessage && (
-                    <span className="text-xs text-gray-400 dark:text-gray-500 italic ml-2">
+                    <span className="inline-flex items-center gap-1.5 text-xs text-gray-400 dark:text-gray-500 italic ml-2">
+                      {statusFaviconUrl && (
+                        <img
+                          src={statusFaviconUrl}
+                          alt=""
+                          className="w-4 h-4 rounded-sm shrink-0"
+                          onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
+                        />
+                      )}
                       {statusMessage}
                     </span>
                   )}

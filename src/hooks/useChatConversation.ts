@@ -63,6 +63,7 @@ interface StreamingState {
   immoDisplayData: ImmoDisplayData | null;
   vignetteCategory: string | null;
   status: string;
+  statusFaviconUrl: string | null;
   lastActivity: number;
   showIndicator: boolean;
 }
@@ -83,7 +84,7 @@ type StreamingAction =
   | { type: "SET_CARDS"; data: CardsSearchData }
   | { type: "SET_IMMO_DISPLAY"; data: ImmoDisplayData }
   | { type: "SET_VIGNETTE_CATEGORY"; category: string | null }
-  | { type: "SET_STATUS"; status: string }
+  | { type: "SET_STATUS"; status: string; faviconUrl?: string | null }
   | { type: "MARK_ACTIVITY" }
   | { type: "SET_INDICATOR"; show: boolean };
 
@@ -103,6 +104,7 @@ const initialStreaming: StreamingState = {
   immoDisplayData: null,
   vignetteCategory: null,
   status: "",
+  statusFaviconUrl: null,
   lastActivity: 0,
   showIndicator: false,
 };
@@ -120,6 +122,7 @@ function streamingReducer(
         message: state.message + action.content,
         lastActivity: Date.now(),
         status: "",
+        statusFaviconUrl: null,
       };
     case "SET_MESSAGE":
       return { ...state, message: action.message, wordsToHighlight: action.wordsToHighlight ?? state.wordsToHighlight };
@@ -148,7 +151,7 @@ function streamingReducer(
     case "SET_VIGNETTE_CATEGORY":
       return { ...state, vignetteCategory: action.category };
     case "SET_STATUS":
-      return { ...state, status: action.status, lastActivity: Date.now() };
+      return { ...state, status: action.status, statusFaviconUrl: action.faviconUrl ?? null, lastActivity: Date.now() };
     case "MARK_ACTIVITY":
       return { ...state, lastActivity: Date.now() };
     case "SET_INDICATOR":
@@ -640,7 +643,7 @@ export function useChatConversation({
             }
           },
           status: (data) => {
-            dispatch({ type: "SET_STATUS", status: data.message as string ?? "" });
+            dispatch({ type: "SET_STATUS", status: data.message as string ?? "", faviconUrl: data.favicon_url as string ?? null });
           },
         };
 
@@ -1115,6 +1118,7 @@ export function useChatConversation({
     streamingImmoDisplayData: streaming.immoDisplayData,
     streamingVignetteCategory: streaming.vignetteCategory,
     currentStatus: streaming.status,
+    currentStatusFaviconUrl: streaming.statusFaviconUrl,
     streamingLastActivity: streaming.lastActivity,
     showStreamingIndicator: streaming.showIndicator,
     messagesEndRef,

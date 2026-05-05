@@ -1,7 +1,13 @@
 "use client";
 
 import { memo, useState } from "react";
+import dynamic from "next/dynamic";
 import { useI18n } from "@/contexts/i18n-context";
+
+const ImmoMap = dynamic(
+  () => import("./ImmoMap").then((m) => m.ImmoMap),
+  { ssr: false, loading: () => <div style={{ height: 180 }} /> }
+);
 
 export interface ImmoPriceFactor {
   label: string;
@@ -23,6 +29,11 @@ export interface ImmoDisplayData {
     address: string;
     neighborhood: string;
     description: string;
+  };
+  location?: {
+    lat: number;
+    lon: number;
+    label: string;
   };
   estimation: {
     total_k: number;
@@ -92,7 +103,7 @@ interface Props {
 
 export const ImmoEstimationCard = memo(function ImmoEstimationCard({ data }: Props) {
   const { t } = useI18n();
-  const { property, estimation, reference_price, price_factors, waterfall, dpe, comparables } = data;
+  const { property, estimation, reference_price, price_factors, waterfall, dpe, comparables, location } = data;
 
   // signedPct: -15 to +15 (signed), active: included in price calculation
   type EditableFactor = ImmoPriceFactor & { signedPct: number; initialSignedPct: number; active: boolean };
@@ -310,6 +321,36 @@ export const ImmoEstimationCard = memo(function ImmoEstimationCard({ data }: Pro
           {dynVsPct} % {t("immoCard.vsNeighborhood")}
         </div>
       </div>
+
+      {/* Map */}
+      {location && (
+        <div
+          style={{
+            background: C.card,
+            border: `1px solid ${C.border}`,
+            borderRadius: 18,
+            overflow: "hidden",
+            marginBottom: 12,
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              padding: "12px 16px 10px",
+            }}
+          >
+            <div style={{ fontSize: 13, fontWeight: 600, color: C.dark }}>
+              {t("immoCard.locationMap")}
+            </div>
+            <div style={{ fontSize: 11, color: C.light, maxWidth: "60%", textAlign: "right", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              {location.label}
+            </div>
+          </div>
+          <ImmoMap lat={location.lat} lon={location.lon} label={location.label} />
+        </div>
+      )}
 
       {/* Single column */}
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
