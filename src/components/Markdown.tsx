@@ -257,7 +257,7 @@ export function Markdown({ content, className, categoryName, onCategoryClick, wo
 
       <div
         ref={containerRef}
-        className={`max-w-none px-0 markdown-container ${className || ''} ${isEditing ? 'edit-mode ring-2 ring-emerald-500/50 rounded-lg p-3 bg-emerald-500/5' : ''}`}
+        className={`max-w-none px-0 markdown-container ${className || ''} ${isEditing ? 'edit-mode ring-2 ring-emerald-500/50 rounded-lg p-5 sm:p-6 bg-emerald-500/5' : ''}`}
         style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif" }}
         contentEditable={isEditing}
         suppressContentEditableWarning
