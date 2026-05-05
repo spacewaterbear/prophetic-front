@@ -20,10 +20,19 @@ interface MarkdownProps {
   categoryName?: string;
   onCategoryClick?: () => void;
   wordsToHighlight?: string[] | null;
+  editable?: boolean;
+  isEditing?: boolean;
+  onSave?: (html: string) => void;
+  onEditCancel?: () => void;
 }
 
-export function Markdown({ content, className, categoryName, onCategoryClick, wordsToHighlight }: MarkdownProps) {
+export function Markdown({ content, className, categoryName, onCategoryClick, wordsToHighlight, editable, isEditing: controlledIsEditing, onSave, onEditCancel }: MarkdownProps) {
   const [htmlContent, setHtmlContent] = useState<string>("");
+  const [internalIsEditing, setInternalIsEditing] = useState(false);
+  const containerRef = React.useRef<HTMLDivElement>(null);
+
+  const isControlled = controlledIsEditing !== undefined;
+  const isEditing = isControlled ? controlledIsEditing : internalIsEditing;
 
   const injectHighlightMarkers = (text: string, words: string[]): string => {
     if (words.length === 0) return text;
@@ -158,6 +167,38 @@ export function Markdown({ content, className, categoryName, onCategoryClick, wo
     }
   };
 
+  const enterEditMode = () => {
+    if (isControlled) return; // parent controls edit mode via isEditing prop
+    setInternalIsEditing(true);
+  };
+
+  const handleDoubleClick = (event: React.MouseEvent) => {
+    if (!editable || isEditing) return;
+    const target = event.target as HTMLElement;
+    if (target.closest('[data-chat-button]') || target.closest('[data-analysis]')) return;
+    enterEditMode();
+  };
+
+  const handleSave = () => {
+    if (containerRef.current && onSave) {
+      onSave(containerRef.current.innerHTML);
+    }
+    if (!isControlled) {
+      setInternalIsEditing(false);
+    }
+  };
+
+  const handleCancel = () => {
+    if (containerRef.current) {
+      containerRef.current.innerHTML = htmlContent;
+    }
+    if (isControlled) {
+      onEditCancel?.();
+    } else {
+      setInternalIsEditing(false);
+    }
+  };
+
   return (
     <div className="relative">
       {categoryName && onCategoryClick && (
@@ -183,10 +224,45 @@ export function Markdown({ content, className, categoryName, onCategoryClick, wo
           </button>
         </div>
       )}
+
+      {isEditing && (
+        <div className="flex items-center gap-2 mb-2">
+          <button
+            onClick={handleSave}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-md transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+            Save
+          </button>
+          <button
+            onClick={handleCancel}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-zinc-300 bg-zinc-700 hover:bg-zinc-600 rounded-md transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+            Cancel
+          </button>
+        </div>
+      )}
+
+      {!isControlled && editable && !isEditing && (
+        <div className="mb-2">
+          <span className="text-xs text-zinc-500">Double-click to edit</span>
+        </div>
+      )}
+
       <div
-        className={`max-w-none px-0 markdown-container ${className || ''}`}
+        ref={containerRef}
+        className={`max-w-none px-0 markdown-container ${className || ''} ${isEditing ? 'edit-mode ring-2 ring-emerald-500/50 rounded-lg p-3 bg-emerald-500/5' : ''}`}
         style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif" }}
+        contentEditable={isEditing}
+        suppressContentEditableWarning
         onClick={handleClick}
+        onDoubleClick={handleDoubleClick}
         dangerouslySetInnerHTML={{ __html: htmlContent }}
       />
     </div>
