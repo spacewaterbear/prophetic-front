@@ -13,6 +13,7 @@ declare module "next-auth" {
         | "intelligence"
         | "oracle";
       isAdmin?: boolean;
+      isPreprod?: boolean;
     } & DefaultSession["user"];
   }
 
@@ -26,5 +27,6 @@ declare module "next-auth" {
       | "intelligence"
       | "oracle";
     isAdmin?: boolean;
+    isPreprod?: boolean;
   }
 }

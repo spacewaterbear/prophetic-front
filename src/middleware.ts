@@ -34,6 +34,10 @@ export default auth((req) => {
   // Environment-based access control variables
   const appEnv = process.env.NEXT_PUBLIC_APP_ENV;
   const isRestrictedEnv = appEnv === "staging" || appEnv === "preprod";
+  const isPreprodUser = req.auth?.user?.isPreprod === true;
+
+  // Staging: only admins. Preprod: admins or users with is_preprod flag.
+  const canAccessRestrictedEnv = isAdmin || (appEnv === "preprod" && isPreprodUser);
 
   // Routes accessible to unauthenticated visitors on non-restricted environments
   // (guests can browse vignettes and use one free question)
@@ -64,8 +68,8 @@ export default auth((req) => {
 
   // If logged in and on login page, redirect based on admin status for restricted envs
   if (isPublicRoute && nextUrl.pathname === "/login") {
-    // On restricted env, non-admin should be redirected to restricted access page
-    if (isRestrictedEnv && !isAdmin) {
+    // On restricted env, unauthorized users should be redirected to restricted access page
+    if (isRestrictedEnv && !canAccessRestrictedEnv) {
       return NextResponse.redirect(new URL("/restricted-access", nextUrl));
     }
     // Admin or production env: redirect to home or registration pending
@@ -87,8 +91,8 @@ export default auth((req) => {
     return NextResponse.next();
   }
 
-  // Environment-based access control: only admins can access staging/preprod
-  if (isRestrictedEnv && !isAdmin) {
+  // Environment-based access control: admins for staging; admins + is_preprod users for preprod
+  if (isRestrictedEnv && !canAccessRestrictedEnv) {
     return NextResponse.redirect(new URL("/restricted-access", nextUrl));
   }
 

@@ -249,8 +249,8 @@ export async function POST(
             console.error(
               `[Prophetic API Error] Status: ${upstreamResponse.status}, Body: ${errorBody}`
             );
-            if (isMaintenanceError(errorBody)) {
-              throw new Error("My brain is in maintenance right now, please wait");
+            if (isMaintenanceError(errorBody, upstreamResponse.status)) {
+              throw new Error("J'ai besoin de me mettre en veille pour le moment. Contactez mon créateur pour en savoir plus");
             }
             throw new Error(`Prophetic API error: ${upstreamResponse.status} - ${errorBody}`);
           }
@@ -280,9 +280,7 @@ export async function POST(
               if (!eventData || eventData === "[DONE]") continue;
 
               try {
-                console.log("[DEBUG] Raw eventData:", eventData);
                 const parsed = JSON.parse(eventData) as Record<string, unknown>;
-                console.log("[DEBUG] Parsed type:", parsed.type);
                 processEvent(parsed, acc, enqueue, encoder);
               } catch (e) {
                 console.error("[Prophetic API] Failed to parse JSON:", eventData, e);
@@ -361,7 +359,7 @@ export async function POST(
           let errorMessage = "Failed to generate AI response";
           if (error instanceof Error) {
             if (isMaintenanceError(error.message)) {
-              errorMessage = "My brain is in maintenance right now, please wait";
+              errorMessage = "J'ai besoin de me mettre en veille pour le moment. Contactez mon créateur pour en savoir plus";
             } else if (error.message.includes("API URL is not configured")) {
               errorMessage = "API configuration error: Missing API URL";
             } else if (error.message.includes("API token is not configured")) {
@@ -373,7 +371,7 @@ export async function POST(
 
           controller.enqueue(
             encoder.encode(
-              `data: ${JSON.stringify({ type: "error", error: errorMessage })}\n\n`
+              `data: ${JSON.stringify({ type: "status", message: errorMessage })}\n\n`
             )
           );
           controller.close();

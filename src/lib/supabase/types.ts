@@ -178,6 +178,7 @@ export type Database = {
           has_accepted_conf_politic_and_cgu: boolean | null
           id: string
           is_admin: boolean
+          is_preprod: boolean
           last_name: string | null
           mail: string | null
           status: Database["public"]["Enums"]["user_status"]
@@ -191,6 +192,7 @@ export type Database = {
           has_accepted_conf_politic_and_cgu?: boolean | null
           id: string
           is_admin?: boolean
+          is_preprod?: boolean
           last_name?: string | null
           mail?: string | null
           status?: Database["public"]["Enums"]["user_status"]
@@ -204,6 +206,7 @@ export type Database = {
           has_accepted_conf_politic_and_cgu?: boolean | null
           id?: string
           is_admin?: boolean
+          is_preprod?: boolean
           last_name?: string | null
           mail?: string | null
           status?: Database["public"]["Enums"]["user_status"]

@@ -561,6 +561,8 @@ export function useChatConversation({
 
         let streamContent = "";
         let sseBuffer = "";
+        let doneReceived = false;
+        let lastStatusMessage = "";
 
         type SseHandler = (data: Record<string, unknown>) => void | Promise<void>;
         const sseHandlers: Record<string, SseHandler> = {
@@ -630,6 +632,7 @@ export function useChatConversation({
             dispatch({ type: "SET_IMMO_DISPLAY", data: data.data as ImmoDisplayData });
           },
           done: async () => {
+            doneReceived = true;
             await loadConversation(targetConversationId);
             dispatch({ type: "RESET" });
             if (isGuest) {
@@ -643,7 +646,8 @@ export function useChatConversation({
             }
           },
           status: (data) => {
-            dispatch({ type: "SET_STATUS", status: data.message as string ?? "", faviconUrl: data.favicon_url as string ?? null });
+            lastStatusMessage = (data.message as string) ?? "";
+            dispatch({ type: "SET_STATUS", status: lastStatusMessage, faviconUrl: (data.favicon_url as string) ?? null });
           },
         };
 
@@ -675,6 +679,10 @@ export function useChatConversation({
 
         // suppress unused variable warning – kept for future use
         void streamContent;
+
+        if (!doneReceived && lastStatusMessage) {
+          dispatch({ type: "SET_MESSAGE", message: lastStatusMessage });
+        }
       } catch (error) {
         console.error("Error sending message:", error);
       } finally {

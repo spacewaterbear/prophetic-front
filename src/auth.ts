@@ -212,13 +212,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
           const { data: profile, error: profileError } = await supabase
             .from('profiles')
-            .select('status, is_admin')
+            .select('status, is_admin, is_preprod')
             .eq('id', session.user.id)
             .maybeSingle();
 
           if (profile) {
             session.user.status = profile.status;
             session.user.isAdmin = profile.is_admin === true;
+            session.user.isPreprod = profile.is_preprod === true;
           } else if (profileError) {
             console.error('[Auth] Error querying profile:', profileError);
           }

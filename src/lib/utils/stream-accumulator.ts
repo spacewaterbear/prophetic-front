@@ -1,4 +1,4 @@
-import { isMaintenanceError, extractErrorMessage } from "./error-parsing";
+import { isMaintenanceError } from "./error-parsing";
 
 /** All mutable state collected while streaming from the Prophetic API. */
 export interface AccumulatedStreamState {
@@ -128,6 +128,10 @@ function handleTypedEvent(
       enqueue(encodeEvent(encoder, { type: "status", message: parsed.message, favicon_url: parsed.favicon_url }));
       return true;
 
+    case "error":
+      enqueue(encodeEvent(encoder, { type: "status", message: "Your brain is being updated, please wait..." }));
+      return true;
+
     default:
       return false;
   }
@@ -190,8 +194,8 @@ export function processEvent(
     if (isMaintenanceError(content)) {
       enqueue(
         encodeEvent(encoder, {
-          type: "error",
-          error: "My brain is in maintenance right now, please wait",
+          type: "status",
+          message: "Your brain is being updated, please wait...",
         }),
       );
       return true;
@@ -208,8 +212,8 @@ export function processEvent(
     console.error("[Prophetic API] Error in stream:", parsed.error);
     enqueue(
       encodeEvent(encoder, {
-        type: "error",
-        error: extractErrorMessage(parsed.error as unknown),
+        type: "status",
+        message: "Your brain is being updated, please wait...",
       }),
     );
     return true;
